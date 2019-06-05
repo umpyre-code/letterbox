@@ -1,22 +1,58 @@
 {
+  "browserslist": {
+    "development": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 edge versions"
+    ],
+    "production": [
+      ">1%",
+      "Firefox ESR",
+      "not ie <= 11",
+      "not op_mini all"
+    ]
+  },
   "dependencies": {
-    "@types/enzyme": "^2.7.2",
+    "@emotion/core": "^10.0.10",
+    "@emotion/styled": "^10.0.11",
+    "@types/enzyme": "^3.9.3",
     "@types/jest": "^24.0.13",
     "@types/node": "^7.0.5",
     "@types/react": "^15.6.6",
     "@types/react-dom": "^0.14.22",
     "@types/react-redux": "^4.4.36",
-    "enzyme": "^2.7.1",
-    "react": "^15.0.0 || ^16.0.0",
-    "react-dom": "^15.0.0 || ^16.0.0",
+    "@types/react-router": "^5.0.1",
+    "@types/react-router-dom": "^4.3.3",
+    "axios": "^0.19.0",
+    "connected-react-router": "^6.4.0",
+    "dotenv-expand": "^5.1.0",
+    "emotion": "^10.0.9",
+    "enzyme": "^3.10.0",
+    "history": "^4.9.0",
+    "moment": "^2.24.0",
+    "polished": "^3.4.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-emotion": "^10.0.0",
     "react-hot-loader": "next",
-    "react-redux": "^5.0.2",
-    "redux": "^3.6.0"
+    "react-redux": "^7.0.0",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "redux": "^4.0.1",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-saga": "^1.0.2",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.87.1",
+    "typeface-ibm-plex-mono": "^0.0.61",
+    "typeface-ibm-plex-sans": "^0.0.61",
+    "typesafe-actions": "^4.4.0"
   },
   "devDependencies": {
+    "cssnano": "^4.1.10",
+    "enzyme-adapter-react-16": "^1.14.0",
     "jest": "^24.8.0",
     "jest-transform-stub": "^2.0.0",
-    "react-addons-test-utils": "^15.4.2",
+    "react-addons-test-utils": "^16.0.0-alpha.3",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.1"
   },

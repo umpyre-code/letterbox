@@ -1,22 +1,26 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { createBrowserHistory } from 'history'
+import { cache } from 'emotion'
+import { CacheProvider } from '@emotion/core'
 
-import Hello from './containers/Hello';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { enthusiasm } from './reducers/index';
-import { StoreState } from './types/index';
+import Main from './main'
+import * as serviceWorker from './serviceWorker'
+import configureStore from './configureStore'
 
-import './index.css';
+import 'typeface-ibm-plex-sans'
+import './styles'
 
-const store = createStore<StoreState>(enthusiasm, {
-  enthusiasmLevel: 1,
-  languageName: 'TypeScript',
-});
+const history = createBrowserHistory()
+
+const initialState = window.initialReduxState
+const store = configureStore(history, initialState)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Hello />
-  </Provider>,
-  document.getElementById('root') as HTMLElement
-);
+  <CacheProvider value={cache}>
+    <Main store={store} history={history} />
+  </CacheProvider>,
+  document.getElementById('root')
+)
+
+serviceWorker.register()
