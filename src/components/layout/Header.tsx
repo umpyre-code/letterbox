@@ -27,16 +27,7 @@ const Header: React.SFC<HeaderProps> = ({ title }) => (
         </HeaderNavLink>
       </HeaderNav>
       <HeaderRight>
-        <LayoutContainer>
-          {({ theme, setTheme }) => (
-            <React.Fragment>
-              <CurrentTheme>Current theme: {theme}</CurrentTheme>
-              <ThemeSwitcherButton onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-                Switch theme
-              </ThemeSwitcherButton>
-            </React.Fragment>
-          )}
-        </LayoutContainer>
+        <p>Hello</p>
       </HeaderRight>
     </HeaderInner>
   </Wrapper>
@@ -46,9 +37,6 @@ export default Header
 
 const Wrapper = styled('header')`
   padding: 0.5rem 1.5rem;
-  background-color: ${props => props.theme.colors.brand};
-  color: ${props => props.theme.colors.white};
-  font-family: ${props => props.theme.fonts.headings};
 `
 
 const HeaderInner = styled(Container)`
@@ -56,10 +44,6 @@ const HeaderInner = styled(Container)`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-
-  @media (min-width: ${props => props.theme.breakpoints.lg}) {
-    flex-direction: row;
-  }
 `
 
 const HeaderLeft = styled('div')`
@@ -69,10 +53,6 @@ const HeaderLeft = styled('div')`
 const HeaderNav = styled('nav')`
   flex: 1 1 auto;
   margin: 1rem 0;
-
-  @media (min-width: ${props => props.theme.breakpoints.lg}) {
-    margin: 0;
-  }
 `
 
 const HeaderNavLink = styled(NavLink)`
@@ -99,10 +79,7 @@ const CurrentTheme = styled('span')`
 const ThemeSwitcherButton = styled('button')`
   display: inline-block;
   padding: 0.25rem 0.5rem;
-  border: 1px solid ${props => props.theme.colors.white};
   border-radius: 3px;
-  background-color: ${props => props.theme.colors.white};
-  color: ${props => props.theme.colors.brand};
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -112,6 +89,5 @@ const ThemeSwitcherButton = styled('button')`
   &:hover,
   &:focus {
     background-color: transparent;
-    color: ${props => props.theme.colors.white};
   }
 `

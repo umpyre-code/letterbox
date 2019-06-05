@@ -43,8 +43,6 @@
     "redux-saga": "^1.0.2",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.87.1",
-    "typeface-ibm-plex-mono": "^0.0.61",
-    "typeface-ibm-plex-sans": "^0.0.61",
     "typesafe-actions": "^4.4.0"
   },
   "devDependencies": {

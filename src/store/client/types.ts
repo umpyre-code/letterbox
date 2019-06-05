@@ -2,7 +2,7 @@
 
 // Response object for GET /heroes
 // https://docs.opendota.com/#tag/heroes%2Fpaths%2F~1heroes%2Fget
-export interface Hero extends ApiResponse {
+export interface Client extends ApiResponse {
   id: number
   name: string
   localized_name: string
@@ -24,18 +24,18 @@ export type ApiResponse = Record<string, any>
 // Define however naming conventions you'd like for your action types, but
 // personally, I use the `@@context/ACTION_TYPE` convention, to follow the convention
 // of Redux's `@@INIT` action.
-export const enum HeroesActionTypes {
-  FETCH_REQUEST = '@@heroes/FETCH_REQUEST',
-  FETCH_SUCCESS = '@@heroes/FETCH_SUCCESS',
-  FETCH_ERROR = '@@heroes/FETCH_ERROR',
-  SELECT_HERO = '@@heroes/SELECT_HERO',
-  SELECTED = '@@heroes/SELECTED'
+export const enum ClientActionTypes {
+  FETCH_REQUEST = '@@client/FETCH_REQUEST',
+  FETCH_SUCCESS = '@@client/FETCH_SUCCESS',
+  FETCH_ERROR = '@@client/FETCH_ERROR',
+  SELECT_HERO = '@@client/SELECT_HERO',
+  SELECTED = '@@client/SELECTED'
 }
 
 // Declare state types with `readonly` modifier to get compile time immutability.
 // https://github.com/piotrwitek/react-redux-typescript-guide#state-with-type-level-immutability
-export interface HeroesState {
+export interface ClientState {
   readonly loading: boolean
-  readonly data: Hero[]
+  readonly data: Client[]
   readonly errors?: string
 }
