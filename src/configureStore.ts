@@ -6,12 +6,10 @@ import { History } from 'history'
 
 import { ApplicationState, createRootReducer, rootSaga } from './store'
 
-export default function configureStore(
-  history: History,
-  initialState: ApplicationState
-): Store<ApplicationState> {
+export default function configureStore(history: History): Store<ApplicationState> {
   const composeEnhancers = composeWithDevTools({})
   const sagaMiddleware = createSagaMiddleware()
+  const initialState = {}
 
   const store = createStore(
     createRootReducer(history),

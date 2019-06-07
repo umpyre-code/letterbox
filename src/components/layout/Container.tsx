@@ -1,8 +1,5 @@
 import styled from '../../utils/styled'
 
-const Container = styled('div')`
-  margin: 0 auto;
-  width: 100%;
-`
+const Container = styled('div')``
 
 export default Container

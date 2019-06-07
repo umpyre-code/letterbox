@@ -3,11 +3,9 @@ import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'connected-react-router'
 import { Store } from 'redux'
 import { History } from 'history'
-import { ThemeProvider } from 'emotion-theming'
 
 import Routes from './routes'
 import { ApplicationState } from './store'
-import LayoutContainer from './containers/LayoutContainer'
 
 interface MainProps {
   store: Store<ApplicationState>

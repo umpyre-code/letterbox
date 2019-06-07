@@ -2,14 +2,12 @@ import * as React from 'react'
 import { Route, Switch } from 'react-router-dom'
 
 import Root from './components/layout/Root'
-import Header from './components/layout/Header'
-import IndexPage from './pages/index'
+import SignUpPage from './pages/signup'
 
 const Routes: React.SFC = () => (
   <Root>
-    <Header title="Umpyre" />
     <Switch>
-      <Route exact path="/" component={IndexPage} />
+      <Route exact path="/" component={SignUpPage} />
       <Route component={() => <div>Not Found</div>} />
     </Switch>
   </Root>

@@ -10,8 +10,6 @@ const Root: React.SFC<RootProps> = ({ children }) => <Wrapper>{children}</Wrappe
 export default Root
 
 const Wrapper = styled('div')`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 100vh;
+  font-family: 'Cooper Hewitt', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto;
+  font-weight: 600;
 `

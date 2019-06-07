@@ -8,10 +8,11 @@ import Main from './main'
 import * as serviceWorker from './serviceWorker'
 import configureStore from './configureStore'
 
+import 'semantic-ui-css/semantic.min.css'
+
 const history = createBrowserHistory()
 
-const initialState = window.initialReduxState
-const store = configureStore(history, initialState)
+const store = configureStore(history)
 
 ReactDOM.render(
   <CacheProvider value={cache}>
