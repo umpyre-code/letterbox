@@ -19,12 +19,16 @@ import { fieldToTextField, TextField, TextFieldProps, Select } from 'formik-mate
 import MuiTextField from '@material-ui/core/TextField'
 import { country_codes } from './phonenumber'
 
+interface PhoneNumber {
+  country_code?: string
+  national_number?: string
+}
+
 interface Values {
   full_name: string
   email: string
   password: string
-  country_code: string
-  phone_number: string
+  phone_number: PhoneNumber
 }
 
 interface PropsFromState {
@@ -39,10 +43,11 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
   <MuiTextField
     {...fieldToTextField(props)}
     onChange={event => {
-      console.log(event)
       const { value } = event.target
       if (value) {
-        const formattedNumber = new AsYouType(props.form.values.country_code).input(value)
+        const formattedNumber = new AsYouType(props.form.values.phone_number.country_code).input(
+          value
+        )
         props.form.setFieldValue(props.field.name, formattedNumber)
       } else {
         props.form.setFieldValue(props.field.name, '')
@@ -56,8 +61,6 @@ type AllProps = PropsFromDispatch & PropsFromState
 
 class SignUp extends React.Component<AllProps> {
   public getClientRequest(values: Values, props: FormikProps<Values>) {
-    console.log(values, props)
-    console.log(this.props)
     this.props.getClientRequest()
   }
 
@@ -68,8 +71,10 @@ class SignUp extends React.Component<AllProps> {
           email: '',
           password: '',
           full_name: '',
-          national_number: '',
-          country_code: 'US'
+          phone_number: {
+            national_number: '',
+            country_code: 'US'
+          }
         }}
         validate={values => {
           const errors: Partial<Values> = {}
@@ -84,8 +89,8 @@ class SignUp extends React.Component<AllProps> {
           if (!values.password) {
             errors.password = 'Required'
           }
-          if (!values.national_number) {
-            errors.national_number = 'Required'
+          if (!values.phone_number.national_number) {
+            errors.phone_number = { national_number: 'Required' }
           }
           return errors
         }}
@@ -110,7 +115,7 @@ class SignUp extends React.Component<AllProps> {
               </Grid>
               <Grid item>
                 <FormControl fullWidth>
-                  <Field type="text" label="Full Name" name="full_name" component={TextField} />
+                  <Field type="text" label="Your Name" name="full_name" component={TextField} />
                 </FormControl>
               </Grid>
               <Grid item>
@@ -118,9 +123,9 @@ class SignUp extends React.Component<AllProps> {
                   <FormGroup row={true}>
                     <Grid container>
                       <Grid item>
-                        <InputLabel htmlFor="country_code">Country Code</InputLabel>
+                        <InputLabel htmlFor="phone_number.country_code">Country Code</InputLabel>
                         <Field
-                          name="country_code"
+                          name="phone_number.country_code"
                           label="Country Code"
                           component={Select}
                           fullWidth
@@ -137,7 +142,7 @@ class SignUp extends React.Component<AllProps> {
                       <Grid item xs>
                         <Field
                           type="text"
-                          name="national_number"
+                          name="phone_number.national_number"
                           label="Phone Number"
                           component={PhoneNumberTextField}
                           fullWidth

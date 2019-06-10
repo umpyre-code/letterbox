@@ -5,10 +5,14 @@ import { History } from 'history'
 
 import clientSaga from './client/sagas'
 import { clientReducer } from './client/reducer'
-import { clientState } from './client/types'
+import { ClientState } from './client/types'
+import keysSaga from './keys/sagas'
+import { keysReducer } from './keys/reducer'
+import { KeysState } from './keys/types'
 
 export interface ApplicationState {
-  client: clientState
+  client: ClientState
+  keys: KeysState
   router: RouterState
 }
 
@@ -19,9 +23,10 @@ export interface ConnectedReduxProps<A extends Action = AnyAction> {
 export const createRootReducer = (history: History) =>
   combineReducers({
     client: clientReducer,
+    keys: keysReducer,
     router: connectRouter(history)
   })
 
 export function* rootSaga() {
-  yield all([fork(clientSaga)])
+  yield all([fork(clientSaga), fork(keysSaga)])
 }

@@ -8,9 +8,7 @@ export default () => (
     <Container maxWidth="sm">
       <Paper style={{ padding: 10 }}>
         <h1>Join Umpyre</h1>
-        <p>
-          Umpyre is a communication tool that let's you decide how much your attention is worth.
-        </p>
+        <p>Umpyre is a communication tool that let's you decide what your attention is worth.</p>
         <SignUp />
       </Paper>
     </Container>
