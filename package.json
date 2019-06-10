@@ -49,6 +49,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-saga": "^1.0.2",
     "semantic-ui-css": "^2.4.1",
+    "typeface-lato": "^0.0.54",
     "typesafe-actions": "^4.4.0"
   },
   "devDependencies": {
