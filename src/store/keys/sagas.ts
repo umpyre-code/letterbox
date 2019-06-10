@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import { KeysActionTypes } from './types'
+import { KeysActionTypes, KeyMap } from './types'
 import { initializeKeysError, initializeKeysSuccess } from './actions'
 import db from '../../db/db'
 import Sodium from '../../utils/sodium'
 
 async function initializeKeys() {
-  const arr = await db.keys.toArray()
-  if (arr.length === 0) {
+  const key_count = await db.keys.count()
+  if (key_count === 0) {
     // This is a fresh new instance. Create the first key.
     const sodium = new Sodium()
     await sodium.init()
@@ -24,7 +24,14 @@ async function initializeKeys() {
       created_at: new Date()
     })
   }
-  return db.keys.toArray()
+
+  // Fetch keys from DB now
+  return db.keys.toArray().then(arr =>
+    arr.reduce((map: KeyMap, key) => {
+      map[key.public_key] = key
+      return map
+    }, {})
+  )
 }
 
 function* handleInitializeKeys() {

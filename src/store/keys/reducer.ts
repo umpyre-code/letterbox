@@ -1,5 +1,6 @@
 import { Reducer } from 'redux'
-import { KeysState, KeysActionTypes } from './types'
+import { KeysState, KeysActionTypes, Key } from './types'
+import { string } from 'prop-types'
 
 export const initialState: KeysState = {
   keys: new Map(),
@@ -14,11 +15,9 @@ const reducer: Reducer<KeysState> = (state = initialState, action) => {
       return { ...state, loading: true }
     }
     case KeysActionTypes.INITIALIZE_KEYS_SUCCESS: {
-      console.log(action.payload)
-      return { ...state, loading: false, data: action.payload, ready: true }
+      return { ...state, loading: false, keys: action.payload, ready: true }
     }
     case KeysActionTypes.INITIALIZE_KEYS_ERROR: {
-      console.log(action.payload)
       return { ...state, loading: false, errors: action.payload }
     }
     default: {

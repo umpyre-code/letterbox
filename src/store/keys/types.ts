@@ -4,7 +4,7 @@ export interface Key {
   private_key: string
 }
 
-type KeyMap = Map<string, Key>
+export type KeyMap = Map<string, Key>
 
 export const enum KeysActionTypes {
   INITIALIZE_KEYS_REQUEST = '@@keys/INITIALIZE_KEYS_REQUEST',
