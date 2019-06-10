@@ -1,12 +1,11 @@
 import { Reducer } from 'redux'
 import { KeysState, KeysActionTypes, Key } from './types'
-import { string } from 'prop-types'
 
 export const initialState: KeysState = {
   keys: new Map(),
   errors: undefined,
   loading: false,
-  ready: false
+  ready: false,
 }
 
 const reducer: Reducer<KeysState> = (state = initialState, action) => {

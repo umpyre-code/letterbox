@@ -26,11 +26,13 @@ async function initializeKeys() {
   }
 
   // Fetch keys from DB now
-  return db.keys.toArray().then(arr =>
+  return db.keys.orderBy(':id').reverse().toArray().then(arr =>
+    // Convert the result into a map, and set the special `current` key to point
+    // to the most recent key by using the highest ID
     arr.reduce((map: KeyMap, key) => {
-      map[key.public_key] = key
+      map.set(key.public_key, key)
       return map
-    }, {})
+    }, new Map([['current', arr[0]]]))
   )
 }
 

@@ -9,13 +9,22 @@ export const initialState: ClientState = {
 
 const reducer: Reducer<ClientState> = (state = initialState, action) => {
   switch (action.type) {
-    case ClientActionTypes.FETCH_REQUEST: {
+    case ClientActionTypes.GET_CLIENT_REQUEST: {
       return { ...state, loading: true }
     }
-    case ClientActionTypes.FETCH_SUCCESS: {
+    case ClientActionTypes.GET_CLIENT_SUCCESS: {
       return { ...state, loading: false, data: action.payload }
     }
-    case ClientActionTypes.FETCH_ERROR: {
+    case ClientActionTypes.GET_CLIENT_ERROR: {
+      return { ...state, loading: false, errors: action.payload }
+    }
+    case ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST: {
+      return { ...state, loading: true }
+    }
+    case ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS: {
+      return { ...state, loading: false, data: action.payload }
+    }
+    case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
       return { ...state, loading: false, errors: action.payload }
     }
     default: {

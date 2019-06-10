@@ -1,10 +1,10 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { FormikProps } from 'formik'
-import { getClientRequest } from '../../store/client/actions'
+import { getClientRequest, submitNewClientRequest } from '../../store/client/actions'
 import { Client } from '../../store/client/types'
 import { ApplicationState } from '../../store'
-import { CountryCode, getCountryCallingCode, AsYouType } from 'libphonenumber-js'
+import { AsYouType } from 'libphonenumber-js'
 import Button from '@material-ui/core/Button'
 import { Formik, Field, Form } from 'formik'
 import {
@@ -37,6 +37,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   getClientRequest: typeof getClientRequest
+  submitNewClientRequest: typeof submitNewClientRequest
 }
 
 const PhoneNumberTextField = (props: TextFieldProps) => (
@@ -95,10 +96,7 @@ class SignUp extends React.Component<AllProps> {
           return errors
         }}
         onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            setSubmitting(false)
-            alert(JSON.stringify(values, null, 2))
-          }, 500)
+          this.props.submitNewClient(values, setSubmitting)
         }}
         render={({ submitForm, isSubmitting, values, setFieldValue }) => (
           <Form>
@@ -178,6 +176,7 @@ const mapStateToProps = ({ client }: ApplicationState) => ({
 
 const mapDispatchToProps = {
   getClientRequest
+  submitNewClientRequest
 }
 
 export default connect(
