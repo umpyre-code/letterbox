@@ -18,6 +18,7 @@ const reducer: Reducer<KeysState> = (state = initialState, action) => {
       return { ...state, loading: false, data: action.payload, ready: true }
     }
     case KeysActionTypes.INITIALIZE_KEYS_ERROR: {
+      console.log(action.payload)
       return { ...state, loading: false, errors: action.payload }
     }
     default: {
