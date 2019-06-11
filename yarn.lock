@@ -4826,7 +4826,7 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libphonenumber-js@^1.7.17, libphonenumber-js@^1.7.19:
+libphonenumber-js@^1.7.19:
   version "1.7.19"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.7.19.tgz#3ce7c99493f594a1695489fc3fc6acc1b70023ac"
   integrity sha512-LnrzN5NA3mQAMtFzS3HzheIn9iDIROWSIV1cCUo56/t5StLuq4XNbO/k2ZrqL0frcMXCwjUSnOhFIEUQxsEcmQ==
@@ -6526,14 +6526,14 @@ react-modal@^3.8.1:
     react-lifecycles-compat "^3.0.0"
     warning "^3.0.0"
 
-react-phone-number-input@^2.3.14:
-  version "2.3.14"
-  resolved "https://registry.yarnpkg.com/react-phone-number-input/-/react-phone-number-input-2.3.14.tgz#a26143674b90f09623f930bf30632afbc59aa2e3"
-  integrity sha512-2xnTTrAHX7WbLfLgzFnHVE21kewP40J2+tb3wD6PHZJvhJBSrl2d4ammz5s1+eGEiHtAByQ0qYL/Js5aO3SXww==
+react-phone-number-input@^2.3.15:
+  version "2.3.15"
+  resolved "https://registry.yarnpkg.com/react-phone-number-input/-/react-phone-number-input-2.3.15.tgz#30074013829add09d9f4e4d99cf7aac03fd713c0"
+  integrity sha512-Qxn0WSSd6H4Ey4UTEVLcVLzvKSFeEjoTlCX1TIPjIYjUqTNHlIZPJlnK5ZPYxprD/d8SN4mIg9+DGDmdx78ElA==
   dependencies:
     classnames "^2.2.5"
     input-format "^0.2.2"
-    libphonenumber-js "^1.7.17"
+    libphonenumber-js "^1.7.19"
     prop-types "^15.7.2"
     react-lifecycles-compat "^3.0.4"
     react-responsive-ui "^0.14.123"
