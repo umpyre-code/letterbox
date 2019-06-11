@@ -1,0 +1,94 @@
+{
+  "browserslist": {
+    "development": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 edge versions"
+    ],
+    "production": [
+      ">1%",
+      "Firefox ESR",
+      "not ie <= 11",
+      "not op_mini all"
+    ]
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.5",
+    "@emotion/core": "^10.0.10",
+    "@emotion/styled": "^10.0.12",
+    "@material-ui/core": "^4.1.0",
+    "@material-ui/icons": "^4.1.0",
+    "@types/enzyme": "^3.9.3",
+    "@types/jest": "^24.0.13",
+    "@types/libsodium-wrappers": "^0.7.5",
+    "@types/node": "^12.0.7",
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.0.0",
+    "@types/react-router": "^5.0.1",
+    "@types/react-router-dom": "^4.3.3",
+    "axios": "^0.19.0",
+    "connected-react-router": "^6.4.0",
+    "dexie": "^2.0.4",
+    "dotenv-expand": "^5.1.0",
+    "emotion": "^10.0.9",
+    "enzyme": "^3.10.0",
+    "formik": "^1.5.7",
+    "formik-material-ui": "^0.0.18",
+    "forms": "^1.3.1",
+    "history": "^4.9.0",
+    "http2": "^3.3.7",
+    "libphonenumber-js": "^1.7.19",
+    "libsodium-wrappers": "^0.7.4",
+    "moment": "^2.24.0",
+    "polished": "^3.4.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "react-emotion": "^10.0.0",
+    "react-hot-loader": "4.11.0",
+    "react-redux": "^7.1.0",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "redux": "^4.0.1",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-saga": "^1.0.3",
+    "semantic-ui-css": "^2.4.1",
+    "typeface-lato": "^0.0.54",
+    "typeface-space-mono": "^0.0.71",
+    "typesafe-actions": "^4.4.0"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "husky": "^2.4.0",
+    "jest": "^24.8.0",
+    "jest-transform-stub": "^2.0.0",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "1.18.2",
+    "pretty-quick": "^1.11.0",
+    "react-addons-test-utils": "^16.0.0-alpha.3",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1"
+  },
+  "jest": {
+    "transform": {
+      ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub",
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "name": "letterbox",
+  "private": true,
+  "scripts": {
+    "build": "parcel build public/index.html",
+    "start": "parcel public/index.html",
+    "test": "jest --watch"
+  },
+  "version": "0.1.0",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
