@@ -23,7 +23,6 @@ function initializeClient() {
 function* handleInitializeClientRequest() {
   try {
     const res = yield call(initializeClient)
-    console.log(res)
 
     if (res && res.error) {
       yield put(initializeClientError(res.error))
