@@ -1,9 +1,7 @@
 import Dexie from 'dexie'
 import Sodium from '../utils/sodium'
 
-interface ClientID {
-  id: string
-}
+type ClientID = string
 
 interface Message {
   id?: number
@@ -15,23 +13,32 @@ interface Message {
 
 interface Key {
   id?: number
-  created_at: Date
   public_key: string
   private_key: string
+  created_at: Date
+}
+
+interface Token {
+  client_id: ClientID
+  token: string
+  created_at: Date
 }
 
 class UmpyreDb extends Dexie {
   public messages: Dexie.Table<Message, number>
   public keys: Dexie.Table<Key, number>
+  public api_tokens: Dexie.Table<Token, number>
 
   public constructor() {
     super('Umpyre')
     this.version(1).stores({
       messages: '++id, hash, body, to, from',
-      keys: '++id, created_at, public_key, private_key'
+      keys: '++id, public_key, private_key, created_at',
+      api_tokens: '++id, client_id, token, created_at'
     })
     this.messages = this.table('messages')
     this.keys = this.table('keys')
+    this.api_tokens = this.table('api_tokens')
   }
 }
 

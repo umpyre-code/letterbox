@@ -1,45 +1,52 @@
 import axios, { AxiosError } from 'axios'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import { ClientActionTypes, NewClient } from './types'
+import { ClientActionTypes, NewClient, Client } from './types'
 import {
-  fetchError,
-  fetchSuccess,
   submitNewClientError,
   submitNewClientRequest,
-  submitNewClientSuccess
+  submitNewClientSuccess,
+  initializeClientError,
+  initializeClientSuccess
 } from './actions'
+import db from '../../db/db'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
-function getClient() {
-  const res = axios.request({
-    method: 'post',
-    url: API_ENDPOINT + '/user'
-  })
-  return res
+function initializeClient() {
+  return db.api_tokens
+    .orderBy(':id')
+    .reverse()
+    .limit(1)
+    .first()
 }
 
-function* handleGetClient() {
+function* handleInitializeClientRequest() {
   try {
-    // To call async functions, use redux-saga's `call()`.
-    const res = yield call(getClient)
+    const res = yield call(initializeClient)
+    console.log(res)
 
-    if (res.error) {
-      yield put(fetchError(res.error))
+    if (res && res.error) {
+      yield put(initializeClientError(res.error))
     } else {
-      yield put(fetchSuccess(res))
+      yield put(initializeClientSuccess(res))
     }
   } catch (err) {
-    if (err instanceof Error) {
-      yield put(fetchError(err.stack!))
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(initializeClientError(err.response.data.message))
+    } else if (err.message) {
+      yield put(initializeClientError(err.message))
     } else {
-      yield put(fetchError('An unknown error occured.'))
+      yield put(initializeClientError(err))
     }
   }
 }
 
 function submitNewClient(new_client: NewClient) {
   return axios.post(API_ENDPOINT + '/client', new_client)
+}
+
+function saveClientToken(client: Client) {
+  db.api_tokens.add({ ...client, created_at: new Date() })
 }
 
 function* handleSubmitNewClientRequest(action: ReturnType<typeof submitNewClientRequest>) {
@@ -49,6 +56,7 @@ function* handleSubmitNewClientRequest(action: ReturnType<typeof submitNewClient
     if (res.error) {
       yield put(submitNewClientError(res.error))
     } else {
+      yield call(saveClientToken, res.data)
       yield put(submitNewClientSuccess(res))
     }
   } catch (err) {
@@ -63,17 +71,16 @@ function* handleSubmitNewClientRequest(action: ReturnType<typeof submitNewClient
   yield call(action.meta.setSubmitting, false)
 }
 
-function* watchGetClientRequest() {
-  yield takeEvery(ClientActionTypes.GET_CLIENT_REQUEST, handleGetClient)
+function* watchSubmitNewClientRequest() {
+  yield takeEvery(ClientActionTypes.INITIALIZE_CLIENT_REQUEST, handleInitializeClientRequest)
 }
 
-function* watchSubmitNewClientRequest() {
+function* watchInitializeClientRequest() {
   yield takeEvery(ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST, handleSubmitNewClientRequest)
 }
 
-// We can also use `fork()` here to split our saga into multiple watchers.
 function* clientSaga() {
-  yield all([fork(watchGetClientRequest), fork(watchSubmitNewClientRequest)])
+  yield all([fork(watchSubmitNewClientRequest), fork(watchInitializeClientRequest)])
 }
 
 export default clientSaga

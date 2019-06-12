@@ -9,6 +9,7 @@ import 'typeface-space-mono'
 import { connect } from 'react-redux'
 import { rootSaga, ConnectedReduxProps, ApplicationState } from '../../store'
 import { initializeKeysRequest } from '../../store/keys/actions'
+import { initializeClientRequest } from '../../store/client/actions'
 
 const theme = createMuiTheme({
   palette: {
@@ -34,6 +35,7 @@ const theme = createMuiTheme({
 
 interface PropsFromDispatch {
   initializeKeysRequest: typeof initializeKeysRequest
+  initializeClientRequest: typeof initializeClientRequest
 }
 
 interface PropsFromState {
@@ -44,6 +46,7 @@ type AllProps = PropsFromDispatch & PropsFromState & ConnectedReduxProps
 
 export class Root extends React.Component<AllProps> {
   componentWillMount() {
+    this.props.initializeClientRequest()
     this.props.initializeKeysRequest()
   }
 
@@ -65,12 +68,13 @@ export class Root extends React.Component<AllProps> {
   }
 }
 
-const mapStateToProps = ({ keys }: ApplicationState) => ({
-  ready: keys.ready
+const mapStateToProps = ({ client, keys }: ApplicationState) => ({
+  ready: keys.ready && client.ready
 })
 
 const mapDispatchToProps = {
-  initializeKeysRequest
+  initializeKeysRequest,
+  initializeClientRequest
 }
 
 export default connect(
