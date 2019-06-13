@@ -1,3 +1,6 @@
+import { FormikActions } from 'formik'
+import { RouterState } from 'connected-react-router'
+
 export interface Client {
   client_id: string
   token: string
@@ -30,4 +33,8 @@ export interface ClientState {
   readonly loading: boolean
   readonly client?: Client
   readonly errors?: string
+}
+
+export interface NewClientMeta {
+  actions: FormikActions<{}>
 }

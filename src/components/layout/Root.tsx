@@ -7,9 +7,10 @@ import green from '@material-ui/core/colors/green'
 import 'typeface-lato'
 import 'typeface-space-mono'
 import { connect } from 'react-redux'
-import { rootSaga, ConnectedReduxProps, ApplicationState } from '../../store'
+import { ApplicationState } from '../../store'
 import { initializeKeysRequest } from '../../store/keys/actions'
 import { initializeClientRequest } from '../../store/client/actions'
+import Loading from '../util/Loading'
 
 const theme = createMuiTheme({
   palette: {
@@ -42,7 +43,7 @@ interface PropsFromState {
   ready: boolean
 }
 
-type AllProps = PropsFromDispatch & PropsFromState & ConnectedReduxProps
+type AllProps = PropsFromDispatch & PropsFromState
 
 export class Root extends React.Component<AllProps> {
   componentWillMount() {
@@ -51,19 +52,14 @@ export class Root extends React.Component<AllProps> {
   }
 
   render() {
-    const { children } = this.props
     if (this.props.ready) {
       return (
         <Wrapper>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <ThemeProvider theme={theme}>{this.props.children}</ThemeProvider>
         </Wrapper>
       )
     } else {
-      return (
-        <LoadingWrapper>
-          <h1>loading it up...</h1>
-        </LoadingWrapper>
-      )
+      return <Loading />
     }
   }
 }
@@ -85,11 +81,5 @@ export default connect(
 const Wrapper = styled('div')`
   font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  font-weight: 400;
-`
-
-const LoadingWrapper = styled('div')`
-  font-family: 'Space Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-weight: 400;
 `

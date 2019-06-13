@@ -1,18 +1,33 @@
 import * as React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { Route, Switch, Redirect } from 'react-router-dom'
 
 import Root from './components/layout/Root'
-import SignUpPage from './pages/signup'
-import IndexPage from './pages/index'
+import LoadableSignUpPage from './pages/loadable-signup'
+import LoadableIndexPage from './pages/loadable-index'
+import { ApplicationState } from './store'
+import { ClientState } from './store/client/types'
 
-const Routes: React.FunctionComponent = ({ children }) => (
+interface PropsFromState {
+  client: ClientState
+}
+
+const Routes: React.FunctionComponent<PropsFromState> = ({ client }) => (
   <Root>
     <Switch>
-      <Route exact path="/" component={IndexPage} />
-      <Route exact path="/signup" component={SignUpPage} />
+      <Route
+        exact
+        path="/"
+        render={client.client ? () => <LoadableIndexPage /> : () => <Redirect to="/signup" />}
+      />
+      <Route exact path="/signup" component={LoadableSignUpPage} />
       <Route component={() => <div>Not Found</div>} />
     </Switch>
   </Root>
 )
 
-export default Routes
+const mapStateToProps = ({ client, keys }: ApplicationState) => ({
+  client: client
+})
+
+export default connect(mapStateToProps)(Routes)

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { FormikProps } from 'formik'
-import { getClientRequest, submitNewClientRequest } from '../../store/client/actions'
+import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { ApplicationState } from '../../store'
 import { AsYouType } from 'libphonenumber-js'
@@ -41,7 +41,6 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  getClientRequest: typeof getClientRequest
   submitNewClientRequest: typeof submitNewClientRequest
 }
 
@@ -71,14 +70,9 @@ async function hashPassword(password: string) {
   )
 }
 
-// Combine both state + dispatch props - as well as any props we want to pass - in a union type.
 type AllProps = PropsFromDispatch & PropsFromState
 
 class SignUp extends React.Component<AllProps> {
-  public getClientRequest(values: Values, props: FormikProps<Values>) {
-    this.props.getClientRequest()
-  }
-
   public render() {
     return (
       <Formik
@@ -111,18 +105,21 @@ class SignUp extends React.Component<AllProps> {
         }}
         onSubmit={(values, actions) => {
           hashPassword(values.password).then(password_hash => {
-            // don't send the plain text password to the server
-            // mix in the public key, password hash
+            // Don't send the plain text password to the server.
+            // Mix in the public key, password hash.
             let new_client = {
               ...values,
               public_key: this.props.keys.current_key.public_key,
               password_hash: password_hash
             }
+            // Remove the plain text password before sending this obj to the server.
             delete new_client.password
-            this.props.submitNewClientRequest(new_client, actions)
+            this.props.submitNewClientRequest(new_client, {
+              actions: actions
+            })
           })
         }}
-        render={({ submitForm, isSubmitting, values, setFieldValue }) => (
+        render={({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
           <Form>
             <Grid container direction="column" spacing={2}>
               <Grid item>
@@ -191,7 +188,7 @@ class SignUp extends React.Component<AllProps> {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isValid}
                   onClick={submitForm}
                   fullWidth
                 >
@@ -206,13 +203,12 @@ class SignUp extends React.Component<AllProps> {
   }
 }
 
-const mapStateToProps = ({ client, keys }: ApplicationState) => ({
+const mapStateToProps = ({ client, keys, router }: ApplicationState) => ({
   client: client,
   keys: keys
 })
 
 const mapDispatchToProps = {
-  getClientRequest,
   submitNewClientRequest
 }
 

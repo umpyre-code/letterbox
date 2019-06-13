@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
+import { push } from 'connected-react-router'
 import { ClientActionTypes, NewClient, Client } from './types'
 import {
   submitNewClientError,
@@ -48,15 +49,18 @@ function saveClientToken(client: Client) {
   db.api_tokens.add({ ...client, created_at: new Date() })
 }
 
-function* handleSubmitNewClientRequest(action: ReturnType<typeof submitNewClientRequest>) {
+function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClientRequest>) {
+  const { payload, meta } = values
+  const { actions } = meta
   try {
-    const res = yield call(submitNewClient, action.payload)
+    const res = yield call(submitNewClient, payload)
 
     if (res.error) {
       yield put(submitNewClientError(res.error))
     } else {
       yield call(saveClientToken, res.data)
       yield put(submitNewClientSuccess(res))
+      yield put(push('/'))
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
@@ -67,7 +71,7 @@ function* handleSubmitNewClientRequest(action: ReturnType<typeof submitNewClient
       yield put(submitNewClientError(err))
     }
   }
-  yield call(action.meta.setSubmitting, false)
+  yield call(actions.setSubmitting, false)
 }
 
 function* watchSubmitNewClientRequest() {
