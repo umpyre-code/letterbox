@@ -1,5 +1,4 @@
 import { FormikActions } from 'formik'
-import { RouterState } from 'connected-react-router'
 
 export interface Client {
   client_id: string

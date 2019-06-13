@@ -3,26 +3,30 @@ import { connect } from 'react-redux'
 import { Route, Switch, Redirect } from 'react-router-dom'
 
 import Root from './components/layout/Root'
-import LoadableSignUpPage from './pages/loadable-signup'
-import LoadableIndexPage from './pages/loadable-index'
 import { ApplicationState } from './store'
 import { ClientState } from './store/client/types'
+import Loading from './components/util/Loading'
 
 interface PropsFromState {
   client: ClientState
 }
 
+const SignUpPage = React.lazy(() => import('./pages/signup'))
+const IndexPage = React.lazy(() => import('./pages/index'))
+
 const Routes: React.FunctionComponent<PropsFromState> = ({ client }) => (
   <Root>
-    <Switch>
-      <Route
-        exact
-        path="/"
-        render={client.client ? () => <LoadableIndexPage /> : () => <Redirect to="/signup" />}
-      />
-      <Route exact path="/signup" component={LoadableSignUpPage} />
-      <Route component={() => <div>Not Found</div>} />
-    </Switch>
+    <React.Suspense fallback={<Loading />}>
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={client.client ? () => <IndexPage /> : () => <Redirect to="/signup" />}
+        />
+        <Route exact path="/signup" component={SignUpPage} />
+        <Route component={() => <div>Not Found</div>} />
+      </Switch>
+    </React.Suspense>
   </Root>
 )
 

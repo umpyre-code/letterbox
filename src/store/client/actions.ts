@@ -1,6 +1,5 @@
 import { action } from 'typesafe-actions'
 import { ClientActionTypes, Client, NewClient, NewClientMeta } from './types'
-import { FormikActions } from 'formik'
 
 export const initializeClientRequest = () => action(ClientActionTypes.INITIALIZE_CLIENT_REQUEST)
 export const initializeClientSuccess = (data: Client) =>

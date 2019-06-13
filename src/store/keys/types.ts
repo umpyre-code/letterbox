@@ -16,6 +16,6 @@ export interface KeysState {
   readonly ready: boolean
   readonly loading: boolean
   readonly keys: KeyMap
-  readonly current_key: Key
+  readonly current_key?: Key
   readonly errors?: string
 }

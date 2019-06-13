@@ -23,7 +23,6 @@ const reducer: Reducer<ClientState> = (state = initialState, action) => {
       return { ...state, loading: true, errors: undefined }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS: {
-      console.log(action.payload)
       return { ...state, loading: false, client: action.payload.data }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {

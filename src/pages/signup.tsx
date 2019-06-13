@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from '../utils/styled'
 import SignUp from '../components/forms/SignUp'
-import { Container, Paper, Grid } from '@material-ui/core'
+import { Container, Paper } from '@material-ui/core'
 
 export default () => (
   <PageContent>

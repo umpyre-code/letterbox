@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { FormikProps } from 'formik'
 import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { ApplicationState } from '../../store'
@@ -14,14 +13,13 @@ import {
   FormControl,
   InputLabel,
   Grid,
-  SnackbarContent,
-  Theme
+  SnackbarContent
 } from '@material-ui/core'
 import { fieldToTextField, TextField, TextFieldProps, Select } from 'formik-material-ui'
 import MuiTextField from '@material-ui/core/TextField'
 import { country_codes } from './phonenumber'
 import { KeysState } from '../../store/keys/types'
-import Sodium from '../../utils/sodium'
+const sodium = require('libsodium-wrappers')
 
 interface PhoneNumber {
   country_code?: string
@@ -62,11 +60,10 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
 )
 
 async function hashPassword(password: string) {
-  const sodium = new Sodium()
-  await sodium.init()
-  return sodium.handle.to_base64(
-    sodium.handle.crypto_generichash(64, password),
-    sodium.handle.base64_variants.ORIGINAL_NO_PADDING
+  await sodium.ready
+  return sodium.to_base64(
+    sodium.crypto_generichash(64, password),
+    sodium.base64_variants.ORIGINAL_NO_PADDING
   )
 }
 

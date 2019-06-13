@@ -1,25 +1,20 @@
-import axios from 'axios'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { KeysActionTypes, KeyMap, Key } from './types'
 import { initializeKeysError, initializeKeysSuccess } from './actions'
 import db from '../../db/db'
-import Sodium from '../../utils/sodium'
+const sodium = require('libsodium-wrappers')
 
 async function initializeKeys() {
   const key_count = await db.keys.count()
   if (key_count === 0) {
     // This is a fresh new instance. Create the first key.
-    const sodium = new Sodium()
-    await sodium.init()
-    const keyValue = sodium.handle.crypto_box_keypair()
+    await sodium.ready
+    const keyValue = sodium.crypto_box_keypair()
     db.keys.add({
-      public_key: sodium.handle.to_base64(
-        keyValue.publicKey,
-        sodium.handle.base64_variants.ORIGINAL_NO_PADDING
-      ),
-      private_key: sodium.handle.to_base64(
+      public_key: sodium.to_base64(keyValue.publicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      private_key: sodium.to_base64(
         keyValue.privateKey,
-        sodium.handle.base64_variants.ORIGINAL_NO_PADDING
+        sodium.base64_variants.ORIGINAL_NO_PADDING
       ),
       created_at: new Date()
     })
