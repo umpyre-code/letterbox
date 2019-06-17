@@ -46,7 +46,7 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "react-emotion": "^10.0.0",
-    "react-hot-loader": "4.11.0",
+    "react-hot-loader": "4.11.1",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
