@@ -7894,10 +7894,10 @@ typeface-space-mono@^0.0.71:
   resolved "https://registry.yarnpkg.com/typeface-space-mono/-/typeface-space-mono-0.0.71.tgz#19cf08b118a3e0042d6eb399f8fc72a3138c73da"
   integrity sha512-v5vMp/kIMPfnHjui3OxdchAdseXydcpZ3eh01xnU+JNA4tqKH/KK/7e+LWC/pscS96+pqgMgyIOrdXWzDjT8MA==
 
-typesafe-actions@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-4.4.0.tgz#217320465f5921f438adda1e9ff5da09182bb266"
-  integrity sha512-91ZsGX/Ojo2lMeRCMwrjohzuGQfB6T7VSkn5HkV6ij4Q4Okhe5eeAXAlUY7erI0sNRGSOWCA6L+lH3PkpD/NlA==
+typesafe-actions@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-4.4.1.tgz#92e4348289d932592f1f18c162f5c094aba8fe9a"
+  integrity sha512-uV74N8uDU2lVaNnYUGmg/Th/mPi9JQJJ5A8+YcHBE5GI+bdgFyl79zCZw4LLU331GCdHWDo6F2J7LVgBHRvaGQ==
 
 typescript-compare@^0.0.2:
   version "0.0.2"

@@ -56,7 +56,7 @@
     "semantic-ui-css": "^2.4.1",
     "typeface-lato": "^0.0.54",
     "typeface-space-mono": "^0.0.71",
-    "typesafe-actions": "^4.4.0"
+    "typesafe-actions": "^4.4.1"
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
