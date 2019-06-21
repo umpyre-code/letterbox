@@ -4,7 +4,6 @@ import { createBrowserHistory } from 'history'
 import { cache } from 'emotion'
 import { CacheProvider } from '@emotion/core'
 import Main from './main'
-import * as serviceWorker from './serviceWorker'
 import configureStore from './configureStore'
 
 const history = createBrowserHistory()
@@ -16,5 +15,3 @@ ReactDOM.render(
   </CacheProvider>,
   document.getElementById('root')
 )
-
-serviceWorker.register()

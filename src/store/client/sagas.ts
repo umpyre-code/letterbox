@@ -9,9 +9,8 @@ import {
   initializeClientError,
   initializeClientSuccess
 } from './actions'
+import API_ENDPOINT from '../api'
 import db from '../../db/db'
-
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
 function initializeClient() {
   return db.api_tokens

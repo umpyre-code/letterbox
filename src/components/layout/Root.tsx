@@ -10,6 +10,7 @@ import { ApplicationState } from '../../store'
 import { initializeKeysRequest } from '../../store/keys/actions'
 import { initializeClientRequest } from '../../store/client/actions'
 import Loading from '../widgets/Loading'
+import { fetchMessagesRequest } from '../../store/messages/actions'
 
 const theme = createMuiTheme({
   palette: {
@@ -36,6 +37,7 @@ const theme = createMuiTheme({
 interface PropsFromDispatch {
   initializeKeysRequest: typeof initializeKeysRequest
   initializeClientRequest: typeof initializeClientRequest
+  fetchMessagesRequest: typeof fetchMessagesRequest
 }
 
 interface PropsFromState {
@@ -46,8 +48,15 @@ type AllProps = PropsFromDispatch & PropsFromState
 
 export class Root extends React.Component<AllProps> {
   componentWillMount() {
+    this.fetchMessagesLoop(this.props)
     this.props.initializeClientRequest()
     this.props.initializeKeysRequest()
+  }
+
+  fetchMessagesLoop(props: AllProps) {
+    console.log('fetch it the messages')
+    props.fetchMessagesRequest()
+    setTimeout(() => this.fetchMessagesLoop(props), 1000)
   }
 
   render() {
@@ -69,7 +78,8 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 
 const mapDispatchToProps = {
   initializeKeysRequest,
-  initializeClientRequest
+  initializeClientRequest,
+  fetchMessagesRequest
 }
 
 export default connect(
