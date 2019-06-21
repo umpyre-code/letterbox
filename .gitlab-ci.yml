@@ -25,6 +25,10 @@ build dist:
   stage: build
   script:
     - yarn run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
   tags:
     - docker
 
