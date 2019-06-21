@@ -1,13 +1,13 @@
 import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects'
-import { ApplicationState } from 'store'
-import { clientFromState } from 'store/api'
+import { ApplicationState } from '../'
+import { clientFromState } from '../api'
 import {
   fetchMessagesError,
   fetchMessagesSuccess,
   initializeMessagesError,
   initializeMessagesSuccess
-} from 'store/messages/actions'
-import { MessagesActionTypes } from 'store/messages/types'
+} from './actions'
+import { MessagesActionTypes } from './types'
 
 async function initializeMessages() {
   return Array.from([])

@@ -1,16 +1,16 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { push } from 'connected-react-router'
-import db from 'db/db'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import { API_ENDPOINT } from 'store/api'
+import db from '../../db/db'
+import { API_ENDPOINT } from '../api'
 import {
   initializeClientError,
   initializeClientSuccess,
   submitNewClientError,
   submitNewClientRequest,
   submitNewClientSuccess
-} from 'store/client/actions'
-import { Client, ClientActionTypes, NewClient } from 'store/client/types'
+} from './actions'
+import { Client, ClientActionTypes, NewClient } from './types'
 
 function initializeClient() {
   return db.apiTokens

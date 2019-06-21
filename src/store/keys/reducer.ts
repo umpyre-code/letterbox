@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { KeysActionTypes, KeysState } from 'store/keys/types'
+import { KeysActionTypes, KeysState } from './types'
 
 export const initialState: KeysState = {
   current_key: undefined,

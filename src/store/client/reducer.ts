@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { ClientActionTypes, ClientState } from 'store/client/types'
+import { ClientActionTypes, ClientState } from './types'
 
 export const initialState: ClientState = {
   client: undefined,

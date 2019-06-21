@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import MuiTextField from '@material-ui/core/TextField'
-import { CountryCodes } from 'components/forms/CountryCodes'
 import { Field, Form, Formik } from 'formik'
 import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-material-ui'
 import { AsYouType } from 'libphonenumber-js'
@@ -17,9 +16,10 @@ import * as sodium from 'libsodium-wrappers'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApplicationState } from 'store'
-import { submitNewClientRequest } from 'store/client/actions'
-import { ClientState } from 'store/client/types'
-import { KeysState } from 'store/keys/types'
+import { submitNewClientRequest } from '../../store/client/actions'
+import { ClientState } from '../../store/client/types'
+import { KeysState } from '../../store/keys/types'
+import { CountryCodes } from './CountryCodes'
 
 interface PhoneNumber {
   country_code?: string

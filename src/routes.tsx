@@ -1,11 +1,10 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Route, Switch, Redirect } from 'react-router-dom'
-
+import { Redirect, Route, Switch } from 'react-router-dom'
 import Root from './components/layout/Root'
+import Loading from './components/widgets/Loading'
 import { ApplicationState } from './store'
 import { ClientState } from './store/client/types'
-import Loading from './components/widgets/Loading'
 
 interface PropsFromState {
   clientState: ClientState
@@ -14,7 +13,7 @@ interface PropsFromState {
 const SignUpPage = React.lazy(() => import('./pages/signup'))
 const IndexPage = React.lazy(() => import('./pages/index'))
 
-const Routes: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
+const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <Root>
     <React.Suspense fallback={<Loading />}>
       <Switch>
@@ -34,4 +33,5 @@ const mapStateToProps = ({ clientState }: ApplicationState) => ({
   clientState: clientState
 })
 
-export default connect(mapStateToProps)(Routes)
+const Routes = connect(mapStateToProps)(RoutesFC)
+export default Routes

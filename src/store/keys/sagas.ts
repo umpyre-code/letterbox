@@ -1,8 +1,8 @@
-import db from 'db/db'
 import * as sodium from 'libsodium-wrappers'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import { initializeKeysError, initializeKeysSuccess } from 'store/keys/actions'
-import { Key, KeyMap, KeysActionTypes } from 'store/keys/types'
+import db from '../../db/db'
+import { initializeKeysError, initializeKeysSuccess } from './actions'
+import { Key, KeyMap, KeysActionTypes } from './types'
 
 async function initializeKeys() {
   const keyCount = await db.keys.count()
