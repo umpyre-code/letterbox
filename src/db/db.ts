@@ -1,4 +1,4 @@
-import dexie from 'dexie'
+import Dexie from 'dexie'
 import { ClientID } from 'store/client/types'
 import { Key } from 'store/keys/types'
 import { Message } from 'store/messages/types'

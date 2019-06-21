@@ -45,6 +45,5 @@ export interface Theme {
   }
 }
 
-type styled = CreateStyled<Theme>
-
-export default styled
+/* tslint:disable:export-name prefer-type-cast */
+export default styled as CreateStyled<Theme>
