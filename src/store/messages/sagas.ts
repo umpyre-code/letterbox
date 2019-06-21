@@ -8,8 +8,8 @@ import {
   fetchMessagesSuccess
 } from './actions'
 import { arrayExpression } from '@babel/types'
-import API_ENDPOINT from '../api'
 import { ApplicationState } from '..'
+import { clientFromState } from '../api'
 
 async function initializeMessages() {
   return Array.from([])
@@ -38,8 +38,8 @@ function* watchInitializeMessagesRequest() {
 }
 
 async function fetchMessages(state: ApplicationState) {
-  const API_KEY = state.clientState.client!.token
-  return axios.get(API_ENDPOINT + '/messages', { headers: { 'X-UMPYRE-APIKEY': API_KEY } })
+  const client = clientFromState(state)
+  return client.get('/messages')
 }
 
 function* handleFetchMessages() {
