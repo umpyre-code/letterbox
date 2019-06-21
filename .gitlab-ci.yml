@@ -43,4 +43,4 @@ check style:
 check tslint:
   stage: checks
   script:
-    - yarn tslint -c tslint.json 'src/**/*.ts'
+    - yarn tslint -c tslint.json src/**/*.ts
