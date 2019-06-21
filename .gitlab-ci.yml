@@ -37,4 +37,8 @@ check style:
   stage: checks
   script:
     - yarn run pretty-quick --check
+
+check tslint:
+  stage: checks
+  script:
     - yarn tslint -c tslint.json 'src/**/*.ts'
