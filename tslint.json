@@ -1,7 +1,18 @@
 {
-  "extends": [],
-  "defaultSeverity": "warning",
+  "defaultSeverity": "error",
+  "extends": ["tslint:latest", "tslint-microsoft-contrib/recommended", "tslint-config-prettier"],
+  "jsRules": {},
+  "rulesDirectory": [],
   "linterOptions": {
     "exclude": ["config/**/*.js", "node_modules/**/*.ts", "dist/**"]
+  },
+  "rules": {
+    "interface-name": [true, "never-prefix"],
+    "no-backbone-get-set-outside-model": false,
+    "no-implicit-dependencies": false,
+    "no-relative-imports": true,
+    "no-submodule-imports": false,
+    "react-this-binding-issue": false,
+    "semicolon": [true, "never"]
   }
 }

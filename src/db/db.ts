@@ -1,7 +1,7 @@
-import Dexie from 'dexie'
-import { Key } from '../store/keys/types'
-import { ClientID } from '../store/client/types'
-import { Message } from '../store/messages/types'
+import dexie from 'dexie'
+import { ClientID } from 'store/client/types'
+import { Key } from 'store/keys/types'
+import { Message } from 'store/messages/types'
 
 interface Token {
   client_id: ClientID
@@ -12,18 +12,18 @@ interface Token {
 class UmpyreDb extends Dexie {
   public messages: Dexie.Table<Message, number>
   public keys: Dexie.Table<Key, number>
-  public api_tokens: Dexie.Table<Token, number>
+  public apiTokens: Dexie.Table<Token, number>
 
   public constructor() {
     super('Umpyre')
     this.version(1).stores({
-      messages: '++id, hash, body, to, from',
+      api_tokens: '++id, client_id, token, created_at',
       keys: '++id, public_key, private_key, created_at',
-      api_tokens: '++id, client_id, token, created_at'
+      messages: '++id, hash, body, to, from'
     })
     this.messages = this.table('messages')
     this.keys = this.table('keys')
-    this.api_tokens = this.table('api_tokens')
+    this.apiTokens = this.table('api_tokens')
   }
 }
 

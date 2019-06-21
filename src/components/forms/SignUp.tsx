@@ -1,25 +1,25 @@
-import * as React from 'react'
-import { connect } from 'react-redux'
-import { submitNewClientRequest } from '../../store/client/actions'
-import { ClientState } from '../../store/client/types'
-import { ApplicationState } from '../../store'
-import { AsYouType } from 'libphonenumber-js'
-import Button from '@material-ui/core/Button'
-import { Formik, Field, Form } from 'formik'
 import {
-  LinearProgress,
-  FormGroup,
-  MenuItem,
   FormControl,
-  InputLabel,
+  FormGroup,
   Grid,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
   SnackbarContent
 } from '@material-ui/core'
-import { fieldToTextField, TextField, TextFieldProps, Select } from 'formik-material-ui'
+import Button from '@material-ui/core/Button'
 import MuiTextField from '@material-ui/core/TextField'
-import { country_codes } from './phonenumber'
-import { KeysState } from '../../store/keys/types'
-const sodium = require('libsodium-wrappers')
+import { CountryCodes } from 'components/forms/CountryCodes'
+import { Field, Form, Formik } from 'formik'
+import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-material-ui'
+import { AsYouType } from 'libphonenumber-js'
+import * as sodium from 'libsodium-wrappers'
+import * as React from 'react'
+import { connect } from 'react-redux'
+import { ApplicationState } from 'store'
+import { submitNewClientRequest } from 'store/client/actions'
+import { ClientState } from 'store/client/types'
+import { KeysState } from 'store/keys/types'
 
 interface PhoneNumber {
   country_code?: string
@@ -69,7 +69,7 @@ async function hashPassword(password: string) {
 
 type AllProps = PropsFromDispatch & PropsFromState
 
-class SignUp extends React.Component<AllProps> {
+class SignUpForm extends React.Component<AllProps> {
   public render() {
     return (
       <Formik
@@ -146,7 +146,7 @@ class SignUp extends React.Component<AllProps> {
                           component={Select}
                           fullWidth
                         >
-                          {country_codes.map(value => {
+                          {CountryCodes.map(value => {
                             return (
                               <MenuItem key={value.code} value={value.code}>
                                 {value.text}
@@ -209,7 +209,7 @@ const mapDispatchToProps = {
   submitNewClientRequest
 }
 
-export default connect(
+export const SignUp = connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignUp)
+)(SignUpForm)

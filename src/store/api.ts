@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
-import { ApplicationState } from '.'
+import { ApplicationState } from 'store'
 
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
-export default API_ENDPOINT
+export const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
 export function clientFromState(state: ApplicationState): AxiosInstance {
   const API_KEY = state.clientState.client!.token

@@ -1,5 +1,5 @@
+import { Key, KeyMap, KeysActionTypes } from 'store/keys/types'
 import { action } from 'typesafe-actions'
-import { KeysActionTypes, Key, KeyMap } from './types'
 
 export const initializeKeysRequest = () => action(KeysActionTypes.INITIALIZE_KEYS_REQUEST)
 export const initializeKeysSuccess = (keys: [Key, KeyMap]) =>

@@ -1,15 +1,15 @@
 import { Reducer } from 'redux'
-import { KeysState, KeysActionTypes, Key } from './types'
+import { KeysActionTypes, KeysState } from 'store/keys/types'
 
 export const initialState: KeysState = {
-  keys: new Map(),
+  current_key: undefined,
   errors: undefined,
+  keys: new Map(),
   loading: false,
-  ready: false,
-  current_key: undefined
+  ready: false
 }
 
-const reducer: Reducer<KeysState> = (state = initialState, action) => {
+export const reducer: Reducer<KeysState> = (state = initialState, action) => {
   switch (action.type) {
     case KeysActionTypes.INITIALIZE_KEYS_REQUEST: {
       return { ...state, loading: true }
@@ -17,10 +17,10 @@ const reducer: Reducer<KeysState> = (state = initialState, action) => {
     case KeysActionTypes.INITIALIZE_KEYS_SUCCESS: {
       return {
         ...state,
-        loading: false,
-        ready: true,
         current_key: action.payload[0],
-        keys: action.payload[1]
+        keys: action.payload[1],
+        loading: false,
+        ready: true
       }
     }
     case KeysActionTypes.INITIALIZE_KEYS_ERROR: {
@@ -31,5 +31,3 @@ const reducer: Reducer<KeysState> = (state = initialState, action) => {
     }
   }
 }
-
-export { reducer as keysReducer }

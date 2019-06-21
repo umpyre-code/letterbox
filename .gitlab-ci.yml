@@ -1,0 +1,40 @@
+---
+stages:
+  - dependencies
+  - build
+  - test
+  - checks
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+image: node:lts
+
+cache:
+  paths:
+    - node_modules/
+
+install dependencies:
+  stage: dependencies
+  script:
+    - yarn install
+  tags:
+    - docker
+
+build dist:
+  stage: build
+  script:
+    - yarn run build
+  tags:
+    - docker
+
+run tests:
+  stage: test
+  script:
+    - yarn run test
+
+check style:
+  stage: checks
+  script:
+    - yarn run pretty-quick --check
+    - yarn tslint -c tslint.json 'src/**/*.ts'

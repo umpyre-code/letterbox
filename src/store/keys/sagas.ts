@@ -1,22 +1,22 @@
+import db from 'db/db'
+import * as sodium from 'libsodium-wrappers'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import { KeysActionTypes, KeyMap, Key } from './types'
-import { initializeKeysError, initializeKeysSuccess } from './actions'
-import db from '../../db/db'
-const sodium = require('libsodium-wrappers')
+import { initializeKeysError, initializeKeysSuccess } from 'store/keys/actions'
+import { Key, KeyMap, KeysActionTypes } from 'store/keys/types'
 
 async function initializeKeys() {
-  const key_count = await db.keys.count()
-  if (key_count === 0) {
+  const keyCount = await db.keys.count()
+  if (keyCount === 0) {
     // This is a fresh new instance. Create the first key.
     await sodium.ready
     const keyValue = sodium.crypto_box_keypair()
     db.keys.add({
-      public_key: sodium.to_base64(keyValue.publicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      created_at: new Date(),
       private_key: sodium.to_base64(
         keyValue.privateKey,
         sodium.base64_variants.ORIGINAL_NO_PADDING
       ),
-      created_at: new Date()
+      public_key: sodium.to_base64(keyValue.publicKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
     })
   }
 
@@ -25,7 +25,7 @@ async function initializeKeys() {
     .orderBy(':id')
     .reverse()
     .toArray()
-    .then(arr =>
+    .then((arr: Key[]) =>
       // Convert the result into a map, and set the special `current` key to point
       // to the most recent key by using the highest ID. This is returned as a tuple.
       [
@@ -61,9 +61,6 @@ function* watchInitializeKeysRequest() {
   yield takeEvery(KeysActionTypes.INITIALIZE_KEYS_REQUEST, handleInitializeKeys)
 }
 
-// We can also use `fork()` here to split our saga into multiple watchers.
-function* keysSaga() {
+export function* sagas() {
   yield all([fork(watchInitializeKeysRequest)])
 }
-
-export default keysSaga

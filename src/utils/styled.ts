@@ -45,4 +45,6 @@ export interface Theme {
   }
 }
 
-export default styled as CreateStyled<Theme>
+type styled = CreateStyled<Theme>
+
+export default styled

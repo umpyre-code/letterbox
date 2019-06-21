@@ -1,4 +1,4 @@
-import { ClientID } from '../client/types'
+import { ClientID } from 'store/client/types'
 
 export interface Message {
   id?: number
@@ -8,7 +8,7 @@ export interface Message {
   from: ClientID
 }
 
-export type MessageList = Array<Message>
+export type MessageList = Message[]
 
 export interface FetchMessagesResponse {
   messages: MessageList

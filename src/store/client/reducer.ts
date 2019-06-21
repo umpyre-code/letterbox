@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { ClientState, ClientActionTypes } from './types'
+import { ClientActionTypes, ClientState } from 'store/client/types'
 
 export const initialState: ClientState = {
   client: undefined,
@@ -8,7 +8,7 @@ export const initialState: ClientState = {
   ready: false
 }
 
-const reducer: Reducer<ClientState> = (state = initialState, action) => {
+export const reducer: Reducer<ClientState> = (state = initialState, action) => {
   switch (action.type) {
     case ClientActionTypes.INITIALIZE_CLIENT_REQUEST: {
       return { ...state, loading: true, errors: undefined }
@@ -33,5 +33,3 @@ const reducer: Reducer<ClientState> = (state = initialState, action) => {
     }
   }
 }
-
-export { reducer as clientReducer }

@@ -1,17 +1,17 @@
-import { combineReducers, Dispatch, Action, AnyAction } from 'redux'
-import { all, fork } from 'redux-saga/effects'
 import { connectRouter, RouterState } from 'connected-react-router'
 import { History } from 'history'
+import { Action, AnyAction, combineReducers, Dispatch } from 'redux'
+import { all, fork } from 'redux-saga/effects'
 
-import clientSaga from './client/sagas'
-import { clientReducer } from './client/reducer'
-import { ClientState } from './client/types'
-import keysSaga from './keys/sagas'
-import { keysReducer } from './keys/reducer'
-import { KeysState } from './keys/types'
-import { MessagesState } from './messages/types'
-import messagesSaga from './messages/sagas'
-import { messagesReducer } from './messages/reducer'
+import { reducer as clientReducer } from 'store/client/reducer'
+import { sagas as clientSagas } from 'store/client/sagas'
+import { ClientState } from 'store/client/types'
+import { reducer as keysReducer } from 'store/keys/reducer'
+import { sagas as keysSagas } from 'store/keys/sagas'
+import { KeysState } from 'store/keys/types'
+import { reducer as messagesReducer } from 'store/messages/reducer'
+import { sagas as messagesSagas } from 'store/messages/sagas'
+import { MessagesState } from 'store/messages/types'
 
 export interface ApplicationState {
   clientState: ClientState
@@ -33,5 +33,5 @@ export const createRootReducer = (history: History) =>
   })
 
 export function* rootSaga() {
-  yield all([fork(clientSaga), fork(keysSaga), fork(messagesSaga)])
+  yield all([fork(clientSagas), fork(keysSagas), fork(messagesSagas)])
 }

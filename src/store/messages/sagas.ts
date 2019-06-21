@@ -1,13 +1,13 @@
-import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects'
-import { MessagesActionTypes } from './types'
+import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects'
+import { ApplicationState } from 'store'
+import { clientFromState } from 'store/api'
 import {
-  initializeMessagesError,
-  initializeMessagesSuccess,
   fetchMessagesError,
-  fetchMessagesSuccess
-} from './actions'
-import { ApplicationState } from '..'
-import { clientFromState } from '../api'
+  fetchMessagesSuccess,
+  initializeMessagesError,
+  initializeMessagesSuccess
+} from 'store/messages/actions'
+import { MessagesActionTypes } from 'store/messages/types'
 
 async function initializeMessages() {
   return Array.from([])
@@ -63,8 +63,6 @@ function* watchFetchMessagesRequest() {
   yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
-function* messagesSaga() {
+export function* sagas() {
   yield all([fork(watchInitializeMessagesRequest), fork(watchFetchMessagesRequest)])
 }
-
-export default messagesSaga

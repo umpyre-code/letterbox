@@ -1,22 +1,22 @@
 import { Reducer } from 'redux'
-import { MessagesState, MessagesActionTypes, Message } from './types'
+import { MessagesActionTypes, MessagesState } from 'store/messages/types'
 
 export const initialState: MessagesState = {
-  messages: Array.from([
-    {
-      to: 'you',
-      from: 'Umpyre',
-      body: '# Welcome to Umpyre 🤗\nUmpyre is a messaging service.',
-      created_at: new Date(),
-      hash: 'lol'
-    }
-  ]),
   errors: undefined,
   loading: false,
+  messages: Array.from([
+    {
+      body: '# Welcome to Umpyre 🤗\nUmpyre is a messaging service.',
+      created_at: new Date(),
+      from: 'Umpyre',
+      hash: 'lol',
+      to: 'you'
+    }
+  ]),
   ready: false
 }
 
-const reducer: Reducer<MessagesState> = (state = initialState, action) => {
+export const reducer: Reducer<MessagesState> = (state = initialState, action) => {
   switch (action.type) {
     case MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST: {
       return { ...state, loading: true }
@@ -25,8 +25,8 @@ const reducer: Reducer<MessagesState> = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        ready: true,
-        messages: action.payload
+        messages: action.payload,
+        ready: true
       }
     }
     case MessagesActionTypes.INITIALIZE_MESSAGES_ERROR: {
@@ -39,8 +39,8 @@ const reducer: Reducer<MessagesState> = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        ready: true,
-        messages: action.payload
+        messages: action.payload,
+        ready: true
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {
@@ -51,5 +51,3 @@ const reducer: Reducer<MessagesState> = (state = initialState, action) => {
     }
   }
 }
-
-export { reducer as messagesReducer }

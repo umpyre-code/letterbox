@@ -1,19 +1,19 @@
 import axios, { AxiosError } from 'axios'
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { push } from 'connected-react-router'
-import { ClientActionTypes, NewClient, Client } from './types'
+import db from 'db/db'
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
+import { API_ENDPOINT } from 'store/api'
 import {
+  initializeClientError,
+  initializeClientSuccess,
   submitNewClientError,
   submitNewClientRequest,
-  submitNewClientSuccess,
-  initializeClientError,
-  initializeClientSuccess
-} from './actions'
-import API_ENDPOINT from '../api'
-import db from '../../db/db'
+  submitNewClientSuccess
+} from 'store/client/actions'
+import { Client, ClientActionTypes, NewClient } from 'store/client/types'
 
 function initializeClient() {
-  return db.api_tokens
+  return db.apiTokens
     .orderBy(':id')
     .reverse()
     .limit(1)
@@ -40,12 +40,12 @@ function* handleInitializeClientRequest() {
   }
 }
 
-function submitNewClient(new_client: NewClient) {
-  return axios.post(API_ENDPOINT + '/client', new_client)
+function submitNewClient(newClient: NewClient) {
+  return axios.post(API_ENDPOINT + '/client', newClient)
 }
 
 function saveClientToken(client: Client) {
-  db.api_tokens.add({ ...client, created_at: new Date() })
+  db.apiTokens.add({ ...client, created_at: new Date() })
 }
 
 function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClientRequest>) {
@@ -81,8 +81,6 @@ function* watchInitializeClientRequest() {
   yield takeEvery(ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST, handleSubmitNewClientRequest)
 }
 
-function* clientSaga() {
+export function* sagas() {
   yield all([fork(watchSubmitNewClientRequest), fork(watchInitializeClientRequest)])
 }
-
-export default clientSaga
