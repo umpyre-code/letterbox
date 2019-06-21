@@ -38,7 +38,7 @@ run tests:
 check style:
   stage: checks
   script:
-    - yarn run pretty-quick --check
+    - yarn run prettier -c src/**
 
 check tslint:
   stage: checks
