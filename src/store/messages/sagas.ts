@@ -1,5 +1,4 @@
 import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects'
-import axios, { AxiosError } from 'axios'
 import { MessagesActionTypes } from './types'
 import {
   initializeMessagesError,
@@ -7,7 +6,6 @@ import {
   fetchMessagesError,
   fetchMessagesSuccess
 } from './actions'
-import { arrayExpression } from '@babel/types'
 import { ApplicationState } from '..'
 import { clientFromState } from '../api'
 
