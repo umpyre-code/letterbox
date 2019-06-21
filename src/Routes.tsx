@@ -30,7 +30,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
 )
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
-  clientState: clientState
+  clientState
 })
 
 const Routes = connect(mapStateToProps)(RoutesFC)
