@@ -84,7 +84,7 @@
   "scripts": {
     "build": "parcel build public/index.html",
     "start": "parcel public/index.html",
-    "test": "jest --watch"
+    "test": "jest"
   },
   "version": "0.1.0",
   "husky": {
