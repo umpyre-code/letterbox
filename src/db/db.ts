@@ -1,3 +1,4 @@
+// tslint:disable-next-line:import-name
 import Dexie from 'dexie'
 import { ClientID } from 'store/client/types'
 import { Key } from 'store/keys/types'
