@@ -3,7 +3,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { Provider } from 'react-redux'
 import { Store } from 'redux'
-import Routes from './Routes'
+import { Routes } from './Routes'
 import { ApplicationState } from './store'
 
 interface MainProps {

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import Root from './components/layout/Root'
+import { Root } from './components/layout/Root'
 import Loading from './components/widgets/Loading'
 import { ApplicationState } from './store'
 import { ClientState } from './store/client/types'
@@ -20,7 +20,13 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
         <Route
           exact
           path="/"
-          render={clientState.client ? () => <IndexPage /> : () => <Redirect to="/signup" />}
+          render={() => {
+            if (clientState.client) {
+              return <IndexPage />
+            } else {
+              return <Redirect to="/signup" />
+            }
+          }}
         />
         <Route exact path="/signup" component={SignUpPage} />
         <Route component={() => <div>Not Found</div>} />
@@ -33,5 +39,4 @@ const mapStateToProps = ({ clientState }: ApplicationState) => ({
   clientState
 })
 
-const Routes = connect(mapStateToProps)(RoutesFC)
-export default Routes
+export const Routes = connect(mapStateToProps)(RoutesFC)

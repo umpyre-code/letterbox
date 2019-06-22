@@ -1,16 +1,16 @@
-import * as React from 'react'
-import styled from '../../utils/styled'
-import { ThemeProvider } from '@material-ui/styles'
-import { createMuiTheme } from '@material-ui/core/styles'
-import purple from '@material-ui/core/colors/purple'
 import green from '@material-ui/core/colors/green'
-import 'typeface-lato'
+import purple from '@material-ui/core/colors/purple'
+import { createMuiTheme } from '@material-ui/core/styles'
+import { ThemeProvider } from '@material-ui/styles'
+import * as React from 'react'
 import { connect } from 'react-redux'
+import 'typeface-lato'
 import { ApplicationState } from '../../store'
-import { initializeKeysRequest } from '../../store/keys/actions'
 import { initializeClientRequest } from '../../store/client/actions'
-import Loading from '../widgets/Loading'
+import { initializeKeysRequest } from '../../store/keys/actions'
 import { fetchMessagesRequest } from '../../store/messages/actions'
+import styled from '../../utils/styled'
+import Loading from '../widgets/Loading'
 
 const theme = createMuiTheme({
   palette: {
@@ -46,20 +46,8 @@ interface PropsFromState {
 
 type AllProps = PropsFromDispatch & PropsFromState
 
-export class Root extends React.Component<AllProps> {
-  componentWillMount() {
-    this.fetchMessagesLoop(this.props)
-    this.props.initializeClientRequest()
-    this.props.initializeKeysRequest()
-  }
-
-  fetchMessagesLoop(props: AllProps) {
-    console.log('fetch it the messages')
-    props.fetchMessagesRequest()
-    setTimeout(() => this.fetchMessagesLoop(props), 1000)
-  }
-
-  render() {
+class RootFC extends React.Component<AllProps> {
+  public render() {
     if (this.props.ready) {
       return (
         <Wrapper>
@@ -70,6 +58,17 @@ export class Root extends React.Component<AllProps> {
       return <Loading />
     }
   }
+
+  public componentWillMount() {
+    this.fetchMessagesLoop(this.props)
+    this.props.initializeKeysRequest()
+    this.props.initializeClientRequest()
+  }
+
+  private fetchMessagesLoop(props: AllProps) {
+    props.fetchMessagesRequest()
+    setTimeout(() => this.fetchMessagesLoop(props), 3000)
+  }
 }
 
 const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
@@ -77,15 +76,15 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
-  initializeKeysRequest,
+  fetchMessagesRequest,
   initializeClientRequest,
-  fetchMessagesRequest
+  initializeKeysRequest
 }
 
-export default connect(
+export const Root = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Root)
+)(RootFC)
 
 const Wrapper = styled('div')`
   font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
