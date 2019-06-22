@@ -4,16 +4,7 @@ import { MessagesActionTypes, MessagesState } from './types'
 export const initialState: MessagesState = {
   errors: undefined,
   loading: false,
-  messages: Array.from([
-    {
-      body: '# Welcome to Umpyre 🤗\nUmpyre is a messaging service.',
-      created_at: new Date(),
-      from: 'Umpyre',
-      hash: 'lol',
-      to: 'you'
-    }
-  ]),
-  ready: false
+  messages: Array.from([])
 }
 
 export const reducer: Reducer<MessagesState> = (state = initialState, action) => {
@@ -25,8 +16,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        messages: action.payload,
-        ready: true
+        messages: action.payload
       }
     }
     case MessagesActionTypes.INITIALIZE_MESSAGES_ERROR: {
@@ -39,8 +29,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        messages: action.payload,
-        ready: true
+        messages: action.payload.messages
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {

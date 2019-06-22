@@ -10,23 +10,21 @@ interface Token {
 }
 
 class UmpyreDb extends Dexie {
-  public messages: Dexie.Table<Message, number>
-  public keys: Dexie.Table<Key, number>
   public apiTokens: Dexie.Table<Token, number>
+  public keys: Dexie.Table<Key, number>
+  public messages: Dexie.Table<Message, number>
 
   public constructor() {
     super('Umpyre')
     this.version(1).stores({
       api_tokens: '++id, client_id, token, created_at',
       keys: '++id, public_key, private_key, created_at',
-      messages: '++id, hash, body, to, from'
+      messages: 'hash, body, to, from, created_at'
     })
-    this.messages = this.table('messages')
-    this.keys = this.table('keys')
     this.apiTokens = this.table('api_tokens')
+    this.keys = this.table('keys')
+    this.messages = this.table('messages')
   }
 }
 
-const db = new UmpyreDb()
-
-export default db
+export const db = new UmpyreDb()

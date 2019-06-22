@@ -1,11 +1,11 @@
 import { ClientID } from 'store/client/types'
 
 export interface Message {
-  id?: number
   hash: string
   body: string
   to: ClientID
   from: ClientID
+  created_at: Date
 }
 
 export type MessageList = Message[]
@@ -24,7 +24,6 @@ export const enum MessagesActionTypes {
 }
 
 export interface MessagesState {
-  readonly ready: boolean
   readonly loading: boolean
   readonly messages: MessageList
   readonly errors?: string

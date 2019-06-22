@@ -1,8 +1,9 @@
-import { all, call, fork, put, select, takeEvery } from 'redux-saga/effects'
+import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
 import { ApplicationState } from '../'
 import { clientFromState } from '../api'
 import {
   fetchMessagesError,
+  fetchMessagesRequest,
   fetchMessagesSuccess,
   initializeMessagesError,
   initializeMessagesSuccess
@@ -10,7 +11,15 @@ import {
 import { MessagesActionTypes } from './types'
 
 async function initializeMessages() {
-  return Array.from([])
+  return Array.from([
+    {
+      body: '# Welcome to Umpyre 🤗\nUmpyre is a messaging service.',
+      created_at: new Date(),
+      from: 'Umpyre',
+      hash: 'lol',
+      to: 'you'
+    }
+  ])
 }
 
 function* handleInitializeMessages() {
@@ -29,6 +38,9 @@ function* handleInitializeMessages() {
       yield put(initializeMessagesError('An unknown error occured.'))
     }
   }
+
+  // Start message fetch loop
+  yield put(fetchMessagesRequest())
 }
 
 function* watchInitializeMessagesRequest() {
@@ -40,6 +52,12 @@ async function fetchMessages(state: ApplicationState) {
   return client.get('/messages')
 }
 
+function* delayThenFetchMessages() {
+  yield delay(3000)
+  yield put(fetchMessagesRequest())
+}
+
+// Message fetch main loop: this saga runs forever and ever
 function* handleFetchMessages() {
   try {
     const state = yield select()
@@ -48,15 +66,18 @@ function* handleFetchMessages() {
     if (res.error) {
       yield put(fetchMessagesError(res.error))
     } else {
-      yield put(fetchMessagesSuccess(res))
+      yield put(fetchMessagesSuccess(res.data))
     }
   } catch (err) {
-    if (err instanceof Error) {
-      yield put(fetchMessagesError(err.stack!))
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(fetchMessagesError(err.response.data.message))
+    } else if (err.message) {
+      yield put(fetchMessagesError(err.message))
     } else {
-      yield put(fetchMessagesError('An unknown error occured.'))
+      yield put(fetchMessagesError(err))
     }
   }
+  yield spawn(delayThenFetchMessages)
 }
 
 function* watchFetchMessagesRequest() {

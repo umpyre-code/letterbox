@@ -11,7 +11,7 @@ interface MainProps {
   history: History
 }
 
-const Main: React.FC<MainProps> = ({ store, history }) => {
+export const Main: React.FC<MainProps> = ({ store, history }) => {
   return (
     <Provider store={store}>
       <ConnectedRouter history={history}>
@@ -20,5 +20,3 @@ const Main: React.FC<MainProps> = ({ store, history }) => {
     </Provider>
   )
 }
-
-export default Main

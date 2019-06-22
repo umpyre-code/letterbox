@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { push } from 'connected-react-router'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import db from '../../db/db'
+import { db } from '../../db/db'
 import { API_ENDPOINT } from '../api'
 import {
   initializeClientError,

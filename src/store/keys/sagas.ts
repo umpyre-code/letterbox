@@ -1,8 +1,12 @@
-import * as sodium from 'libsodium-wrappers'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
-import db from '../../db/db'
+import { db } from '../../db/db'
 import { initializeKeysError, initializeKeysSuccess } from './actions'
 import { Key, KeyMap, KeysActionTypes } from './types'
+
+// This doesn't work unless we use the old-style of import. I gave up trying to
+// figure out why.
+// tslint:disable-next-line
+const sodium = require('libsodium-wrappers')
 
 async function initializeKeys() {
   const keyCount = await db.keys.count()

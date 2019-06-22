@@ -8,7 +8,7 @@ import 'typeface-lato'
 import { ApplicationState } from '../../store'
 import { initializeClientRequest } from '../../store/client/actions'
 import { initializeKeysRequest } from '../../store/keys/actions'
-import { fetchMessagesRequest } from '../../store/messages/actions'
+import { initializeMessagesRequest } from '../../store/messages/actions'
 import styled from '../../utils/styled'
 import Loading from '../widgets/Loading'
 
@@ -37,7 +37,7 @@ const theme = createMuiTheme({
 interface PropsFromDispatch {
   initializeKeysRequest: typeof initializeKeysRequest
   initializeClientRequest: typeof initializeClientRequest
-  fetchMessagesRequest: typeof fetchMessagesRequest
+  initializeMessagesRequest: typeof initializeMessagesRequest
 }
 
 interface PropsFromState {
@@ -60,14 +60,9 @@ class RootFC extends React.Component<AllProps> {
   }
 
   public componentWillMount() {
-    this.fetchMessagesLoop(this.props)
     this.props.initializeKeysRequest()
     this.props.initializeClientRequest()
-  }
-
-  private fetchMessagesLoop(props: AllProps) {
-    props.fetchMessagesRequest()
-    setTimeout(() => this.fetchMessagesLoop(props), 3000)
+    this.props.initializeMessagesRequest()
   }
 }
 
@@ -76,9 +71,9 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
-  fetchMessagesRequest,
   initializeClientRequest,
-  initializeKeysRequest
+  initializeKeysRequest,
+  initializeMessagesRequest
 }
 
 export const Root = connect(

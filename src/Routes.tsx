@@ -10,8 +10,8 @@ interface PropsFromState {
   clientState: ClientState
 }
 
-const SignUpPage = React.lazy(() => import('./pages/signup'))
-const IndexPage = React.lazy(() => import('./pages/index'))
+const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
+const LazyIndexPage = React.lazy(() => import('./pages/index'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <Root>
@@ -22,13 +22,13 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
           path="/"
           render={() => {
             if (clientState.client) {
-              return <IndexPage />
+              return <LazyIndexPage />
             } else {
               return <Redirect to="/signup" />
             }
           }}
         />
-        <Route exact path="/signup" component={SignUpPage} />
+        <Route exact path="/signup" component={LazySignUpPage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
     </React.Suspense>
