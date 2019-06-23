@@ -53,7 +53,8 @@ async function fetchMessages(state: ApplicationState) {
 }
 
 function* delayThenFetchMessages() {
-  yield delay(3000)
+  const fetchIntervalMillis = 2000
+  yield delay(fetchIntervalMillis)
   yield put(fetchMessagesRequest())
 }
 

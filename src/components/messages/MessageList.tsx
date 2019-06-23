@@ -1,10 +1,9 @@
 import * as React from 'react'
-import styled from '../../utils/styled'
 import { ApplicationState } from '../../store'
 import { connect } from 'react-redux'
 import { MessagesState } from '../../store/messages/types'
 import MessageBody from './MessageBody'
-import { Paper } from '@material-ui/core'
+import { Box, Paper } from '@material-ui/core'
 
 interface PropsFromState {
   messagesState: MessagesState
@@ -13,7 +12,7 @@ interface PropsFromState {
 type AllProps = PropsFromState
 
 const MessageList: React.FunctionComponent<AllProps> = ({ messagesState }) => (
-  <MessageListWrapper>
+  <Box>
     {messagesState.messages.map((message, index) => {
       return (
         <Paper key={index}>
@@ -23,7 +22,7 @@ const MessageList: React.FunctionComponent<AllProps> = ({ messagesState }) => (
         </Paper>
       )
     })}
-  </MessageListWrapper>
+  </Box>
 )
 
 const mapStateToProps = ({ messagesState }: ApplicationState) => ({
@@ -31,5 +30,3 @@ const mapStateToProps = ({ messagesState }: ApplicationState) => ({
 })
 
 export default connect(mapStateToProps)(MessageList)
-
-const MessageListWrapper = styled('div')``

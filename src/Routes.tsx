@@ -11,7 +11,7 @@ interface PropsFromState {
 }
 
 const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
-const LazyIndexPage = React.lazy(() => import('./pages/index'))
+const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <Root>

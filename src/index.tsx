@@ -1,5 +1,3 @@
-import { CacheProvider } from '@emotion/core'
-import { cache } from 'emotion'
 import { createBrowserHistory } from 'history'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
@@ -9,9 +7,4 @@ import { Main } from './Main'
 const history = createBrowserHistory()
 const store = configureStore(history)
 
-ReactDOM.render(
-  <CacheProvider value={cache}>
-    <Main store={store} history={history} />
-  </CacheProvider>,
-  document.getElementById('root')
-)
+ReactDOM.render(<Main store={store} history={history} />, document.getElementById('root'))

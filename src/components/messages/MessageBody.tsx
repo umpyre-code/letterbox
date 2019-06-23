@@ -1,6 +1,6 @@
 import * as React from 'react'
-import styled from '../../utils/styled'
 import * as marked from 'marked'
+import { Box } from '@material-ui/core'
 
 interface MessageBodyProps {
   body: string
@@ -20,9 +20,7 @@ function markdownToHtml(body: string): string {
 }
 
 const MessageBody: React.FunctionComponent<MessageBodyProps> = ({ body }) => (
-  <MessageContent dangerouslySetInnerHTML={{ __html: markdownToHtml(body) }} />
+  <Box dangerouslySetInnerHTML={{ __html: markdownToHtml(body) }} />
 )
 
 export default MessageBody
-
-const MessageContent = styled('div')``
