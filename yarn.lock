@@ -7379,10 +7379,10 @@ typeface-lato@^0.0.54:
   resolved "https://registry.yarnpkg.com/typeface-lato/-/typeface-lato-0.0.54.tgz#6ea56309a8b0cfdb7e8246e05de4b58b8272b47c"
   integrity sha512-2/oP5YrXCBSLg+N2ZdWnMbJ0PRIidrJVFHgRoLxo5MNsdu9eE4aBwsoEY/K/+9rKdktGO8zpiXBYPRn9F6U/Sw==
 
-typesafe-actions@^4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-4.4.1.tgz#92e4348289d932592f1f18c162f5c094aba8fe9a"
-  integrity sha512-uV74N8uDU2lVaNnYUGmg/Th/mPi9JQJJ5A8+YcHBE5GI+bdgFyl79zCZw4LLU331GCdHWDo6F2J7LVgBHRvaGQ==
+typesafe-actions@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/typesafe-actions/-/typesafe-actions-4.4.2.tgz#8f817c479d12130b5ebb442032968b2a18929e1a"
+  integrity sha512-QW61P4cOX8dCNmrfpcUMjvU/MF/sFTC8/PlG9215W1gKDzZUBjRGdyYSO6ZcEUNsn491S2VpryJOHSIVSDqJrg==
 
 typescript-compare@^0.0.2:
   version "0.0.2"
