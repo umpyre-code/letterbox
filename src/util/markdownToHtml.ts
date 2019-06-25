@@ -1,4 +1,4 @@
-import * as marked from 'marked'
+import marked from 'marked'
 
 export function markdownToHtml(body: string): string {
   marked.setOptions({
