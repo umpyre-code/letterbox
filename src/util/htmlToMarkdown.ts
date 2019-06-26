@@ -1,9 +1,9 @@
 import dompurify from 'dompurify'
-import TurndownService from 'turndown'
+import turndown from 'turndown'
 
-const turndown = new TurndownService({ linkStyle: 'referenced' })
+const td = new turndown({ linkStyle: 'referenced' })
 
 export function htmlToMarkdown(html: string): string {
   const sanitizedHtml = dompurify.sanitize(html)
-  return turndown.turndown(sanitizedHtml)
+  return td.turndown(sanitizedHtml)
 }
