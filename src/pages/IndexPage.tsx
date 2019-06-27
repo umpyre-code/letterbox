@@ -1,10 +1,11 @@
-import { Container, Typography } from '@material-ui/core'
+import { Container, Divider, Grid, Typography } from '@material-ui/core'
 import { green } from '@material-ui/core/colors'
 import Fab from '@material-ui/core/Fab'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import MessageList from '../components/messages/MessageList'
+import Loading from '../components/widgets/Loading'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,17 +39,26 @@ const IndexPage = () => {
       >
         <Edit />
       </Fab>
-      <Container>
-        <Typography variant="h1" component="h1">
-          Hello 😇
-        </Typography>
-        <MessageList />
-      </Container>
-      {showCompose ? (
-        <Container>
-          <LazyComposeForm />
-        </Container>
-      ) : null}
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Typography variant="h2" component="h2">
+            <strong>Umpyre</strong>
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+        </Grid>
+        <Grid item xs={12}>
+          <MessageList />
+        </Grid>
+        {showCompose ? (
+          <Grid item xs={12}>
+            <React.Suspense fallback={<Loading />}>
+              <LazyComposeForm />
+            </React.Suspense>
+          </Grid>
+        ) : null}
+      </Grid>
     </Container>
   )
 }
