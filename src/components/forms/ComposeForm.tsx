@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   createStyles,
   Divider,
@@ -13,6 +14,7 @@ import {
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { EditorState } from 'draft-js'
 import {
   BlockquoteButton,
@@ -27,6 +29,7 @@ import {
   UnderlineButton,
   UnorderedListButton
 } from 'draft-js-buttons'
+import { stateToHTML } from 'draft-js-export-html'
 import createInlineToolbarPlugin, { Separator } from 'draft-js-inline-toolbar-plugin'
 import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
@@ -36,6 +39,7 @@ import createPrismPlugin from 'draft-js-prism-plugin'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import * as React from 'react'
+import { htmlToMarkdown } from '../../util/htmlToMarkdown'
 import './Draft.css'
 
 const inlineToolbarPlugin = createInlineToolbarPlugin()
@@ -61,8 +65,16 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    button: {
-      margin: theme.spacing(1)
+    deleteIcon: {
+      marginLeft: theme.spacing(1)
+    },
+    discardBox: {
+      position: 'relative'
+    },
+    discardButton: {
+      backgroundColor: '#ff8c8c',
+      position: 'absolute',
+      right: theme.spacing(0)
     },
     root: {
       padding: theme.spacing(1, 1)
@@ -73,9 +85,44 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+const SendButton = ({ classes, handleSend }) => (
+  <Tooltip title="Does everything look good? Send it!">
+    <Button variant="contained" color="primary" onClick={handleSend}>
+      Send
+      <SendIcon className={classes.sendIcon} />
+    </Button>
+  </Tooltip>
+)
+
+const DiscardButton = ({ classes, handleDiscard }) => (
+  <Box className={classes.discardBox}>
+    <Tooltip title="Discard this draft forever">
+      <Button variant="contained" className={classes.discardButton} onClick={handleDiscard}>
+        Discard
+        <DeleteIcon className={classes.deleteIcon} />
+      </Button>
+    </Tooltip>
+  </Box>
+)
+
 const ComposeForm = () => {
   const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
+  const [recipient, setRecipient] = React.useState('')
+  const [pda, setPda] = React.useState('')
   const classes = useStyles()
+
+  function handleSend() {
+    const message = {
+      body: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
+      pda,
+      to: recipient
+    }
+    console.log(message)
+  }
+
+  function handleDiscard() {
+    console.log('discard button clicked')
+  }
 
   return (
     <Paper className={classes.root}>
@@ -86,17 +133,18 @@ const ComposeForm = () => {
             label="Recipient"
             placeholder="Who is this message for?"
             fullWidth
+            onChange={event => setRecipient(event.target.value)}
           />
         </Grid>
-        <Grid item xs={2}>
-          {' '}
-          <Button variant="contained" color="primary" className={classes.button}>
-            Send
-            <SendIcon className={classes.sendIcon} />
-          </Button>
-        </Grid>
+        <Grid item xs={2}></Grid>
         <Grid item xs={10}>
-          <TextField id="pda" label="PDA" placeholder="Public display of affection" fullWidth />
+          <TextField
+            id="pda"
+            label="PDA"
+            placeholder="Public display of affection"
+            fullWidth
+            onChange={event => setPda(event.target.value)}
+          />
         </Grid>
         <Grid item xs={2}>
           <HtmlTooltip
@@ -124,10 +172,21 @@ const ComposeForm = () => {
             plugins={editorPlugins}
             onChange={(updatedEditorState: EditorState) => {
               setEditorState(updatedEditorState)
-              // console.log(htmlToMarkdown(stateToHTML(updatedEditorState.getCurrentContent())))
             }}
-            placeholder="Say something nice :) Everything in the message body is private."
+            placeholder="Say something nice :) Everything within the message body is private."
+            spellCheck={true}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+        </Grid>
+        <Grid item xs={12} sm container alignItems="flex-start" justify="flex-start">
+          <Grid item xs={8}>
+            <SendButton classes={classes} handleSend={handleSend} />
+          </Grid>
+          <Grid item xs={4}>
+            <DiscardButton classes={classes} handleDiscard={handleDiscard} />
+          </Grid>
         </Grid>
       </Grid>
       <InlineToolbar>

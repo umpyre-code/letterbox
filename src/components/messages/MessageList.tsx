@@ -1,9 +1,9 @@
+import { createStyles, List, makeStyles, Theme } from '@material-ui/core'
 import * as React from 'react'
-import { ApplicationState } from '../../store'
 import { connect } from 'react-redux'
+import { ApplicationState } from '../../store'
 import { MessagesState } from '../../store/messages/types'
-import MessageBody from './MessageBody'
-import { Box, Paper, makeStyles, Theme, createStyles, Typography } from '@material-ui/core'
+import { MessageListItem } from './MessageListItem'
 
 interface PropsFromState {
   messagesState: MessagesState
@@ -19,28 +19,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const MessageList: React.FunctionComponent<AllProps> = ({ messagesState }) => {
+const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => {
   const classes = useStyles()
 
   return (
-    <Box>
-      {messagesState.messages.map((message, index) => {
-        return (
-          <Paper key={index}>
-            <Typography variant="h2" component="h2">
-              {message.from}
-            </Typography>
-            <br />
-            <MessageBody body={message.body} />
-          </Paper>
-        )
-      })}
-    </Box>
+    <List>
+      {messagesState.messages.map(message => (
+        <MessageListItem message={message} key={message.hash} />
+      ))}
+    </List>
   )
 }
 
 const mapStateToProps = ({ messagesState }: ApplicationState) => ({
-  messagesState: messagesState
+  messagesState
 })
 
-export default connect(mapStateToProps)(MessageList)
+export const MessageList = connect(mapStateToProps)(MessageListFC)

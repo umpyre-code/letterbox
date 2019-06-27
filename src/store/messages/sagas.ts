@@ -17,6 +17,7 @@ async function initializeMessages() {
       created_at: new Date(),
       from: 'Umpyre',
       hash: 'lol',
+      pda: 'Greetings',
       to: 'you'
     }
   ])

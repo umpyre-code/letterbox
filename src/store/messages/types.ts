@@ -1,10 +1,11 @@
-import { ClientID } from 'store/client/types'
+import { ClientID } from '../client/types'
 
 export interface Message {
   hash: string
   body: string
   to: ClientID
   from: ClientID
+  pda: string
   created_at: Date
 }
 
