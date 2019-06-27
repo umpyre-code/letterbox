@@ -7,6 +7,12 @@ export const initializeClientSuccess = (data: Client) =>
 export const initializeClientError = (message: string) =>
   action(ClientActionTypes.INITIALIZE_CLIENT_ERROR, message)
 
+export const fetchClientRequest = () => action(ClientActionTypes.FETCH_CLIENT_REQUEST)
+export const fetchClientSuccess = (data: Client) =>
+  action(ClientActionTypes.FETCH_CLIENT_SUCCESS, data)
+export const fetchClientError = (message: string) =>
+  action(ClientActionTypes.FETCH_CLIENT_ERROR, message)
+
 export const submitNewClientRequest = (newClient: NewClient, meta: NewClientMeta) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST, newClient, meta)
 export const submitNewClientSuccess = (data: Client) =>

@@ -6,6 +6,7 @@ import { ApplicationState } from '../../store'
 import { initializeClientRequest } from '../../store/client/actions'
 import { initializeKeysRequest } from '../../store/keys/actions'
 import { initializeMessagesRequest } from '../../store/messages/actions'
+import { secureMathRandom } from '../../util/secureMathRandom'
 import { theme } from '../theme'
 import Loading from '../widgets/Loading'
 
@@ -34,6 +35,10 @@ class RootFC extends React.Component<AllProps> {
     this.props.initializeKeysRequest()
     this.props.initializeClientRequest()
     this.props.initializeMessagesRequest()
+
+    // Reload the page every ~24h
+    const sway = secureMathRandom() * 3600 - 1800
+    setTimeout(() => window.location.reload(true), 1000 * (24 * 3600 + sway))
   }
 }
 

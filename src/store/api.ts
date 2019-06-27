@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { ApplicationState } from 'store'
+import { ApplicationState } from '../store'
 
 export const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 

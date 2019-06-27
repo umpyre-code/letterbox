@@ -24,16 +24,24 @@ export const enum ClientActionTypes {
   INITIALIZE_CLIENT_REQUEST = '@@client/INITIALIZE_CLIENT_REQUEST',
   INITIALIZE_CLIENT_SUCCESS = '@@client/INITIALIZE_CLIENT_SUCCESS',
   INITIALIZE_CLIENT_ERROR = '@@client/INITIALIZE_CLIENT_ERROR',
+  FETCH_CLIENT_REQUEST = '@@client/FETCH_CLIENT_REQUEST',
+  FETCH_CLIENT_SUCCESS = '@@client/FETCH_CLIENT_SUCCESS',
+  FETCH_CLIENT_ERROR = '@@client/FETCH_CLIENT_ERROR',
   SUBMIT_NEW_CLIENT_REQUEST = '@@client/SUBMIT_NEW_CLIENT_REQUEST',
   SUBMIT_NEW_CLIENT_SUCCESS = '@@client/SUBMIT_NEW_CLIENT_SUCCESS',
   SUBMIT_NEW_CLIENT_ERROR = '@@client/SUBMIT_NEW_CLIENT_ERROR'
 }
 
+export interface ClientProfile {
+  id: string
+}
+
 export interface ClientState {
-  readonly ready: boolean
-  readonly loading: boolean
   readonly client?: Client
+  readonly clientProfile?: ClientProfile
   readonly errors?: string
+  readonly loading: boolean
+  readonly ready: boolean
 }
 
 export interface NewClientMeta {
