@@ -7,4 +7,6 @@ export interface Message {
   from: ClientID
   pda: string
   created_at: Date
+  nonce: string
+  public_key: string
 }

@@ -1,7 +1,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { db } from '../../db/db'
 import { initializeKeysError, initializeKeysSuccess } from './actions'
-import { Key, KeyMap, KeysActionTypes } from './types'
+import { KeyMap, KeyPair, KeysActionTypes } from './types'
 
 // This doesn't work unless we use the old-style of import. I gave up trying to
 // figure out why.
@@ -9,12 +9,12 @@ import { Key, KeyMap, KeysActionTypes } from './types'
 const sodium = require('libsodium-wrappers')
 
 async function initializeKeys() {
-  const keyCount = await db.keys.count()
+  const keyCount = await db.keyPairs.count()
   if (keyCount === 0) {
     // This is a fresh new instance. Create the first key.
     await sodium.ready
     const keyValue = sodium.crypto_box_keypair()
-    db.keys.add({
+    db.keyPairs.add({
       created_at: new Date(),
       private_key: sodium.to_base64(
         keyValue.privateKey,
@@ -25,11 +25,11 @@ async function initializeKeys() {
   }
 
   // Fetch keys from DB now
-  return db.keys
+  return db.keyPairs
     .orderBy(':id')
     .reverse()
     .toArray()
-    .then((arr: Key[]) =>
+    .then((arr: KeyPair[]) =>
       // Convert the result into a map, and set the special `current` key to point
       // to the most recent key by using the highest ID. This is returned as a tuple.
       [

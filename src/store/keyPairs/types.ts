@@ -1,11 +1,11 @@
-export interface Key {
+export interface KeyPair {
   id?: number
   public_key: string
   private_key: string
   created_at: Date
 }
 
-export type KeyMap = Map<string, Key>
+export type KeyMap = Map<string, KeyPair>
 
 export const enum KeysActionTypes {
   INITIALIZE_KEYS_REQUEST = '@@keys/INITIALIZE_KEYS_REQUEST',
@@ -17,6 +17,6 @@ export interface KeysState {
   readonly ready: boolean
   readonly loading: boolean
   readonly keys: KeyMap
-  readonly current_key?: Key
+  readonly current_key?: KeyPair
   readonly errors?: string
 }

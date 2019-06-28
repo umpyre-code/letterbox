@@ -17,7 +17,7 @@ import { connect } from 'react-redux'
 import { ApplicationState } from 'store'
 import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
-import { KeysState } from '../../store/keys/types'
+import { KeysState } from '../../store/keyPairs/types'
 import { CountryCodes } from './CountryCodes'
 
 // This doesn't work unless we use the old-style of import. I gave up trying to

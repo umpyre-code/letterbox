@@ -1,8 +1,9 @@
 import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
 import { ApplicationState } from '../'
 import { API } from '../api'
+import { KeyPair } from '../keyPairs/types'
 import { ClientCredentials, ClientProfile } from '../models/client'
-import { Message, MessageList } from '../models/messages'
+import { Message } from '../models/messages'
 import {
   fetchMessagesError,
   fetchMessagesRequest,
@@ -66,20 +67,25 @@ async function decryptMessage(message: Message, api: API, myPrivateKey: string):
   const senderProfile: ClientProfile = await api.fetchClient(message.from)
   return {
     ...message,
-    body: await decryptMessageBody(message.body, myPrivateKey, senderProfile.public_key)
+    body: await decryptMessageBody(
+      message.body,
+      message.nonce,
+      myPrivateKey,
+      senderProfile.public_key
+    )
   }
 }
 
 async function decryptMessageBody(
   body: string,
+  nonce: string,
   myPrivateKey: string,
   theirPublicKey: string
 ): Promise<string> {
   await sodium.ready
-  const { ciphertext, nonce } = JSON.parse(body)
   return sodium.to_string(
     sodium.crypto_box_open_easy(
-      sodium.from_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      sodium.from_base64(body, sodium.base64_variants.ORIGINAL_NO_PADDING),
       sodium.from_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
       sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
       sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
@@ -123,35 +129,35 @@ function* watchFetchMessagesRequest() {
 const sodium = require('libsodium-wrappers')
 
 async function encryptMessageBody(
-  body: string,
-  myPrivateKey: string,
+  message: Message,
+  keyPair: KeyPair,
   theirPublicKey: string
-): Promise<string> {
+): Promise<Message> {
   await sodium.ready
   const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES)
   const ciphertext = sodium.crypto_box_easy(
-    sodium.from_string(body),
+    sodium.from_string(message.body),
     nonce,
     sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    sodium.from_base64(keyPair.private_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
   )
-  return JSON.stringify({
-    ciphertext: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING)
-  })
+  return {
+    ...message,
+    body: sodium.to_base64(ciphertext),
+    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
+    public_key: keyPair.public_key
+  }
 }
 
 async function sendMessage(
   credentials: ClientCredentials,
-  myPrivateKey: string,
+  keyPair: KeyPair,
   message: Message
 ): Promise<Message> {
   const api = new API(credentials)
   const recipientProfile: ClientProfile = await api.fetchClient(message.to)
-  const encryptedMessage = {
-    ...message,
-    body: await encryptMessageBody(message.body, myPrivateKey, recipientProfile.public_key)
-  }
+  const encryptedMessage = await encryptMessageBody(message, keyPair, recipientProfile.public_key)
+
   return api.sendMessage(encryptedMessage)
 }
 
@@ -160,8 +166,7 @@ function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const myPrivateKey = state.keysState.current_key!.private_key
-    const res = yield call(sendMessage, credentials, myPrivateKey, payload)
+    const res = yield call(sendMessage, credentials, state.keysState.current_key!, payload)
 
     if (res.error) {
       yield put(sendMessageError(res.error))
