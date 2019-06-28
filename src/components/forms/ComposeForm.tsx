@@ -68,9 +68,6 @@ const useStyles = makeStyles((theme: Theme) =>
     deleteIcon: {
       marginLeft: theme.spacing(1)
     },
-    discardBox: {
-      position: 'relative'
-    },
     discardButton: {
       backgroundColor: '#ff8c8c',
       position: 'absolute',
@@ -95,7 +92,7 @@ const SendButton = ({ classes, handleSend }) => (
 )
 
 const DiscardButton = ({ classes, handleDiscard }) => (
-  <Box className={classes.discardBox}>
+  <Box position="relative">
     <Tooltip title="Discard this draft forever">
       <Button variant="contained" className={classes.discardButton} onClick={handleDiscard}>
         Discard

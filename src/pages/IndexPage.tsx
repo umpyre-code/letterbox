@@ -1,4 +1,4 @@
-import { Container, Divider, Grid, Typography, Tooltip } from '@material-ui/core'
+import { Container, Divider, Grid, Typography, Tooltip, Box } from '@material-ui/core'
 import { green } from '@material-ui/core/colors'
 import Fab from '@material-ui/core/Fab'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -7,49 +7,35 @@ import * as React from 'react'
 import { MessageList } from '../components/messages/MessageList'
 import Loading from '../components/widgets/Loading'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1)
-    },
-    fabGreen: {
-      '&:hover': {
-        backgroundColor: green[600]
-      },
-      backgroundColor: green[500],
-      color: theme.palette.common.white
-    }
-  })
-)
-
 const LazyComposeForm = React.lazy(() => import('../components/forms/ComposeForm'))
 
 const IndexPage = () => {
   const [showCompose, setShowCompose] = React.useState(false)
-  const classes = useStyles()
 
   return (
     <Container>
-      <Tooltip title="Compose a new message">
-        <Fab
-          color="primary"
-          aria-label="Compose"
-          className={classes.fab}
-          onClick={() => setShowCompose(!showCompose)}
-        >
-          <Edit />
-        </Fab>
-      </Tooltip>
-      <Grid container spacing={1} alignItems="flex-end">
+      <Grid container spacing={1} justify="space-between">
         <Grid item xs={3}>
           <Typography variant="h2" component="h2">
             <strong>Umpyre</strong>
           </Typography>
         </Grid>
-        <Grid item xs={9}>
-          <Typography>say nice things to nice people</Typography>
+        <Grid item xs style={{ position: 'relative' }}>
+          <Typography style={{ left: '0px', bottom: '0px', position: 'absolute' }}>
+            say nice things to nice people
+          </Typography>
+        </Grid>
+        <Grid item xs style={{ position: 'relative' }}>
+          <Tooltip title="Compose a new message">
+            <Fab
+              style={{ right: '0px', position: 'absolute' }}
+              color="primary"
+              aria-label="Compose"
+              onClick={() => setShowCompose(!showCompose)}
+            >
+              <Edit />
+            </Fab>
+          </Tooltip>
         </Grid>
         <Grid item xs={12}>
           <Divider />
