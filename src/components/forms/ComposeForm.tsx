@@ -56,9 +56,9 @@ const editorPlugins = [
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {
-    backgroundColor: '#f5f5f9',
+    backgroundColor: '#fdfdfd',
     border: '1px solid #dadde9',
-    color: 'rgba(0, 0, 0, 0.95)',
+    color: 'rgba(0, 0, 0, 0.7)',
     maxWidth: 250
   }
 }))(Tooltip)
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1)
     },
     discardButton: {
-      backgroundColor: '#ff8c8c',
+      backgroundColor: '#ccc',
       position: 'absolute',
       right: theme.spacing(0)
     },
@@ -124,7 +124,7 @@ const ComposeForm = () => {
   return (
     <Paper className={classes.root}>
       <Grid container spacing={1} alignItems="flex-end">
-        <Grid item xs={10}>
+        <Grid item xs={5}>
           <TextField
             id="recipient"
             label="Recipient"
@@ -133,8 +133,7 @@ const ComposeForm = () => {
             onChange={event => setRecipient(event.target.value)}
           />
         </Grid>
-        <Grid item xs={2}></Grid>
-        <Grid item xs={10}>
+        <Grid item xs={6}>
           <TextField
             id="pda"
             label="PDA"
@@ -143,7 +142,7 @@ const ComposeForm = () => {
             onChange={event => setPda(event.target.value)}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={1}>
           <HtmlTooltip
             title={
               <React.Fragment>
@@ -151,8 +150,8 @@ const ComposeForm = () => {
                   <strong>Public Display of Affection</strong>
                 </Typography>
                 <Typography>
-                  The PDA is what the recipient sees before opening the message. It's similar to a
-                  subject line. However, the PDA is not protected by end-to-end encryption.
+                  The PDA is a short message, like subject. The PDA is not protected by end-to-end
+                  encryption.
                 </Typography>
               </React.Fragment>
             }

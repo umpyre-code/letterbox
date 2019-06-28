@@ -1,15 +1,21 @@
-import { Container, Divider, Grid, Typography, Tooltip, Box } from '@material-ui/core'
-import { green } from '@material-ui/core/colors'
+import { Container, Divider, Grid, Tooltip, Typography } from '@material-ui/core'
 import Fab from '@material-ui/core/Fab'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
+import { connect } from 'react-redux'
 import { MessageList } from '../components/messages/MessageList'
 import Loading from '../components/widgets/Loading'
+import { Profile } from '../components/widgets/Profile'
+import { ApplicationState } from '../store'
+import { ClientProfile } from '../store/client/types'
 
 const LazyComposeForm = React.lazy(() => import('../components/forms/ComposeForm'))
 
-const IndexPage = () => {
+interface Props {
+  clientProfile: ClientProfile
+}
+
+const IndexPageFC: React.FC<Props> = ({ clientProfile }) => {
   const [showCompose, setShowCompose] = React.useState(false)
 
   return (
@@ -20,10 +26,8 @@ const IndexPage = () => {
             <strong>Umpyre</strong>
           </Typography>
         </Grid>
-        <Grid item xs style={{ position: 'relative' }}>
-          <Typography style={{ left: '0px', bottom: '0px', position: 'absolute' }}>
-            say nice things to nice people
-          </Typography>
+        <Grid item xs>
+          <Profile clientProfile={clientProfile} />
         </Grid>
         <Grid item xs style={{ position: 'relative' }}>
           <Tooltip title="Compose a new message">
@@ -55,4 +59,9 @@ const IndexPage = () => {
   )
 }
 
+const mapStateToProps = ({ clientState }: ApplicationState) => ({
+  clientProfile: clientState.clientProfile!
+})
+
+const IndexPage = connect(mapStateToProps)(IndexPageFC)
 export default IndexPage
