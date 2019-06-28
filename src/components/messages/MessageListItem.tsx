@@ -5,12 +5,13 @@ import {
   ListItemAvatar,
   ListItemText,
   makeStyles,
-  Paper,
   Theme,
-  Typography
+  Typography,
+  Box
 } from '@material-ui/core'
 import * as React from 'react'
 import { Message } from '../../store/messages/types'
+import MessageBody from './MessageBody'
 
 interface Props {
   message: Message
@@ -30,8 +31,20 @@ export const MessageListItem: React.FunctionComponent<AllProps> = ({ message }) 
   const [isBodyVisible, setIsBodyVisible] = React.useState(false)
   const classes = useStyles()
 
+  function renderBody() {
+    if (isBodyVisible) {
+      return (
+        <ListItem>
+          <MessageBody body={message.body} />
+        </ListItem>
+      )
+    } else {
+      return null
+    }
+  }
+
   return (
-    <Paper>
+    <Box>
       <ListItem button onClick={() => setIsBodyVisible(!isBodyVisible)}>
         <ListItemAvatar>
           <Avatar alt="Alice Pleasance Liddell">AL</Avatar>
@@ -63,6 +76,7 @@ export const MessageListItem: React.FunctionComponent<AllProps> = ({ message }) 
           }
         />
       </ListItem>
-    </Paper>
+      {renderBody()}
+    </Box>
   )
 }
