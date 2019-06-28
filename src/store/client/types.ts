@@ -54,6 +54,7 @@ export class ClientProfileHelper implements ClientProfile {
   public static FROM(clientProfile: ClientProfile): ClientProfileHelper {
     return new ClientProfileHelper(clientProfile)
   }
+
   // tslint:disable variable-name
   public client_id: string = ''
   public full_name: string = ''

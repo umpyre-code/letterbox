@@ -3,7 +3,7 @@ import { History } from 'history'
 import * as React from 'react'
 import { Provider } from 'react-redux'
 import { Store } from 'redux'
-import { Routes } from './Routes'
+import Loading from './components/widgets/Loading'
 import { ApplicationState } from './store'
 
 interface MainProps {
@@ -11,12 +11,16 @@ interface MainProps {
   history: History
 }
 
+const LazyRoutes = React.lazy(() => import('./Routes'))
+
 export const Main: React.FC<MainProps> = ({ store, history }) => {
   return (
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <Routes />
-      </ConnectedRouter>
-    </Provider>
+    <React.Suspense fallback={<Loading />}>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <LazyRoutes />
+        </ConnectedRouter>
+      </Provider>
+    </React.Suspense>
   )
 }

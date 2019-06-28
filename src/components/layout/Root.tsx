@@ -36,9 +36,10 @@ class RootFC extends React.Component<AllProps> {
     this.props.initializeClientRequest()
     this.props.initializeMessagesRequest()
 
-    // Reload the page every ~24h
-    const sway = secureMathRandom() * 3600 - 1800
-    setTimeout(() => window.location.reload(true), 1000 * (24 * 3600 + sway))
+    // Reload the page every ~24h +/- 2h
+    const sway = 4 * secureMathRandom() * 3600 - 2 * 3600
+    const reloadAfter = Math.round(24 * 3600 + sway)
+    setTimeout(() => window.location.reload(true), 1000 * reloadAfter)
   }
 }
 
@@ -52,7 +53,9 @@ const mapDispatchToProps = {
   initializeMessagesRequest
 }
 
-export const Root = connect(
+const Root = connect(
   mapStateToProps,
   mapDispatchToProps
 )(RootFC)
+
+export default Root

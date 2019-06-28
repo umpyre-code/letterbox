@@ -163,15 +163,17 @@ const ComposeForm = () => {
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <Editor
-            editorState={editorState}
-            plugins={editorPlugins}
-            onChange={(updatedEditorState: EditorState) => {
-              setEditorState(updatedEditorState)
-            }}
-            placeholder="Say something nice :) Everything within the message body is private."
-            spellCheck={true}
-          />
+          <Box>
+            <Editor
+              editorState={editorState}
+              plugins={editorPlugins}
+              onChange={(updatedEditorState: EditorState) => {
+                setEditorState(updatedEditorState)
+              }}
+              placeholder="🔐 message body is private"
+              spellCheck={true}
+            />
+          </Box>
         </Grid>
         <Grid item xs={12}>
           <Divider />

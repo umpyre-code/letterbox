@@ -1,23 +1,27 @@
-import { Avatar, Card, CardHeader, IconButton } from '@material-ui/core'
-import { classes } from 'istanbul-lib-coverage'
+import { Avatar, Card, CardHeader } from '@material-ui/core'
 import * as React from 'react'
 import { ClientProfile, ClientProfileHelper } from '../../store/client/types'
+import Loading from './Loading'
 
 interface Props {
-  clientProfile: ClientProfile
+  clientProfile?: ClientProfile
 }
 
 export const Profile: React.FC<Props> = ({ clientProfile }) => {
-  const clientProfileHelper = ClientProfileHelper.FROM(clientProfile)
+  function getCardHeader() {
+    if (clientProfile) {
+      const clientProfileHelper = ClientProfileHelper.FROM(clientProfile)
+      return (
+        <CardHeader
+          avatar={<Avatar>{clientProfileHelper.getInitials()}</Avatar>}
+          title={clientProfile.full_name}
+          subheader={clientProfile.client_id}
+        />
+      )
+    } else {
+      return <Loading />
+    }
+  }
 
-  return (
-    <Card>
-      {' '}
-      <CardHeader
-        avatar={<Avatar>{clientProfileHelper.getInitials()}</Avatar>}
-        title={clientProfile.full_name}
-        subheader={clientProfile.client_id}
-      />
-    </Card>
-  )
+  return <Card>{getCardHeader()}</Card>
 }
