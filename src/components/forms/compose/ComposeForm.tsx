@@ -1,16 +1,4 @@
-import {
-  Box,
-  createStyles,
-  Divider,
-  Grid,
-  makeStyles,
-  Paper,
-  Theme,
-  Tooltip,
-  Typography,
-  withStyles
-} from '@material-ui/core'
-import HelpIcon from '@material-ui/icons/HelpOutline'
+import { Box, createStyles, Divider, Grid, makeStyles, Paper, Theme } from '@material-ui/core'
 import { EditorState } from 'draft-js'
 import {
   BlockquoteButton,
@@ -35,9 +23,11 @@ import createPrismPlugin from 'draft-js-prism-plugin'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import * as React from 'react'
+import { connect } from 'react-redux'
+import { sendMessageRequest } from '../../../store/messages/actions'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
-import { DiscardButton, PDAField, RecipientField, SendButton } from './Widgets'
 import './Draft.css'
+import { DiscardButton, PDAField, PDAToolTip, RecipientField, SendButton } from './Widgets'
 
 const inlineToolbarPlugin = createInlineToolbarPlugin()
 const { InlineToolbar } = inlineToolbarPlugin
@@ -50,15 +40,6 @@ const editorPlugins = [
   createMarkdownPlugin(),
   createLinkifyPlugin()
 ]
-
-const HtmlTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: '#fdfdfd',
-    border: '1px solid #dadde9',
-    color: 'rgba(0, 0, 0, 0.7)',
-    maxWidth: 250
-  }
-}))(Tooltip)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -79,7 +60,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ComposeForm = () => {
+interface Props {
+  sendMessage: typeof sendMessageRequest
+}
+
+const ComposeFormFC: React.FC<Props> = ({ sendMessage }) => {
   const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
   const [recipient, setRecipient] = React.useState('')
   const [pda, setPda] = React.useState('')
@@ -92,6 +77,7 @@ const ComposeForm = () => {
       to: recipient
     }
     console.log(message)
+    sendMessage(message)
   }
 
   function handleDiscard() {
@@ -108,21 +94,7 @@ const ComposeForm = () => {
           <PDAField setPda={setPda} />
         </Grid>
         <Grid item xs={1}>
-          <HtmlTooltip
-            title={
-              <React.Fragment>
-                <Typography color="inherit">
-                  <strong>Public Display of Affection</strong>
-                </Typography>
-                <Typography>
-                  The PDA is a short message, like subject. The PDA is not protected by end-to-end
-                  encryption.
-                </Typography>
-              </React.Fragment>
-            }
-          >
-            <HelpIcon />
-          </HtmlTooltip>
+          <PDAToolTip />
         </Grid>
         <Grid item xs={12}>
           <Divider />
@@ -135,7 +107,7 @@ const ComposeForm = () => {
               onChange={(updatedEditorState: EditorState) => {
                 setEditorState(updatedEditorState)
               }}
-              placeholder="🔐 message body is private"
+              placeholder="🔐 the message body is private"
               spellCheck={true}
             />
           </Box>
@@ -153,8 +125,7 @@ const ComposeForm = () => {
         </Grid>
       </Grid>
       <InlineToolbar>
-        {// may be use React.Fragment instead of div to improve perfomance after React 16
-        externalProps => (
+        {(externalProps: any) => (
           <React.Fragment>
             <HeadlineOneButton {...externalProps} />
             <HeadlineTwoButton {...externalProps} />
@@ -175,5 +146,16 @@ const ComposeForm = () => {
     </Paper>
   )
 }
+
+const mapDispatchToProps = {
+  sendMessage: sendMessageRequest
+}
+
+const mapStateToProps = () => ({})
+
+const ComposeForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ComposeFormFC)
 
 export default ComposeForm

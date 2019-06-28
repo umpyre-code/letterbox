@@ -6,9 +6,25 @@ import {
   fetchMessagesRequest,
   fetchMessagesSuccess,
   initializeMessagesError,
-  initializeMessagesSuccess
+  initializeMessagesSuccess,
+  sendMessageError,
+  sendMessageSuccess,
+  sendMessageRequest
 } from './actions'
-import { MessagesActionTypes } from './types'
+import { Message, MessagesActionTypes } from './types'
+
+// This doesn't work unless we use the old-style of import. I gave up trying to
+// figure out why.
+// tslint:disable-next-line
+const sodium = require('libsodium-wrappers')
+
+async function encryptMessageBody(
+  body: string,
+  my_private_key: string,
+  their_public_key: string
+): string {
+  return ''
+}
 
 async function initializeMessages() {
   return Array.from([
@@ -86,6 +102,41 @@ function* watchFetchMessagesRequest() {
   yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
+async function sendMessage(message: Message, state: ApplicationState) {
+  console.log('send message saga woop woop')
+  console.log(message)
+}
+
+function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
+  const { payload } = values
+  try {
+    const state = yield select()
+    const res = yield call(sendMessage, payload, state)
+
+    if (res.error) {
+      yield put(sendMessageError(res.error))
+    } else {
+      yield put(sendMessageSuccess())
+    }
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(sendMessageError(err.response.data.message))
+    } else if (err.message) {
+      yield put(sendMessageError(err.message))
+    } else {
+      yield put(sendMessageError(err))
+    }
+  }
+}
+
+function* watchSendMessageRequest() {
+  yield takeEvery(MessagesActionTypes.SEND_MESSAGE_REQUEST, handleSendMessage)
+}
+
 export function* sagas() {
-  yield all([fork(watchInitializeMessagesRequest), fork(watchFetchMessagesRequest)])
+  yield all([
+    fork(watchInitializeMessagesRequest),
+    fork(watchFetchMessagesRequest),
+    fork(watchSendMessageRequest)
+  ])
 }

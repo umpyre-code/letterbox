@@ -1,5 +1,6 @@
-import { Box, Button, TextField, Tooltip } from '@material-ui/core'
+import { Box, Button, TextField, Theme, Tooltip, Typography, withStyles } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
+import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 
@@ -59,4 +60,31 @@ export const PDAField: React.FC<PDAFieldProps> = ({ setPda }) => (
     fullWidth
     onChange={event => setPda(event.target.value)}
   />
+)
+
+const HtmlTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: '#fdfdfd',
+    border: '1px solid #dadde9',
+    color: 'rgba(0, 0, 0, 0.7)',
+    maxWidth: 250
+  }
+}))(Tooltip)
+
+export const PDAToolTip = () => (
+  <HtmlTooltip
+    title={
+      <React.Fragment>
+        <Typography color="inherit">
+          <strong>Public Display of Affection</strong>
+        </Typography>
+        <Typography>
+          The PDA is a short message, like subject. The PDA is not protected by end-to-end
+          encryption.
+        </Typography>
+      </React.Fragment>
+    }
+  >
+    <HelpIcon />
+  </HtmlTooltip>
 )
