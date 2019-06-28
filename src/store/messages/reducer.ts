@@ -29,7 +29,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        messages: action.payload.messages
+        messages: action.payload
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {

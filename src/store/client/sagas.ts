@@ -73,11 +73,12 @@ function* handleFetchClientRequest() {
       yield put(fetchClientError(err))
     }
   }
-  yield spawn(delayThenFetchClient)
+  // yield spawn(delayThenFetchClient)
 }
 
-function saveClientToken(client: ClientCredentials) {
-  db.apiTokens.add({ ...client, created_at: new Date() })
+function saveClientToken(credentials: ClientCredentials) {
+  console.log(credentials)
+  db.apiTokens.add({ ...credentials, created_at: new Date() })
 }
 
 function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClientRequest>) {

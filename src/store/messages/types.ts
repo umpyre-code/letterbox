@@ -1,7 +1,7 @@
-import { MessageList } from '../models/messages'
+import { Message } from '../models/messages'
 
 export interface FetchMessagesResponse {
-  messages: MessageList
+  messages: Message[]
 }
 
 export const enum MessagesActionTypes {
@@ -18,6 +18,6 @@ export const enum MessagesActionTypes {
 
 export interface MessagesState {
   readonly loading: boolean
-  readonly messages: MessageList
+  readonly messages: Message[]
   readonly errors?: string
 }

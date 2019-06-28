@@ -2,7 +2,7 @@ import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-sag
 import { ApplicationState } from '../'
 import { API } from '../api'
 import { ClientCredentials, ClientProfile } from '../models/client'
-import { Message } from '../models/messages'
+import { Message, MessageList } from '../models/messages'
 import {
   fetchMessagesError,
   fetchMessagesRequest,
@@ -16,16 +16,7 @@ import {
 import { MessagesActionTypes } from './types'
 
 async function initializeMessages() {
-  return Array.from([
-    {
-      body: '# Welcome to Umpyre 🤗\nUmpyre is a messaging service.',
-      created_at: new Date(),
-      from: 'Umpyre',
-      hash: 'lol',
-      pda: 'Greetings',
-      to: 'you'
-    }
-  ])
+  return Array.from([])
 }
 
 function* handleInitializeMessages() {
@@ -46,7 +37,7 @@ function* handleInitializeMessages() {
   }
 
   // Start message fetch loop
-  yield put(fetchMessagesRequest())
+  yield spawn(delayThenFetchMessages)
 }
 
 function* watchInitializeMessagesRequest() {
@@ -59,12 +50,50 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
+async function fetchMessages(
+  credentials: ClientCredentials,
+  myPrivateKey: string
+): Promise<Message[]> {
+  const api = new API(credentials)
+  const messageResponse = await api.fetchMessages()
+  console.log(messageResponse)
+  return Promise.all(
+    messageResponse.messages.map((message: Message) => decryptMessage(message, api, myPrivateKey))
+  )
+}
+
+async function decryptMessage(message: Message, api: API, myPrivateKey: string): Promise<Message> {
+  const senderProfile: ClientProfile = await api.fetchClient(message.from)
+  return {
+    ...message,
+    body: await decryptMessageBody(message.body, myPrivateKey, senderProfile.public_key)
+  }
+}
+
+async function decryptMessageBody(
+  body: string,
+  myPrivateKey: string,
+  theirPublicKey: string
+): Promise<string> {
+  await sodium.ready
+  const { ciphertext, nonce } = JSON.parse(body)
+  return sodium.to_string(
+    sodium.crypto_box_open_easy(
+      sodium.from_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      sodium.from_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
+      sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    )
+  )
+}
+
 // Message fetch main loop: this saga runs forever and ever
 function* handleFetchMessages() {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(API.FETCH_MESSAGES, credentials)
+    const myPrivateKey = state.keysState.current_key!.private_key
+    const res = yield call(fetchMessages, credentials, myPrivateKey)
 
     if (res.error) {
       yield put(fetchMessagesError(res.error))
@@ -72,6 +101,7 @@ function* handleFetchMessages() {
       yield put(fetchMessagesSuccess(res))
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(fetchMessagesError(err.response.data.message))
     } else if (err.message) {
@@ -80,7 +110,7 @@ function* handleFetchMessages() {
       yield put(fetchMessagesError(err))
     }
   }
-  yield spawn(delayThenFetchMessages)
+  // yield spawn(delayThenFetchMessages)
 }
 
 function* watchFetchMessagesRequest() {
@@ -97,14 +127,18 @@ async function encryptMessageBody(
   myPrivateKey: string,
   theirPublicKey: string
 ): Promise<string> {
+  await sodium.ready
   const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES)
   const ciphertext = sodium.crypto_box_easy(
-    body,
+    sodium.from_string(body),
     nonce,
     sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
     sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
   )
-  return sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING)
+  return JSON.stringify({
+    ciphertext: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
+    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING)
+  })
 }
 
 async function sendMessage(

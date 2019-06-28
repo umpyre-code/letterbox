@@ -8,5 +8,3 @@ export interface Message {
   pda: string
   created_at: Date
 }
-
-export type MessageList = Message[]

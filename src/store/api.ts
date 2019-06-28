@@ -6,7 +6,7 @@ const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.
 
 export class API {
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
-    return axios.post(API_ENDPOINT + '/client', newClient)
+    return axios.post(API_ENDPOINT + '/client', newClient).then(response => response.data)
   }
 
   public static async FETCH_CLIENT(
