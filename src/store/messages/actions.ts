@@ -1,5 +1,6 @@
 import { action } from 'typesafe-actions'
-import { Message, MessageList, MessagesActionTypes } from './types'
+import { Message, MessageList } from '../models/messages'
+import { MessagesActionTypes } from './types'
 
 export const initializeMessagesRequest = () =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST)

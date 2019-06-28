@@ -1,24 +1,5 @@
 import { FormikActions } from 'formik'
-
-export type ClientID = string
-
-export interface Client {
-  client_id: ClientID
-  token: string
-}
-
-export interface PhoneNumber {
-  country_code?: string
-  national_number?: string
-}
-
-export interface NewClient {
-  full_name: string
-  email: string
-  password_hash: string
-  phone_number: PhoneNumber
-  public_key?: string
-}
+import { ClientCredentials, ClientProfile } from '../models/client'
 
 export const enum ClientActionTypes {
   INITIALIZE_CLIENT_REQUEST = '@@client/INITIALIZE_CLIENT_REQUEST',
@@ -32,15 +13,9 @@ export const enum ClientActionTypes {
   SUBMIT_NEW_CLIENT_ERROR = '@@client/SUBMIT_NEW_CLIENT_ERROR'
 }
 
-export interface ClientProfile {
-  client_id: string
-  full_name: string
-  public_key: string
-}
-
 export interface ClientState {
-  readonly client?: Client
-  readonly clientProfile?: ClientProfile
+  readonly credentials?: ClientCredentials
+  readonly profile?: ClientProfile
   readonly errors?: string
   readonly loading: boolean
   readonly ready: boolean

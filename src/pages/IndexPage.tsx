@@ -16,12 +16,12 @@ import { MessageList } from '../components/messages/MessageList'
 import Loading from '../components/widgets/Loading'
 import { Profile } from '../components/widgets/Profile'
 import { ApplicationState } from '../store'
-import { ClientProfile } from '../store/client/types'
+import { ClientProfile } from '../store/models/client'
 
 const LazyComposeForm = React.lazy(() => import('../components/forms/compose/ComposeForm'))
 
 interface Props {
-  clientProfile: ClientProfile
+  profile: ClientProfile
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,12 +29,13 @@ const useStyles = makeStyles((theme: Theme) =>
     composeButton: {
       bottom: theme.spacing(1),
       position: 'absolute',
-      right: theme.spacing(1)
+      right: theme.spacing(1),
+      zIndex: 1000
     }
   })
 )
 
-const IndexPageFC: React.FC<Props> = ({ clientProfile }) => {
+const IndexPageFC: React.FC<Props> = ({ profile }) => {
   const [showCompose, setShowCompose] = React.useState(false)
   const classes = useStyles()
 
@@ -57,7 +58,7 @@ const IndexPageFC: React.FC<Props> = ({ clientProfile }) => {
           </Typography>
         </Grid>
         <Grid item xs={5}>
-          <Profile clientProfile={clientProfile} />
+          <Profile profile={profile} />
         </Grid>
         <Grid item xs style={{ position: 'relative' }}></Grid>
         <Grid item xs={12}>
@@ -79,7 +80,7 @@ const IndexPageFC: React.FC<Props> = ({ clientProfile }) => {
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
-  clientProfile: clientState.clientProfile!
+  profile: clientState.profile!
 })
 
 const IndexPage = connect(mapStateToProps)(IndexPageFC)

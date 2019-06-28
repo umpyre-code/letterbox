@@ -21,7 +21,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
           exact
           path="/"
           render={() => {
-            if (clientState.client) {
+            if (clientState.credentials) {
               return <LazyIndexPage />
             } else {
               return <Redirect to="/signup" />

@@ -1,6 +1,8 @@
 import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
 import { ApplicationState } from '../'
-import { clientFromState } from '../api'
+import { API } from '../api'
+import { ClientCredentials, ClientProfile } from '../models/client'
+import { Message } from '../models/messages'
 import {
   fetchMessagesError,
   fetchMessagesRequest,
@@ -8,23 +10,10 @@ import {
   initializeMessagesError,
   initializeMessagesSuccess,
   sendMessageError,
-  sendMessageSuccess,
-  sendMessageRequest
+  sendMessageRequest,
+  sendMessageSuccess
 } from './actions'
-import { Message, MessagesActionTypes } from './types'
-
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
-
-async function encryptMessageBody(
-  body: string,
-  my_private_key: string,
-  their_public_key: string
-): string {
-  return ''
-}
+import { MessagesActionTypes } from './types'
 
 async function initializeMessages() {
   return Array.from([
@@ -64,11 +53,6 @@ function* watchInitializeMessagesRequest() {
   yield takeEvery(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST, handleInitializeMessages)
 }
 
-async function fetchMessages(state: ApplicationState) {
-  const client = clientFromState(state)
-  return client.get('/messages')
-}
-
 function* delayThenFetchMessages() {
   const fetchIntervalMillis = 1500
   yield delay(fetchIntervalMillis)
@@ -78,13 +62,14 @@ function* delayThenFetchMessages() {
 // Message fetch main loop: this saga runs forever and ever
 function* handleFetchMessages() {
   try {
-    const state = yield select()
-    const res = yield call(fetchMessages, state)
+    const state: ApplicationState = yield select()
+    const credentials = state.clientState.credentials!
+    const res = yield call(API.FETCH_MESSAGES, credentials)
 
     if (res.error) {
       yield put(fetchMessagesError(res.error))
     } else {
-      yield put(fetchMessagesSuccess(res.data))
+      yield put(fetchMessagesSuccess(res))
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
@@ -102,16 +87,47 @@ function* watchFetchMessagesRequest() {
   yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
-async function sendMessage(message: Message, state: ApplicationState) {
-  console.log('send message saga woop woop')
-  console.log(message)
+// This doesn't work unless we use the old-style of import. I gave up trying to
+// figure out why.
+// tslint:disable-next-line
+const sodium = require('libsodium-wrappers')
+
+async function encryptMessageBody(
+  body: string,
+  myPrivateKey: string,
+  theirPublicKey: string
+): Promise<string> {
+  const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES)
+  const ciphertext = sodium.crypto_box_easy(
+    body,
+    nonce,
+    sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
+    sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
+  )
+  return sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING)
+}
+
+async function sendMessage(
+  credentials: ClientCredentials,
+  myPrivateKey: string,
+  message: Message
+): Promise<Message> {
+  const api = new API(credentials)
+  const recipientProfile: ClientProfile = await api.fetchClient(message.to)
+  const encryptedMessage = {
+    ...message,
+    body: await encryptMessageBody(message.body, myPrivateKey, recipientProfile.public_key)
+  }
+  return api.sendMessage(encryptedMessage)
 }
 
 function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
   const { payload } = values
   try {
-    const state = yield select()
-    const res = yield call(sendMessage, payload, state)
+    const state: ApplicationState = yield select()
+    const credentials = state.clientState.credentials!
+    const myPrivateKey = state.keysState.current_key!.private_key
+    const res = yield call(sendMessage, credentials, myPrivateKey, payload)
 
     if (res.error) {
       yield put(sendMessageError(res.error))

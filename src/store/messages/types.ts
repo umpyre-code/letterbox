@@ -1,15 +1,4 @@
-import { ClientID } from '../client/types'
-
-export interface Message {
-  hash: string
-  body: string
-  to: ClientID
-  from: ClientID
-  pda: string
-  created_at: Date
-}
-
-export type MessageList = Message[]
+import { MessageList } from '../models/messages'
 
 export interface FetchMessagesResponse {
   messages: MessageList

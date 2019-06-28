@@ -1,12 +1,10 @@
 // tslint:disable-next-line:import-name
 import Dexie from 'dexie'
-import { ClientID } from 'store/client/types'
-import { Key } from 'store/keys/types'
-import { Message } from 'store/messages/types'
+import { Key } from '../store/keys/types'
+import { ClientCredentials } from '../store/models/client'
+import { Message } from '../store/models/messages'
 
-interface Token {
-  client_id: ClientID
-  token: string
+interface Token extends ClientCredentials {
   created_at: Date
 }
 
