@@ -1,20 +1,16 @@
 import {
   Box,
-  Button,
   createStyles,
   Divider,
   Grid,
   makeStyles,
   Paper,
-  TextField,
   Theme,
   Tooltip,
   Typography,
   withStyles
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/HelpOutline'
-import SendIcon from '@material-ui/icons/Send'
-import DeleteIcon from '@material-ui/icons/Delete'
 import { EditorState } from 'draft-js'
 import {
   BlockquoteButton,
@@ -39,7 +35,8 @@ import createPrismPlugin from 'draft-js-prism-plugin'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import * as React from 'react'
-import { htmlToMarkdown } from '../../util/htmlToMarkdown'
+import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
+import { DiscardButton, PDAField, RecipientField, SendButton } from './Widgets'
 import './Draft.css'
 
 const inlineToolbarPlugin = createInlineToolbarPlugin()
@@ -82,26 +79,6 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const SendButton = ({ classes, handleSend }) => (
-  <Tooltip title="Does everything look good? Send it!">
-    <Button variant="contained" color="primary" onClick={handleSend}>
-      Send
-      <SendIcon className={classes.sendIcon} />
-    </Button>
-  </Tooltip>
-)
-
-const DiscardButton = ({ classes, handleDiscard }) => (
-  <Box position="relative">
-    <Tooltip title="Discard this draft forever">
-      <Button variant="contained" className={classes.discardButton} onClick={handleDiscard}>
-        Discard
-        <DeleteIcon className={classes.deleteIcon} />
-      </Button>
-    </Tooltip>
-  </Box>
-)
-
 const ComposeForm = () => {
   const [editorState, setEditorState] = React.useState(EditorState.createEmpty())
   const [recipient, setRecipient] = React.useState('')
@@ -125,22 +102,10 @@ const ComposeForm = () => {
     <Paper className={classes.root}>
       <Grid container spacing={1} alignItems="flex-end">
         <Grid item xs={5}>
-          <TextField
-            id="recipient"
-            label="Recipient"
-            placeholder="Who is this message for?"
-            fullWidth
-            onChange={event => setRecipient(event.target.value)}
-          />
+          <RecipientField setRecipient={setRecipient} />
         </Grid>
         <Grid item xs={6}>
-          <TextField
-            id="pda"
-            label="PDA"
-            placeholder="Public display of affection"
-            fullWidth
-            onChange={event => setPda(event.target.value)}
-          />
+          <PDAField setPda={setPda} />
         </Grid>
         <Grid item xs={1}>
           <HtmlTooltip

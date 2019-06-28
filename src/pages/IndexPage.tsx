@@ -18,7 +18,7 @@ import { Profile } from '../components/widgets/Profile'
 import { ApplicationState } from '../store'
 import { ClientProfile } from '../store/client/types'
 
-const LazyComposeForm = React.lazy(() => import('../components/forms/ComposeForm'))
+const LazyComposeForm = React.lazy(() => import('../components/forms/compose'))
 
 interface Props {
   clientProfile: ClientProfile
