@@ -27,9 +27,9 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     composeButton: {
-      bottom: theme.spacing(1),
+      bottom: theme.spacing(2),
       position: 'absolute',
-      right: theme.spacing(1),
+      right: theme.spacing(2),
       zIndex: 1000
     }
   })
