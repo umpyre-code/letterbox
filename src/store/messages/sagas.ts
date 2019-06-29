@@ -1,5 +1,6 @@
 import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
 import { ApplicationState } from '../'
+import { db } from '../../db/db'
 import { API } from '../api'
 import { KeyPair } from '../keyPairs/types'
 import { ClientCredentials, ClientProfile } from '../models/client'
@@ -16,8 +17,11 @@ import {
 } from './actions'
 import { MessagesActionTypes } from './types'
 
-async function initializeMessages() {
-  return Array.from([])
+async function initializeMessages(): Promise<Message[]> {
+  return db.messages
+    .orderBy('received_at')
+    .reverse()
+    .toArray()
 }
 
 function* handleInitializeMessages() {
@@ -51,16 +55,18 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
-async function fetchMessages(
-  credentials: ClientCredentials,
-  myPrivateKey: string
-): Promise<Message[]> {
+async function fetchMessages(credentials: ClientCredentials, myPrivateKey: string) {
   const api = new API(credentials)
   const messageResponse = await api.fetchMessages()
-  console.log(messageResponse)
-  return Promise.all(
+  const messages = await Promise.all(
     messageResponse.messages.map((message: Message) => decryptMessage(message, api, myPrivateKey))
   )
+  console.log(messages)
+  await db.messages.add(messages)
+  return db.messages
+    .orderBy('received_at')
+    .reverse()
+    .toArray()
 }
 
 async function decryptMessage(message: Message, api: API, myPrivateKey: string): Promise<Message> {

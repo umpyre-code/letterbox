@@ -3,18 +3,14 @@ import { EditorState } from 'draft-js'
 import {
   BlockquoteButton,
   BoldButton,
-  CodeBlockButton,
-  CodeButton,
   HeadlineOneButton,
-  HeadlineThreeButton,
   HeadlineTwoButton,
   ItalicButton,
   OrderedListButton,
-  UnderlineButton,
   UnorderedListButton
 } from 'draft-js-buttons'
 import { stateToHTML } from 'draft-js-export-html'
-import createInlineToolbarPlugin, { Separator } from 'draft-js-inline-toolbar-plugin'
+import createInlineToolbarPlugin from 'draft-js-inline-toolbar-plugin'
 import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import createMarkdownPlugin from 'draft-js-markdown-plugin'

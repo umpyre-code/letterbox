@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
-import { ClientCredentials, NewClient, ClientProfile, ClientID } from './models/client'
-import { Message, MessageList } from './models/messages'
+import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
+import { Message } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
@@ -33,7 +33,7 @@ export class API {
     return this.client.get(`/client/${clientId}`).then(response => response.data)
   }
 
-  public async fetchMessages(): Promise<MessageList> {
+  public async fetchMessages(): Promise<Message[]> {
     return this.client.get('/messages').then(response => response.data)
   }
 

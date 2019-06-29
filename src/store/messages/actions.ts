@@ -1,5 +1,5 @@
 import { action } from 'typesafe-actions'
-import { Message, MessageList } from '../models/messages'
+import { Message } from '../models/messages'
 import { MessagesActionTypes } from './types'
 
 export const initializeMessagesRequest = () =>
@@ -10,7 +10,7 @@ export const initializeMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_ERROR, errorMessage)
 
 export const fetchMessagesRequest = () => action(MessagesActionTypes.FETCH_MESSAGES_REQUEST)
-export const fetchMessagesSuccess = (messages: MessageList) =>
+export const fetchMessagesSuccess = (messages: Message[]) =>
   action(MessagesActionTypes.FETCH_MESSAGES_SUCCESS, messages)
 export const fetchMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.FETCH_MESSAGES_ERROR, errorMessage)
