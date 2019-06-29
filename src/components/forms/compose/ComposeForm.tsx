@@ -129,17 +129,11 @@ const ComposeFormFC: React.FC<Props> = ({ sendMessage }) => {
           <React.Fragment>
             <HeadlineOneButton {...externalProps} />
             <HeadlineTwoButton {...externalProps} />
-            <HeadlineThreeButton {...externalProps} />
-            <Separator {...externalProps} />
             <BoldButton {...externalProps} />
             <ItalicButton {...externalProps} />
-            <UnderlineButton {...externalProps} />
-            <Separator {...externalProps} />
-            <CodeButton {...externalProps} />
             <UnorderedListButton {...externalProps} />
             <OrderedListButton {...externalProps} />
             <BlockquoteButton {...externalProps} />
-            <CodeBlockButton {...externalProps} />
           </React.Fragment>
         )}
       </InlineToolbar>

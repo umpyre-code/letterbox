@@ -7,6 +7,7 @@ export const theme = createMuiTheme({
     primary: purple,
     secondary: green
   },
+  spacing: 5,
   typography: {
     fontFamily: [
       'Lato Regular',
