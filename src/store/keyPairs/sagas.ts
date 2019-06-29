@@ -26,7 +26,7 @@ async function initializeKeys() {
 
   // Fetch keys from DB now
   return db.keyPairs
-    .orderBy(':id')
+    .orderBy('created_at')
     .reverse()
     .toArray()
     .then((arr: KeyPair[]) =>

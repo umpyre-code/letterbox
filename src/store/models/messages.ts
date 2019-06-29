@@ -1,32 +1,34 @@
 import { ClientID } from './client'
 
 export interface Timestamp {
-  seconds: number
   nanos: number
+  seconds: number
 }
 
 // Our internal representation of a message
 export interface Message {
-  hash: string
   body: string
-  to: ClientID
   from: ClientID
+  hash: string
+  nonce: string
   pda: string
   received_at: Date
-  nonce: string
-  public_key: string
+  recipient_public_key: string
+  sender_public_key: string
+  to: ClientID
 }
 
 // The API's actual representation of a message
 export interface APIMessage {
-  hash: string
   body: string
-  to: ClientID
   from: ClientID
+  hash: string
+  nonce: string
   pda: string
   received_at: Timestamp
-  nonce: string
-  public_key: string
+  recipient_public_key: string
+  sender_public_key: string
+  to: ClientID
 }
 
 export interface MessagesResponse {

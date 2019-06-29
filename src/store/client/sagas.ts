@@ -18,7 +18,7 @@ import { ClientActionTypes } from './types'
 
 function initializeClient() {
   return db.apiTokens
-    .orderBy(':id')
+    .orderBy('created_at')
     .reverse()
     .limit(1)
     .first()
@@ -73,11 +73,10 @@ function* handleFetchClientRequest() {
       yield put(fetchClientError(err))
     }
   }
-  // yield spawn(delayThenFetchClient)
+  yield spawn(delayThenFetchClient)
 }
 
 function saveClientToken(credentials: ClientCredentials) {
-  console.log(credentials)
   db.apiTokens.add({ ...credentials, created_at: new Date() })
 }
 

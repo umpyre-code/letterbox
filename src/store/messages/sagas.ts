@@ -55,11 +55,11 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
-async function fetchMessages(credentials: ClientCredentials, myPrivateKey: string) {
+async function fetchMessages(credentials: ClientCredentials) {
   const api = new API(credentials)
   const messages = await api.fetchMessages()
   const decryptedMessages = await Promise.all(
-    messages.map((message: Message) => decryptMessage(message, api, myPrivateKey))
+    messages.map((message: Message) => decryptMessage(message))
   )
   await db.messages.bulkPut(decryptedMessages)
   return db.messages
@@ -68,15 +68,17 @@ async function fetchMessages(credentials: ClientCredentials, myPrivateKey: strin
     .toArray()
 }
 
-async function decryptMessage(message: Message, api: API, myPrivateKey: string): Promise<Message> {
-  const senderProfile: ClientProfile = await api.fetchClient(message.from)
+async function decryptMessage(message: Message): Promise<Message> {
+  // Need to gracefully handle the case where this DB doesn't contain this public
+  // key
+  const myKeyPair = await db.keyPairs.get({ public_key: message.recipient_public_key })
   return {
     ...message,
     body: await decryptMessageBody(
       message.body,
       message.nonce,
-      myPrivateKey,
-      senderProfile.public_key
+      myKeyPair!.private_key,
+      message.sender_public_key
     )
   }
 }
@@ -103,8 +105,7 @@ function* handleFetchMessages() {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const myPrivateKey = state.keysState.current_key!.private_key
-    const res = yield call(fetchMessages, credentials, myPrivateKey)
+    const res = yield call(fetchMessages, credentials)
 
     if (res.error) {
       yield put(fetchMessagesError(res.error))
@@ -120,7 +121,7 @@ function* handleFetchMessages() {
       yield put(fetchMessagesError(err))
     }
   }
-  // yield spawn(delayThenFetchMessages)
+  yield spawn(delayThenFetchMessages)
 }
 
 function* watchFetchMessagesRequest() {
@@ -147,9 +148,10 @@ async function encryptMessageBody(
   )
   return {
     ...message,
-    body: sodium.to_base64(ciphertext),
+    body: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
     nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    public_key: keyPair.public_key
+    recipient_public_key: theirPublicKey,
+    sender_public_key: keyPair.public_key
   }
 }
 
