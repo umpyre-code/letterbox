@@ -1,8 +1,15 @@
 import axios, { AxiosInstance } from 'axios'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
-import { Message } from './models/messages'
+import { APIMessage, Message, MessagesResponse } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
+
+function fromApiMessage(response: MessagesResponse): Message[] {
+  return response.messages.map((message: APIMessage) => ({
+    ...message,
+    received_at: new Date(message.received_at.seconds * 1000 + message.received_at.nanos / 1e6)
+  }))
+}
 
 export class API {
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
@@ -17,7 +24,7 @@ export class API {
     return api.fetchClient(clientId)
   }
 
-  public static async FETCH_MESSAGES(credentials: ClientCredentials): Promise<MessageList> {
+  public static async FETCH_MESSAGES(credentials: ClientCredentials): Promise<Message[]> {
     const api = new API(credentials)
     return api.fetchMessages()
   }
@@ -34,7 +41,13 @@ export class API {
   }
 
   public async fetchMessages(): Promise<Message[]> {
-    return this.client.get('/messages').then(response => response.data)
+    // The received_at field is actually an object that looks like this:
+    // received_at: {
+    //   seconds: number,
+    //   nanos: number
+    // }
+    // Here we translate it into a version with a simplified date.
+    return this.client.get('/messages').then(response => fromApiMessage(response.data))
   }
 
   public async sendMessage(message: Message): Promise<Message> {

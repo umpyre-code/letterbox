@@ -57,12 +57,11 @@ function* delayThenFetchMessages() {
 
 async function fetchMessages(credentials: ClientCredentials, myPrivateKey: string) {
   const api = new API(credentials)
-  const messageResponse = await api.fetchMessages()
-  const messages = await Promise.all(
-    messageResponse.messages.map((message: Message) => decryptMessage(message, api, myPrivateKey))
+  const messages = await api.fetchMessages()
+  const decryptedMessages = await Promise.all(
+    messages.map((message: Message) => decryptMessage(message, api, myPrivateKey))
   )
-  console.log(messages)
-  await db.messages.add(messages)
+  await db.messages.bulkPut(decryptedMessages)
   return db.messages
     .orderBy('received_at')
     .reverse()
@@ -113,7 +112,6 @@ function* handleFetchMessages() {
       yield put(fetchMessagesSuccess(res))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(fetchMessagesError(err.response.data.message))
     } else if (err.message) {
