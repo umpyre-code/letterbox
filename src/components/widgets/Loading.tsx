@@ -10,7 +10,8 @@ const Loading: React.FC<LoadingProps> = ({ centerOnPage }) => {
     style = {
       left: '50%',
       position: 'absolute',
-      top: '50%'
+      top: '50%',
+      transform: 'rotate(45deg) translate(-50%, -50%)'
     }
   } else {
     style = {}
