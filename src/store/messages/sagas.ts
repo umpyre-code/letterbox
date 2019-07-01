@@ -16,6 +16,7 @@ import {
   sendMessageSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
+import { removeDraftRequest } from '../drafts/actions'
 
 async function initializeMessages(): Promise<Message[]> {
   return db.messages
@@ -169,15 +170,18 @@ async function sendMessage(
 
 function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
   const { payload } = values
+  const { message, draft } = payload
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(sendMessage, credentials, state.keysState.current_key!, payload)
+    const res = yield call(sendMessage, credentials, state.keysState.current_key!, message)
 
     if (res.error) {
       yield put(sendMessageError(res.error))
+      yield put(removeDraftRequest({ ...draft, sending: false }))
     } else {
       yield put(sendMessageSuccess())
+      yield put(removeDraftRequest(draft))
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {

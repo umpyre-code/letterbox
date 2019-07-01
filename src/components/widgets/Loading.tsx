@@ -1,18 +1,30 @@
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import * as React from 'react'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    progress: {
-      margin: theme.spacing(2)
-    }
-  })
-)
+interface LoadingProps {
+  centerOnPage?: boolean
+}
 
-const Loading = () => {
-  const classes = useStyles()
-  return <CircularProgress className={classes.progress} />
+const Loading: React.FC<LoadingProps> = ({ centerOnPage }) => {
+  let style = {}
+  if (centerOnPage) {
+    style = {
+      left: '50%',
+      position: 'absolute',
+      top: '50%'
+    }
+  } else {
+    style = {}
+  }
+
+  return (
+    <div className="lds-heart" style={style}>
+      <div></div>
+    </div>
+  )
+}
+
+Loading.defaultProps = {
+  centerOnPage: false
 }
 
 export default Loading

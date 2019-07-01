@@ -1,3 +1,4 @@
+import { Draft } from '../drafts/types'
 import { Message } from '../models/messages'
 
 export interface FetchMessagesResponse {
@@ -20,4 +21,9 @@ export interface MessagesState {
   readonly loading: boolean
   readonly messages: Message[]
   readonly errors?: string
+}
+
+export interface SendMessage {
+  message: Message
+  draft: Draft
 }

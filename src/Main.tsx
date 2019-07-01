@@ -15,7 +15,7 @@ const LazyRoutes = React.lazy(() => import('./Routes'))
 
 export const Main: React.FC<MainProps> = ({ store, history }) => {
   return (
-    <React.Suspense fallback={<Loading />}>
+    <React.Suspense fallback={<Loading centerOnPage={true} />}>
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <LazyRoutes />

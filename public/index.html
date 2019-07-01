@@ -7,9 +7,8 @@
     <style>
       .lds-heart {
         display: inline-block;
-        position: absolute;
-        left: 50%;
-        bottom: 50%;
+        position: relative;
+        margin: auto;
         width: 64px;
         height: 64px;
         transform: rotate(45deg);
@@ -76,7 +75,7 @@
 
   <body>
     <div id="root">
-      <div class="lds-heart">
+      <div class="lds-heart" style="position: absolute; left: 50%; top: 50%;">
         <div></div>
       </div>
     </div>

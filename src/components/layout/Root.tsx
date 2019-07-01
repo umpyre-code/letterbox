@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import 'typeface-lato'
 import { ApplicationState } from '../../store'
 import { initializeClientRequest } from '../../store/client/actions'
+import { initializeDraftsRequest } from '../../store/drafts/actions'
 import { initializeKeysRequest } from '../../store/keyPairs/actions'
 import { initializeMessagesRequest } from '../../store/messages/actions'
 import { secureMathRandom } from '../../util/secureMathRandom'
@@ -11,8 +12,9 @@ import { theme } from '../theme'
 import Loading from '../widgets/Loading'
 
 interface PropsFromDispatch {
-  initializeKeysRequest: typeof initializeKeysRequest
   initializeClientRequest: typeof initializeClientRequest
+  initializeDraftsRequest: typeof initializeDraftsRequest
+  initializeKeysRequest: typeof initializeKeysRequest
   initializeMessagesRequest: typeof initializeMessagesRequest
 }
 
@@ -27,7 +29,7 @@ class RootFC extends React.Component<AllProps> {
     if (this.props.ready) {
       return <ThemeProvider theme={theme}>{this.props.children}</ThemeProvider>
     } else {
-      return <Loading />
+      return <Loading centerOnPage={true} />
     }
   }
 
@@ -35,6 +37,7 @@ class RootFC extends React.Component<AllProps> {
     this.props.initializeKeysRequest()
     this.props.initializeClientRequest()
     this.props.initializeMessagesRequest()
+    this.props.initializeDraftsRequest()
 
     // Reload the page every ~24h +/- 2h
     const sway = 4 * secureMathRandom() * 3600 - 2 * 3600
@@ -49,6 +52,7 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 
 const mapDispatchToProps = {
   initializeClientRequest,
+  initializeDraftsRequest,
   initializeKeysRequest,
   initializeMessagesRequest
 }

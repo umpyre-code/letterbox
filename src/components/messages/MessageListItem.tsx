@@ -1,16 +1,16 @@
 import {
   Avatar,
+  Box,
   createStyles,
   ListItem,
   ListItemAvatar,
   ListItemText,
   makeStyles,
   Theme,
-  Typography,
-  Box
+  Typography
 } from '@material-ui/core'
 import * as React from 'react'
-import { Message } from '../../store/messages/types'
+import { Message } from '../../store/models/messages'
 import MessageBody from './MessageBody'
 
 interface Props {

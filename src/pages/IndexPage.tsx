@@ -12,17 +12,22 @@ import Fab from '@material-ui/core/Fab'
 import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
-import Loading from '../components/widgets/Loading'
 import { Profile } from '../components/widgets/Profile'
 import { ApplicationState } from '../store'
+import { addDraftRequest } from '../store/drafts/actions'
 import { ClientProfile } from '../store/models/client'
 
-const LazyComposeForm = React.lazy(() => import('../components/forms/compose/ComposeForm'))
-
-interface Props {
+interface PropsFromState {
   profile: ClientProfile
 }
+
+interface PropsFromDispatch {
+  addDraft: typeof addDraftRequest
+}
+
+type AllProps = PropsFromState & PropsFromDispatch
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,8 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<Props> = ({ profile }) => {
-  const [showCompose, setShowCompose] = React.useState(false)
+const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
   const classes = useStyles()
 
   return (
@@ -46,7 +50,7 @@ const IndexPageFC: React.FC<Props> = ({ profile }) => {
           className={classes.composeButton}
           color="primary"
           aria-label="Compose"
-          onClick={() => setShowCompose(!showCompose)}
+          onClick={addDraft}
         >
           <Edit />
         </Fab>
@@ -64,13 +68,9 @@ const IndexPageFC: React.FC<Props> = ({ profile }) => {
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        {showCompose ? (
-          <Grid item xs={12}>
-            <React.Suspense fallback={<Loading />}>
-              <LazyComposeForm />
-            </React.Suspense>
-          </Grid>
-        ) : null}
+        <Grid item xs={12}>
+          <DraftList />
+        </Grid>
         <Grid item xs={12}>
           <MessageList />
         </Grid>
@@ -83,5 +83,12 @@ const mapStateToProps = ({ clientState }: ApplicationState) => ({
   profile: clientState.profile!
 })
 
-const IndexPage = connect(mapStateToProps)(IndexPageFC)
+const mapDispatchToProps = {
+  addDraft: addDraftRequest
+}
+
+const IndexPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(IndexPageFC)
 export default IndexPage

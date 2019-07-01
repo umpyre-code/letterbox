@@ -14,7 +14,7 @@ const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 const LazyRoot = React.lazy(() => import('./components/layout/Root'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
-  <React.Suspense fallback={<Loading />}>
+  <React.Suspense fallback={<Loading centerOnPage={true} />}>
     <LazyRoot>
       <Switch>
         <Route
