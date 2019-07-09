@@ -20,8 +20,10 @@ class UmpyreDb extends Dexie {
     this.version(1).stores({
       api_tokens: '++id, client_id, token, created_at',
       drafts: '++id, editorContent, recipient, pda, created_at',
-      keyPairs: '++id, public_key, private_key, created_at',
-      messages: 'hash, body, to, from, received_at, pda, public_key, nonce'
+      keyPairs:
+        '++id, box_public_key, box_secret_key, signing_public_key, signing_secret_key, created_at',
+      messages:
+        'hash, body, to, from, received_at, pda, recipient_public_key, sender_public_key, nonce, sent_at, signature'
     })
     this.apiTokens = this.table('api_tokens')
     this.drafts = this.table('drafts')

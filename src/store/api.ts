@@ -4,11 +4,16 @@ import { APIMessage, Message, MessagesResponse } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
-function fromApiMessage(response: MessagesResponse): Message[] {
-  return response.messages.map((message: APIMessage) => ({
+function fromApiMessage(message: APIMessage): Message {
+  return {
     ...message,
-    received_at: new Date(message.received_at.seconds * 1000 + message.received_at.nanos / 1e6)
-  }))
+    received_at: new Date(message.received_at!.seconds * 1000 + message.received_at!.nanos / 1e6),
+    sent_at: new Date(message.sent_at.seconds * 1000 + message.sent_at.nanos / 1e6)
+  }
+}
+
+function fromApiMessages(response: MessagesResponse): Message[] {
+  return response.messages.map((message: APIMessage) => fromApiMessage(message))
 }
 
 export class API {
@@ -43,14 +48,14 @@ export class API {
   public async fetchMessages(): Promise<Message[]> {
     // The received_at field is actually an object that looks like this:
     // received_at: {
-    //   seconds: number,
     //   nanos: number
+    //   seconds: number,
     // }
-    // Here we translate it into a version with a simplified date.
-    return this.client.get('/messages').then(response => fromApiMessage(response.data))
+    // Here we convert it into a local representation which has a simplified date.
+    return this.client.get('/messages').then(response => fromApiMessages(response.data))
   }
 
-  public async sendMessage(message: Message): Promise<Message> {
-    return this.client.post('/messages', message).then(response => response.data)
+  public async sendMessage(message: APIMessage): Promise<Message> {
+    return this.client.post('/messages', message).then(response => fromApiMessage(response.data))
   }
 }

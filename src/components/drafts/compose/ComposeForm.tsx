@@ -94,6 +94,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendMessage, updateDra
     const message = {
       body: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
       pda,
+      sent_at: new Date(),
       to: recipient
     }
     updateDraft({ ...draft, sending: true })

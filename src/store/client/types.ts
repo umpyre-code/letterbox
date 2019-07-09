@@ -33,12 +33,14 @@ export class ClientProfileHelper implements ClientProfile {
   // tslint:disable variable-name
   public client_id: string = ''
   public full_name: string = ''
-  public public_key: string = ''
+  public box_public_key: string = ''
+  public signing_public_key: string = ''
 
   constructor(clientProfile: ClientProfile) {
     this.client_id = clientProfile.client_id
     this.full_name = clientProfile.full_name
-    this.public_key = clientProfile.public_key
+    this.box_public_key = clientProfile.box_public_key
+    this.signing_public_key = clientProfile.signing_public_key
   }
 
   public getInitials(): string {

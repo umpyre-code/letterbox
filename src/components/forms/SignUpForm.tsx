@@ -66,7 +66,7 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
 async function hashPassword(password: string) {
   await sodium.ready
   return sodium.to_base64(
-    sodium.crypto_generichash(64, password),
+    sodium.crypto_generichash(64, sodium.from_string(password)),
     sodium.base64_variants.ORIGINAL_NO_PADDING
   )
 }
@@ -110,7 +110,8 @@ class SignUp extends React.Component<AllProps> {
             // Mix in the public key, password hash.
             let new_client = {
               ...values,
-              public_key: this.props.keys.current_key.public_key,
+              box_public_key: this.props.keys.current_key.box_public_key,
+              signing_public_key: this.props.keys.current_key.signing_public_key,
               password_hash: password_hash
             }
             // Remove the plain text password before sending this obj to the server.

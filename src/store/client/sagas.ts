@@ -85,6 +85,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   const { actions } = meta
   try {
     const res = yield call(API.SUBMIT_NEW_CLIENT, payload)
+    console.log(res)
 
     if (res.error) {
       yield put(submitNewClientError(res.error))
@@ -94,6 +95,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(push('/'))
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(submitNewClientError(err.response.data.message))
     } else if (err.message) {

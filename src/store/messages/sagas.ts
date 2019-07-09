@@ -2,9 +2,10 @@ import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-sag
 import { ApplicationState } from '../'
 import { db } from '../../db/db'
 import { API } from '../api'
+import { removeDraftRequest } from '../drafts/actions'
 import { KeyPair } from '../keyPairs/types'
-import { ClientCredentials, ClientProfile } from '../models/client'
-import { Message } from '../models/messages'
+import { ClientCredentials, ClientProfile, ClientID } from '../models/client'
+import { APIMessage, Message } from '../models/messages'
 import {
   fetchMessagesError,
   fetchMessagesRequest,
@@ -16,7 +17,6 @@ import {
   sendMessageSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-import { removeDraftRequest } from '../drafts/actions'
 
 async function initializeMessages(): Promise<Message[]> {
   return db.messages
@@ -72,13 +72,13 @@ async function fetchMessages(credentials: ClientCredentials) {
 async function decryptMessage(message: Message): Promise<Message> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
-  const myKeyPair = await db.keyPairs.get({ public_key: message.recipient_public_key })
+  const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
   return {
     ...message,
     body: await decryptMessageBody(
       message.body,
       message.nonce,
-      myKeyPair!.private_key,
+      myKeyPair!.box_secret_key,
       message.sender_public_key
     )
   }
@@ -134,25 +134,95 @@ function* watchFetchMessagesRequest() {
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
+function toApiMessage(message: Message, from: ClientID): APIMessage {
+  return {
+    ...message,
+    from,
+    received_at: undefined,
+    sent_at: {
+      nanos: (message.sent_at.getTime() % 1000) * 1e6,
+      seconds: Math.floor(message.sent_at.getTime() / 1000)
+    }
+  }
+}
+
 async function encryptMessageBody(
-  message: Message,
+  message: APIMessage,
   keyPair: KeyPair,
   theirPublicKey: string
-): Promise<Message> {
+): Promise<APIMessage> {
   await sodium.ready
   const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES)
   const ciphertext = sodium.crypto_box_easy(
     sodium.from_string(message.body),
     nonce,
     sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    sodium.from_base64(keyPair.private_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    sodium.from_base64(keyPair.box_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
   )
   return {
     ...message,
     body: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
     nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
     recipient_public_key: theirPublicKey,
-    sender_public_key: keyPair.public_key
+    sender_public_key: keyPair.box_public_key
+  }
+}
+
+async function hashMessage(message: APIMessage): Promise<APIMessage> {
+  await sodium.ready
+  const hashableMessage: any = {
+    ...message,
+    hash: undefined,
+    signature: undefined
+  }
+
+  const orderedKeysObj: any = {}
+  Object.keys(hashableMessage)
+    .sort()
+    .forEach(key => {
+      orderedKeysObj[key] = hashableMessage[key]
+    })
+  const hashableMessageJson = JSON.stringify(orderedKeysObj, (key, value) => {
+    if (value !== null) {
+      return value
+    }
+  })
+  const hash = sodium.to_base64(
+    sodium.crypto_generichash(16, sodium.from_string(hashableMessageJson)),
+    sodium.base64_variants.ORIGINAL_NO_PADDING
+  )
+
+  return {
+    ...message,
+    hash
+  }
+}
+
+async function signMessage(message: APIMessage, keyPair: KeyPair): Promise<APIMessage> {
+  await sodium.ready
+  const signableMessage: any = {
+    ...message,
+    signature: undefined
+  }
+
+  const orderedKeysObj: any = {}
+  Object.keys(signableMessage)
+    .sort()
+    .forEach(key => {
+      orderedKeysObj[key] = signableMessage[key]
+    })
+  const signableMessageJson = JSON.stringify(orderedKeysObj)
+  const signature = sodium.to_base64(
+    sodium.crypto_sign_detached(
+      sodium.from_string(signableMessageJson),
+      sodium.from_base64(keyPair.signing_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    ),
+    sodium.base64_variants.ORIGINAL_NO_PADDING
+  )
+
+  return {
+    ...message,
+    signature
   }
 }
 
@@ -163,9 +233,16 @@ async function sendMessage(
 ): Promise<Message> {
   const api = new API(credentials)
   const recipientProfile: ClientProfile = await api.fetchClient(message.to)
-  const encryptedMessage = await encryptMessageBody(message, keyPair, recipientProfile.public_key)
+  const apiMessage = toApiMessage(message, credentials.client_id)
+  const encryptedMessage = await encryptMessageBody(
+    apiMessage,
+    keyPair,
+    recipientProfile.box_public_key
+  )
+  const hashedMessage = await hashMessage(encryptedMessage)
+  const signedMessage = await signMessage(hashedMessage, keyPair)
 
-  return api.sendMessage(encryptedMessage)
+  return api.sendMessage(signedMessage)
 }
 
 function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {

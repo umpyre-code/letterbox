@@ -1,7 +1,9 @@
 export interface KeyPair {
   id?: number
-  public_key: string
-  private_key: string
+  box_public_key: string
+  box_secret_key: string
+  signing_public_key: string
+  signing_secret_key: string
   created_at: Date
 }
 

@@ -15,11 +15,13 @@ export interface NewClient {
   email: string
   password_hash: string
   phone_number: PhoneNumber
-  public_key?: string
+  box_public_key?: string
+  signing_public_key?: string
 }
 
 export interface ClientProfile {
   client_id: string
   full_name: string
-  public_key: string
+  box_public_key: string
+  signing_public_key: string
 }

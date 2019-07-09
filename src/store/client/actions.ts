@@ -1,6 +1,6 @@
 import { action } from 'typesafe-actions'
-import { ClientActionTypes, NewClientMeta } from './types'
 import { NewClient } from '../models/client'
+import { ClientActionTypes, NewClientMeta } from './types'
 
 export const initializeClientRequest = () => action(ClientActionTypes.INITIALIZE_CLIENT_REQUEST)
 export const initializeClientSuccess = (data: Client) =>

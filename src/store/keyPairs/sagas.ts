@@ -13,14 +13,26 @@ async function initializeKeys() {
   if (keyCount === 0) {
     // This is a fresh new instance. Create the first key.
     await sodium.ready
-    const keyValue = sodium.crypto_box_keypair()
-    db.keyPairs.add({
-      created_at: new Date(),
-      private_key: sodium.to_base64(
-        keyValue.privateKey,
+    const boxKeys = sodium.crypto_box_keypair()
+    const signKeys = sodium.crypto_sign_keypair()
+    await db.keyPairs.add({
+      box_public_key: sodium.to_base64(
+        boxKeys.publicKey,
         sodium.base64_variants.ORIGINAL_NO_PADDING
       ),
-      public_key: sodium.to_base64(keyValue.publicKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
+      box_secret_key: sodium.to_base64(
+        boxKeys.privateKey,
+        sodium.base64_variants.ORIGINAL_NO_PADDING
+      ),
+      created_at: new Date(),
+      signing_public_key: sodium.to_base64(
+        signKeys.publicKey,
+        sodium.base64_variants.ORIGINAL_NO_PADDING
+      ),
+      signing_secret_key: sodium.to_base64(
+        signKeys.privateKey,
+        sodium.base64_variants.ORIGINAL_NO_PADDING
+      )
     })
   }
 
@@ -35,7 +47,7 @@ async function initializeKeys() {
       [
         arr[0],
         arr.reduce((map: KeyMap, key) => {
-          map.set(key.public_key, key)
+          map.set(key.box_public_key, key)
           return map
         }, new Map())
       ]

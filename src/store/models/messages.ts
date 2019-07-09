@@ -9,12 +9,14 @@ export interface Timestamp {
 export interface Message {
   body: string
   from: ClientID
-  hash: string
+  hash?: string
   nonce: string
   pda: string
-  received_at: Date
+  received_at?: Date
   recipient_public_key: string
   sender_public_key: string
+  sent_at: Date
+  signature?: string
   to: ClientID
 }
 
@@ -22,12 +24,14 @@ export interface Message {
 export interface APIMessage {
   body: string
   from: ClientID
-  hash: string
+  hash?: string
   nonce: string
   pda: string
-  received_at: Timestamp
+  received_at?: Timestamp
   recipient_public_key: string
   sender_public_key: string
+  sent_at: Timestamp
+  signature?: string
   to: ClientID
 }
 
