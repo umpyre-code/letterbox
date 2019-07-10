@@ -3,7 +3,8 @@ import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-sag
 import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
-import { ClientCredentials } from '../models/client'
+import { KeyPair } from '../keyPairs/types'
+import { ClientCredentials, NewClient } from '../models/client'
 import {
   fetchClientError,
   fetchClientRequest,
@@ -15,6 +16,11 @@ import {
   submitNewClientSuccess
 } from './actions'
 import { ClientActionTypes } from './types'
+
+// This doesn't work unless we use the old-style of import. I gave up trying to
+// figure out why.
+// tslint:disable-next-line
+const sodium = require('libsodium-wrappers')
 
 function initializeClient() {
   return db.apiTokens
@@ -80,12 +86,35 @@ function saveClientToken(credentials: ClientCredentials) {
   db.apiTokens.add({ ...credentials, created_at: new Date() })
 }
 
+async function withHashedPassword(newClient: NewClient): Promise<NewClient> {
+  await sodium.ready
+  return {
+    ...newClient,
+    password_hash: sodium.to_base64(
+      sodium.crypto_generichash(64, sodium.from_string(newClient.password_hash)),
+      sodium.base64_variants.ORIGINAL_NO_PADDING
+    )
+  }
+}
+
+async function submitNewClient(newClient: NewClient, keyPair: KeyPair): Promise<ClientCredentials> {
+  const newClientHashed = await withHashedPassword(newClient)
+  // Add public keys
+  const newClientHashedWithKeys = {
+    ...newClientHashed,
+    box_public_key: keyPair.box_public_key,
+    signing_public_key: keyPair.signing_public_key
+  }
+  return API.SUBMIT_NEW_CLIENT(newClientHashedWithKeys)
+}
+
 function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClientRequest>) {
   const { payload, meta } = values
   const { actions } = meta
   try {
-    const res = yield call(API.SUBMIT_NEW_CLIENT, payload)
-    console.log(res)
+    const state: ApplicationState = yield select()
+    const currentKeyPair = state.keysState.current_key!
+    const res = yield call(submitNewClient, payload, currentKeyPair)
 
     if (res.error) {
       yield put(submitNewClientError(res.error))
@@ -95,7 +124,6 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(push('/'))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(submitNewClientError(err.response.data.message))
     } else if (err.message) {

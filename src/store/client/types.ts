@@ -17,6 +17,7 @@ export interface ClientState {
   readonly credentials?: ClientCredentials
   readonly profile?: ClientProfile
   readonly errors?: string
+  readonly signUpFormErrors?: string
   readonly loading: boolean
   readonly ready: boolean
 }

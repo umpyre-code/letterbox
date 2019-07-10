@@ -14,16 +14,11 @@ import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-mate
 import { AsYouType } from 'libphonenumber-js'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { ApplicationState } from 'store'
+import { ApplicationState } from '../../store'
 import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { KeysState } from '../../store/keyPairs/types'
 import { CountryCodes } from './CountryCodes'
-
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
 
 interface PhoneNumber {
   country_code?: string
@@ -63,14 +58,6 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
   />
 )
 
-async function hashPassword(password: string) {
-  await sodium.ready
-  return sodium.to_base64(
-    sodium.crypto_generichash(64, sodium.from_string(password)),
-    sodium.base64_variants.ORIGINAL_NO_PADDING
-  )
-}
-
 type AllProps = PropsFromDispatch & PropsFromState
 
 class SignUp extends React.Component<AllProps> {
@@ -79,11 +66,11 @@ class SignUp extends React.Component<AllProps> {
       <Formik
         initialValues={{
           email: '',
-          password: '',
           full_name: '',
+          password: '',
           phone_number: {
-            national_number: '',
-            country_code: 'US'
+            country_code: 'US',
+            national_number: ''
           }
         }}
         validate={values => {
@@ -105,104 +92,100 @@ class SignUp extends React.Component<AllProps> {
           return errors
         }}
         onSubmit={(values, actions) => {
-          hashPassword(values.password).then(password_hash => {
-            // Don't send the plain text password to the server.
-            // Mix in the public key, password hash.
-            let new_client = {
-              ...values,
-              box_public_key: this.props.keys.current_key.box_public_key,
-              signing_public_key: this.props.keys.current_key.signing_public_key,
-              password_hash: password_hash
-            }
-            // Remove the plain text password before sending this obj to the server.
-            delete new_client.password
-            this.props.submitNewClientRequest(new_client, {
-              actions: actions
-            })
+          const newClient = {
+            ...values,
+            // The password hash is computed in the sagas
+            password_hash: values.password
+          }
+          delete newClient.password
+          this.props.submitNewClientRequest(newClient, {
+            actions
           })
         }}
-        render={({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
-          <Form>
-            <Grid container direction="column" spacing={2}>
-              <Grid item>
-                <FormControl fullWidth>
-                  <Field name="email" type="email" label="Email" component={TextField} />
-                </FormControl>
-              </Grid>
-              <Grid item>
-                <FormControl fullWidth>
-                  <Field type="password" label="Password" name="password" component={TextField} />
-                </FormControl>
-              </Grid>
-              <Grid item>
-                <FormControl fullWidth>
-                  <Field type="text" label="Your Name" name="full_name" component={TextField} />
-                </FormControl>
-              </Grid>
-              <Grid item>
-                <FormControl fullWidth>
-                  <FormGroup row={true}>
-                    <Grid container>
-                      <Grid item>
-                        <InputLabel htmlFor="phone_number.country_code">Country Code</InputLabel>
-                        <Field
-                          name="phone_number.country_code"
-                          label="Country Code"
-                          component={Select}
-                          fullWidth
-                        >
-                          {CountryCodes.map(value => {
-                            return (
-                              <MenuItem key={value.code} value={value.code}>
-                                {value.text}
-                              </MenuItem>
-                            )
-                          })}
-                        </Field>
-                      </Grid>
-                      <Grid item xs>
-                        <Field
-                          type="text"
-                          name="phone_number.national_number"
-                          label="Phone Number"
-                          component={PhoneNumberTextField}
-                          fullWidth
-                        />
-                      </Grid>
-                    </Grid>
-                  </FormGroup>
-                </FormControl>
-              </Grid>
-              {this.props.client.errors && (
-                <Grid item>
-                  <SnackbarContent
-                    message={
-                      <h3>
-                        <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
-                        {this.props.client.errors}
-                      </h3>
-                    }
-                  />
-                </Grid>
-              )}
-              <Grid item>
-                {isSubmitting && <LinearProgress />}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={isSubmitting || !isValid}
-                  onClick={submitForm}
-                  fullWidth
-                >
-                  Sign Up 👍
-                </Button>
-              </Grid>
-            </Grid>
-          </Form>
-        )}
+        render={this.handleFormRender}
       />
     )
   }
+
+  private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
+    <Form>
+      <Grid container direction="column" spacing={2}>
+        <Grid item>
+          <FormControl fullWidth>
+            <Field name="email" type="email" label="Email" component={TextField} />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl fullWidth>
+            <Field type="password" label="Password" name="password" component={TextField} />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl fullWidth>
+            <Field type="text" label="Your Name" name="full_name" component={TextField} />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl fullWidth>
+            <FormGroup row={true}>
+              <Grid container>
+                <Grid item>
+                  <InputLabel htmlFor="phone_number.country_code">Country Code</InputLabel>
+                  <Field
+                    name="phone_number.country_code"
+                    label="Country Code"
+                    component={Select}
+                    fullWidth
+                  >
+                    {CountryCodes.map(value => {
+                      return (
+                        <MenuItem key={value.code} value={value.code}>
+                          {value.text}
+                        </MenuItem>
+                      )
+                    })}
+                  </Field>
+                </Grid>
+                <Grid item xs>
+                  <Field
+                    type="text"
+                    name="phone_number.national_number"
+                    label="Phone Number"
+                    component={PhoneNumberTextField}
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+            </FormGroup>
+          </FormControl>
+        </Grid>
+        {this.props.client.signUpFormErrors && (
+          <Grid item>
+            <SnackbarContent
+              message={
+                <h3>
+                  <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
+                  {this.props.client.signUpFormErrors}
+                </h3>
+              }
+            />
+          </Grid>
+        )}
+        <Grid item>
+          {isSubmitting && <LinearProgress />}
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting || !isValid}
+            onClick={submitForm}
+            fullWidth
+          >
+            Sign Up 👍
+          </Button>
+        </Grid>
+      </Grid>
+    </Form>
+  )
 }
 
 const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
