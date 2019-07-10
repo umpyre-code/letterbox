@@ -8,7 +8,7 @@ import {
   Paper,
   Theme
 } from '@material-ui/core'
-import { EditorState } from 'draft-js'
+import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
 import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
@@ -23,6 +23,7 @@ import { removeDraftRequest, updateDraftRequest } from '../../../store/drafts/ac
 import { Draft } from '../../../store/drafts/types'
 import { sendMessageRequest } from '../../../store/messages/actions'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
+import { MessageBodyModel } from '../../messages/MessageBody'
 import './Draft.css'
 import {
   DiscardButton,
@@ -33,7 +34,6 @@ import {
   RecipientField,
   SendButton
 } from './Widgets'
-import { convertFromRaw, convertToRaw } from 'draft-js'
 
 const editorPlugins = [
   inlineToolbarPlugin,
@@ -91,8 +91,11 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendMessage, updateDra
   const classes = useStyles()
 
   function handleSend() {
+    const messageBody: MessageBodyModel = {
+      markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
+    }
     const message = {
-      body: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
+      body: JSON.stringify(messageBody),
       pda,
       sent_at: new Date(),
       to: recipient
