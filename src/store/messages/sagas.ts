@@ -188,7 +188,7 @@ async function hashMessage(message: APIMessage): Promise<APIMessage> {
     }
   })
   const hash = sodium.to_base64(
-    sodium.crypto_generichash(16, sodium.from_string(hashableMessageJson)),
+    sodium.crypto_generichash(32, sodium.from_string(hashableMessageJson)),
     sodium.base64_variants.ORIGINAL_NO_PADDING
   )
 
