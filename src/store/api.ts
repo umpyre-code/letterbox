@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
+import * as qs from 'querystringify'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage, Message, MessagesResponse } from './models/messages'
 
@@ -29,9 +30,12 @@ export class API {
     return api.fetchClient(clientId)
   }
 
-  public static async FETCH_MESSAGES(credentials: ClientCredentials): Promise<Message[]> {
+  public static async FETCH_MESSAGES(
+    credentials: ClientCredentials,
+    sketch: string
+  ): Promise<Message[]> {
     const api = new API(credentials)
-    return api.fetchMessages()
+    return api.fetchMessages(sketch)
   }
 
   private client: AxiosInstance
@@ -45,14 +49,16 @@ export class API {
     return this.client.get(`/client/${clientId}`).then(response => response.data)
   }
 
-  public async fetchMessages(): Promise<Message[]> {
+  public async fetchMessages(sketch: string): Promise<Message[]> {
     // The received_at field is actually an object that looks like this:
     // received_at: {
     //   nanos: number
     //   seconds: number,
     // }
     // Here we convert it into a local representation which has a simplified date.
-    return this.client.get('/messages').then(response => fromApiMessages(response.data))
+    const params = new URLSearchParams()
+    params.append('sketch', sketch)
+    return this.client.get('/messages', { params }).then(response => fromApiMessages(response.data))
   }
 
   public async sendMessage(message: APIMessage): Promise<Message> {

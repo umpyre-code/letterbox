@@ -1,10 +1,11 @@
 import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
 import { ApplicationState } from '../'
 import { db } from '../../db/db'
+import { BloomFilter } from '../../util/BloomFilter'
 import { API } from '../api'
 import { removeDraftRequest } from '../drafts/actions'
 import { KeyPair } from '../keyPairs/types'
-import { ClientCredentials, ClientProfile, ClientID } from '../models/client'
+import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
 import {
   fetchMessagesError,
@@ -18,7 +19,7 @@ import {
 } from './actions'
 import { MessagesActionTypes } from './types'
 
-async function initializeMessages(): Promise<Message[]> {
+async function getAllMessages(): Promise<Message[]> {
   return db.messages
     .orderBy('received_at')
     .reverse()
@@ -27,7 +28,7 @@ async function initializeMessages(): Promise<Message[]> {
 
 function* handleInitializeMessages() {
   try {
-    const res = yield call(initializeMessages)
+    const res = yield call(getAllMessages)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -56,9 +57,34 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
+async function getAllMessagesInLast30Days(): Promise<Message[]> {
+  const nowMinus30Days = new Date()
+  nowMinus30Days.setDate(nowMinus30Days.getDate() - 30)
+
+  return db.messages
+    .orderBy('received_at')
+    .reverse()
+    .filter(message => {
+      return message.received_at! >= nowMinus30Days
+    })
+    .toArray()
+}
+
+async function calculateMessageSketch(): Promise<string> {
+  const messagesFromLast30days = await getAllMessagesInLast30Days()
+
+  // Construct bloom filter
+  const bf = new BloomFilter()
+  messagesFromLast30days.forEach(message => bf.add(message.hash!))
+
+  await sodium.ready
+  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.ORIGINAL_NO_PADDING)
+}
+
 async function fetchMessages(credentials: ClientCredentials) {
   const api = new API(credentials)
-  const messages = await api.fetchMessages()
+  const sketch = await calculateMessageSketch()
+  const messages = await api.fetchMessages(sketch)
   const decryptedMessages = await Promise.all(
     messages.map((message: Message) => decryptMessage(message))
   )

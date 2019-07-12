@@ -1,6 +1,7 @@
 import {
   Container,
   createStyles,
+  CssBaseline,
   Divider,
   Grid,
   makeStyles,
@@ -33,9 +34,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     composeButton: {
       bottom: theme.spacing(2),
-      position: 'absolute',
+      margin: '0 auto',
+      position: 'fixed',
       right: theme.spacing(2),
-      zIndex: 1000
+      zIndex: 1
+    },
+    draftContainer: {
+      margin: theme.spacing(1, 0, 1, 0)
+    },
+    messageListContainer: {
+      margin: theme.spacing(1, 0, 1, 0)
     }
   })
 )
@@ -44,38 +52,41 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
   const classes = useStyles()
 
   return (
-    <Container>
-      <Tooltip title="Compose a new message">
-        <Fab
-          className={classes.composeButton}
-          color="primary"
-          aria-label="Compose"
-          onClick={addDraft}
-        >
-          <Edit />
-        </Fab>
-      </Tooltip>
-      <Grid container spacing={1} justify="space-between">
-        <Grid item xs={7}>
-          <Typography variant="h2" component="h2">
-            <strong>Umpyre</strong>
-          </Typography>
+    <React.Fragment>
+      <CssBaseline />
+      <Container>
+        <Tooltip title="Compose a new message">
+          <Fab
+            className={classes.composeButton}
+            color="primary"
+            aria-label="Compose"
+            onClick={addDraft}
+          >
+            <Edit />
+          </Fab>
+        </Tooltip>
+        <Grid container spacing={1} justify="space-between">
+          <Grid item xs={7}>
+            <Typography variant="h2" component="h2">
+              <strong>Umpyre</strong>
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <Profile profile={profile} />
+          </Grid>
+          <Grid item xs style={{ position: 'relative' }}></Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
         </Grid>
-        <Grid item xs={5}>
-          <Profile profile={profile} />
-        </Grid>
-        <Grid item xs style={{ position: 'relative' }}></Grid>
-        <Grid item xs={12}>
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <DraftList />
-        </Grid>
-        <Grid item xs={12}>
-          <MessageList />
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+      <Container className={classes.draftContainer}>
+        <DraftList />
+      </Container>
+      <Container className={classes.messageListContainer}>
+        <MessageList />
+      </Container>
+    </React.Fragment>
   )
 }
 
