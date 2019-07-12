@@ -3,6 +3,10 @@ steps:
     entrypoint: 'yarn'
     args: ['install']
   - name: 'gcr.io/cloud-builders/npm'
+    entrypoint: 'yarn'
+    args: ['run', 'test']
+  - name: 'gcr.io/cloud-builders/npm'
+    entrypoint: 'yarn'
     args: ['run', 'build']
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['cp', 'dist/*', 'gs://staging.umpyre.io/']
