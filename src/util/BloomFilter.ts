@@ -96,7 +96,7 @@ export class BloomFilter {
   // See http://willwhim.wpengine.com/2011/09/03/producing-n-hash-functions-by-hashing-only-once/
   public locations(value: string): Uint16Array {
     const a = fnv_1a(value)
-    const b = fnv_1a(value, 1576284489) // The seed value is chosen randomly
+    const b = fnv_1a(value, 872958581) // The seed value is chosen randomly
     let x = a % this.m
     for (let i = 0; i < this.k; ++i) {
       this.locationsBuffer[i] = x < 0 ? x + this.m : x
