@@ -19,7 +19,11 @@ import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { removeDraftRequest, updateDraftRequest } from '../../../store/drafts/actions'
+import {
+  removeDraftRequest,
+  updateDraftRequest,
+  sendDraftRequest
+} from '../../../store/drafts/actions'
 import { Draft } from '../../../store/drafts/types'
 import { sendMessageRequest } from '../../../store/messages/actions'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
@@ -34,6 +38,7 @@ import {
   RecipientField,
   SendButton
 } from './Widgets'
+import { toApiMessage } from '../../../store/messages/utils'
 
 const editorPlugins = [
   inlineToolbarPlugin,
@@ -74,13 +79,13 @@ interface Props {
 
 interface PropsFromDispatch {
   removeDraft: typeof removeDraftRequest
-  sendMessage: typeof sendMessageRequest
+  sendDraft: typeof sendDraftRequest
   updateDraft: typeof updateDraftRequest
 }
 
 type AllProps = Props & PropsFromDispatch
 
-const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendMessage, updateDraft, draft }) => {
+const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft, draft }) => {
   const [editorState, setEditorState] = React.useState(
     draft.editorContent
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(draft.editorContent)))
@@ -100,8 +105,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendMessage, updateDra
       sent_at: new Date(),
       to: recipient
     }
-    updateDraft({ ...draft, sending: true })
-    sendMessage({ message, draft })
+    sendDraft({ ...draft, message })
   }
 
   function handleDiscard() {
@@ -182,7 +186,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendMessage, updateDra
 
 const mapDispatchToProps = {
   removeDraft: removeDraftRequest,
-  sendMessage: sendMessageRequest,
+  sendDraft: sendDraftRequest,
   updateDraft: updateDraftRequest
 }
 

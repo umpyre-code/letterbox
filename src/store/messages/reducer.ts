@@ -4,7 +4,8 @@ import { MessagesActionTypes, MessagesState } from './types'
 export const initialState: MessagesState = {
   errors: undefined,
   loading: false,
-  messages: Array.from([])
+  messages: Array.from([]),
+  sketch: ''
 }
 
 export const reducer: Reducer<MessagesState> = (state = initialState, action) => {
@@ -34,6 +35,9 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {
       return { ...state, loading: false, errors: action.payload }
+    }
+    case MessagesActionTypes.UPDATE_SKETCH_SUCCESS: {
+      return { ...state, sketch: action.payload }
     }
     default: {
       return state

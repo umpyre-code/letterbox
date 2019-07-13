@@ -1,11 +1,21 @@
-import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
+import {
+  all,
+  call,
+  delay,
+  fork,
+  put,
+  select,
+  spawn,
+  takeEvery,
+  takeLatest
+} from 'redux-saga/effects'
 import { ApplicationState } from '../'
 import { db } from '../../db/db'
 import { BloomFilter } from '../../util/BloomFilter'
 import { API } from '../api'
 import { removeDraftRequest } from '../drafts/actions'
-import { KeyPair } from '../keyPairs/types'
-import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
+import { Draft } from '../drafts/types'
+import { ClientCredentials } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
 import {
   fetchMessagesError,
@@ -15,9 +25,16 @@ import {
   initializeMessagesSuccess,
   sendMessageError,
   sendMessageRequest,
-  sendMessageSuccess
+  sendMessageSuccess,
+  updateSketchRequest,
+  updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
+
+// This doesn't work unless we use the old-style of import. I gave up trying to
+// figure out why.
+// tslint:disable-next-line
+const sodium = require('libsodium-wrappers')
 
 async function getAllMessages(): Promise<Message[]> {
   return db.messages
@@ -28,6 +45,8 @@ async function getAllMessages(): Promise<Message[]> {
 
 function* handleInitializeMessages() {
   try {
+    // Update message sketch first
+    yield put(updateSketchRequest())
     const res = yield call(getAllMessages)
 
     if (res.error) {
@@ -52,39 +71,17 @@ function* watchInitializeMessagesRequest() {
 }
 
 function* delayThenFetchMessages() {
-  const fetchIntervalMillis = 1500
+  const fetchIntervalMillis = 2000
   yield delay(fetchIntervalMillis)
   yield put(fetchMessagesRequest())
 }
 
-async function getAllMessagesInLast30Days(): Promise<Message[]> {
-  const nowMinus30Days = new Date()
-  nowMinus30Days.setDate(nowMinus30Days.getDate() - 30)
-
-  return db.messages
-    .orderBy('received_at')
-    .reverse()
-    .filter(message => {
-      return message.received_at! >= nowMinus30Days
-    })
-    .toArray()
-}
-
-async function calculateMessageSketch(): Promise<string> {
-  const messagesFromLast30days = await getAllMessagesInLast30Days()
-
-  // Construct bloom filter
-  const bf = new BloomFilter()
-  messagesFromLast30days.forEach(message => bf.add(message.hash!))
-
-  await sodium.ready
-  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.ORIGINAL_NO_PADDING)
-}
-
-async function fetchMessages(credentials: ClientCredentials) {
+async function fetchMessages(credentials: ClientCredentials, sketch: string) {
   const api = new API(credentials)
-  const sketch = await calculateMessageSketch()
-  const messages = await api.fetchMessages(sketch)
+  return api.fetchMessages(sketch)
+}
+
+async function decryptStoreAndRetrieveMessages(messages: Message[]) {
   const decryptedMessages = await Promise.all(
     messages.map((message: Message) => decryptMessage(message))
   )
@@ -132,11 +129,14 @@ function* handleFetchMessages() {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(fetchMessages, credentials)
+    const sketch = state.messagesState.sketch
+    const messages = yield call(fetchMessages, credentials, sketch)
 
-    if (res.error) {
-      yield put(fetchMessagesError(res.error))
-    } else {
+    if (messages.error) {
+      yield put(fetchMessagesError(messages.error))
+    } else if (messages.length > 0) {
+      yield put(updateSketchRequest())
+      const res = yield call(decryptStoreAndRetrieveMessages, messages)
       yield put(fetchMessagesSuccess(res))
     }
   } catch (err) {
@@ -155,129 +155,24 @@ function* watchFetchMessagesRequest() {
   yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
-
-function toApiMessage(message: Message, from: ClientID): APIMessage {
-  return {
-    ...message,
-    from,
-    received_at: undefined,
-    sent_at: {
-      nanos: (message.sent_at.getTime() % 1000) * 1e6,
-      seconds: Math.floor(message.sent_at.getTime() / 1000)
-    }
-  }
-}
-
-async function encryptMessageBody(
-  message: APIMessage,
-  keyPair: KeyPair,
-  theirPublicKey: string
-): Promise<APIMessage> {
-  await sodium.ready
-  const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES)
-  const ciphertext = sodium.crypto_box_easy(
-    sodium.from_string(message.body),
-    nonce,
-    sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    sodium.from_base64(keyPair.box_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
-  )
-  return {
-    ...message,
-    body: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    recipient_public_key: theirPublicKey,
-    sender_public_key: keyPair.box_public_key
-  }
-}
-
-async function hashMessage(message: APIMessage): Promise<APIMessage> {
-  await sodium.ready
-  const hashableMessage: any = {
-    ...message,
-    hash: undefined,
-    signature: undefined
-  }
-
-  const orderedKeysObj: any = {}
-  Object.keys(hashableMessage)
-    .sort()
-    .forEach(key => {
-      orderedKeysObj[key] = hashableMessage[key]
-    })
-  const hashableMessageJson = JSON.stringify(orderedKeysObj, (key, value) => {
-    if (value !== null) {
-      return value
-    }
-  })
-  const hash = sodium.to_base64(
-    sodium.crypto_generichash(32, sodium.from_string(hashableMessageJson)),
-    sodium.base64_variants.ORIGINAL_NO_PADDING
-  )
-
-  return {
-    ...message,
-    hash
-  }
-}
-
-async function signMessage(message: APIMessage, keyPair: KeyPair): Promise<APIMessage> {
-  await sodium.ready
-  const signableMessage: any = {
-    ...message,
-    signature: undefined
-  }
-
-  const orderedKeysObj: any = {}
-  Object.keys(signableMessage)
-    .sort()
-    .forEach(key => {
-      orderedKeysObj[key] = signableMessage[key]
-    })
-  const signableMessageJson = JSON.stringify(orderedKeysObj)
-  const signature = sodium.to_base64(
-    sodium.crypto_sign_detached(
-      sodium.from_string(signableMessageJson),
-      sodium.from_base64(keyPair.signing_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
-    ),
-    sodium.base64_variants.ORIGINAL_NO_PADDING
-  )
-
-  return {
-    ...message,
-    signature
-  }
-}
-
 async function sendMessage(
   credentials: ClientCredentials,
-  keyPair: KeyPair,
-  message: Message
+  apiMessage: APIMessage
 ): Promise<Message> {
   const api = new API(credentials)
-  const recipientProfile: ClientProfile = await api.fetchClient(message.to)
-  const apiMessage = toApiMessage(message, credentials.client_id)
-  const encryptedMessage = await encryptMessageBody(
-    apiMessage,
-    keyPair,
-    recipientProfile.box_public_key
-  )
-  const hashedMessage = await hashMessage(encryptedMessage)
-  const signedMessage = await signMessage(hashedMessage, keyPair)
-
-  return api.sendMessage(signedMessage)
+  return api.sendMessage(apiMessage)
 }
 
 function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
   const { payload } = values
-  const { message, draft } = payload
+  const draft: Draft = payload
+  const { apiMessage } = draft
   try {
+    console.log(draft)
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(sendMessage, credentials, state.keysState.current_key!, message)
+    const res = yield call(sendMessage, credentials, apiMessage!)
+    console.log(res)
 
     if (res.error) {
       yield put(sendMessageError(res.error))
@@ -287,6 +182,7 @@ function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
       yield put(removeDraftRequest(draft))
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(sendMessageError(err.response.data.message))
     } else if (err.message) {
@@ -301,10 +197,44 @@ function* watchSendMessageRequest() {
   yield takeEvery(MessagesActionTypes.SEND_MESSAGE_REQUEST, handleSendMessage)
 }
 
+async function getAllMessagesInLast31Days(): Promise<Message[]> {
+  const nowMinus31Days = new Date()
+  nowMinus31Days.setDate(nowMinus31Days.getDate() - 31)
+
+  return db.messages
+    .orderBy('received_at')
+    .reverse()
+    .filter(message => {
+      return message.received_at! >= nowMinus31Days
+    })
+    .toArray()
+}
+
+async function calculateMessageSketch(): Promise<string> {
+  const messagesFromLast30days = await getAllMessagesInLast31Days()
+
+  // Construct bloom filter
+  const bf = new BloomFilter()
+  messagesFromLast30days.forEach(message => bf.add(message.hash!))
+
+  await sodium.ready
+  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.ORIGINAL_NO_PADDING)
+}
+
+function* handleUpdateSketch(values: ReturnType<typeof updateSketchRequest>) {
+  const sketch = yield call(calculateMessageSketch)
+  yield put(updateSketchSuccess(sketch))
+}
+
+function* watchUpdateSketchRequest() {
+  yield takeLatest(MessagesActionTypes.UPDATE_SKETCH_REQUEST, handleUpdateSketch)
+}
+
 export function* sagas() {
   yield all([
     fork(watchInitializeMessagesRequest),
     fork(watchFetchMessagesRequest),
-    fork(watchSendMessageRequest)
+    fork(watchSendMessageRequest),
+    fork(watchUpdateSketchRequest)
   ])
 }

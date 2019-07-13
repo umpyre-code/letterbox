@@ -26,21 +26,41 @@ export interface NewClientMeta {
   actions: FormikActions<{}>
 }
 
+export const emptyClientProfile: ClientProfile = {
+  box_public_key: '',
+  client_id: '',
+  full_name: '',
+  handle: undefined,
+  profile: undefined,
+  signing_public_key: ''
+}
+
+export const loadingClientProfile: ClientProfile = {
+  box_public_key: '',
+  client_id: '',
+  full_name: 'Unknown Person',
+  handle: undefined,
+  profile: undefined,
+  signing_public_key: ''
+}
+
 export class ClientProfileHelper implements ClientProfile {
   public static FROM(clientProfile: ClientProfile): ClientProfileHelper {
     return new ClientProfileHelper(clientProfile)
   }
 
   // tslint:disable variable-name
+  public box_public_key: string = ''
   public client_id: string = ''
   public full_name: string = ''
-  public box_public_key: string = ''
+  public handle?: string
+  public profile?: string
   public signing_public_key: string = ''
 
   constructor(clientProfile: ClientProfile) {
+    this.box_public_key = clientProfile.box_public_key
     this.client_id = clientProfile.client_id
     this.full_name = clientProfile.full_name
-    this.box_public_key = clientProfile.box_public_key
     this.signing_public_key = clientProfile.signing_public_key
   }
 

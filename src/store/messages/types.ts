@@ -1,4 +1,3 @@
-import { Draft } from '../drafts/types'
 import { Message } from '../models/messages'
 
 export interface FetchMessagesResponse {
@@ -14,16 +13,14 @@ export const enum MessagesActionTypes {
   FETCH_MESSAGES_ERROR = '@@messages/FETCH_MESSAGES_ERROR',
   SEND_MESSAGE_REQUEST = '@@messages/SEND_MESSAGE_REQUEST',
   SEND_MESSAGE_SUCCESS = '@@messages/SEND_MESSAGE_SUCCESS',
-  SEND_MESSAGE_ERROR = '@@messages/SEND_MESSAGE_ERROR'
+  SEND_MESSAGE_ERROR = '@@messages/SEND_MESSAGE_ERROR',
+  UPDATE_SKETCH_REQUEST = '@@messages/UPDATE_SKETCH_REQUEST',
+  UPDATE_SKETCH_SUCCESS = '@@messages/UPDATE_SKETCH_SUCCESS'
 }
 
 export interface MessagesState {
   readonly loading: boolean
   readonly messages: Message[]
   readonly errors?: string
-}
-
-export interface SendMessage {
-  message: Message
-  draft: Draft
+  readonly sketch: string
 }

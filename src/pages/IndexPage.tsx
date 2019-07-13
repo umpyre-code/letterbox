@@ -40,10 +40,13 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 1
     },
     draftContainer: {
-      margin: theme.spacing(1, 0, 1, 0)
+      padding: theme.spacing(1)
+    },
+    headerContainer: {
+      padding: theme.spacing(1)
     },
     messageListContainer: {
-      margin: theme.spacing(1, 0, 1, 0)
+      padding: theme.spacing(1)
     }
   })
 )
@@ -54,7 +57,7 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container>
+      <Container className={classes.headerContainer}>
         <Tooltip title="Compose a new message">
           <Fab
             className={classes.composeButton}

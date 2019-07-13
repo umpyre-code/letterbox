@@ -1,6 +1,7 @@
 import { action } from 'typesafe-actions'
+import { Draft } from '../drafts/types'
 import { Message } from '../models/messages'
-import { MessagesActionTypes, SendMessage } from './types'
+import { MessagesActionTypes } from './types'
 
 export const initializeMessagesRequest = () =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST)
@@ -15,8 +16,12 @@ export const fetchMessagesSuccess = (messages: Message[]) =>
 export const fetchMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.FETCH_MESSAGES_ERROR, errorMessage)
 
-export const sendMessageRequest = (message: SendMessage) =>
-  action(MessagesActionTypes.SEND_MESSAGE_REQUEST, message)
+export const sendMessageRequest = (draft: Draft) =>
+  action(MessagesActionTypes.SEND_MESSAGE_REQUEST, draft)
 export const sendMessageSuccess = () => action(MessagesActionTypes.SEND_MESSAGE_SUCCESS)
 export const sendMessageError = (errorMessage: string) =>
   action(MessagesActionTypes.SEND_MESSAGE_ERROR, errorMessage)
+
+export const updateSketchRequest = () => action(MessagesActionTypes.UPDATE_SKETCH_REQUEST)
+export const updateSketchSuccess = (sketch: string) =>
+  action(MessagesActionTypes.UPDATE_SKETCH_SUCCESS, sketch)

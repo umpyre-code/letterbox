@@ -14,6 +14,7 @@ import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-mate
 import { AsYouType } from 'libphonenumber-js'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import * as Yup from 'yup'
 import { ApplicationState } from '../../store'
 import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
@@ -60,6 +61,20 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
 
 type AllProps = PropsFromDispatch & PropsFromState
 
+const SignupFormSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("That doesn't look right")
+    .required('We need a way to occasionally reach you'),
+  full_name: Yup.string()
+    .max(100, 'Keep it under 100 characters')
+    .required('How shall we address you?'),
+  password: Yup.string().required('Make it unique'),
+  phone_number: Yup.object().shape({
+    country_code: Yup.string().required(),
+    national_number: Yup.string().required("We need to know you're not a robot")
+  })
+})
+
 class SignUp extends React.Component<AllProps> {
   public render() {
     return (
@@ -73,24 +88,7 @@ class SignUp extends React.Component<AllProps> {
             national_number: ''
           }
         }}
-        validate={values => {
-          const errors: Partial<Values> = {}
-          if (!values.email) {
-            errors.email = 'Required'
-          } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-            errors.email = 'Invalid email address'
-          }
-          if (!values.full_name) {
-            errors.full_name = 'Required'
-          }
-          if (!values.password) {
-            errors.password = 'Required'
-          }
-          if (!values.phone_number.national_number) {
-            errors.phone_number = { national_number: 'Required' }
-          }
-          return errors
-        }}
+        validationSchema={SignupFormSchema}
         onSubmit={(values, actions) => {
           const newClient = {
             ...values,

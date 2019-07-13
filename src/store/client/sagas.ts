@@ -54,7 +54,7 @@ function* handleInitializeClientRequest() {
 }
 
 function* delayThenFetchClient() {
-  const fetchIntervalMillis = 1500
+  const fetchIntervalMillis = 2000
   yield delay(fetchIntervalMillis)
   yield put(fetchClientRequest())
 }

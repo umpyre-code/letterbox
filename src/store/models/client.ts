@@ -24,4 +24,6 @@ export interface ClientProfile {
   full_name: string
   box_public_key: string
   signing_public_key: string
+  handle?: string
+  profile?: string
 }

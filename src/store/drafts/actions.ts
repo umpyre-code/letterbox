@@ -26,3 +26,9 @@ export const updateDraftSuccess = (drafts: Draft[]) =>
   action(DraftsActionTypes.UPDATE_DRAFT_SUCCESS, drafts)
 export const updateDraftError = (errorMessage: string) =>
   action(DraftsActionTypes.UPDATE_DRAFT_ERROR, errorMessage)
+
+export const sendDraftRequest = (draft: Draft) =>
+  action(DraftsActionTypes.SEND_DRAFT_REQUEST, draft)
+export const sendDraftSuccess = () => action(DraftsActionTypes.SEND_DRAFT_SUCCESS)
+export const sendDraftError = (errorMessage: string) =>
+  action(DraftsActionTypes.SEND_DRAFT_ERROR, errorMessage)

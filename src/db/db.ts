@@ -9,10 +9,17 @@ interface Token extends ClientCredentials {
   created_at: Date
 }
 
+// A simple key/value pair
+interface KeyValue {
+  key: string
+  value: string
+}
+
 class UmpyreDb extends Dexie {
   public apiTokens: Dexie.Table<Token, number>
   public drafts: Dexie.Table<Draft, number>
   public keyPairs: Dexie.Table<KeyPair, number>
+  public keyValues: Dexie.Table<KeyValue, string>
   public messages: Dexie.Table<Message, string>
 
   public constructor() {
@@ -22,12 +29,14 @@ class UmpyreDb extends Dexie {
       drafts: '++id, editorContent, recipient, pda, created_at',
       keyPairs:
         '++id, box_public_key, box_secret_key, signing_public_key, signing_secret_key, created_at',
+      keyValues: 'key, value',
       messages:
         'hash, body, to, from, received_at, pda, recipient_public_key, sender_public_key, nonce, sent_at, signature'
     })
     this.apiTokens = this.table('api_tokens')
     this.drafts = this.table('drafts')
     this.keyPairs = this.table('keyPairs')
+    this.keyValues = this.table('keyValues')
     this.messages = this.table('messages')
   }
 }

@@ -47,9 +47,9 @@ const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => 
       return (
         <List className={classes.list}>
           {messagesState.messages.map((message, index) => (
-            <React.Fragment>
+            <React.Fragment key={message.hash}>
               {index > 0 && <Divider />}
-              <MessageListItem message={message} key={message.hash} />
+              <MessageListItem message={message} />
             </React.Fragment>
           ))}
         </List>

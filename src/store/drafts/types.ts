@@ -1,3 +1,5 @@
+import { APIMessage, Message } from '../models/messages'
+
 export interface Draft {
   id?: number
 
@@ -9,6 +11,8 @@ export interface Draft {
   pda: string
   created_at: Date
   sending: boolean
+  message?: Message
+  apiMessage?: APIMessage
 }
 
 export interface FetchDraftsResponse {
@@ -25,6 +29,9 @@ export const enum DraftsActionTypes {
   REMOVE_DRAFT_ERROR = '@@drafts/REMOVE_DRAFT_ERROR',
   REMOVE_DRAFT_REQUEST = '@@drafts/REMOVE_DRAFT_REQUEST',
   REMOVE_DRAFT_SUCCESS = '@@drafts/REMOVE_DRAFT_SUCCESS',
+  SEND_DRAFT_REQUEST = '@@drafts/SEND_DRAFT_REQUEST',
+  SEND_DRAFT_ERROR = '@@drafts/SEND_DRAFT_ERROR',
+  SEND_DRAFT_SUCCESS = '@@drafts/SEND_DRAFT_SUCCESS',
   UPDATE_DRAFT_ERROR = '@@drafts/UPDATE_DRAFT_ERROR',
   UPDATE_DRAFT_REQUEST = '@@drafts/UPDATE_DRAFT_REQUEST',
   UPDATE_DRAFT_SUCCESS = '@@drafts/UPDATE_DRAFT_SUCCESS'

@@ -14,7 +14,9 @@ export const Profile: React.FC<Props> = ({ profile }) => {
       const clientProfileHelper = ClientProfileHelper.FROM(profile)
       return (
         <CardHeader
-          avatar={<Avatar>{clientProfileHelper.getInitials()}</Avatar>}
+          avatar={
+            <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
+          }
           title={profile.full_name}
           subheader={profile.client_id}
         />
