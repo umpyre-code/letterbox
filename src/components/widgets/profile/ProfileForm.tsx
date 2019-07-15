@@ -1,12 +1,12 @@
 import {
   Avatar,
   Button,
+  Card,
   CardHeader,
   createStyles,
   LinearProgress,
   makeStyles,
-  Theme,
-  Card
+  Theme
 } from '@material-ui/core'
 import DoneIcon from '@material-ui/icons/Done'
 import { Field, Form, Formik, FormikProps, FormikValues } from 'formik'
