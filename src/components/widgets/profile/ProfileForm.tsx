@@ -1,159 +1,107 @@
 import {
   Avatar,
-  Card,
-  CardContent,
+  Button,
   CardHeader,
   createStyles,
-  Divider,
-  IconButton,
+  LinearProgress,
   makeStyles,
-  Menu,
-  MenuItem,
   Theme,
-  Typography
+  Card
 } from '@material-ui/core'
-import EditButton from '@material-ui/icons/Edit'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
+import DoneIcon from '@material-ui/icons/Done'
+import { Field, Form, Formik, FormikProps, FormikValues } from 'formik'
+import { TextField } from 'formik-material-ui'
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-import { ClientProfileHelper } from '../../store/client/types'
-import { ClientProfile } from '../../store/models/client'
-import { markdownToHtml } from '../../util/markdownToHtml'
-import Loading from './Loading'
+import * as Yup from 'yup'
+import { ClientProfileHelper } from '../../../store/client/types'
+import { ClientProfile } from '../../../store/models/client'
 
-const useStyles = makeStyles((theme: Theme) => createStyles({}))
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    doneIcon: {
+      marginLeft: theme.spacing(1)
+    }
+  })
+)
 
 interface Props {
-  editButton?: boolean
-  full?: boolean
-  menu?: boolean
   profile?: ClientProfile
 }
 
-interface ProfileMenuProps {
-  menuAnchorElement: null | HTMLElement
-  setMenuAnchorElementNull: () => void
-}
+const ProfileFormSchema = Yup.object().shape({
+  full_name: Yup.string()
+    .max(100, 'Keep it under 100 characters')
+    .required('How shall we address you?'),
+  handle: Yup.string()
+    .max(100, 'Keep it under 100 characters')
+    .lowercase()
+    .trim()
+    .matches(
+      /^[a-z0-9_.-]*$/,
+      "Your handle can't contain special characters; only A to Z, 0 to 9, _, ., and -."
+    )
+    .nullable()
+})
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({
-  menuAnchorElement,
-  setMenuAnchorElementNull
-}) => {
-  function handleMenuClose() {
-    setMenuAnchorElementNull()
-  }
-
-  return (
-    <Menu
-      id="simple-menu"
-      anchorEl={menuAnchorElement}
-      keepMounted
-      open={Boolean(menuAnchorElement)}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/profile">My Public Profile</Link>
-      </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/account">My Account</Link>
-      </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/logout">Logout</Link>
-      </MenuItem>
-    </Menu>
-  )
-}
-
-export const Profile: React.FC<Props> = ({ editButton, full, menu, profile }) => {
+export const ProfileForm: React.FC<Props> = ({ profile }) => {
+  const clientProfileHelper = ClientProfileHelper.FROM(profile!)
   const classes = useStyles()
-  const [isEditing, setIsEditing] = React.useState<boolean>(false)
-  const [menuAnchorElement, setMenuAnchorElement] = React.useState<null | HTMLElement>(null)
 
-  const profileMenu = (
-    <ProfileMenu
-      menuAnchorElement={menuAnchorElement}
-      setMenuAnchorElementNull={() => setMenuAnchorElement(null)}
-    />
-  )
+  const handleFormRender = (props: FormikProps<FormikValues>) => {
+    const { submitForm, isSubmitting, isValid, isValidating } = props
 
-  function getAction() {
-    if (editButton) {
-      return (
-        <IconButton aria-label="Edit" onClick={() => setIsEditing(!isEditing)}>
-          <EditButton />
-        </IconButton>
-      )
-    } else if (menu) {
-      return (
-        <IconButton
-          aria-label="Settings"
-          onClick={event => setMenuAnchorElement(event.currentTarget)}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      )
-    } else {
-      return null
-    }
-  }
-
-  function getHandle() {
-    if (profile && profile.handle && profile.handle.length > 0) {
-      return `/u/${profile.handle}`
-    } else {
-      return null
-    }
-  }
-
-  function getCardHeader() {
-    if (profile) {
-      const clientProfileHelper = ClientProfileHelper.FROM(profile)
-      return (
+    return (
+      <Form>
         <CardHeader
           avatar={
             <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
           }
-          action={getAction()}
-          title={profile.full_name}
-          subheader={getHandle()}
+          title={<Field type="text" label="Your Name" name="full_name" component={TextField} />}
+          subheader={<Field type="text" label="Handle" name="handle" component={TextField} />}
+          action={
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting || !isValid}
+              onClick={submitForm}
+              fullWidth
+            >
+              Done
+              <DoneIcon className={classes.doneIcon} />
+            </Button>
+          }
         />
-      )
-    } else {
-      return <Loading />
-    }
-  }
-
-  function getCardBody() {
-    if (profile && profile.profile && profile.profile.length > 0) {
-      return (
-        <React.Fragment>
-          <Typography component="h3" variant="h3">
-            About me
-          </Typography>
-          <Divider light />
-          <CardContent>
-            {/* tslint:disable-next-line: react-no-dangerous-html */}
-            <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
-          </CardContent>
-        </React.Fragment>
-      )
-    } else {
-      return null
-    }
+        {/* {this.props.client.signUpFormErrors && (
+          <Grid item>
+            <SnackbarContent
+              message={
+                <h3>
+                  <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
+                  {this.props.client.signUpFormErrors}
+                </h3>
+              }
+            />
+          </Grid>
+        )} */}
+        {isSubmitting && <LinearProgress />}
+      </Form>
+    )
   }
 
   return (
     <Card>
-      {getCardHeader()}
-      {getCardBody()}
-      {menu && profileMenu}
+      <Formik
+        initialValues={{
+          full_name: profile!.full_name!,
+          handle: profile!.handle || ''
+        }}
+        validationSchema={ProfileFormSchema}
+        isInitialValid={true}
+        onSubmit={(values, actions) => {
+          console.log(values)
+        }}
+        render={handleFormRender}
+      />
     </Card>
   )
-}
-
-Profile.defaultProps = {
-  editButton: false,
-  full: false,
-  menu: false,
-  profile: undefined
 }

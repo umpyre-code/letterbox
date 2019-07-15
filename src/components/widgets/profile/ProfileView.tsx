@@ -16,18 +16,18 @@ import EditButton from '@material-ui/icons/Edit'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { ClientProfileHelper } from '../../store/client/types'
-import { ClientProfile } from '../../store/models/client'
-import { markdownToHtml } from '../../util/markdownToHtml'
-import Loading from './Loading'
+import { ClientProfileHelper } from '../../../store/client/types'
+import { ClientProfile } from '../../../store/models/client'
+import { markdownToHtml } from '../../../util/markdownToHtml'
+import Loading from '../Loading'
 
 const useStyles = makeStyles((theme: Theme) => createStyles({}))
 
 interface Props {
-  editButton?: boolean
-  full?: boolean
+  editable?: boolean
   menu?: boolean
   profile?: ClientProfile
+  setIsEditing: (arg0: boolean) => void
 }
 
 interface ProfileMenuProps {
@@ -64,9 +64,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   )
 }
 
-export const Profile: React.FC<Props> = ({ editButton, full, menu, profile }) => {
+export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEditing }) => {
   const classes = useStyles()
-  const [isEditing, setIsEditing] = React.useState<boolean>(false)
   const [menuAnchorElement, setMenuAnchorElement] = React.useState<null | HTMLElement>(null)
 
   const profileMenu = (
@@ -77,9 +76,9 @@ export const Profile: React.FC<Props> = ({ editButton, full, menu, profile }) =>
   )
 
   function getAction() {
-    if (editButton) {
+    if (editable) {
       return (
-        <IconButton aria-label="Edit" onClick={() => setIsEditing(!isEditing)}>
+        <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
           <EditButton />
         </IconButton>
       )
@@ -149,11 +148,4 @@ export const Profile: React.FC<Props> = ({ editButton, full, menu, profile }) =>
       {menu && profileMenu}
     </Card>
   )
-}
-
-Profile.defaultProps = {
-  editButton: false,
-  full: false,
-  menu: false,
-  profile: undefined
 }

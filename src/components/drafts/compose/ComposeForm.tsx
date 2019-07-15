@@ -21,11 +21,10 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import {
   removeDraftRequest,
-  updateDraftRequest,
-  sendDraftRequest
+  sendDraftRequest,
+  updateDraftRequest
 } from '../../../store/drafts/actions'
 import { Draft } from '../../../store/drafts/types'
-import { sendMessageRequest } from '../../../store/messages/actions'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { MessageBodyModel } from '../../messages/MessageBody'
 import './Draft.css'
@@ -38,7 +37,6 @@ import {
   RecipientField,
   SendButton
 } from './Widgets'
-import { toApiMessage } from '../../../store/messages/utils'
 
 const editorPlugins = [
   inlineToolbarPlugin,
@@ -66,7 +64,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1, 1),
       width: '100%'
     },
-
     sendIcon: {
       marginLeft: theme.spacing(1)
     }
@@ -153,7 +150,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
                   )
                 })
               }}
-              placeholder="🔐 the message body is private"
+              placeholder="🔐 message body is private"
               spellCheck={true}
             />
           </Box>
