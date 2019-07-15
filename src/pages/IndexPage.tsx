@@ -15,7 +15,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
-import { Profile } from '../components/widgets/Profile'
+import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
 import { ClientProfile } from '../store/models/client'
@@ -75,7 +75,7 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
             </Typography>
           </Grid>
           <Grid item xs={5}>
-            <Profile profile={profile} />
+            <Profile profile={profile} menu />
           </Grid>
           <Grid item xs style={{ position: 'relative' }}></Grid>
           <Grid item xs={12}>
