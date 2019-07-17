@@ -19,7 +19,7 @@ export const Profile: React.FC<Props> = props => {
   const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
   if (isEditing) {
-    return <ProfileForm {...props} />
+    return <ProfileForm {...props} setIsEditing={setIsEditing} />
   } else {
     return <ProfileView {...props} setIsEditing={setIsEditing} />
   }

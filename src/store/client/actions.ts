@@ -1,6 +1,6 @@
 import { action } from 'typesafe-actions'
-import { NewClient } from '../models/client'
-import { ClientActionTypes, NewClientMeta } from './types'
+import { ClientProfile, NewClient } from '../models/client'
+import { ClientActionTypes, NewClientMeta, UpdateClientProfileMeta } from './types'
 
 export const initializeClientRequest = () => action(ClientActionTypes.INITIALIZE_CLIENT_REQUEST)
 export const initializeClientSuccess = (data: Client) =>
@@ -20,3 +20,12 @@ export const submitNewClientSuccess = (data: Client) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS, data)
 export const submitNewClientError = (message: string) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR, message)
+
+export const updateClientProfileRequest = (
+  clientProfile: ClientProfile,
+  meta: UpdateClientProfileMeta
+) => action(ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST, clientProfile, meta)
+export const updateClientProfileSuccess = (data: Client) =>
+  action(ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS, data)
+export const updateClientProfileError = (message: string) =>
+  action(ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR, message)

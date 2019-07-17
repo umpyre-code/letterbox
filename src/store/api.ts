@@ -30,6 +30,14 @@ export class API {
     return api.fetchClient(clientId)
   }
 
+  public static async FETCH_CLIENT_BY_HANDLE(
+    credentials: ClientCredentials,
+    handle: string
+  ): Promise<ClientProfile> {
+    const api = new API(credentials)
+    return api.fetchClientByHandle(handle)
+  }
+
   public static async FETCH_MESSAGES(
     credentials: ClientCredentials,
     sketch: string
@@ -42,11 +50,18 @@ export class API {
 
   constructor(credentials: ClientCredentials) {
     const API_KEY = credentials.token
-    this.client = axios.create({ baseURL: API_ENDPOINT, headers: { 'X-UMPYRE-APIKEY': API_KEY } })
+    this.client = axios.create({
+      baseURL: API_ENDPOINT,
+      headers: { 'X-UMPYRE-APIKEY': API_KEY }
+    })
   }
 
   public async fetchClient(clientId: ClientID): Promise<ClientProfile> {
     return this.client.get(`/client/${clientId}`).then(response => response.data)
+  }
+
+  public async fetchClientByHandle(handle: string): Promise<ClientProfile> {
+    return this.client.get(`/handle/${handle}`).then(response => response.data)
   }
 
   public async fetchMessages(sketch: string): Promise<Message[]> {
@@ -63,5 +78,9 @@ export class API {
 
   public async sendMessage(message: APIMessage): Promise<Message> {
     return this.client.post('/messages', message).then(response => fromApiMessage(response.data))
+  }
+
+  public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {
+    return this.client.put(`/client/${clientProfile.client_id}`, clientProfile)
   }
 }

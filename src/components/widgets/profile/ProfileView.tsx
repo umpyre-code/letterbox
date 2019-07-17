@@ -79,7 +79,7 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
     if (editable) {
       return (
         <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
-          <EditButton />
+          <EditButton color="primary" />
         </IconButton>
       )
     } else if (menu) {
@@ -98,7 +98,7 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
 
   function getHandle() {
     if (profile && profile.handle && profile.handle.length > 0) {
-      return `/u/${profile.handle}`
+      return <Link to={`/u/${profile.handle}`}>{`/u/${profile.handle}`}</Link>
     } else {
       return null
     }
@@ -113,7 +113,7 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
             <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
           }
           action={getAction()}
-          title={profile.full_name}
+          title={<Typography>{profile.full_name}</Typography>}
           subheader={getHandle()}
         />
       )
@@ -126,11 +126,11 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
     if (profile && profile.profile && profile.profile.length > 0) {
       return (
         <React.Fragment>
-          <Typography component="h3" variant="h3">
-            About me
-          </Typography>
-          <Divider light />
           <CardContent>
+            <Typography component="sub" variant="subtitle1">
+              About me
+            </Typography>
+            <Divider light />
             {/* tslint:disable-next-line: react-no-dangerous-html */}
             <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
           </CardContent>

@@ -2,16 +2,6 @@ import { Box, Button, TextField, Theme, Tooltip, Typography, withStyles } from '
 import DeleteIcon from '@material-ui/icons/Delete'
 import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
-import {
-  BlockquoteButton,
-  BoldButton,
-  HeadlineOneButton,
-  HeadlineTwoButton,
-  ItalicButton,
-  OrderedListButton,
-  UnorderedListButton
-} from 'draft-js-buttons'
-import createInlineToolbarPlugin from 'draft-js-inline-toolbar-plugin'
 import * as React from 'react'
 
 interface SendButtonProps {
@@ -112,23 +102,4 @@ export const PDAToolTip = () => (
   >
     <HelpIcon />
   </HtmlTooltip>
-)
-
-export const inlineToolbarPlugin = createInlineToolbarPlugin()
-const { InlineToolbar } = inlineToolbarPlugin
-
-export const DraftInlineToolbar = () => (
-  <InlineToolbar>
-    {(externalProps: any) => (
-      <React.Fragment>
-        <HeadlineOneButton {...externalProps} />
-        <HeadlineTwoButton {...externalProps} />
-        <BoldButton {...externalProps} />
-        <ItalicButton {...externalProps} />
-        <UnorderedListButton {...externalProps} />
-        <OrderedListButton {...externalProps} />
-        <BlockquoteButton {...externalProps} />
-      </React.Fragment>
-    )}
-  </InlineToolbar>
 )

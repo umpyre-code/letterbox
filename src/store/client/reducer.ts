@@ -44,6 +44,15 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
       return { ...state, loading: false, signUpFormErrors: action.payload }
     }
+    case ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST: {
+      return { ...state, updateClientProfileFormErrors: undefined }
+    }
+    case ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS: {
+      return { ...state, profile: action.payload.data }
+    }
+    case ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR: {
+      return { ...state, updateClientProfileFormErrors: action.payload }
+    }
     default: {
       return state
     }

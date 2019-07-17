@@ -1,10 +1,10 @@
 import { push } from 'connected-react-router'
-import { all, call, delay, fork, put, select, spawn, takeEvery } from 'redux-saga/effects'
+import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
 import { KeyPair } from '../keyPairs/types'
-import { ClientCredentials, NewClient } from '../models/client'
+import { ClientCredentials, ClientProfile, NewClient } from '../models/client'
 import {
   fetchClientError,
   fetchClientRequest,
@@ -13,7 +13,10 @@ import {
   initializeClientSuccess,
   submitNewClientError,
   submitNewClientRequest,
-  submitNewClientSuccess
+  submitNewClientSuccess,
+  updateClientProfileError,
+  updateClientProfileRequest,
+  updateClientProfileSuccess
 } from './actions'
 import { ClientActionTypes } from './types'
 
@@ -49,13 +52,7 @@ function* handleInitializeClientRequest() {
     }
   }
 
-  // Start client fetch loop
-  yield put(fetchClientRequest())
-}
-
-function* delayThenFetchClient() {
-  const fetchIntervalMillis = 2000
-  yield delay(fetchIntervalMillis)
+  // Fetch the client profile
   yield put(fetchClientRequest())
 }
 
@@ -79,7 +76,6 @@ function* handleFetchClientRequest() {
       yield put(fetchClientError(err))
     }
   }
-  yield spawn(delayThenFetchClient)
 }
 
 function saveClientToken(credentials: ClientCredentials) {
@@ -133,6 +129,43 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     }
   }
   yield call(actions.setSubmitting, false)
+
+  // Fetch the client profile
+  yield put(fetchClientRequest())
+}
+
+async function updateClientProfile(
+  credentials: ClientCredentials,
+  clientProfile: ClientProfile
+): Promise<ClientProfile> {
+  const api = new API(credentials)
+  return api.updateClientProfile(clientProfile)
+}
+
+function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClientProfileRequest>) {
+  const { payload, meta } = values
+  const { actions, setIsEditing } = meta
+  try {
+    const state: ApplicationState = yield select()
+    const credentials = state.clientState.credentials!
+    const res = yield call(updateClientProfile, credentials, payload)
+
+    if (res.error) {
+      yield put(updateClientProfileError(res.error))
+    } else {
+      yield put(updateClientProfileSuccess(res))
+      yield call(setIsEditing, false)
+    }
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(updateClientProfileError(err.response.data.message))
+    } else if (err.message) {
+      yield put(updateClientProfileError(err.message))
+    } else {
+      yield put(updateClientProfileError(err))
+    }
+  }
+  yield call(actions.setSubmitting, false)
 }
 
 function* watchInitializeClientRequest() {
@@ -147,10 +180,18 @@ function* watchSubmitNewClientRequest() {
   yield takeEvery(ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST, handleSubmitNewClientRequest)
 }
 
+function* watchUpdateClientProfileRequest() {
+  yield takeLatest(
+    ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST,
+    handleUpdateClientProfileRequest
+  )
+}
+
 export function* sagas() {
   yield all([
-    fork(watchInitializeClientRequest),
     fork(watchFetchClientRequest),
-    fork(watchSubmitNewClientRequest)
+    fork(watchInitializeClientRequest),
+    fork(watchSubmitNewClientRequest),
+    fork(watchUpdateClientProfileRequest)
   ])
 }

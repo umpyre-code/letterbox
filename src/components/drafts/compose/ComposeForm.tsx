@@ -1,5 +1,4 @@
 import {
-  Box,
   createStyles,
   Divider,
   Grid,
@@ -10,13 +9,6 @@ import {
 } from '@material-ui/core'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
-import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
-import createLinkifyPlugin from 'draft-js-linkify-plugin'
-import createMarkdownPlugin from 'draft-js-markdown-plugin'
-import Editor from 'draft-js-plugins-editor'
-import createPrismPlugin from 'draft-js-prism-plugin'
-import Prism from 'prismjs'
-import 'prismjs/themes/prism.css'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import {
@@ -27,25 +19,8 @@ import {
 import { Draft } from '../../../store/drafts/types'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { MessageBodyModel } from '../../messages/MessageBody'
-import './Draft.css'
-import {
-  DiscardButton,
-  DraftInlineToolbar,
-  inlineToolbarPlugin,
-  PDAField,
-  PDAToolTip,
-  RecipientField,
-  SendButton
-} from './Widgets'
-
-const editorPlugins = [
-  inlineToolbarPlugin,
-  createPrismPlugin({
-    prism: Prism
-  }),
-  createMarkdownPlugin(),
-  createLinkifyPlugin()
-]
+import { Editor } from './Editor'
+import { DiscardButton, PDAField, PDAToolTip, RecipientField, SendButton } from './Widgets'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -137,23 +112,17 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <Box>
-            <Editor
-              editorState={editorState}
-              plugins={editorPlugins}
-              onChange={(updatedEditorState: EditorState) => {
-                setEditorState(updatedEditorState)
-                updateDraft({
-                  ...draft,
-                  editorContent: JSON.stringify(
-                    convertToRaw(updatedEditorState.getCurrentContent())
-                  )
-                })
-              }}
-              placeholder="🔐 message body is private"
-              spellCheck={true}
-            />
-          </Box>
+          <Editor
+            editorState={editorState}
+            onChange={(updatedEditorState: EditorState) => {
+              setEditorState(updatedEditorState)
+              updateDraft({
+                ...draft,
+                editorContent: JSON.stringify(convertToRaw(updatedEditorState.getCurrentContent()))
+              })
+            }}
+            placeholder="🔐 message body is private"
+          />
         </Grid>
         <Grid item xs={12}>
           <Divider />
@@ -171,7 +140,6 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
           </Grid>
         </Grid>
       </Grid>
-      <DraftInlineToolbar />
       {draft.sending && (
         <Grid item xs={12}>
           <LinearProgress className={classes.progress} />
