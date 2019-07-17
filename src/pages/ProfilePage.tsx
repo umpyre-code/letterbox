@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import * as Router from 'react-router-dom'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
@@ -18,9 +19,15 @@ interface PropsFromState {
   profile: ClientProfile
 }
 
-interface PropsFromDispatch {}
+interface ProfileRoute {
+  handle: string
+}
 
-type AllProps = PropsFromState & PropsFromDispatch
+interface PropsFromRouter {
+  match: Router.match<ProfileRoute>
+}
+
+type AllProps = PropsFromState & PropsFromRouter
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ProfilePageFC: React.FC<AllProps> = ({ profile }) => {
+const ProfilePageFC: React.FC<AllProps> = ({ profile, match }) => {
   const classes = useStyles()
 
   return (
@@ -41,7 +48,9 @@ const ProfilePageFC: React.FC<AllProps> = ({ profile }) => {
       <CssBaseline />
       <Container className={classes.headerContainer}>
         <Typography variant="h2" component="h2">
-          <strong>Umpyre</strong>
+          <strong>
+            <Router.Link to="/">Umpyre</Router.Link>
+          </strong>
         </Typography>
       </Container>
       <Divider />
@@ -60,8 +69,10 @@ const mapDispatchToProps = {
   addDraft: addDraftRequest
 }
 
-const ProfilePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProfilePageFC)
+const ProfilePage = Router.withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(ProfilePageFC)
+)
 export default ProfilePage

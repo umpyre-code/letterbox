@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Container,
   createStyles,
   Divider,
   IconButton,
@@ -21,7 +22,13 @@ import { ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 
-const useStyles = makeStyles((theme: Theme) => createStyles({}))
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    profileContainer: {
+      padding: theme.spacing(0, 1, 0, 1)
+    }
+  })
+)
 
 interface Props {
   editable?: boolean
@@ -79,7 +86,7 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
     if (editable) {
       return (
         <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
-          <EditButton color="primary" />
+          <EditButton color="secondary" />
         </IconButton>
       )
     } else if (menu) {
@@ -98,7 +105,7 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
 
   function getHandle() {
     if (profile && profile.handle && profile.handle.length > 0) {
-      return <Link to={`/u/${profile.handle}`}>{`/u/${profile.handle}`}</Link>
+      return <Link to={`/c/${profile.handle}`}>{`/c/${profile.handle}`}</Link>
     } else {
       return null
     }
@@ -131,8 +138,10 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
               About me
             </Typography>
             <Divider light />
-            {/* tslint:disable-next-line: react-no-dangerous-html */}
-            <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
+            <Container className={classes.profileContainer}>
+              {/* tslint:disable-next-line: react-no-dangerous-html */}
+              <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
+            </Container>
           </CardContent>
         </React.Fragment>
       )

@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core'
 import DoneIcon from '@material-ui/icons/Done'
 import { ContentState, convertFromHTML, EditorState } from 'draft-js'
+import { stateToHTML } from 'draft-js-export-html'
 import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import { Field, Form, Formik, FormikProps, FormikValues } from 'formik'
 import { TextField } from 'formik-material-ui'
@@ -24,6 +25,7 @@ import { API } from '../../../store/api'
 import { updateClientProfileRequest } from '../../../store/client/actions'
 import { ClientProfileHelper } from '../../../store/client/types'
 import { ClientCredentials, ClientProfile } from '../../../store/models/client'
+import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import { Editor } from '../../drafts/compose/Editor'
 
@@ -81,7 +83,7 @@ async function testHandle(
   credentials: ClientCredentials,
   profile: ClientProfile
 ): Promise<boolean> {
-  if (value === profile.handle) {
+  if (value.toLowerCase() === profile.handle!.toLowerCase()) {
     // if the handle hasn't changed, that's fine
     return Promise.resolve(true)
   } else if (value === null || value.length === 0) {
@@ -100,10 +102,9 @@ function getSchema(credentials: ClientCredentials, profile: ClientProfile) {
       .required('How shall we address F?'),
     handle: Yup.string()
       .max(100, 'Keep it under 100 characters')
-      .lowercase()
       .trim()
       .matches(
-        /^[a-z0-9_.-]*$/,
+        /^[a-zA-Z0-9_.-]*$/,
         "Your handle can't contain special characters; only A to Z, 0 to 9, _, ., and -."
       )
       .nullable()
@@ -188,10 +189,17 @@ export const ProfileFormFC: React.FC<AllProps> = ({
           full_name: profile!.full_name!,
           handle: profile!.handle || ''
         }}
-        validationSchema={getSchema(credentials, profile)}
+        validationSchema={getSchema(credentials, profile!)}
         isInitialValid={true}
         onSubmit={(values, actions) => {
-          updateClientProfile({ ...profile, ...values }, { actions, setIsEditing })
+          updateClientProfile(
+            {
+              ...profile,
+              ...values,
+              profile: htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
+            },
+            { actions, setIsEditing }
+          )
         }}
         render={handleFormRender}
       />

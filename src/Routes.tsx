@@ -31,8 +31,8 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
           }}
         />
         <Route exact path="/signup" component={LazySignUpPage} />
-        <Route exact path="/profile" component={LazyProfilePage} />
         <Route exact path="/account" component={LazyAccountPage} />
+        <Route path="/c/:handle" component={LazyProfilePage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
     </LazyRoot>
