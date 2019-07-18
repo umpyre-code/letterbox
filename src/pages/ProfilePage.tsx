@@ -18,17 +18,15 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
-  credentials?: ClientCredentials
-  profile?: ClientProfile
+  readonly credentials?: ClientCredentials
+  readonly profile?: ClientProfile
 }
 
-interface ProfileRoute {
-  handle: string
+interface MatchParams {
+  readonly handle: string
 }
 
-interface PropsFromRouter {
-  match: Router.match<ProfileRoute>
-}
+interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
 
 type AllProps = PropsFromState & PropsFromRouter
 

@@ -38,7 +38,7 @@ class RootFC extends React.Component<AllProps> {
 }
 
 const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
-  ready: keysState.ready && clientState.ready
+  ready: clientState.ready
 })
 
 const mapDispatchToProps = {

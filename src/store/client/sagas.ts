@@ -44,9 +44,13 @@ function* handleInitializeClientRequest() {
       yield put(initializeClientError(res.error))
     } else {
       yield put(initializeClientSuccess(res))
-      yield put(initializeKeysRequest())
-      yield put(initializeDraftsRequest())
-      yield put(initializeMessagesRequest())
+      if (res && res.client_id && res.token && res.token.length > 0) {
+        // If we got a client API token, kick off other init actions
+        yield put(fetchClientRequest())
+        yield put(initializeKeysRequest())
+        yield put(initializeDraftsRequest())
+        yield put(initializeMessagesRequest())
+      }
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
@@ -57,9 +61,6 @@ function* handleInitializeClientRequest() {
       yield put(initializeClientError(err))
     }
   }
-
-  // Fetch the client profile
-  yield put(fetchClientRequest())
 }
 
 function* handleFetchClientRequest() {
