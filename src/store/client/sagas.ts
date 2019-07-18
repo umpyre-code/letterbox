@@ -3,7 +3,10 @@ import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/
 import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
+import { initializeDraftsRequest } from '../drafts/actions'
+import { initializeKeysRequest } from '../keyPairs/actions'
 import { KeyPair } from '../keyPairs/types'
+import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, NewClient } from '../models/client'
 import {
   fetchClientError,
@@ -41,6 +44,9 @@ function* handleInitializeClientRequest() {
       yield put(initializeClientError(res.error))
     } else {
       yield put(initializeClientSuccess(res))
+      yield put(initializeKeysRequest())
+      yield put(initializeDraftsRequest())
+      yield put(initializeMessagesRequest())
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {

@@ -18,8 +18,8 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
-  credentials: ClientCredentials
-  profile: ClientProfile
+  credentials?: ClientCredentials
+  profile?: ClientProfile
 }
 
 interface ProfileRoute {
@@ -58,9 +58,10 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
 
   function isEditable(): boolean {
     return (
-      profile.client_id != null &&
-      credentials != null &&
-      credentials.client_id != null &&
+      profile !== undefined &&
+      profile.client_id !== undefined &&
+      credentials !== undefined &&
+      credentials.client_id !== undefined &&
       profile.client_id === credentials.client_id
     )
   }

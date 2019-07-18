@@ -48,12 +48,18 @@ export class API {
 
   private client: AxiosInstance
 
-  constructor(credentials: ClientCredentials) {
-    const API_KEY = credentials.token
-    this.client = axios.create({
-      baseURL: API_ENDPOINT,
-      headers: { 'X-UMPYRE-APIKEY': API_KEY }
-    })
+  constructor(credentials?: ClientCredentials) {
+    if (credentials && credentials.token) {
+      const API_KEY = credentials.token
+      this.client = axios.create({
+        baseURL: API_ENDPOINT,
+        headers: { 'X-UMPYRE-APIKEY': API_KEY }
+      })
+    } else {
+      this.client = axios.create({
+        baseURL: API_ENDPOINT
+      })
+    }
   }
 
   public async fetchClient(clientId: ClientID): Promise<ClientProfile> {
