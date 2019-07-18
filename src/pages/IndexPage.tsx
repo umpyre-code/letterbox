@@ -13,6 +13,7 @@ import Fab from '@material-ui/core/Fab'
 import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import * as Router from 'react-router-dom'
 import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
 import { Profile } from '../components/widgets/profile/Profile'
@@ -71,7 +72,9 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
         <Grid container spacing={1} justify="space-between">
           <Grid item xs={7}>
             <Typography variant="h2" component="h2">
-              <strong>Umpyre</strong>
+              <strong>
+                <Router.Link to="/">Umpyre</Router.Link>
+              </strong>
             </Typography>
           </Grid>
           <Grid item xs={5}>

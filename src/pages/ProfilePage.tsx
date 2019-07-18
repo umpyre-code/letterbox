@@ -12,10 +12,13 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
+import { API } from '../store/api'
+import { emptyClientProfile } from '../store/client/types'
 import { addDraftRequest } from '../store/drafts/actions'
-import { ClientProfile } from '../store/models/client'
+import { ClientCredentials, ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
+  credentials: ClientCredentials
   profile: ClientProfile
 }
 
@@ -40,8 +43,27 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ProfilePageFC: React.FC<AllProps> = ({ profile, match }) => {
+const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
+  const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles()
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const api = new API(credentials)
+      const res = await api.fetchClientByHandle(match.params.handle)
+      setProfile(res)
+    }
+    fetchData()
+  }, [])
+
+  function isEditable(): boolean {
+    return (
+      profile.client_id != null &&
+      credentials != null &&
+      credentials.client_id != null &&
+      profile.client_id === credentials.client_id
+    )
+  }
 
   return (
     <React.Fragment>
@@ -55,13 +77,14 @@ const ProfilePageFC: React.FC<AllProps> = ({ profile, match }) => {
       </Container>
       <Divider />
       <Container className={classes.profileContainer}>
-        <Profile profile={profile} editable full />
+        <Profile profile={profile} editable={isEditable()} full />
       </Container>
     </React.Fragment>
   )
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
+  credentials: clientState.credentials!,
   profile: clientState.profile!
 })
 
