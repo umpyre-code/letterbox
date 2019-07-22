@@ -16,7 +16,7 @@ import { API } from '../api'
 import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { ClientCredentials } from '../models/client'
-import { APIMessage, Message } from '../models/messages'
+import { APIMessage, fromApiMessage, Message, MessageBody } from '../models/messages'
 import {
   fetchMessagesError,
   fetchMessagesRequest,
@@ -81,9 +81,9 @@ async function fetchMessages(credentials: ClientCredentials, sketch: string) {
   return api.fetchMessages(sketch)
 }
 
-async function decryptStoreAndRetrieveMessages(messages: Message[]) {
+async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   const decryptedMessages = await Promise.all(
-    messages.map((message: Message) => decryptMessage(message))
+    messages.map((message: APIMessage) => decryptMessage(message))
   )
   await db.messages.bulkPut(decryptedMessages)
   return db.messages
@@ -92,18 +92,20 @@ async function decryptStoreAndRetrieveMessages(messages: Message[]) {
     .toArray()
 }
 
-async function decryptMessage(message: Message): Promise<Message> {
+async function decryptMessage(message: APIMessage): Promise<Message> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
   const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
   return {
-    ...message,
-    body: await decryptMessageBody(
-      message.body,
-      message.nonce,
-      myKeyPair!.box_secret_key,
-      message.sender_public_key
-    )
+    ...fromApiMessage(message),
+    body: JSON.parse(
+      await decryptMessageBody(
+        message.body,
+        message.nonce,
+        myKeyPair!.box_secret_key,
+        message.sender_public_key
+      )
+    ) as MessageBody
   }
 }
 
@@ -158,7 +160,7 @@ function* watchFetchMessagesRequest() {
 async function sendMessage(
   credentials: ClientCredentials,
   apiMessage: APIMessage
-): Promise<Message> {
+): Promise<APIMessage> {
   const api = new API(credentials)
   return api.sendMessage(apiMessage)
 }
@@ -168,11 +170,9 @@ function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
   const draft: Draft = payload
   const { apiMessage } = draft
   try {
-    console.log(draft)
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
     const res = yield call(sendMessage, credentials, apiMessage!)
-    console.log(res)
 
     if (res.error) {
       yield put(sendMessageError(res.error))
@@ -182,7 +182,6 @@ function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
       yield put(removeDraftRequest(draft))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(sendMessageError(err.response.data.message))
     } else if (err.message) {

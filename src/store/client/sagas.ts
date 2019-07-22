@@ -56,7 +56,6 @@ function* handleInitializeClientRequest() {
       }
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(initializeClientError(err.response.data.message))
     } else if (err.message) {
@@ -79,7 +78,6 @@ function* handleFetchClientRequest() {
       yield put(fetchClientSuccess(res))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(fetchClientError(err.response.data.message))
     } else if (err.message) {
@@ -153,7 +151,6 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(push('/'))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(submitNewClientError(err.response.data.message))
     } else if (err.message) {
@@ -191,7 +188,6 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
       yield call(setIsEditing, false)
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(updateClientProfileError(err.response.data.message))
     } else if (err.message) {
