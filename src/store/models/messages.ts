@@ -5,18 +5,20 @@ export interface Timestamp {
   seconds: number
 }
 
+export type MessageHash = string
+
 export interface MessageBody {
   // The markdown message body
   markdown: string
   // Parent message hash, if this is a reply.
-  parent?: string
+  parent?: MessageHash
 }
 
 // Our internal representation of a message
 export interface Message {
   body: MessageBody
   from: ClientID
-  hash?: string
+  hash?: MessageHash
   nonce: string
   pda: string
   received_at?: Date

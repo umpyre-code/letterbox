@@ -15,6 +15,7 @@ import { AsYouType } from 'libphonenumber-js'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Yup from 'yup'
+import zxcvbn from 'zxcvbn'
 import { ApplicationState } from '../../store'
 import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
@@ -61,6 +62,14 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
 
 type AllProps = PropsFromDispatch & PropsFromState
 
+function testPassword(value: string): boolean {
+  return zxcvbn(value).score > 2
+}
+
+function passwordHelp(value: string): string {
+  return zxcvbn(value).feedback.warning
+}
+
 const SignupFormSchema = Yup.object().shape({
   email: Yup.string()
     .email("That doesn't look right")
@@ -68,9 +77,11 @@ const SignupFormSchema = Yup.object().shape({
   full_name: Yup.string()
     .max(100, 'Keep it under 100 characters')
     .required('How shall we address you?'),
-  password: Yup.string().required('Make it unique'),
+  password: Yup.string()
+    .required('Make it unique')
+    .test('is a strong password', value => passwordHelp(value.value), value => testPassword(value)),
   phone_number: Yup.object().shape({
-    country_code: Yup.string().required(),
+    country_code: Yup.string().required('Country code is required'),
     national_number: Yup.string().required("We need to know you're not a robot")
   })
 })
