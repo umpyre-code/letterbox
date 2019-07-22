@@ -91,9 +91,7 @@ class SignUp extends React.Component<AllProps> {
         validationSchema={SignupFormSchema}
         onSubmit={(values, actions) => {
           const newClient = {
-            ...values,
-            // The password hash is computed in the sagas
-            password_hash: values.password
+            ...values
           }
           delete newClient.password
           this.props.submitNewClientRequest(newClient, {

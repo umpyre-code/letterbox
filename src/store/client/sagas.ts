@@ -1,5 +1,8 @@
 import { push } from 'connected-react-router'
+import * as jwt from 'jsonwebtoken'
 import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
+import * as srp from 'secure-remote-password/client'
+import { SHA3 } from 'sha3'
 import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
@@ -7,7 +10,7 @@ import { initializeDraftsRequest } from '../drafts/actions'
 import { initializeKeysRequest } from '../keyPairs/actions'
 import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
-import { ClientCredentials, ClientProfile, NewClient } from '../models/client'
+import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
 import {
   fetchClientError,
   fetchClientRequest,
@@ -28,7 +31,7 @@ import { ClientActionTypes } from './types'
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
-function initializeClient() {
+async function initializeClient() {
   return db.apiTokens
     .orderBy('created_at')
     .reverse()
@@ -44,7 +47,7 @@ function* handleInitializeClientRequest() {
       yield put(initializeClientError(res.error))
     } else {
       yield put(initializeClientSuccess(res))
-      if (res && res.client_id && res.token && res.token.length > 0) {
+      if (res && res.client_id) {
         // If we got a client API token, kick off other init actions
         yield put(fetchClientRequest())
         yield put(initializeKeysRequest())
@@ -53,6 +56,7 @@ function* handleInitializeClientRequest() {
       }
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(initializeClientError(err.response.data.message))
     } else if (err.message) {
@@ -75,6 +79,7 @@ function* handleFetchClientRequest() {
       yield put(fetchClientSuccess(res))
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(fetchClientError(err.response.data.message))
     } else if (err.message) {
@@ -85,26 +90,47 @@ function* handleFetchClientRequest() {
   }
 }
 
-function saveClientToken(credentials: ClientCredentials) {
-  db.apiTokens.add({ ...credentials, created_at: new Date() })
-}
-
-async function withHashedPassword(newClient: NewClient): Promise<NewClient> {
-  await sodium.ready
+function verifyJwt(credentials: ClientCredentials): ClientCredentials {
+  const verifiedJwt: Jwt = {
+    ...credentials.jwt,
+    claims: jwt.verify(credentials.jwt.token, credentials.jwt.secret, {
+      clockTolerance: 300
+    }) as JwtClaims
+  }
   return {
-    ...newClient,
-    password_hash: sodium.to_base64(
-      sodium.crypto_generichash(64, sodium.from_string(newClient.password_hash)),
-      sodium.base64_variants.ORIGINAL_NO_PADDING
-    )
+    ...credentials,
+    jwt: verifiedJwt
   }
 }
 
+function saveClientToken(credentials: ClientCredentials) {
+  const verifiedCredentials = verifyJwt(credentials)
+  db.apiTokens.add({ ...verifiedCredentials, created_at: new Date() })
+}
+
+async function withPassword(newClient: NewClient): Promise<NewClient> {
+  await sodium.ready
+  const salt = srp.generateSalt()
+  const hash = new SHA3(512)
+  hash.update(salt, 'hex')
+  hash.update(`${newClient.email}:${newClient.password!}`)
+  const privateKey = hash.digest('hex')
+  const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
+  const client = {
+    ...newClient,
+    password_salt: sodium.to_base64(salt, sodium.base64_variants.ORIGINAL_NO_PADDING),
+    password_verifier: sodium.to_base64(verifier, sodium.base64_variants.ORIGINAL_NO_PADDING)
+  }
+  // Do not transmit password to server
+  delete client.password
+  return client
+}
+
 async function submitNewClient(newClient: NewClient, keyPair: KeyPair): Promise<ClientCredentials> {
-  const newClientHashed = await withHashedPassword(newClient)
+  const newClientWithPassword = await withPassword(newClient)
   // Add public keys
   const newClientHashedWithKeys = {
-    ...newClientHashed,
+    ...newClientWithPassword,
     box_public_key: keyPair.box_public_key,
     signing_public_key: keyPair.signing_public_key
   }
@@ -127,6 +153,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(push('/'))
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(submitNewClientError(err.response.data.message))
     } else if (err.message) {
@@ -164,6 +191,7 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
       yield call(setIsEditing, false)
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(updateClientProfileError(err.response.data.message))
     } else if (err.message) {

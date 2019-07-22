@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import * as qs from 'querystringify'
+import * as jwt from 'jsonwebtoken'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage, Message, MessagesResponse } from './models/messages'
 
@@ -49,11 +49,18 @@ export class API {
   private client: AxiosInstance
 
   constructor(credentials?: ClientCredentials) {
-    if (credentials && credentials.token) {
-      const API_KEY = credentials.token
+    if (credentials) {
+      const claims = credentials.jwt.claims!
+      delete claims.iat
+      delete claims.exp
+      delete claims.nbf
+      const token = jwt.sign(credentials.jwt.claims!, credentials.jwt.secret, {
+        expiresIn: '5m',
+        notBefore: '0s'
+      })
       this.client = axios.create({
         baseURL: API_ENDPOINT,
-        headers: { 'X-UMPYRE-APIKEY': API_KEY }
+        headers: { 'X-UMPYRE-TOKEN': token }
       })
     } else {
       this.client = axios.create({

@@ -1,8 +1,23 @@
 export type ClientID = string
 
+export interface JwtClaims {
+  exp: number
+  iat: number
+  iss: string
+  jti: string
+  nbf: number
+  sub: string
+}
+
+export interface Jwt {
+  token: string
+  secret: string
+  claims?: JwtClaims
+}
+
 export interface ClientCredentials {
   client_id: ClientID
-  token: string
+  jwt: Jwt
 }
 
 export interface PhoneNumber {
@@ -13,7 +28,9 @@ export interface PhoneNumber {
 export interface NewClient {
   full_name: string
   email: string
-  password_hash: string
+  password?: string
+  password_verifier?: string
+  password_salt?: string
   phone_number: PhoneNumber
   box_public_key?: string
   signing_public_key?: string
