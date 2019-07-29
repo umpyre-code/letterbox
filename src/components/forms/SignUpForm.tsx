@@ -207,8 +207,8 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
-  submitNewClientRequest,
-  initializeKeysRequest
+  initializeKeysRequest,
+  submitNewClientRequest
 }
 
 export const SignUpForm = connect(
