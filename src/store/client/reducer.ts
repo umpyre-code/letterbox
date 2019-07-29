@@ -39,7 +39,7 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
       return { ...state, loading: true, signUpFormErrors: undefined }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS: {
-      return { ...state, loading: false, client: action.payload.data }
+      return { ...state, loading: false, credentials: action.payload }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
       return { ...state, loading: false, signUpFormErrors: action.payload }

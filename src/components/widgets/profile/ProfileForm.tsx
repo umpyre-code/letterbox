@@ -83,7 +83,7 @@ async function testHandle(
   credentials: ClientCredentials,
   profile: ClientProfile
 ): Promise<boolean> {
-  if (value.toLowerCase() === profile.handle!.toLowerCase()) {
+  if (profile.handle && value.toLowerCase() === profile.handle.toLowerCase()) {
     // if the handle hasn't changed, that's fine
     return Promise.resolve(true)
   } else if (value === null || value.length === 0) {

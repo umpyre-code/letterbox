@@ -18,12 +18,15 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 import { ClientProfileHelper } from '../../../store/client/types'
-import { ClientProfile } from '../../../store/models/client'
+import { Balance, ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    handleText: {
+      color: 'rgba(0, 0, 0, 0.54)'
+    },
     profileContainer: {
       padding: theme.spacing(0, 1, 0, 1)
     }
@@ -31,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface Props {
+  balance?: Balance
   editable?: boolean
   menu?: boolean
   profile?: ClientProfile
@@ -71,7 +75,65 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   )
 }
 
-export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEditing }) => {
+interface HandleProps {
+  profile?: ClientProfile
+}
+
+export const Handle: React.FC<HandleProps> = ({ profile }) => {
+  const classes = useStyles()
+  if (profile && profile.handle && profile.handle.length > 0) {
+    return (
+      <Link to={`/c/${profile.handle}`}>
+        <Typography className={classes.handleText} variant="subtitle2">
+          {profile.handle}
+        </Typography>
+      </Link>
+    )
+  } else {
+    return null
+  }
+}
+
+interface ActionProps {
+  editable?: boolean
+  menu?: boolean
+  setIsEditing: (arg0: boolean) => void
+  setMenuAnchorElement: (arg0: any) => void
+}
+
+export const Action: React.FC<ActionProps> = ({
+  editable,
+  menu,
+  setIsEditing,
+  setMenuAnchorElement
+}) => {
+  if (editable) {
+    return (
+      <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
+        <EditButton color="secondary" />
+      </IconButton>
+    )
+  } else if (menu) {
+    return (
+      <IconButton
+        aria-label="Settings"
+        onClick={event => setMenuAnchorElement(event.currentTarget)}
+      >
+        <MoreVertIcon />
+      </IconButton>
+    )
+  } else {
+    return null
+  }
+}
+
+export const ProfileView: React.FC<Props> = ({
+  balance,
+  editable,
+  menu,
+  profile,
+  setIsEditing
+}) => {
   const classes = useStyles()
   const [menuAnchorElement, setMenuAnchorElement] = React.useState<null | HTMLElement>(null)
 
@@ -82,30 +144,10 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
     />
   )
 
-  function getAction() {
-    if (editable) {
-      return (
-        <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
-          <EditButton color="secondary" />
-        </IconButton>
-      )
-    } else if (menu) {
-      return (
-        <IconButton
-          aria-label="Settings"
-          onClick={event => setMenuAnchorElement(event.currentTarget)}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      )
-    } else {
-      return null
-    }
-  }
-
-  function getHandle() {
-    if (profile && profile.handle && profile.handle.length > 0) {
-      return <Link to={`/c/${profile.handle}`}>{`/c/${profile.handle}`}</Link>
+  function getBalance() {
+    if (balance !== undefined) {
+      const amount = Math.floor(100 * (balance.balance_cents + balance.promo_cents))
+      return <Typography>${amount}</Typography>
     } else {
       return null
     }
@@ -119,9 +161,20 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
           avatar={
             <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
           }
-          action={getAction()}
-          title={<Typography>{profile.full_name}</Typography>}
-          subheader={getHandle()}
+          action={
+            <Action
+              editable={editable}
+              menu={menu}
+              setIsEditing={setIsEditing}
+              setMenuAnchorElement={setMenuAnchorElement}
+            />
+          }
+          title={
+            <Typography>
+              {profile.full_name} {getBalance()}
+            </Typography>
+          }
+          subheader={<Handle profile={profile} />}
         />
       )
     } else {
@@ -130,20 +183,22 @@ export const ProfileView: React.FC<Props> = ({ editable, menu, profile, setIsEdi
   }
 
   function getCardBody() {
+    return <React.Fragment>{getProfileContent()}</React.Fragment>
+  }
+
+  function getProfileContent() {
     if (profile && profile.profile && profile.profile.length > 0) {
       return (
-        <React.Fragment>
-          <CardContent>
-            <Typography component="sub" variant="subtitle1">
-              About me
-            </Typography>
-            <Divider light />
-            <Container className={classes.profileContainer}>
-              {/* tslint:disable-next-line: react-no-dangerous-html */}
-              <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
-            </Container>
-          </CardContent>
-        </React.Fragment>
+        <CardContent>
+          <Typography component="sub" variant="subtitle1">
+            About me
+          </Typography>
+          <Divider light />
+          <Container className={classes.profileContainer}>
+            {/* tslint:disable-next-line: react-no-dangerous-html */}
+            <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
+          </Container>
+        </CardContent>
       )
     } else {
       return null

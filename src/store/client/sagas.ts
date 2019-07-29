@@ -5,6 +5,7 @@ import * as srp from 'secure-remote-password/client'
 import { SHA3 } from 'sha3'
 import { ApplicationState } from '..'
 import { db } from '../../db/db'
+import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { initializeDraftsRequest } from '../drafts/actions'
 import { initializeKeysRequest } from '../keyPairs/actions'
@@ -53,6 +54,7 @@ function* handleInitializeClientRequest() {
         yield put(initializeKeysRequest())
         yield put(initializeDraftsRequest())
         yield put(initializeMessagesRequest())
+        yield put(fetchBalanceRequest())
       }
     }
   } catch (err) {
@@ -101,9 +103,10 @@ function verifyJwt(credentials: ClientCredentials): ClientCredentials {
   }
 }
 
-function saveClientToken(credentials: ClientCredentials) {
+async function saveClientToken(credentials: ClientCredentials) {
   const verifiedCredentials = verifyJwt(credentials)
-  db.apiTokens.add({ ...verifiedCredentials, created_at: new Date() })
+  await db.apiTokens.add({ ...verifiedCredentials, created_at: new Date() })
+  return Promise.resolve(verifiedCredentials)
 }
 
 async function withPassword(newClient: NewClient): Promise<NewClient> {
@@ -146,8 +149,8 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     if (res.error) {
       yield put(submitNewClientError(res.error))
     } else {
-      yield call(saveClientToken, res)
-      yield put(submitNewClientSuccess(res))
+      const credentials = yield call(saveClientToken, res)
+      yield put(submitNewClientSuccess(credentials))
       yield put(push('/'))
     }
   } catch (err) {

@@ -2,6 +2,9 @@ import { connectRouter, RouterState } from 'connected-react-router'
 import { History } from 'history'
 import { Action, AnyAction, combineReducers, Dispatch } from 'redux'
 import { all, fork } from 'redux-saga/effects'
+import { reducer as accountReducer } from './account/reducer'
+import { sagas as accountSagas } from './account/sagas'
+import { AccountState } from './account/types'
 import { reducer as clientReducer } from './client/reducer'
 import { sagas as clientSagas } from './client/sagas'
 import { ClientState } from './client/types'
@@ -16,6 +19,7 @@ import { sagas as messagesSagas } from './messages/sagas'
 import { MessagesState } from './messages/types'
 
 export interface ApplicationState {
+  accountState: AccountState
   clientState: ClientState
   draftsState: DraftsState
   keysState: KeysState
@@ -29,6 +33,7 @@ export interface ConnectedReduxProps<A extends Action = AnyAction> {
 
 export const createRootReducer = (history: History) =>
   combineReducers({
+    accountState: accountReducer,
     clientState: clientReducer,
     draftsState: draftsReducer,
     keysState: keysReducer,
@@ -37,5 +42,11 @@ export const createRootReducer = (history: History) =>
   })
 
 export function* rootSaga() {
-  yield all([fork(clientSagas), fork(draftsSagas), fork(keysSagas), fork(messagesSagas)])
+  yield all([
+    fork(accountSagas),
+    fork(clientSagas),
+    fork(draftsSagas),
+    fork(keysSagas),
+    fork(messagesSagas)
+  ])
 }

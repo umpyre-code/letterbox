@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import * as jwt from 'jsonwebtoken'
-import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
-import { APIMessage, Message, MessagesResponse } from './models/messages'
+import { Balance, ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
+import { APIMessage } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
@@ -83,5 +83,9 @@ export class API {
 
   public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {
     return this.client.put(`/client/${clientProfile.client_id}`, clientProfile)
+  }
+
+  public async fetchBalance(): Promise<Balance> {
+    return this.client.get('/account/balance').then(response => response.data)
   }
 }

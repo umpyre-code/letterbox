@@ -48,8 +48,13 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
   React.useEffect(() => {
     async function fetchData() {
       const api = new API(credentials)
-      const res = await api.fetchClientByHandle(match.params.handle)
-      setProfile(res)
+      if (match.params.handle) {
+        const res = await api.fetchClientByHandle(match.params.handle)
+        setProfile(res)
+      } else {
+        const res = await api.fetchClient(credentials!.client_id)
+        setProfile(res)
+      }
     }
     fetchData()
   }, [])

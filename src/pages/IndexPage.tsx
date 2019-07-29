@@ -18,10 +18,12 @@ import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
+import { AccountState } from '../store/account/types'
 import { addDraftRequest } from '../store/drafts/actions'
 import { ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
+  balance?: Balance
   profile: ClientProfile
 }
 
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
+const IndexPageFC: React.FC<AllProps> = ({ balance, profile, addDraft }) => {
   const classes = useStyles()
 
   return (
@@ -78,7 +80,7 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
             </Typography>
           </Grid>
           <Grid item xs={5}>
-            <Profile profile={profile} menu />
+            <Profile profile={profile} balance={balance} menu />
           </Grid>
           <Grid item xs style={{ position: 'relative' }}></Grid>
           <Grid item xs={12}>
@@ -96,7 +98,8 @@ const IndexPageFC: React.FC<AllProps> = ({ profile, addDraft }) => {
   )
 }
 
-const mapStateToProps = ({ clientState }: ApplicationState) => ({
+const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
+  balance: accountState.balance!,
   profile: clientState.profile!
 })
 

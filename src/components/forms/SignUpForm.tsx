@@ -21,6 +21,7 @@ import { submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { KeysState } from '../../store/keyPairs/types'
 import { CountryCodes } from './CountryCodes'
+import { initializeKeysRequest } from '../../store/keyPairs/actions'
 
 interface PhoneNumber {
   country_code?: string
@@ -41,6 +42,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   submitNewClientRequest: typeof submitNewClientRequest
+  initializeKeysRequest: typeof initializeKeysRequest
 }
 
 const PhoneNumberTextField = (props: TextFieldProps) => (
@@ -87,6 +89,10 @@ const SignupFormSchema = Yup.object().shape({
 })
 
 class SignUp extends React.Component<AllProps> {
+  public componentWillMount() {
+    this.props.initializeKeysRequest()
+  }
+
   public render() {
     return (
       <Formik
@@ -201,7 +207,8 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
-  submitNewClientRequest
+  submitNewClientRequest,
+  initializeKeysRequest
 }
 
 export const SignUpForm = connect(
