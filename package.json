@@ -46,7 +46,7 @@
     "dompurify": "^1.0.11",
     "draft-js": "^0.11.0",
     "draft-js-buttons": "^2.0.1",
-    "draft-js-export-html": "^1.4.0",
+    "draft-js-export-html": "^1.4.1",
     "draft-js-inline-toolbar-plugin": "^3.0.0",
     "draft-js-linkify-plugin": "^2.0.1",
     "draft-js-markdown-plugin": "^3.0.5",
