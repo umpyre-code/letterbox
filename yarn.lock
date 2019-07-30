@@ -2813,10 +2813,10 @@ draft-js-checkable-list-item@^2.0.6:
   dependencies:
     draft-js-modifiers "^0.1.5"
 
-draft-js-export-html@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/draft-js-export-html/-/draft-js-export-html-1.4.0.tgz#7383b742d6ad87d3fa17008dd826f2e5e9d93869"
-  integrity sha512-kOcIxsTBNqgU4nIXfsv9flkFqoqkoxivtftC0Auqas8Hhqhe1Tp+8KGganAySIYINSDMNI5PHeq+7mlmbBQV0g==
+draft-js-export-html@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/draft-js-export-html/-/draft-js-export-html-1.4.1.tgz#7cdad970c6f7f2cdd19ce4c1f5073fdf0f313b4d"
+  integrity sha512-G4VGBSalPowktIE4wp3rFbhjs+Ln9IZ2FhXeHjsZDSw0a2+h+BjKu5Enq+mcsyVb51RW740GBK8Xbf7Iic51tw==
   dependencies:
     draft-js-utils "^1.4.0"
 
