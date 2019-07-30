@@ -19,7 +19,7 @@ import {
 import EditButton from '@material-ui/icons/Edit'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import * as React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, LinkProps } from 'react-router-dom'
 import { ClientProfileHelper } from '../../../store/client/types'
 import { Balance, ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
@@ -28,10 +28,12 @@ import Loading from '../Loading'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     addCreditsButton: {
-      '& .plusButton': { display: 'none', fontSize: '1rem', color: theme.palette.primary },
+      '& .plusButton': { display: 'none', fontSize: '1rem', color: theme.palette.primary.main },
+      // '&:hover': {
+      // color: '#f00'
+      // },
       '&:hover .plusButton': {
-        display: 'inline',
-        color: theme.palette.primary
+        display: 'inline'
       },
       fontSize: '1.2rem',
       lineHeight: 1,
@@ -155,6 +157,14 @@ export const Action: React.FC<ActionProps> = ({
   }
 }
 
+const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
+  <Link innerRef={ref as any} {...props} />
+))
+
+const CollisionLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+  (props, ref) => <Link innerRef={ref as any} to="/addcredits" {...props} />
+)
+
 interface BalanceProps {
   balance?: Balance
 }
@@ -166,7 +176,7 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
     const amount = Math.floor(100 * (balance.balance_cents + balance.promo_cents))
     return (
       <Tooltip title="Add credits" enterDelay={500}>
-        <Button className={classes.addCreditsButton} size="small">
+        <Button className={classes.addCreditsButton} size="small" component={CollisionLink}>
           <span className="plusButton">+&nbsp;</span>${amount}
         </Button>
       </Tooltip>

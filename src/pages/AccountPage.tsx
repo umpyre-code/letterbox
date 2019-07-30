@@ -8,7 +8,6 @@ import {
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
 import { ClientProfile } from '../store/models/client'
@@ -54,7 +53,7 @@ const AccountPageFC: React.FC<AllProps> = ({ profile }) => {
         </Typography>
       </Container>
       <Container>
-        <Profile profile={profile} />
+        <Typography variant="h4">My account</Typography>
       </Container>
     </React.Fragment>
   )

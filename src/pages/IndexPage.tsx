@@ -14,8 +14,6 @@ import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import { Elements, StripeProvider } from 'react-stripe-elements'
-import AddCreditsForm from '../components/AddCreditsForm'
 import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
 import { Profile } from '../components/widgets/profile/Profile'
@@ -95,16 +93,6 @@ const IndexPageFC: React.FC<AllProps> = ({ balance, profile, addDraft }) => {
       <Container className={classes.messageListContainer}>
         <MessageList />
       </Container>
-      {/* <Container>
-        <StripeProvider apiKey="pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR">
-          <div className="example">
-            <h1>React Stripe Elements Example</h1>
-            <Elements>
-              <AddCreditsForm />
-            </Elements>
-          </div>
-        </StripeProvider>
-      </Container> */}
     </React.Fragment>
   )
 }

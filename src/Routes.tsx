@@ -10,10 +10,11 @@ interface PropsFromState {
   clientState: ClientState
 }
 
-const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
+const LazyAccountPage = React.lazy(() => import('./pages/AccountPage'))
+const LazyAddCreditsPage = React.lazy(() => import('./pages/AddCreditsPage'))
 const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
-const LazyAccountPage = React.lazy(() => import('./pages/AccountPage'))
+const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <React.Suspense fallback={<Loading centerOnPage={true} />}>
@@ -33,6 +34,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
         <Route exact path="/signup" component={LazySignUpPage} />
         <Route exact path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />
+        <Route exact path="/addcredits" component={LazyAddCreditsPage} />
         <Route path="/c/:handle" component={LazyProfilePage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
