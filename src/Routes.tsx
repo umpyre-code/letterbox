@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Root from './components/layout/Root'
 import Loading from './components/widgets/Loading'
-import ProfilePage from './pages/ProfilePage'
 import { ApplicationState } from './store'
 import { ClientState } from './store/client/types'
 
@@ -34,7 +33,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
         <Route exact path="/signup" component={LazySignUpPage} />
         <Route exact path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />
-        <Route path="/c/:handle" component={ProfilePage} />
+        <Route path="/c/:handle" component={LazyProfilePage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
     </Root>

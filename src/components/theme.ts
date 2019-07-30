@@ -12,7 +12,7 @@ export const theme = createMuiTheme({
   spacing: 5,
   typography: {
     fontFamily: [
-      'Lato Regular',
+      'Lato',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',

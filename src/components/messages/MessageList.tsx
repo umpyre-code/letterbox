@@ -1,5 +1,4 @@
 import {
-  Box,
   createStyles,
   Divider,
   List,
@@ -12,6 +11,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../../store'
 import { MessagesState } from '../../store/messages/types'
+import { Emoji } from '../widgets/Emoji'
 import { MessageListItem } from './MessageListItem'
 
 interface PropsFromState {
@@ -55,7 +55,11 @@ const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => 
         </List>
       )
     } else {
-      return <Typography className={classes.noMessages}>no messages 😀</Typography>
+      return (
+        <Typography className={classes.noMessages}>
+          no messages <Emoji>😀</Emoji>
+        </Typography>
+      )
     }
   }
 

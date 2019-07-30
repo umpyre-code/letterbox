@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@material-ui/styles'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import 'typeface-lato'
 import { ApplicationState } from '../../store'
 import { initializeClientRequest } from '../../store/client/actions'
 import { secureMathRandom } from '../../util/secureMathRandom'

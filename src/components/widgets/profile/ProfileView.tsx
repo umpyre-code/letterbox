@@ -1,16 +1,19 @@
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   CardHeader,
   Container,
   createStyles,
   Divider,
+  Grid,
   IconButton,
   makeStyles,
   Menu,
   MenuItem,
   Theme,
+  Tooltip,
   Typography
 } from '@material-ui/core'
 import EditButton from '@material-ui/icons/Edit'
@@ -24,10 +27,35 @@ import Loading from '../Loading'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    addCreditsButton: {
+      '& .plusButton': { display: 'none', fontSize: '1rem', color: theme.palette.primary },
+      '&:hover .plusButton': {
+        display: 'inline',
+        color: theme.palette.primary
+      },
+      fontSize: '1.2rem',
+      lineHeight: 1,
+      margin: theme.spacing(0),
+      minWidth: 0,
+      padding: theme.spacing(1)
+    },
     handleText: {
       color: 'rgba(0, 0, 0, 0.54)'
     },
     profileContainer: {
+      fontFamily: [
+        'Aleo',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"'
+      ].join(','),
       padding: theme.spacing(0, 1, 0, 1)
     }
   })
@@ -127,6 +155,27 @@ export const Action: React.FC<ActionProps> = ({
   }
 }
 
+interface BalanceProps {
+  balance?: Balance
+}
+
+export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
+  const classes = useStyles()
+
+  if (balance !== undefined) {
+    const amount = Math.floor(100 * (balance.balance_cents + balance.promo_cents))
+    return (
+      <Tooltip title="Add credits" enterDelay={500}>
+        <Button className={classes.addCreditsButton} size="small">
+          <span className="plusButton">+&nbsp;</span>${amount}
+        </Button>
+      </Tooltip>
+    )
+  } else {
+    return null
+  }
+}
+
 export const ProfileView: React.FC<Props> = ({
   balance,
   editable,
@@ -143,15 +192,6 @@ export const ProfileView: React.FC<Props> = ({
       setMenuAnchorElementNull={() => setMenuAnchorElement(null)}
     />
   )
-
-  function getBalance() {
-    if (balance !== undefined) {
-      const amount = Math.floor(100 * (balance.balance_cents + balance.promo_cents))
-      return <Typography>${amount}</Typography>
-    } else {
-      return null
-    }
-  }
 
   function getCardHeader() {
     if (profile) {
@@ -170,9 +210,20 @@ export const ProfileView: React.FC<Props> = ({
             />
           }
           title={
-            <Typography>
-              {profile.full_name} {getBalance()}
-            </Typography>
+            <Grid
+              container
+              style={{ padding: 0 }}
+              spacing={0}
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item zeroMinWidth>
+                <Typography>{profile.full_name}</Typography>
+              </Grid>
+              <Grid item zeroMinWidth>
+                <BalanceButton balance={balance} />
+              </Grid>
+            </Grid>
           }
           subheader={<Handle profile={profile} />}
         />
