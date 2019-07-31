@@ -16,11 +16,12 @@ import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance, ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
+import Loading from '../components/widgets/Loading'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 
 interface PropsFromState {
-  balance: Balance
+  balance?: Balance
   profile: ClientProfile
 }
 
@@ -49,41 +50,45 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
   const [stripe, setStripe] = React.useState(null)
   const classes = useStyles()
 
+  function stripeLoaded() {
+    setStripe(window.Stripe(STRIPE_API_PK))
+  }
+
   React.useEffect(() => {
-    loadScript('https://js.stripe.com/v3/', 'stripe-js')
-    document!.querySelector('#stripe-js')!.addEventListener('load', () => {
-      const stripe = window.Stripe(STRIPE_API_PK)
-      setStripe(stripe)
-    })
+    loadScript('https://js.stripe.com/v3/', 'stripe-js', stripeLoaded)
   }, [])
 
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <Container className={classes.headerContainer}>
-        <Typography variant="h2" component="h2">
-          <strong>
-            <Router.Link to="/">Umpyre</Router.Link>
-          </strong>
-        </Typography>
-      </Container>
-      <Divider />
-      <Container className={classes.bodyContainer}>
-        <Container className={classes.bodyContentContainer}>
-          <Typography variant="h4">Add credits to your account</Typography>
+  if (balance) {
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <Container className={classes.headerContainer}>
+          <Typography variant="h2" component="h2">
+            <strong>
+              <Router.Link to="/">Umpyre</Router.Link>
+            </strong>
+          </Typography>
         </Container>
-        <Container className={classes.bodyContentContainer}>
-          {stripe !== null && (
-            <StripeProvider stripe={stripe}>
-              <Elements>
-                <AddCreditsForm balance={balance} />
-              </Elements>
-            </StripeProvider>
-          )}
+        <Divider />
+        <Container className={classes.bodyContainer}>
+          <Container className={classes.bodyContentContainer}>
+            <Typography variant="h4">Add credits to your account</Typography>
+          </Container>
+          <Container className={classes.bodyContentContainer}>
+            {stripe !== null && (
+              <StripeProvider stripe={stripe}>
+                <Elements>
+                  <AddCreditsForm balance={balance} />
+                </Elements>
+              </StripeProvider>
+            )}
+          </Container>
         </Container>
-      </Container>
-    </React.Fragment>
-  )
+      </React.Fragment>
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
