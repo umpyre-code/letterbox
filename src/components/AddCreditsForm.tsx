@@ -53,16 +53,22 @@ function numberFormatCustom(props: NumberFormatCustomProps) {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    contentContainer: { padding: theme.spacing(4, 0, 0, 0) },
     customAmount: {
       margin: 0
     },
     customAmountLabel: {
       display: 'none'
     },
-    contentContainer: { padding: theme.spacing(4, 0, 4, 0) },
     customTextField: {},
     gridContainer: { padding: theme.spacing(3, 0, 3, 0) },
-    table: {}
+    lastTableCell: {
+      borderTop: '1px solid rgba(224, 224, 224, 1)'
+    },
+    table: {},
+    tableCell: {
+      borderBottom: '0'
+    }
   })
 )
 
@@ -142,6 +148,8 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
               onChange={customAmountChanged}
               className={classes.customTextField}
               variant="outlined"
+              margin="dense"
+              style={{ width: 150 }}
               InputProps={{
                 inputComponent: numberFormatCustom as any,
                 onClick: customAmountInputClicked
@@ -241,16 +249,23 @@ interface BalanceTableProps {
 
 const BalanceTable: React.FC<BalanceTableProps> = ({ rows }) => {
   const classes = useStyles()
+  function getCellClass(index) {
+    if (index < rows.length - 1) {
+      return classes.tableCell
+    } else {
+      return classes.lastTableCell
+    }
+  }
   return (
     <Paper>
       <Table className={classes.table} size="small">
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={index} hover>
-              <TableCell component="th" scope="row">
+            <TableRow key={index}>
+              <TableCell component="th" scope="row" classes={{ root: getCellClass(index) }}>
                 {row.name}
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" classes={{ root: getCellClass(index) }}>
                 <NumberFormat
                   value={row.value}
                   thousandSeparator
@@ -297,6 +312,9 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
   return (
     <React.Fragment>
       <BalanceTable rows={currentRows} />
+      <Container className={classes.contentContainer}>
+        <Typography variant="h6">Payment</Typography>
+      </Container>
       <Container className={classes.contentContainer}>
         <RadioButtons setCreditAmount={setCreditAmount} />
       </Container>

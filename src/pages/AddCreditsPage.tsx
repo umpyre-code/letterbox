@@ -72,7 +72,7 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
         <Divider />
         <Container className={classes.bodyContainer}>
           <Container className={classes.bodyContentContainer}>
-            <Typography variant="h4">Add credits to your account</Typography>
+            <Typography variant="h4">Add credits</Typography>
           </Container>
           <Container className={classes.bodyContentContainer}>
             {stripe !== null && (
