@@ -81,7 +81,7 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
       </Container>
       <Divider />
       <Container className={classes.profileContainer}>
-        <Profile profile={profile} editable={isEditable()} full />
+        <Profile profile={profile} editable={isEditable()} fullProfile />
       </Container>
     </React.Fragment>
   )

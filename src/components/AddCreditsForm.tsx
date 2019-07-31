@@ -1,24 +1,22 @@
 import {
   Button,
+  Container,
   createStyles,
-  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
   Grid,
   makeStyles,
+  Paper,
   Radio,
   RadioGroup,
-  TextField,
-  Theme,
-  Typography,
   Table,
   TableBody,
   TableCell,
   TableRow,
-  TableHead,
-  Container,
-  Paper
+  TextField,
+  Theme,
+  Typography
 } from '@material-ui/core'
 import React, { Component } from 'react'
 import NumberFormat from 'react-number-format'
@@ -298,9 +296,9 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
   const stripeFee = calculateStripeFee(creditAmount) / 100 - creditAmount
   const chargeAmount = stripeFee + creditAmount
   const currentRows = [
-    makeRow('Current balance', balanceAmount),
-    makeRow('Promo balance', promoAmount),
-    makeRow('Total balance', totalAmount)
+    makeRow('Current', balanceAmount),
+    makeRow('Promo', promoAmount),
+    makeRow('Total', totalAmount)
   ]
   const updatedRows = [
     makeRow('Additional credits', creditAmount),
@@ -311,13 +309,14 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
 
   return (
     <React.Fragment>
+      <Container className={classes.contentContainer}>
+        <Typography variant="h6">Current balance</Typography>
+      </Container>
       <BalanceTable rows={currentRows} />
       <Container className={classes.contentContainer}>
         <Typography variant="h6">Payment</Typography>
       </Container>
-      <Container className={classes.contentContainer}>
-        <RadioButtons setCreditAmount={setCreditAmount} />
-      </Container>
+      <RadioButtons setCreditAmount={setCreditAmount} />
       <BalanceTable rows={updatedRows} />
       <Container className={classes.contentContainer}>
         <CardSectionForm chargeAmount={chargeAmount} />

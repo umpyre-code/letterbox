@@ -10,13 +10,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({}))
 interface Props {
   balance?: Balance
   editable?: boolean
-  full?: boolean
+  fullProfile?: boolean
   menu?: boolean
   profile?: ClientProfile
 }
 
 export const Profile: React.FC<Props> = props => {
-  const { editable, full, menu, profile } = props
+  const { editable, fullProfile, menu, profile } = props
   const classes = useStyles()
   const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
@@ -34,7 +34,7 @@ export const Profile: React.FC<Props> = props => {
 Profile.defaultProps = {
   balance: undefined,
   editable: false,
-  full: false,
+  fullProfile: false,
   menu: false,
   profile: undefined
 }

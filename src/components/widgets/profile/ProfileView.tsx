@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'rgba(0, 0, 0, 0.54)'
     },
     profileContainer: {
+      padding: theme.spacing(0, 1, 0, 1)
+    },
+    profileTypography: {
       fontFamily: [
         'Aleo',
         '-apple-system',
@@ -57,8 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"'
-      ].join(','),
-      padding: theme.spacing(0, 1, 0, 1)
+      ].join(',')
     }
   })
 )
@@ -66,6 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   balance?: Balance
   editable?: boolean
+  fullProfile?: boolean
   menu?: boolean
   profile?: ClientProfile
   setIsEditing: (arg0: boolean) => void
@@ -189,6 +192,7 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
 export const ProfileView: React.FC<Props> = ({
   balance,
   editable,
+  fullProfile,
   menu,
   profile,
   setIsEditing
@@ -248,7 +252,7 @@ export const ProfileView: React.FC<Props> = ({
   }
 
   function getProfileContent() {
-    if (profile && profile.profile && profile.profile.length > 0) {
+    if (fullProfile && profile && profile.profile && profile.profile.length > 0) {
       return (
         <CardContent>
           <Typography component="sub" variant="subtitle1">
@@ -257,7 +261,10 @@ export const ProfileView: React.FC<Props> = ({
           <Divider light />
           <Container className={classes.profileContainer}>
             {/* tslint:disable-next-line: react-no-dangerous-html */}
-            <Typography dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }} />
+            <Typography
+              className={classes.profileTypography}
+              dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }}
+            />
           </Container>
         </CardContent>
       )

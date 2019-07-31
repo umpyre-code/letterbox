@@ -151,6 +151,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     } else {
       const credentials = yield call(saveClientToken, res)
       yield put(submitNewClientSuccess(credentials))
+      yield put(fetchBalanceRequest())
       yield put(push('/'))
     }
   } catch (err) {
