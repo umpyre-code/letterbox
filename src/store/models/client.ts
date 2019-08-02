@@ -44,8 +44,3 @@ export interface ClientProfile {
   handle?: string
   profile?: string
 }
-
-export interface Balance {
-  balance_cents: number
-  promo_cents: number
-}

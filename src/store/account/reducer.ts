@@ -3,9 +3,8 @@ import { AccountActionTypes, AccountState } from './types'
 
 export const initialState: AccountState = {
   balance: undefined,
-  errors: undefined,
-  loading: false,
-  ready: false
+  charging: false,
+  errors: undefined
 }
 
 export const reducer: Reducer<AccountState> = (state = initialState, action) => {
@@ -18,6 +17,30 @@ export const reducer: Reducer<AccountState> = (state = initialState, action) => 
       return {
         ...state,
         balance: action.payload.balance
+      }
+    }
+    case AccountActionTypes.CHARGE_REQUEST: {
+      return { ...state, charging: true }
+    }
+    case AccountActionTypes.CHARGE_ERROR: {
+      return state
+    }
+    case AccountActionTypes.CLEAR_CHARGE_ERRORS: {
+      return { ...state, chargeErrorResponse: undefined }
+    }
+    case AccountActionTypes.CHARGE_SUCCESS: {
+      return {
+        ...state,
+        balance: action.payload.balance,
+        chargeResponse: action.payload,
+        charging: false
+      }
+    }
+    case AccountActionTypes.CHARGE_API_ERROR: {
+      return {
+        ...state,
+        chargeErrorResponse: action.payload,
+        charging: false
       }
     }
     default: {

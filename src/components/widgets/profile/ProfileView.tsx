@@ -176,7 +176,7 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
   const classes = useStyles()
 
   if (balance !== undefined) {
-    const amount = Math.floor(100 * (balance.balance_cents + balance.promo_cents))
+    const amount = Math.floor((balance.balance_cents + balance.promo_cents) / 100)
     return (
       <Tooltip title="Add credits" enterDelay={500}>
         <Button className={classes.addCreditsButton} size="small" component={CollisionLink}>

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import * as jwt from 'jsonwebtoken'
-import { Balance, ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
+import { Balance, ChargeRequest, ChargeResponse } from './models/account'
+import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
@@ -87,5 +88,9 @@ export class API {
 
   public async fetchBalance(): Promise<Balance> {
     return this.client.get('/account/balance').then(response => response.data)
+  }
+
+  public async charge(charge: ChargeRequest): Promise<ChargeResponse> {
+    return this.client.post('/account/charge', charge).then(response => response.data)
   }
 }
