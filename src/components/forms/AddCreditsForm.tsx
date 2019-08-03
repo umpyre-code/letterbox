@@ -6,14 +6,8 @@ import {
   FormLabel,
   Grid,
   makeStyles,
-  Paper,
   Radio,
   RadioGroup,
-  SnackbarContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
   TextField,
   Theme,
   Typography
@@ -21,6 +15,7 @@ import {
 import React from 'react'
 import NumberFormat from 'react-number-format'
 import { Balance } from '../../store/models/account'
+import { BalanceTable, makeRow, makeRowsFromBalance } from '../widgets/BalanceTable'
 import { CardSectionForm } from './CardSectionForm'
 
 interface NumberFormatCustomProps {
@@ -58,14 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'none'
     },
     customTextField: {},
-    gridContainer: { padding: theme.spacing(3, 0, 3, 0) },
-    lastTableCell: {
-      borderTop: '1px solid rgba(224, 224, 224, 1)'
-    },
-    table: {},
-    tableCell: {
-      borderBottom: '0'
-    }
+    gridContainer: { padding: theme.spacing(3, 0, 3, 0) }
   })
 )
 
@@ -170,70 +158,14 @@ function calculateStripeFee(amount: number) {
   return Math.round((amountCents + fixedFee) / (1 - percentFee))
 }
 
-interface Row {
-  name: string
-  value: number
-}
-
-interface BalanceTableProps {
-  rows: Row[]
-}
-
-const BalanceTable: React.FC<BalanceTableProps> = ({ rows }) => {
-  const classes = useStyles()
-  function getCellClass(index) {
-    if (index < rows.length - 1) {
-      return classes.tableCell
-    } else {
-      return classes.lastTableCell
-    }
-  }
-  return (
-    <Paper>
-      <Table className={classes.table} size="small">
-        <TableBody>
-          {rows.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row" classes={{ root: getCellClass(index) }}>
-                {row.name}
-              </TableCell>
-              <TableCell align="right" classes={{ root: getCellClass(index) }}>
-                <NumberFormat
-                  value={row.value}
-                  thousandSeparator
-                  prefix="$"
-                  displayType="text"
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
-  )
-}
-
-function makeRow(name: string, value: number): Row {
-  return { name, value }
-}
-
 const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
   const [creditAmount, setCreditAmount] = React.useState(20)
   const classes = useStyles()
 
-  const balanceAmount = balance.balance_cents / 100.0
-  const promoAmount = balance.promo_cents / 100.0
-  const totalAmount = (balance.balance_cents + balance.promo_cents) / 100.0
   const newBalance = creditAmount + (balance.balance_cents + balance.promo_cents) / 100.0
   const stripeFee = calculateStripeFee(creditAmount) / 100 - creditAmount
   const chargeAmount = stripeFee + creditAmount
-  const currentRows = [
-    makeRow('Current', balanceAmount),
-    makeRow('Promo', promoAmount),
-    makeRow('Total', totalAmount)
-  ]
+  const currentRows = makeRowsFromBalance(balance)
   const updatedRows = [
     makeRow('Additional credits', creditAmount),
     makeRow('Card fee', stripeFee),

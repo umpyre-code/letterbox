@@ -1,24 +1,35 @@
 import {
+  AppBar,
+  Box,
   Container,
   createStyles,
   CssBaseline,
   makeStyles,
+  Paper,
+  Tab,
+  Tabs,
   Theme,
   Typography
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import { Link, Route, Switch } from 'react-router-dom'
+import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
+import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
+import { PayoutsPage } from './PayoutsPage'
+import { Emoji } from '../components/widgets/Emoji'
 
 interface PropsFromState {
-  profile: ClientProfile
+  profile?: ClientProfile
+  balance?: Balance
 }
 
 interface PropsFromDispatch {}
 
-type AllProps = PropsFromState & PropsFromDispatch
+type AccountPageProps = PropsFromState & PropsFromDispatch
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +52,31 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const AccountPageFC: React.FC<AllProps> = ({ profile }) => {
+function a11yProps(name: string) {
+  return {
+    'aria-controls': `simple-tabpanel-${name}`,
+    id: `simple-tab-${name}`
+  }
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode
+  name: string
+}
+
+const TabPanel: React.FC<TabPanelProps> = ({ children, name, ...other }) => (
+  <Typography
+    component="div"
+    role="tabpanel"
+    id={`tabpanel-${name}`}
+    aria-labelledby={`tab-${name}`}
+    {...other}
+  >
+    <Box p={3}>{children}</Box>
+  </Typography>
+)
+
+const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile }) => {
   const classes = useStyles()
 
   return (
@@ -49,17 +84,87 @@ const AccountPageFC: React.FC<AllProps> = ({ profile }) => {
       <CssBaseline />
       <Container className={classes.headerContainer}>
         <Typography variant="h2" component="h2">
-          <strong>Umpyre</strong>
+          <strong>
+            <Link to="/">Umpyre</Link>
+          </strong>
         </Typography>
       </Container>
       <Container>
-        <Typography variant="h4">My account</Typography>
+        <Paper>
+          <Route
+            path="/account"
+            render={({ location }) => (
+              <React.Fragment>
+                <AppBar position="static">
+                  <Tabs value={location.pathname} aria-label="my account">
+                    <Tab
+                      label="Account"
+                      {...a11yProps('account')}
+                      component={Link}
+                      to="/account"
+                      value="/account"
+                    />
+                    <Tab
+                      label="Balance"
+                      {...a11yProps('balance')}
+                      component={Link}
+                      to="/account/balance"
+                      value="/account/balance"
+                    />
+                    <Tab
+                      label="Payouts"
+                      {...a11yProps('payouts')}
+                      component={Link}
+                      to="/account/payouts"
+                      value="/account/payouts"
+                    />
+                  </Tabs>
+                </AppBar>
+                <React.Fragment>
+                  <Switch>
+                    <Route
+                      exact
+                      path="/account"
+                      render={() => (
+                        <TabPanel name="account">
+                          <Typography variant="h5">Account info</Typography>
+                          <Typography>
+                            Looking good <Emoji>😎</Emoji>
+                          </Typography>
+                        </TabPanel>
+                      )}
+                    />
+                    <Route
+                      path="/account/balance"
+                      render={() => (
+                        <TabPanel name="balance">
+                          <Typography variant="h5">Account balance</Typography>
+
+                          {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
+                        </TabPanel>
+                      )}
+                    />
+                    <Route
+                      path="/account/payouts"
+                      render={() => (
+                        <TabPanel name="payouts">
+                          <PayoutsPage />
+                        </TabPanel>
+                      )}
+                    />
+                  </Switch>
+                </React.Fragment>
+              </React.Fragment>
+            )}
+          />
+        </Paper>
       </Container>
     </React.Fragment>
   )
 }
 
-const mapStateToProps = ({ clientState }: ApplicationState) => ({
+const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
+  balance: accountState.balance!,
   profile: clientState.profile!
 })
 

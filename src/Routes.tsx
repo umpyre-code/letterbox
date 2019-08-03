@@ -32,7 +32,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
           }}
         />
         <Route exact path="/signup" component={LazySignUpPage} />
-        <Route exact path="/account" component={LazyAccountPage} />
+        <Route path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />
         <Route exact path="/addcredits" component={LazyAddCreditsPage} />
         <Route path="/c/:handle" component={LazyProfilePage} />

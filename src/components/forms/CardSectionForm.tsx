@@ -17,8 +17,8 @@ import { CardElement, injectStripe } from 'react-stripe-elements'
 import { ApplicationState } from '../../store'
 import { chargeRequest, clearChargeErrors } from '../../store/account/actions'
 import { ChargeErrorResponse, ChargeResponse } from '../../store/models/account'
-import './stripe.css'
 import { ClientProfile } from '../../store/models/client'
+import './stripe.css'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -77,7 +77,9 @@ class CardSection extends Component<CardSectionProps, CardSectionState> {
     this.onCardElementChanged = this.onCardElementChanged.bind(this)
     this.buttonDisabled = this.buttonDisabled.bind(this)
 
-    this.state = { error: undefined }
+    this.state = {
+      error: undefined
+    }
   }
 
   public async submit() {
