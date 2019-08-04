@@ -278,16 +278,16 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
 }) => {
   const classes = useStyles()
 
-  const oauthParams = qs.parse(searchString, { ignoreQueryPrefix: true })
-  if (oauthParams && oauthParams.code && oauthParams.state) {
-    postConnectOauth({
-      authorization_code: oauthParams.code,
-      oauth_state: oauthParams.state
-    })
-  }
-
   React.useEffect(() => {
-    fetchConnectAccount()
+    const oauthParams = qs.parse(searchString, { ignoreQueryPrefix: true })
+    if (oauthParams && oauthParams.code && oauthParams.state) {
+      postConnectOauth({
+        authorization_code: oauthParams.code,
+        oauth_state: oauthParams.state
+      })
+    } else {
+      fetchConnectAccount()
+    }
   }, [])
 
   if (profile && balance && connectAccount) {
