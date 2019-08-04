@@ -285,9 +285,8 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
         authorization_code: oauthParams.code,
         oauth_state: oauthParams.state
       })
-    } else {
-      fetchConnectAccount()
     }
+    fetchConnectAccount()
   }, [])
 
   if (profile && balance && connectAccount) {
