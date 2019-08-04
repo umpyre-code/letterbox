@@ -20,7 +20,7 @@ import Loading from '../components/widgets/Loading'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
-import { ClientProfile, ClientCredentials } from '../store/models/client'
+import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
 
 interface PropsFromState {
