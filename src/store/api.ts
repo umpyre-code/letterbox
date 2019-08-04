@@ -7,7 +7,9 @@ import {
   ChargeResponse,
   ConnectAccountInfo,
   ConnectOauth,
-  PostConnectOauthResponse
+  PostConnectOauthResponse,
+  ConnectAccountPrefs,
+  PostConnectPrefsResponse
 } from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage } from './models/messages'
@@ -112,7 +114,11 @@ export class API {
     return this.client.post('/account/charge', charge).then(response => response.data)
   }
 
-  public async post_oauth(oauth: ConnectOauth): Promise<PostConnectOauthResponse> {
+  public async postOauth(oauth: ConnectOauth): Promise<PostConnectOauthResponse> {
     return this.client.post('/account/oauth', oauth).then(response => response.data)
+  }
+
+  public async updateConnectPrefs(prefs: ConnectAccountPrefs): Promise<PostConnectPrefsResponse> {
+    return this.client.post('/account/connect/prefs', prefs).then(response => response.data)
   }
 }

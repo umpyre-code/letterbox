@@ -4,6 +4,8 @@ import {
   ChargeErrorResponse,
   ChargeRequest,
   ChargeResponse,
+  ConnectAccountInfo,
+  ConnectAccountPrefs,
   ConnectOauth,
   FetchConnectAccountInfoResponse,
   PostConnectOauthResponse
@@ -37,4 +39,11 @@ export const postConnectOauthRequest = (oauth: ConnectOauth) =>
 export const postConnectOauthSuccess = (account: PostConnectOauthResponse) =>
   action(AccountActionTypes.POST_CONNECT_OAUTH_SUCCESS, account)
 export const postConnectOauthError = (message: string) =>
+  action(AccountActionTypes.POST_CONNECT_OAUTH_ERROR, message)
+
+export const postConnectPrefsRequest = (oauth: ConnectAccountPrefs) =>
+  action(AccountActionTypes.POST_CONNECT_PREFS_REQUEST, oauth)
+export const postConnectPrefsSuccess = (account: ConnectAccountInfo) =>
+  action(AccountActionTypes.POST_CONNECT_PREFS_SUCCESS, account)
+export const postConnectPrefsError = (message: string) =>
   action(AccountActionTypes.POST_CONNECT_OAUTH_ERROR, message)

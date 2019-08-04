@@ -3,9 +3,12 @@ import { AccountActionTypes, AccountState } from './types'
 
 export const initialState: AccountState = {
   balance: undefined,
+  chargeErrorResponse: undefined,
+  chargeResponse: undefined,
   charging: false,
   connectAccount: undefined,
-  errors: undefined
+  errors: undefined,
+  updatingPrefs: false
 }
 
 export const reducer: Reducer<AccountState> = (state = initialState, action) => {
@@ -38,6 +41,19 @@ export const reducer: Reducer<AccountState> = (state = initialState, action) => 
       return {
         ...state,
         connectAccount: action.payload.connect_account
+      }
+    }
+    case AccountActionTypes.POST_CONNECT_PREFS_ERROR: {
+      return { ...state, updatingPrefs: false }
+    }
+    case AccountActionTypes.POST_CONNECT_PREFS_REQUEST: {
+      return { ...state, updatingPrefs: true }
+    }
+    case AccountActionTypes.POST_CONNECT_PREFS_SUCCESS: {
+      return {
+        ...state,
+        connectAccount: action.payload,
+        updatingPrefs: false
       }
     }
     case AccountActionTypes.CHARGE_REQUEST: {

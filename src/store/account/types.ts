@@ -14,7 +14,10 @@ export const enum AccountActionTypes {
   FETCH_CONNECT_ACCOUNT_SUCCESS = '@@account/FETCH_CONNECT_ACCOUNT_SUCCESS',
   POST_CONNECT_OAUTH_ERROR = '@@account/POST_CONNECT_OAUTH_ERROR',
   POST_CONNECT_OAUTH_REQUEST = '@@account/POST_CONNECT_OAUTH_REQUEST',
-  POST_CONNECT_OAUTH_SUCCESS = '@@account/POST_CONNECT_OAUTH_SUCCESS'
+  POST_CONNECT_OAUTH_SUCCESS = '@@account/POST_CONNECT_OAUTH_SUCCESS',
+  POST_CONNECT_PREFS_ERROR = '@@account/POST_CONNECT_PREFS_ERROR',
+  POST_CONNECT_PREFS_REQUEST = '@@account/POST_CONNECT_PREFS_REQUEST',
+  POST_CONNECT_PREFS_SUCCESS = '@@account/POST_CONNECT_PREFS_SUCCESS'
 }
 
 export interface AccountState {
@@ -24,4 +27,5 @@ export interface AccountState {
   readonly charging: boolean
   readonly connectAccount?: ConnectAccountInfo
   readonly errors?: string
+  readonly updatingPrefs: boolean
 }

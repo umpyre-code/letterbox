@@ -2,7 +2,7 @@ import { goBack } from 'connected-react-router'
 import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import { ApplicationState } from '..'
 import { API } from '../api'
-import { ChargeRequest, ConnectOauth } from '../models/account'
+import { ChargeRequest, ConnectOauth, ConnectAccountPrefs } from '../models/account'
 import { ClientCredentials } from '../models/client'
 import {
   chargeApiError,
@@ -15,7 +15,10 @@ import {
   fetchConnectAccountSuccess,
   postConnectOauthError,
   postConnectOauthSuccess,
-  postConnectOauthRequest
+  postConnectOauthRequest,
+  postConnectPrefsRequest,
+  postConnectPrefsError,
+  postConnectPrefsSuccess
 } from './actions'
 import { AccountActionTypes } from './types'
 
@@ -114,7 +117,7 @@ function* watchChargeRequest() {
 
 async function postOauth(credentials: ClientCredentials, oauth: ConnectOauth) {
   const api = new API(credentials)
-  return api.post_oauth(oauth)
+  return api.postOauth(oauth)
 }
 
 function* handlePostOauth(values: ReturnType<typeof postConnectOauthRequest>) {
@@ -142,11 +145,42 @@ function* watchPostConnectOauthRequest() {
   yield takeEvery(AccountActionTypes.POST_CONNECT_OAUTH_REQUEST, handlePostOauth)
 }
 
+async function postPrefs(credentials: ClientCredentials, prefs: ConnectAccountPrefs) {
+  const api = new API(credentials)
+  return api.updateConnectPrefs(prefs)
+}
+
+function* handlePostPrefs(values: ReturnType<typeof postConnectPrefsRequest>) {
+  try {
+    const { payload } = values
+    const state: ApplicationState = yield select()
+    const credentials: ClientCredentials = state.clientState.credentials!
+    const res = yield call(postPrefs, credentials, payload)
+
+    if (res.error) {
+      yield put(postConnectPrefsError(res.error))
+    } else {
+      yield put(postConnectPrefsSuccess(res))
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      yield put(postConnectPrefsError(err.stack!))
+    } else {
+      yield put(postConnectPrefsError('An unknown error occured.'))
+    }
+  }
+}
+
+function* watchPostConnectPrefsRequest() {
+  yield takeLatest(AccountActionTypes.POST_CONNECT_PREFS_REQUEST, handlePostPrefs)
+}
+
 export function* sagas() {
   yield all([
     fork(watchChargeRequest),
     fork(watchFetchBalanceRequest),
     fork(watchFetchConnectAccountRequest),
-    fork(watchPostConnectOauthRequest)
+    fork(watchPostConnectOauthRequest),
+    fork(watchPostConnectPrefsRequest)
   ])
 }

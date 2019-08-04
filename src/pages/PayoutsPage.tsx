@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   createStyles,
   Divider,
   Fade,
@@ -15,6 +16,7 @@ import {
 } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
+import qs from 'qs'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
@@ -24,14 +26,12 @@ import Loading from '../components/widgets/Loading'
 import { ApplicationState } from '../store'
 import {
   fetchConnectAccountRequest,
-  postConnectOauthError,
   postConnectOauthRequest,
-  postConnectOauthRequest
+  postConnectPrefsRequest
 } from '../store/account/actions'
 import { Balance, ConnectAccountInfo } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import './stripe-connect-button.css'
-import qs from 'qs'
 
 const sliderStyles = makeStyles({
   input: {
@@ -71,19 +71,22 @@ function numberFormatCustom(props: NumberFormatCustomProps) {
 }
 
 interface PayoutSliderProps {
-  disabled: boolean
   connectAccount: ConnectAccountInfo
+  updatingPrefs: boolean
+  updatePrefs: typeof postConnectPrefsRequest
 }
 
-const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount }) => {
+const PayoutSlider: React.FC<PayoutSliderProps> = ({
+  connectAccount,
+  updatingPrefs,
+  updatePrefs
+}) => {
   const classes = sliderStyles()
   const [payoutAmount, setPayoutAmount] = React.useState(
     Math.trunc(connectAccount.preferences.automatic_payout_threshold_cents / 100)
   )
-  const [saved, setSaved] = React.useState(false)
-
+  const [wasChanged, setWasChanged] = React.useState(false)
   const handleSliderChange = (event: any, newValue: number) => {
-    setSaved(true)
     setPayoutAmount(newValue)
   }
 
@@ -92,7 +95,11 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount })
     if (amount < 100) {
       amount = 100
     }
-    setPayoutAmount(amount)
+    updatePrefs({
+      ...connectAccount.preferences,
+      automatic_payout_threshold_cents: Math.trunc(amount * 100)
+    })
+    setWasChanged(true)
   }
 
   const handleBlur = () => {
@@ -101,15 +108,49 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount })
     }
   }
 
+  function showProgress() {
+    if (updatingPrefs) {
+      return <CircularProgress />
+    } else {
+      return (
+        <Fade timeout={500} in={wasChanged}>
+          <Typography style={{ color: 'pink' }}>
+            Saved! <Emoji>😇</Emoji>
+          </Typography>
+        </Fade>
+      )
+    }
+  }
+
   return (
     <React.Fragment>
+      <FormControl component="fieldset">
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={connectAccount.preferences.enable_automatic_payouts}
+                onChange={(event, checked) => {
+                  updatePrefs({
+                    ...connectAccount.preferences,
+                    enable_automatic_payouts: checked
+                  })
+                  setWasChanged(true)
+                }}
+              />
+            }
+            label="Enable automatic payouts"
+          />
+        </FormGroup>
+      </FormControl>
       <Typography id="input-slider" gutterBottom>
         Payout threshold
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item>
           <Slider
-            disabled={disabled}
+            disabled={!connectAccount.preferences.enable_automatic_payouts}
             className={classes.slider}
             value={payoutAmount}
             onChange={handleSliderChange}
@@ -120,7 +161,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount })
         </Grid>
         <Grid item>
           <TextField
-            disabled={disabled}
+            disabled={!connectAccount.preferences.enable_automatic_payouts}
             label="Amount"
             inputProps={{ 'aria-label': 'payout-threshold-amount' }}
             variant="outlined"
@@ -134,15 +175,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount })
             }}
           />
         </Grid>
-        <Grid item>
-          {saved && (
-            <Fade timeout={500} in>
-              <Typography style={{ color: 'pink' }}>
-                Settings saved <Emoji>😇</Emoji>
-              </Typography>
-            </Fade>
-          )}
-        </Grid>
+        <Grid item>{showProgress()}</Grid>
       </Grid>
     </React.Fragment>
   )
@@ -160,13 +193,16 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 interface PayoutPreferencesSectionProps {
   connectAccount: ConnectAccountInfo
+  updatingPrefs: boolean
+  updatePrefs: typeof postConnectPrefsRequest
 }
 
-const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({ connectAccount }) => {
+const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({
+  connectAccount,
+  updatingPrefs,
+  updatePrefs
+}) => {
   const classes = useStyles()
-  const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
-    connectAccount.preferences.enable_automatic_payouts
-  )
 
   return (
     <React.Fragment>
@@ -181,21 +217,11 @@ const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({ con
         </Typography>
       </Box>
       <Box>
-        <FormControl component="fieldset">
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  checked={autoPayoutsEnabled}
-                  onChange={(event, checked) => setAutoPayoutsEnabled(checked)}
-                />
-              }
-              label="Enable automatic payouts"
-            />
-          </FormGroup>
-        </FormControl>
-        <PayoutSlider disabled={!autoPayoutsEnabled} connectAccount={connectAccount} />
+        <PayoutSlider
+          connectAccount={connectAccount}
+          updatingPrefs={updatingPrefs}
+          updatePrefs={updatePrefs}
+        />
       </Box>
     </React.Fragment>
   )
@@ -203,9 +229,15 @@ const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({ con
 
 interface ConnectButtonSectionProps {
   connectAccount: ConnectAccountInfo
+  updatingPrefs: boolean
+  updatePrefs: typeof postConnectPrefsRequest
 }
 
-const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({ connectAccount }) => {
+const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
+  connectAccount,
+  updatingPrefs,
+  updatePrefs
+}) => {
   const classes = useStyles()
   const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
     connectAccount.preferences.enable_automatic_payouts
@@ -215,14 +247,18 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({ connectAcco
     return (
       <React.Fragment>
         <Box className={classes.wordBox}>
-          <Typography variant="body1">Your Connect account is active.</Typography>
+          <Typography variant="body1">Your Stripe Connect account is active.</Typography>
         </Box>
         <Box className={classes.buttonBox}>
           <Link href={connectAccount.login_link_url} target="_blank" className="stripe-connect">
             <span>Stripe Connect Dashboard</span>
           </Link>
         </Box>
-        <PayoutPreferencesSection connectAccount={connectAccount} />
+        <PayoutPreferencesSection
+          connectAccount={connectAccount}
+          updatingPrefs={updatingPrefs}
+          updatePrefs={updatePrefs}
+        />
       </React.Fragment>
     )
   } else if (connectAccount.oauth_url) {
@@ -266,6 +302,8 @@ interface PayoutsProps {
   fetchConnectAccount: typeof fetchConnectAccountRequest
   postConnectOauth: typeof postConnectOauthRequest
   searchString: string
+  updatingPrefs: boolean
+  updatePrefs: typeof postConnectPrefsRequest
 }
 
 export const PayoutsPageFC: React.FC<PayoutsProps> = ({
@@ -274,7 +312,9 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
   connectAccount,
   fetchConnectAccount,
   postConnectOauth,
-  searchString
+  searchString,
+  updatingPrefs,
+  updatePrefs
 }) => {
   const classes = useStyles()
 
@@ -285,8 +325,9 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
         authorization_code: oauthParams.code,
         oauth_state: oauthParams.state
       })
+    } else {
+      fetchConnectAccount()
     }
-    fetchConnectAccount()
   }, [])
 
   if (profile && balance && connectAccount) {
@@ -294,7 +335,11 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
       <React.Fragment>
         <Typography variant="h5">Account payouts</Typography>
         <Divider />
-        <ConnectButtonSection connectAccount={connectAccount} />
+        <ConnectButtonSection
+          connectAccount={connectAccount}
+          updatingPrefs={updatingPrefs}
+          updatePrefs={updatePrefs}
+        />
       </React.Fragment>
     )
   } else {
@@ -305,12 +350,14 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
   balance: accountState.balance,
   connectAccount: accountState.connectAccount,
-  profile: clientState.profile
+  profile: clientState.profile,
+  updatingPrefs: accountState.updatingPrefs
 })
 
 const mapDispatchToProps = {
   fetchConnectAccount: fetchConnectAccountRequest,
-  postConnectOauth: postConnectOauthRequest
+  postConnectOauth: postConnectOauthRequest,
+  updatePrefs: postConnectPrefsRequest
 }
 
 const PayoutsPage = connect(
