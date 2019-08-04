@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
+import axiosRetry from 'axios-retry'
 import * as jwt from 'jsonwebtoken'
 import {
   Balance,
@@ -10,7 +11,6 @@ import {
 } from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage } from './models/messages'
-import axiosRetry from 'axios-retry'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
