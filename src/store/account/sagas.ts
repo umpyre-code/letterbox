@@ -2,7 +2,7 @@ import { goBack } from 'connected-react-router'
 import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import { ApplicationState } from '..'
 import { API } from '../api'
-import { ChargeRequest, ConnectOauth, ConnectAccountPrefs } from '../models/account'
+import { ChargeRequest, ConnectAccountPrefs, ConnectOauth } from '../models/account'
 import { ClientCredentials } from '../models/client'
 import {
   chargeApiError,
@@ -14,10 +14,10 @@ import {
   fetchConnectAccountError,
   fetchConnectAccountSuccess,
   postConnectOauthError,
-  postConnectOauthSuccess,
   postConnectOauthRequest,
-  postConnectPrefsRequest,
+  postConnectOauthSuccess,
   postConnectPrefsError,
+  postConnectPrefsRequest,
   postConnectPrefsSuccess
 } from './actions'
 import { AccountActionTypes } from './types'

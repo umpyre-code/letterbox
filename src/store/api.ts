@@ -6,9 +6,9 @@ import {
   ChargeRequest,
   ChargeResponse,
   ConnectAccountInfo,
+  ConnectAccountPrefs,
   ConnectOauth,
   PostConnectOauthResponse,
-  ConnectAccountPrefs,
   PostConnectPrefsResponse
 } from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
