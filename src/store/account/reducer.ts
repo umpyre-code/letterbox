@@ -4,6 +4,7 @@ import { AccountActionTypes, AccountState } from './types'
 export const initialState: AccountState = {
   balance: undefined,
   charging: false,
+  connectAccount: undefined,
   errors: undefined
 }
 
@@ -17,6 +18,26 @@ export const reducer: Reducer<AccountState> = (state = initialState, action) => 
       return {
         ...state,
         balance: action.payload.balance
+      }
+    }
+    case AccountActionTypes.FETCH_CONNECT_ACCOUNT_ERROR:
+    case AccountActionTypes.FETCH_CONNECT_ACCOUNT_REQUEST: {
+      return state
+    }
+    case AccountActionTypes.FETCH_CONNECT_ACCOUNT_SUCCESS: {
+      return {
+        ...state,
+        connectAccount: action.payload.connect_account
+      }
+    }
+    case AccountActionTypes.POST_CONNECT_OAUTH_ERROR:
+    case AccountActionTypes.POST_CONNECT_OAUTH_REQUEST: {
+      return state
+    }
+    case AccountActionTypes.POST_CONNECT_OAUTH_SUCCESS: {
+      return {
+        ...state,
+        connectAccount: action.payload.connect_account
       }
     }
     case AccountActionTypes.CHARGE_REQUEST: {

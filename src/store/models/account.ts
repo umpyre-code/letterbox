@@ -22,3 +22,30 @@ export interface ChargeErrorResponse {
   api_response: stripe.Error
   message: string
 }
+
+export interface FetchConnectAccountInfoResponse {
+  client_id: string
+  connect_account: ConnectAccountInfo
+}
+
+export interface ConnectAccountPrefs {
+  enable_automatic_payouts: boolean
+  automatic_payout_threshold_cents: number
+}
+
+export interface ConnectAccountInfo {
+  state: string
+  login_link_url?: string
+  oauth_url?: string
+  preferences: ConnectAccountPrefs
+}
+
+export interface ConnectOauth {
+  authorization_code: string
+  oauth_state: string
+}
+
+export interface PostConnectOauthResponse {
+  client_id: string
+  connect_account: ConnectAccountInfo
+}

@@ -2,27 +2,36 @@ import {
   Box,
   createStyles,
   Divider,
+  Fade,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
   Link,
   makeStyles,
+  Switch,
   TextField,
   Theme,
-  Typography,
-  Switch,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  Fade
+  Typography
 } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Slider from '@material-ui/core/Slider'
-import React, * as React from 'react'
+import * as React from 'react'
 import NumberFormat from 'react-number-format'
+import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import './stripe-connect-button.css'
 import { Emoji } from '../components/widgets/Emoji'
-
-const STRIPE_CLIENT_ID = process.env.STRIPE_CLIENT_ID || 'ca_FVZ7xsdnQsZChPyqzq4sDtwCMSoATpPz'
-const BASE_URL = process.env.STRIPE_CLIENT_ID || 'https://staging.umpyre.io'
+import Loading from '../components/widgets/Loading'
+import { ApplicationState } from '../store'
+import {
+  fetchConnectAccountRequest,
+  postConnectOauthError,
+  postConnectOauthRequest,
+  postConnectOauthRequest
+} from '../store/account/actions'
+import { Balance, ConnectAccountInfo } from '../store/models/account'
+import { ClientProfile } from '../store/models/client'
+import './stripe-connect-button.css'
+import qs from 'qs'
 
 const sliderStyles = makeStyles({
   input: {
@@ -63,11 +72,14 @@ function numberFormatCustom(props: NumberFormatCustomProps) {
 
 interface PayoutSliderProps {
   disabled: boolean
+  connectAccount: ConnectAccountInfo
 }
 
-const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled }) => {
+const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled, connectAccount }) => {
   const classes = sliderStyles()
-  const [payoutAmount, setPayoutAmount] = React.useState(100)
+  const [payoutAmount, setPayoutAmount] = React.useState(
+    Math.trunc(connectAccount.preferences.automatic_payout_threshold_cents / 100)
+  )
   const [saved, setSaved] = React.useState(false)
 
   const handleSliderChange = (event: any, newValue: number) => {
@@ -76,17 +88,17 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled }) => {
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPayoutAmount(event.target.value === '' ? '' : Number(event.target.value))
+    let amount = Number(event.target.value)
+    if (amount < 100) {
+      amount = 100
+    }
+    setPayoutAmount(amount)
   }
 
   const handleBlur = () => {
     if (payoutAmount < 100) {
       setPayoutAmount(100)
     }
-  }
-
-  function sliderValue() {
-    return typeof value === 'number' ? value : 100
   }
 
   return (
@@ -122,7 +134,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({ disabled }) => {
             }}
           />
         </Grid>
-        <Grid item alignContent="center">
+        <Grid item>
           {saved && (
             <Fade timeout={500} in>
               <Typography style={{ color: 'pink' }}>
@@ -146,46 +158,26 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
+interface PayoutPreferencesSectionProps {
+  connectAccount: ConnectAccountInfo
+}
 
-export const PayoutsPage: React.FC = ({}) => {
+const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({ connectAccount }) => {
   const classes = useStyles()
-  const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(false)
+  const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
+    connectAccount.preferences.enable_automatic_payouts
+  )
 
   return (
     <React.Fragment>
-      <Typography variant="h5">Account payouts</Typography>
-      <Divider />
-      <Box className={classes.wordBox}>
-        <Typography variant="body1">
-          To enable payouts, you'll need a Stripe Connect account.
-        </Typography>
-      </Box>
-      <Box className={classes.buttonBox}>
-        <Link
-          href={`https://connect.stripe.com/express/oauth/authorize?redirect_uri=${BASE_URL}/account/payouts&client_id=${STRIPE_CLIENT_ID}&state={}&&stripe_user[business_type]=individual`}
-          className="stripe-connect"
-        >
-          <span>Connect with Stripe</span>
-        </Link>
-      </Box>
-      <Box className={classes.wordBox}>
-        <Typography variant="body1">
-          <em>
-            Please note that payouts are currently only available to clients in the US or Canada. If
-            you're outside the US or Canada and want to withdraw credits, please contact{' '}
-            <Router.Link to="/c/support">/c/support</Router.Link> or send an email to{' '}
-            <Link href="mailto:support@umpyre.com">support@umpyre.com</Link>.
-          </em>
-        </Typography>
-      </Box>
       <Box className={classes.wordBox}>
         <Typography variant="h6">Payout preferences</Typography>
       </Box>
       <Divider />
       <Box className={classes.wordBox}>
         <Typography>
-          Automatic payouts are processed daily, and will be paid out as soon as your account
-          balance reaches the payout threshold. The minimum payout amount is $100.
+          Automatic payouts are processed daily, and are paid when your account balance reaches the
+          payout threshold. The minimum payout amount is $100.
         </Typography>
       </Box>
       <Box>
@@ -203,8 +195,127 @@ export const PayoutsPage: React.FC = ({}) => {
             />
           </FormGroup>
         </FormControl>
-        <PayoutSlider disabled={!autoPayoutsEnabled} />
+        <PayoutSlider disabled={!autoPayoutsEnabled} connectAccount={connectAccount} />
       </Box>
     </React.Fragment>
   )
 }
+
+interface ConnectButtonSectionProps {
+  connectAccount: ConnectAccountInfo
+}
+
+const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({ connectAccount }) => {
+  const classes = useStyles()
+  const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
+    connectAccount.preferences.enable_automatic_payouts
+  )
+
+  if (connectAccount.state === 'active') {
+    return (
+      <React.Fragment>
+        <Box className={classes.wordBox}>
+          <Typography variant="body1">Your Connect account is active.</Typography>
+        </Box>
+        <Box className={classes.buttonBox}>
+          <Link href={connectAccount.login_link_url} target="_blank" className="stripe-connect">
+            <span>Stripe Connect Dashboard</span>
+          </Link>
+        </Box>
+        <PayoutPreferencesSection connectAccount={connectAccount} />
+      </React.Fragment>
+    )
+  } else if (connectAccount.oauth_url) {
+    return (
+      <React.Fragment>
+        <Box className={classes.wordBox}>
+          <Typography variant="body1">
+            To enable payouts, you'll need a Stripe Connect account.
+          </Typography>
+        </Box>
+        <Box className={classes.buttonBox}>
+          <Link href={connectAccount.oauth_url.replace('[0]', '[]')} className="stripe-connect">
+            <span>Connect with Stripe</span>
+          </Link>
+        </Box>
+        <Box className={classes.wordBox}>
+          <Typography variant="body1">
+            <em>
+              Payouts are currently only available to clients in the US or Canada. If you're outside
+              the US or Canada and want to withdraw credits, please contact{' '}
+              <Router.Link to="/c/support">/c/support</Router.Link> or send an email to{' '}
+              <Link href="mailto:support@umpyre.com">support@umpyre.com</Link>.
+            </em>
+          </Typography>
+        </Box>
+      </React.Fragment>
+    )
+  } else {
+    return (
+      <Box className={classes.wordBox}>
+        <Typography variant="body1">Payouts can't be enabled at this time.</Typography>
+      </Box>
+    )
+  }
+}
+
+interface PayoutsProps {
+  profile?: ClientProfile
+  balance?: Balance
+  connectAccount?: ConnectAccountInfo
+  fetchConnectAccount: typeof fetchConnectAccountRequest
+  postConnectOauth: typeof postConnectOauthRequest
+  searchString: string
+}
+
+export const PayoutsPageFC: React.FC<PayoutsProps> = ({
+  profile,
+  balance,
+  connectAccount,
+  fetchConnectAccount,
+  postConnectOauth,
+  searchString
+}) => {
+  const classes = useStyles()
+
+  const oauthParams = qs.parse(searchString, { ignoreQueryPrefix: true })
+  if (oauthParams && oauthParams.code && oauthParams.state) {
+    postConnectOauth({
+      authorization_code: oauthParams.code,
+      oauth_state: oauthParams.state
+    })
+  }
+
+  React.useEffect(() => {
+    fetchConnectAccount()
+  }, [])
+
+  if (profile && balance && connectAccount) {
+    return (
+      <React.Fragment>
+        <Typography variant="h5">Account payouts</Typography>
+        <Divider />
+        <ConnectButtonSection connectAccount={connectAccount} />
+      </React.Fragment>
+    )
+  } else {
+    return <Loading />
+  }
+}
+
+const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
+  balance: accountState.balance,
+  connectAccount: accountState.connectAccount,
+  profile: clientState.profile
+})
+
+const mapDispatchToProps = {
+  fetchConnectAccount: fetchConnectAccountRequest,
+  postConnectOauth: postConnectOauthRequest
+}
+
+const PayoutsPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PayoutsPageFC)
+export default PayoutsPage

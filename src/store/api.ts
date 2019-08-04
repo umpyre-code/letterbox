@@ -1,8 +1,16 @@
 import axios, { AxiosInstance } from 'axios'
 import * as jwt from 'jsonwebtoken'
-import { Balance, ChargeRequest, ChargeResponse } from './models/account'
+import {
+  Balance,
+  ChargeRequest,
+  ChargeResponse,
+  ConnectAccountInfo,
+  ConnectOauth,
+  PostConnectOauthResponse
+} from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage } from './models/messages'
+import axiosRetry from 'axios-retry'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
@@ -56,6 +64,12 @@ export class API {
         baseURL: API_ENDPOINT
       })
     }
+    axiosRetry(this.client, {
+      retries: 10,
+      retryDelay: retryCount => {
+        return Math.pow(retryCount + 1, 1.5) * 1000
+      }
+    })
   }
 
   public async fetchClient(clientId: ClientID): Promise<ClientProfile> {
@@ -90,7 +104,15 @@ export class API {
     return this.client.get('/account/balance').then(response => response.data)
   }
 
+  public async fetchConnectAccount(): Promise<ConnectAccountInfo> {
+    return this.client.get('/account/connect').then(response => response.data)
+  }
+
   public async charge(charge: ChargeRequest): Promise<ChargeResponse> {
     return this.client.post('/account/charge', charge).then(response => response.data)
+  }
+
+  public async post_oauth(oauth: ConnectOauth): Promise<PostConnectOauthResponse> {
+    return this.client.post('/account/oauth', oauth).then(response => response.data)
   }
 }
