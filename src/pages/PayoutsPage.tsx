@@ -261,6 +261,17 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
         />
       </React.Fragment>
     )
+  } else if (connectAccount.state === 'ineligible') {
+    return (
+      <React.Fragment>
+        <Box className={classes.wordBox}>
+          <Typography variant="body1">
+            Your your account is not yet eligible for payouts. Check back when your account is at
+            least 7 days old.
+          </Typography>
+        </Box>
+      </React.Fragment>
+    )
   } else if (connectAccount.oauth_url) {
     return (
       <React.Fragment>

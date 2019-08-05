@@ -4,6 +4,16 @@ import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 
+interface AddCreditsButtonProps {}
+
+export const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({}) => (
+  <Tooltip title="Your balance is insufficient, you need to add credits first.">
+    <Button variant="contained" color="primary">
+      Add Credits
+    </Button>
+  </Tooltip>
+)
+
 interface SendButtonProps {
   classes: Record<'sendIcon', string>
   enabled: boolean
@@ -55,7 +65,6 @@ export const RecipientField: React.FC<RecipientFieldProps> = ({ setRecipient, in
     id="recipient"
     label="Recipient"
     defaultValue={initialValue}
-    placeholder="Who is this message for?"
     fullWidth
     onChange={event => setRecipient(event.target.value)}
   />
@@ -94,8 +103,8 @@ export const PDAToolTip = () => (
           <strong>Public Display of Affection</strong>
         </Typography>
         <Typography>
-          The PDA is a short message, like subject. The PDA is not protected by end-to-end
-          encryption.
+          The PDA is a short message, like a subject line. The PDA is not protected by end-to-end
+          encryption, and the recipient can view the PDA before the message is read.
         </Typography>
       </React.Fragment>
     }

@@ -54,7 +54,8 @@ async function addDraft(): Promise<Draft[]> {
     editorContent: undefined,
     pda: '',
     recipient: '',
-    sending: false
+    sending: false,
+    value_cents: 0
   })
   return db.drafts
     .orderBy('created_at')

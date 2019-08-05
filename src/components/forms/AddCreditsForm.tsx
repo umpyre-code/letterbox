@@ -8,7 +8,6 @@ import {
   makeStyles,
   Radio,
   RadioGroup,
-  TextField,
   Theme,
   Typography
 } from '@material-ui/core'
@@ -16,6 +15,7 @@ import React from 'react'
 import NumberFormat from 'react-number-format'
 import { Balance } from '../../store/models/account'
 import { BalanceTable, makeRow, makeRowsFromBalance } from '../widgets/BalanceTable'
+import { PaymentInput } from '../widgets/PaymentInput'
 import { CardSectionForm } from './CardSectionForm'
 
 interface NumberFormatCustomProps {
@@ -126,7 +126,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
             />
           </Grid>
           <Grid item>
-            <TextField
+            <PaymentInput
               inputRef={customAmountRef}
               label="Custom amount"
               inputProps={{ 'aria-label': 'custom' }}
@@ -135,10 +135,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
               variant="outlined"
               margin="dense"
               style={{ width: 150 }}
-              InputProps={{
-                inputComponent: numberFormatCustom as any,
-                onClick: customAmountInputClicked
-              }}
+              inputClicked={customAmountInputClicked}
             />
           </Grid>
         </Grid>

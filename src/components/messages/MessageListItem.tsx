@@ -10,6 +10,7 @@ import {
   Typography
 } from '@material-ui/core'
 import * as React from 'react'
+import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../../store'
 import { API } from '../../store/api'
@@ -34,6 +35,22 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inline'
     }
   })
+)
+
+interface MessageValueProps {
+  message: Message
+}
+const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
+  <Typography variant="h5">
+    <NumberFormat
+      allowNegative={false}
+      decimalScale={0}
+      value={Math.trunc(message.value_cents / 100)}
+      thousandSeparator
+      prefix="$"
+      displayType="text"
+    />
+  </Typography>
 )
 
 const MessageListItemFC: React.FunctionComponent<AllProps> = ({ credentials, message }) => {
@@ -112,6 +129,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({ credentials, mes
             </React.Fragment>
           }
         />
+        <MessageValue message={message} />
       </ListItem>
       {renderBody()}
     </Box>

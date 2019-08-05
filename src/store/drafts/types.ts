@@ -10,6 +10,7 @@ export interface Draft {
   recipient: string
   pda: string
   created_at: Date
+  value_cents: number
   sending: boolean
   message?: Message
   apiMessage?: APIMessage

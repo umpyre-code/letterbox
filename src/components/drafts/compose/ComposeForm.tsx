@@ -17,10 +17,22 @@ import {
   updateDraftRequest
 } from '../../../store/drafts/actions'
 import { Draft } from '../../../store/drafts/types'
+import { MessageBody } from '../../../store/models/messages'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
-import { MessageBodyModel } from '../../messages/MessageBody'
+import { PaymentInput } from '../../widgets/PaymentInput'
 import { Editor } from './Editor'
-import { DiscardButton, PDAField, PDAToolTip, RecipientField, SendButton } from './Widgets'
+import {
+  AddCreditsButton,
+  DiscardButton,
+  PDAField,
+  PDAToolTip,
+  RecipientField,
+  SendButton
+} from './Widgets'
+import { Balance } from '../../../store/models/account'
+import { ApplicationState } from '../../../store'
+
+const UMPYRE_MESSAGE_SEND_FEE = 0.15
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,8 +57,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+export function calculateMessageCost(amountCents: number) {
+  if (amountCents === 0) {
+    return 0
+  } else {
+    return Math.round(amountCents * (1 - UMPYRE_MESSAGE_SEND_FEE))
+  }
+}
+
 interface Props {
   draft: Draft
+  balance: Balance
 }
 
 interface PropsFromDispatch {
@@ -57,7 +78,14 @@ interface PropsFromDispatch {
 
 type AllProps = Props & PropsFromDispatch
 
-const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft, draft }) => {
+// tslint:disable-next-line: max-func-body-length
+const ComposeFormFC: React.FC<AllProps> = ({
+  balance,
+  removeDraft,
+  sendDraft,
+  updateDraft,
+  draft
+}) => {
   const [editorState, setEditorState] = React.useState(
     draft.editorContent
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(draft.editorContent)))
@@ -65,17 +93,21 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
   )
   const [recipient, setRecipient] = React.useState(draft.recipient)
   const [pda, setPda] = React.useState(draft.pda)
+  const [messageValue, setMessageValue] = React.useState<number | undefined>(
+    Math.trunc(draft.value_cents / 100)
+  )
   const classes = useStyles()
 
   function handleSend() {
-    const messageBody: MessageBodyModel = {
+    const messageBody: MessageBody = {
       markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
     }
     const message = {
       body: JSON.stringify(messageBody),
       pda,
       sent_at: new Date(),
-      to: recipient
+      to: recipient,
+      value_cents: (messageValue ? messageValue : 0) * 100
     }
     sendDraft({ ...draft, message })
   }
@@ -84,10 +116,45 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
     removeDraft(draft)
   }
 
+  function balanceIsSufficient() {
+    return (
+      (messageValue &&
+        calculateMessageCost(messageValue * 100) <= balance.balance_cents + balance.promo_cents) ||
+      messageValue === 0
+    )
+  }
+
+  function readyToSend() {
+    if (
+      editorState.getCurrentContent().hasText() &&
+      recipient !== '' &&
+      pda !== '' &&
+      balanceIsSufficient()
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  function showAddCreditsButton() {
+    if (!balanceIsSufficient()) {
+      return <AddCreditsButton />
+    } else {
+      return (
+        <SendButton
+          classes={classes}
+          enabled={readyToSend() && !draft.sending}
+          handleSend={handleSend}
+        />
+      )
+    }
+  }
+
   return (
     <Paper className={classes.root}>
       <Grid container spacing={1} alignItems="flex-end">
-        <Grid item xs={5}>
+        <Grid item xs={2}>
           <RecipientField
             initialValue={draft.recipient}
             setRecipient={(value: string) => {
@@ -96,7 +163,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
             }}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs>
           <PDAField
             initialValue={draft.pda}
             setPda={(value: string) => {
@@ -105,7 +172,7 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
             }}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs="auto">
           <PDAToolTip />
         </Grid>
         <Grid item xs={12}>
@@ -127,11 +194,22 @@ const ComposeFormFC: React.FC<AllProps> = ({ removeDraft, sendDraft, updateDraft
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        <Grid item xs={12} sm container alignItems="flex-start" justify="flex-start">
-          <Grid item xs={8}>
-            <SendButton classes={classes} enabled={!draft.sending} handleSend={handleSend} />
+        <Grid item xs={12} sm container alignContent="center" justify="flex-start">
+          <Grid item xs>
+            <PaymentInput
+              style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
+              placeholder="Message value"
+              label="Payment"
+              defaultValue={draft.value_cents / 100}
+              onChange={event => {
+                const value = Number(event.target.value)
+                setMessageValue(value)
+                updateDraft({ ...draft, value_cents: value * 100 })
+              }}
+            />
+            {showAddCreditsButton()}
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs>
             <DiscardButton
               classes={classes}
               enabled={!draft.sending}
@@ -155,7 +233,9 @@ const mapDispatchToProps = {
   updateDraft: updateDraftRequest
 }
 
-const mapStateToProps = () => ({})
+const mapStateToProps = ({ accountState }: ApplicationState) => ({
+  balance: accountState.balance
+})
 
 const ComposeForm = connect(
   mapStateToProps,

@@ -227,7 +227,11 @@ export const ProfileView: React.FC<Props> = ({
       return (
         <CardHeader
           avatar={
-            <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
+            <Link to={`/c/${profile.handle}`}>
+              <Avatar alt={clientProfileHelper.full_name}>
+                {clientProfileHelper.getInitials()}
+              </Avatar>
+            </Link>
           }
           action={
             <Action
@@ -246,7 +250,9 @@ export const ProfileView: React.FC<Props> = ({
               alignItems="center"
             >
               <Grid item zeroMinWidth>
-                <Typography>{profile.full_name}</Typography>
+                <Typography>
+                  <Link to={`/c/${profile.handle}`}>{profile.full_name}</Link>
+                </Typography>
               </Grid>
               <Grid item zeroMinWidth>
                 <BalanceButton balance={balance} />

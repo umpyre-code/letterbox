@@ -94,8 +94,8 @@ export class API {
     return this.client.get('/messages', { params }).then(response => response.data)
   }
 
-  public async sendMessage(message: APIMessage): Promise<APIMessage> {
-    return this.client.post('/messages', message).then(response => response.data)
+  public async sendMessages(messages: APIMessage[]): Promise<APIMessage[]> {
+    return this.client.post('/messages', messages).then(response => response.data)
   }
 
   public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {

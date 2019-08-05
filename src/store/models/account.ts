@@ -3,6 +3,7 @@ import 'stripe-v3'
 export interface Balance {
   balance_cents: number
   promo_cents: number
+  withdrawable_cents: number
 }
 
 export interface ChargeRequest {

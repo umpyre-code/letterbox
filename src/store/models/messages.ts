@@ -27,6 +27,7 @@ export interface Message {
   sent_at: Date
   signature?: string
   to: ClientID
+  value_cents: number
 }
 
 // The API's actual representation of a message
@@ -42,6 +43,7 @@ export interface APIMessage {
   sent_at: Timestamp
   signature?: string
   to: ClientID
+  value_cents: number
 }
 
 export interface MessagesResponse {

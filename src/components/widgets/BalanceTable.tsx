@@ -85,10 +85,12 @@ export function makeRow(name: string, value: number): Row {
 export function makeRowsFromBalance(balance: Balance): Row[] {
   const balanceAmount = balance.balance_cents / 100.0
   const promoAmount = balance.promo_cents / 100.0
+  const withdrawableAmount = balance.withdrawable_cents / 100.0
   const totalAmount = (balance.balance_cents + balance.promo_cents) / 100.0
   return [
     makeRow('Current', balanceAmount),
     makeRow('Promo', promoAmount),
+    makeRow('Withdrawable', withdrawableAmount),
     makeRow('Total', totalAmount)
   ]
 }

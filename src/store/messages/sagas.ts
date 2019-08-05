@@ -30,6 +30,7 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
+import { fetchBalanceRequest } from '../account/actions'
 
 // This doesn't work unless we use the old-style of import. I gave up trying to
 // figure out why.
@@ -76,7 +77,10 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
-async function fetchMessages(credentials: ClientCredentials, sketch: string) {
+async function fetchMessages(
+  credentials: ClientCredentials,
+  sketch: string
+): Promise<APIMessage[]> {
   const api = new API(credentials)
   return api.fetchMessages(sketch)
 }
@@ -162,7 +166,7 @@ async function sendMessage(
   apiMessage: APIMessage
 ): Promise<APIMessage> {
   const api = new API(credentials)
-  return api.sendMessage(apiMessage)
+  return api.sendMessages([apiMessage]).then(messages => messages[0])
 }
 
 function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
@@ -180,6 +184,7 @@ function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
     } else {
       yield put(sendMessageSuccess())
       yield put(removeDraftRequest(draft))
+      yield put(fetchBalanceRequest())
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
