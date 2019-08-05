@@ -123,7 +123,7 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
 
   function getDateJoined() {
     const secondsSince = Date.now() / 1000 - profile!.joined
-    return `joined ${moment.duration(secondsSince, 'seconds').format({ largest: 2 })} ago`
+    return `joined ${moment.duration(secondsSince, 'seconds').format({ largest: 1 })} ago`
   }
 
   if (profile && profile.handle && profile.handle.length > 0) {
