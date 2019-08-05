@@ -18,12 +18,18 @@ import {
 } from '@material-ui/core'
 import EditButton from '@material-ui/icons/Edit'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import moment from 'moment'
+import momentDurationFormatSetup from 'moment-duration-format'
 import * as React from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import { ClientProfileHelper } from '../../../store/client/types'
-import { Balance, ClientProfile } from '../../../store/models/client'
+import { Balance } from '../../../store/models/account'
+import { ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
+
+// Set up moment duration format
+momentDurationFormatSetup(moment)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -114,16 +120,24 @@ interface HandleProps {
 
 export const Handle: React.FC<HandleProps> = ({ profile }) => {
   const classes = useStyles()
+
+  function getDateJoined() {
+    const secondsSince = Date.now() / 1000 - profile!.joined
+    return `joined ${moment.duration(secondsSince, 'seconds').format({ largest: 2 })} ago`
+  }
+
   if (profile && profile.handle && profile.handle.length > 0) {
     return (
-      <Link to={`/c/${profile.handle}`}>
-        <Typography className={classes.handleText} variant="subtitle2">
-          {profile.handle}
-        </Typography>
-      </Link>
+      <Typography className={classes.handleText} variant="subtitle2">
+        <Link to={`/c/${profile.handle}`}>{profile.handle}</Link>&nbsp;{getDateJoined()}
+      </Typography>
     )
   } else {
-    return null
+    return (
+      <Typography className={classes.handleText} variant="subtitle2">
+        {getDateJoined()}
+      </Typography>
+    )
   }
 }
 

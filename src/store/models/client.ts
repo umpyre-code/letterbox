@@ -43,4 +43,5 @@ export interface ClientProfile {
   signing_public_key: string
   handle?: string
   profile?: string
+  joined: number
 }
