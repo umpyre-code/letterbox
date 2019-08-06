@@ -18,6 +18,7 @@ import { ClientProfileHelper, loadingClientProfile } from '../../store/client/ty
 import { ClientCredentials } from '../../store/models/client'
 import { Message } from '../../store/models/messages'
 import MessageBody from './MessageBody'
+import * as Router from 'react-router-dom'
 
 interface Props {
   message: Message
@@ -27,13 +28,18 @@ interface PropsFromState {
   credentials: ClientCredentials
 }
 
-type AllProps = Props & PropsFromState
+interface MatchParams {}
+
+interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
+
+type AllProps = Props & PropsFromState & PropsFromRouter
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     inline: {
       display: 'inline'
-    }
+    },
+    listItem: { padding: theme.spacing(1) }
   })
 )
 
@@ -53,7 +59,11 @@ const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
   </Typography>
 )
 
-const MessageListItemFC: React.FunctionComponent<AllProps> = ({ credentials, message }) => {
+const MessageListItemFC: React.FunctionComponent<AllProps> = ({
+  credentials,
+  message,
+  history
+}) => {
   const [isBodyVisible, setIsBodyVisible] = React.useState(false)
   const [fromProfile, setFromProfile] = React.useState(
     ClientProfileHelper.FROM(loadingClientProfile)
@@ -101,7 +111,11 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({ credentials, mes
 
   return (
     <Box>
-      <ListItem button onClick={() => setIsBodyVisible(!isBodyVisible)}>
+      <ListItem
+        className={classes.listItem}
+        button
+        onClick={() => history.push(`/m/${message.hash}`)}
+      >
         {renderAvatar()}
         <ListItemText
           primary={
@@ -140,4 +154,4 @@ const mapStateToProps = ({ clientState }: ApplicationState) => ({
   credentials: clientState.credentials!
 })
 
-export const MessageListItem = connect(mapStateToProps)(MessageListItemFC)
+export const MessageListItem = Router.withRouter(connect(mapStateToProps)(MessageListItemFC))

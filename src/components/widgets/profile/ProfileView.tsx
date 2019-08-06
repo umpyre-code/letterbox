@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 0,
       padding: theme.spacing(1)
     },
+    cardHeader: { padding: theme.spacing(1) },
     handleText: {
       color: 'rgba(0, 0, 0, 0.54)'
     },
@@ -83,6 +84,14 @@ interface Props {
 interface ProfileMenuProps {
   menuAnchorElement: null | HTMLElement
   setMenuAnchorElementNull: () => void
+}
+
+function getProfileUrl(profile: ClientProfile) {
+  if (profile.handle && profile.handle !== '') {
+    return `/c/${profile.handle}`
+  } else {
+    return `/u/${profile.client_id}`
+  }
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
@@ -123,13 +132,17 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
 
   function getDateJoined() {
     const secondsSince = Date.now() / 1000 - profile!.joined
-    return `joined ${moment.duration(secondsSince, 'seconds').format({ largest: 1 })} ago`
+    return `joined ${moment
+      .duration(secondsSince, 'seconds')
+      .format('y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]', {
+        largest: 1
+      })} ago`
   }
 
   if (profile && profile.handle && profile.handle.length > 0) {
     return (
       <Typography className={classes.handleText} variant="subtitle2">
-        <Link to={`/c/${profile.handle}`}>{profile.handle}</Link>&nbsp;{getDateJoined()}
+        <Link to={getProfileUrl(profile)}>{profile.handle}</Link>&nbsp;{getDateJoined()}
       </Typography>
     )
   } else {
@@ -226,8 +239,9 @@ export const ProfileView: React.FC<Props> = ({
       const clientProfileHelper = ClientProfileHelper.FROM(profile)
       return (
         <CardHeader
+          className={classes.cardHeader}
           avatar={
-            <Link to={`/c/${profile.handle}`}>
+            <Link to={getProfileUrl(profile)}>
               <Avatar alt={clientProfileHelper.full_name}>
                 {clientProfileHelper.getInitials()}
               </Avatar>
@@ -251,7 +265,7 @@ export const ProfileView: React.FC<Props> = ({
             >
               <Grid item zeroMinWidth>
                 <Typography>
-                  <Link to={`/c/${profile.handle}`}>{profile.full_name}</Link>
+                  <Link to={getProfileUrl(profile)}>{profile.full_name}</Link>
                 </Typography>
               </Grid>
               <Grid item zeroMinWidth>

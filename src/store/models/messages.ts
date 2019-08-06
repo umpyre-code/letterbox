@@ -21,6 +21,7 @@ export interface Message {
   hash?: MessageHash
   nonce: string
   pda: string
+  read: boolean
   received_at?: Date
   recipient_public_key: string
   sender_public_key: string
@@ -54,6 +55,7 @@ export function fromApiMessage(message: APIMessage): Message {
   return {
     ...message,
     received_at: new Date(message.received_at!.seconds * 1000 + message.received_at!.nanos / 1e6),
-    sent_at: new Date(message.sent_at.seconds * 1000 + message.sent_at.nanos / 1e6)
+    sent_at: new Date(message.sent_at.seconds * 1000 + message.sent_at.nanos / 1e6),
+    read: false
   }
 }

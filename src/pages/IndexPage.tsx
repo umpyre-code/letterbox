@@ -19,10 +19,13 @@ import { MessageList } from '../components/messages/MessageList'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
-import { Balance, ClientProfile } from '../store/models/client'
+import { MessagesState } from '../store/messages/types'
+import { Balance } from '../store/models/account'
+import { ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
   balance?: Balance
+  messagesState: MessagesState
   profile: ClientProfile
 }
 
@@ -53,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<AllProps> = ({ balance, profile, addDraft }) => {
+const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, profile }) => {
   const classes = useStyles()
 
   return (
@@ -91,14 +94,18 @@ const IndexPageFC: React.FC<AllProps> = ({ balance, profile, addDraft }) => {
         <DraftList />
       </Container>
       <Container className={classes.messageListContainer}>
-        <MessageList />
+        <MessageList messages={messagesState.unreadMessages} messageType="unread" />
+      </Container>
+      <Container className={classes.messageListContainer}>
+        <MessageList messages={messagesState.readMessages} messageType="read" />
       </Container>
     </React.Fragment>
   )
 }
 
-const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
+const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
   balance: accountState.balance!,
+  messagesState,
   profile: clientState.profile!
 })
 

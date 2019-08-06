@@ -15,6 +15,7 @@ const LazyAddCreditsPage = React.lazy(() => import('./pages/AddCreditsPage'))
 const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
 const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
+const LazyMessagePage = React.lazy(() => import('./pages/MessagePage'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <React.Suspense fallback={<Loading centerOnPage={true} />}>
@@ -36,6 +37,8 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
         <Route exact path="/profile" component={LazyProfilePage} />
         <Route exact path="/addcredits" component={LazyAddCreditsPage} />
         <Route path="/c/:handle" component={LazyProfilePage} />
+        <Route path="/u/:client_id" component={LazyProfilePage} />
+        <Route path="/m/:message_hash" component={LazyMessagePage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
     </Root>

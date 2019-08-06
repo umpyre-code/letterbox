@@ -8,14 +8,13 @@ import {
   Typography
 } from '@material-ui/core'
 import * as React from 'react'
-import { connect } from 'react-redux'
-import { ApplicationState } from '../../store'
-import { MessagesState } from '../../store/messages/types'
+import { Message } from '../../store/models/messages'
 import { Emoji } from '../widgets/Emoji'
 import { MessageListItem } from './MessageListItem'
 
 interface PropsFromState {
-  messagesState: MessagesState
+  messages: Message[]
+  messageType: string
 }
 
 type AllProps = PropsFromState
@@ -39,14 +38,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => {
+export const MessageList: React.FunctionComponent<AllProps> = ({ messages, messageType }) => {
   const classes = useStyles()
 
   function renderInner() {
-    if (messagesState.messages.length > 0) {
+    if (messages.length > 0) {
       return (
         <List className={classes.list}>
-          {messagesState.messages.map((message, index) => (
+          {messages.map((message, index) => (
             <React.Fragment key={message.hash}>
               {index > 0 && <Divider />}
               <MessageListItem message={message} />
@@ -57,7 +56,7 @@ const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => 
     } else {
       return (
         <Typography className={classes.noMessages}>
-          no messages <Emoji>😀</Emoji>
+          no {messageType} messages <Emoji>😀</Emoji>
         </Typography>
       )
     }
@@ -65,9 +64,3 @@ const MessageListFC: React.FunctionComponent<AllProps> = ({ messagesState }) => 
 
   return <Paper className={classes.root}>{renderInner()}</Paper>
 }
-
-const mapStateToProps = ({ messagesState }: ApplicationState) => ({
-  messagesState
-})
-
-export const MessageList = connect(mapStateToProps)(MessageListFC)

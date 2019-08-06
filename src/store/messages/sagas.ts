@@ -12,6 +12,7 @@ import {
 import { ApplicationState } from '../'
 import { db } from '../../db/db'
 import { BloomFilter } from '../../util/BloomFilter'
+import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
@@ -30,17 +31,21 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-import { fetchBalanceRequest } from '../account/actions'
 
 // This doesn't work unless we use the old-style of import. I gave up trying to
 // figure out why.
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
-async function getAllMessages(): Promise<Message[]> {
+async function getMessages(): Promise<Message[]> {
+  const nowMinus30Days = new Date()
+  nowMinus30Days.setDate(nowMinus30Days.getDate() - 30)
+
   return db.messages
     .orderBy('received_at')
-    .reverse()
+    .filter(message => {
+      return message.received_at !== undefined && message.received_at > nowMinus30Days
+    })
     .toArray()
 }
 
@@ -48,7 +53,7 @@ function* handleInitializeMessages() {
   try {
     // Update message sketch first
     yield put(updateSketchRequest())
-    const res = yield call(getAllMessages)
+    const res = yield call(getMessages)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -89,11 +94,8 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   const decryptedMessages = await Promise.all(
     messages.map((message: APIMessage) => decryptMessage(message))
   )
-  await db.messages.bulkPut(decryptedMessages)
-  return db.messages
-    .orderBy('received_at')
-    .reverse()
-    .toArray()
+  await db.messages.bulkAdd(decryptedMessages)
+  return getMessages()
 }
 
 async function decryptMessage(message: APIMessage): Promise<Message> {

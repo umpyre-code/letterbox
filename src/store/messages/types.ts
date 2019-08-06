@@ -19,8 +19,9 @@ export const enum MessagesActionTypes {
 }
 
 export interface MessagesState {
-  readonly loading: boolean
-  readonly messages: Message[]
   readonly errors?: string
+  readonly loading: boolean
+  readonly readMessages: Message[]
   readonly sketch: string
+  readonly unreadMessages: Message[]
 }

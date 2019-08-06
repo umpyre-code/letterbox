@@ -1,11 +1,34 @@
 import { Reducer } from 'redux'
+import { Message } from '../models/messages'
 import { MessagesActionTypes, MessagesState } from './types'
 
 export const initialState: MessagesState = {
   errors: undefined,
   loading: false,
-  messages: Array.from([]),
-  sketch: ''
+  readMessages: Array.from([]),
+  sketch: '',
+  unreadMessages: Array.from([])
+}
+
+interface RankedMessages {
+  readMessages: Message[]
+  unreadMessages: Message[]
+}
+
+function cmp(first: Message, second: Message): number {
+  if (first.value_cents > second.value_cents) {
+    return -1
+  } else if (second.value_cents > first.value_cents) {
+    return 1
+  }
+  return 0
+}
+
+function rankMessages(messages: Message[]): RankedMessages {
+  return {
+    readMessages: messages.filter(message => message.read === true).sort(cmp),
+    unreadMessages: messages.filter(message => message.read === false).sort(cmp)
+  }
 }
 
 export const reducer: Reducer<MessagesState> = (state = initialState, action) => {
@@ -17,7 +40,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        messages: action.payload
+        ...rankMessages(action.payload)
       }
     }
     case MessagesActionTypes.INITIALIZE_MESSAGES_ERROR: {
@@ -30,7 +53,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        messages: action.payload
+        ...rankMessages(action.payload)
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {
