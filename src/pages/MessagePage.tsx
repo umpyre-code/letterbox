@@ -19,9 +19,7 @@ import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { Message } from '../store/models/messages'
 
-interface Props {
-  message: Message
-}
+interface Props {}
 
 interface PropsFromState {
   balance?: Balance
@@ -56,9 +54,10 @@ const MessagePageFC: React.FC<AllProps> = ({ balance, match, profile }) => {
   React.useEffect(() => {
     async function fetchMessages() {
       const message_hash = match.params.message_hash
-      const thisMessage = await db.messages.get(message_hash)
-      if (thisMessage) {
-        setMessages([thisMessage])
+      const thisMessageBody = await db.messageBodies.get(message_hash)
+      const thisMessage = await db.messageInfos.get(message_hash)
+      if (thisMessageBody && thisMessage) {
+        setMessages([{ ...thisMessage, body: thisMessageBody.body }])
       }
       return Promise.resolve()
     }

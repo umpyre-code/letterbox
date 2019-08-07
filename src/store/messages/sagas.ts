@@ -37,14 +37,14 @@ import { MessagesActionTypes } from './types'
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
-async function getMessages(): Promise<Message[]> {
-  const nowMinus30Days = new Date()
-  nowMinus30Days.setDate(nowMinus30Days.getDate() - 30)
+async function getMessagesWithoutBody(withinDays: number): Promise<Message[]> {
+  const fromDate = new Date()
+  fromDate.setDate(fromDate.getDate() - withinDays)
 
-  return db.messages
+  return db.messageInfos
     .orderBy('received_at')
     .filter(message => {
-      return message.received_at !== undefined && message.received_at > nowMinus30Days
+      return message.received_at !== undefined && message.received_at > fromDate
     })
     .toArray()
 }
@@ -53,7 +53,7 @@ function* handleInitializeMessages() {
   try {
     // Update message sketch first
     yield put(updateSketchRequest())
-    const res = yield call(getMessages)
+    const res = yield call(getMessagesWithoutBody, 30)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -94,8 +94,19 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   const decryptedMessages = await Promise.all(
     messages.map((message: APIMessage) => decryptMessage(message))
   )
-  await db.messages.bulkAdd(decryptedMessages)
-  return getMessages()
+  const messageBodies = decryptedMessages.map(message => ({
+    body: message.body!,
+    hash: message.hash!
+  }))
+  const messageInfos = decryptedMessages.map(message => ({
+    ...message,
+    body: undefined
+  }))
+  await db.transaction('rw', db.messageInfos, db.messageBodies, async () => {
+    await db.messageInfos.bulkAdd(messageInfos)
+    await db.messageBodies.bulkAdd(messageBodies)
+  })
+  return getMessagesWithoutBody(30)
 }
 
 async function decryptMessage(message: APIMessage): Promise<Message> {
@@ -203,25 +214,12 @@ function* watchSendMessageRequest() {
   yield takeEvery(MessagesActionTypes.SEND_MESSAGE_REQUEST, handleSendMessage)
 }
 
-async function getAllMessagesInLast31Days(): Promise<Message[]> {
-  const nowMinus31Days = new Date()
-  nowMinus31Days.setDate(nowMinus31Days.getDate() - 31)
-
-  return db.messages
-    .orderBy('received_at')
-    .reverse()
-    .filter(message => {
-      return message.received_at! >= nowMinus31Days
-    })
-    .toArray()
-}
-
 async function calculateMessageSketch(): Promise<string> {
-  const messagesFromLast30days = await getAllMessagesInLast31Days()
+  const messagesFromLast31days = await getMessagesWithoutBody(31)
 
   // Construct bloom filter
   const bf = new BloomFilter()
-  messagesFromLast30days.forEach(message => bf.add(message.hash!))
+  messagesFromLast31days.forEach(message => bf.add(message.hash!))
 
   await sodium.ready
   return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.URLSAFE_NO_PADDING)

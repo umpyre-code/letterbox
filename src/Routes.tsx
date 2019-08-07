@@ -21,17 +21,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <React.Suspense fallback={<Loading centerOnPage={true} />}>
     <Root>
       <Switch>
-        <Route
-          exact
-          path="/"
-          render={() => {
-            if (clientState.credentials) {
-              return <LazyIndexPage />
-            } else {
-              return <Redirect to="/signup" />
-            }
-          }}
-        />
+        <Route exact path="/" component={LazyIndexPage} />
         <Route exact path="/signup" component={LazySignUpPage} />
         <Route path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />

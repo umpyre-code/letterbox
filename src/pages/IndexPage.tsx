@@ -14,6 +14,7 @@ import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
+import ClientInit from '../components/ClientInit'
 import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
 import { Profile } from '../components/widgets/profile/Profile'
@@ -56,11 +57,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, profile }) => {
+const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, ready, messagesState, profile }) => {
   const classes = useStyles()
 
+  if (ready && !profile) {
+    // ready without a profile? redirect to sign up page
+    return <Router.Redirect to="/signup" />
+  }
+
   return (
-    <React.Fragment>
+    <ClientInit>
       <CssBaseline />
       <Container className={classes.headerContainer}>
         <Tooltip title="Compose a new message">
@@ -99,14 +105,15 @@ const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, pro
       <Container className={classes.messageListContainer}>
         <MessageList messages={messagesState.readMessages} messageType="read" />
       </Container>
-    </React.Fragment>
+    </ClientInit>
   )
 }
 
 const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
   balance: accountState.balance!,
   messagesState,
-  profile: clientState.profile!
+  profile: clientState.profile!,
+  ready: clientState.ready
 })
 
 const mapDispatchToProps = {

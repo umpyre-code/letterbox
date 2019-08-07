@@ -2,14 +2,10 @@ import { ThemeProvider } from '@material-ui/styles'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../../store'
-import { initializeClientRequest } from '../../store/client/actions'
 import { secureMathRandom } from '../../util/secureMathRandom'
 import { theme } from '../theme'
-import Loading from '../widgets/Loading'
 
-interface PropsFromDispatch {
-  initializeClientRequest: typeof initializeClientRequest
-}
+interface PropsFromDispatch {}
 
 interface PropsFromState {
   ready: boolean
@@ -19,17 +15,12 @@ type AllProps = PropsFromDispatch & PropsFromState
 
 class RootFC extends React.Component<AllProps> {
   public render() {
-    if (this.props.ready) {
-      return <ThemeProvider theme={theme}>{this.props.children}</ThemeProvider>
-    } else {
-      return <Loading centerOnPage={true} />
-    }
+    return <ThemeProvider theme={theme}>{this.props.children}</ThemeProvider>
   }
 
   public componentWillMount() {
-    this.props.initializeClientRequest()
-
-    // Reload the page every ~24h +/- 2h
+    // Reload the page every ~24h +/- 2h. This is a hack to make sure clients
+    // don't end up on an ancient version of the app.
     const sway = 4 * secureMathRandom() * 3600 - 2 * 3600
     const reloadAfter = Math.round(24 * 3600 + sway)
     setTimeout(() => window.location.reload(true), 1000 * reloadAfter)
@@ -40,9 +31,7 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
   ready: clientState.ready
 })
 
-const mapDispatchToProps = {
-  initializeClientRequest
-}
+const mapDispatchToProps = {}
 
 const Root = connect(
   mapStateToProps,

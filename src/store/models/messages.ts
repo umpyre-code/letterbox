@@ -14,9 +14,15 @@ export interface MessageBody {
   parent?: MessageHash
 }
 
+// The message body as it's stored in the DB
+export interface DBMessageBody {
+  hash: MessageHash
+  body: MessageBody
+}
+
 // Our internal representation of a message
 export interface Message {
-  body: MessageBody
+  body?: MessageBody
   from: ClientID
   hash?: MessageHash
   nonce: string
