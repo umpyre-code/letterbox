@@ -4,8 +4,9 @@ test('new_client_reducer', () => {
   let state
   state = reducer(
     {
-      loading: true,
-      ready: true
+      clientReady: false,
+      credentialsReady: false,
+      loading: true
     },
     {
       payload: {
@@ -28,7 +29,7 @@ test('new_client_reducer', () => {
           'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTU5NTM2ODEsImlhdCI6MTU2NDQxNzY4MSwiaXNzIjoiVW1weXJlIiwianRpIjoiOGQxZmY2ZjE3YmIxNDEwYWFhOGFjNWQ5ZTk1OGE5OWYiLCJuYmYiOjE1NjQ0MTc5ODEsInN1YiI6IjY0OGNlOTIyYzI3OTRiMzRiNGYxMWQxNDZiNjhkYWQyIn0.m3WKTr_5fraEbqcaen6W9-zL57kGT3O42T1XKfji4Sw'
       }
     },
-    loading: false,
-    ready: true
+    credentialsReady: true,
+    loading: false
   })
 })
