@@ -28,6 +28,7 @@ interface PropsFromState {
   balance?: Balance
   messagesState: MessagesState
   profile: ClientProfile
+  ready: boolean
 }
 
 interface PropsFromDispatch {
@@ -57,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, ready, messagesState, profile }) => {
+const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, profile, ready }) => {
   const classes = useStyles()
 
   if (ready && !profile) {
