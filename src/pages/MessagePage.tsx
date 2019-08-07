@@ -55,7 +55,7 @@ const MessagePageFC: React.FC<AllProps> = ({ balance, match, profile }) => {
 
   React.useEffect(() => {
     async function fetchMessages() {
-      const message_hash = decodeURIComponent(match.params.message_hash)
+      const message_hash = match.params.message_hash
       const thisMessage = await db.messages.get(message_hash)
       if (thisMessage) {
         setMessages([thisMessage])

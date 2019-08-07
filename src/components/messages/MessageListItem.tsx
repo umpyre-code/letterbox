@@ -114,7 +114,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       <ListItem
         className={classes.listItem}
         button
-        onClick={() => history.push(`/m/${encodeURIComponent(message.hash!)}`)}
+        onClick={() => history.push(`/m/${message.hash!}`)}
       >
         {renderAvatar()}
         <ListItemText
