@@ -124,10 +124,10 @@ async function decryptMessageBody(
   await sodium.ready
   return sodium.to_string(
     sodium.crypto_box_open_easy(
-      sodium.from_base64(body, sodium.base64_variants.ORIGINAL_NO_PADDING),
-      sodium.from_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
-      sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
-      sodium.from_base64(myPrivateKey, sodium.base64_variants.ORIGINAL_NO_PADDING)
+      sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
     )
   )
 }
@@ -224,7 +224,7 @@ async function calculateMessageSketch(): Promise<string> {
   messagesFromLast30days.forEach(message => bf.add(message.hash!))
 
   await sodium.ready
-  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.ORIGINAL_NO_PADDING)
+  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.URLSAFE_NO_PADDING)
 }
 
 function* handleUpdateSketch(values: ReturnType<typeof updateSketchRequest>) {

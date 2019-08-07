@@ -119,8 +119,8 @@ async function withPassword(newClient: NewClient): Promise<NewClient> {
   const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
   const client = {
     ...newClient,
-    password_salt: sodium.to_base64(salt, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    password_verifier: sodium.to_base64(verifier, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    password_salt: sodium.to_base64(salt, sodium.base64_variants.URLSAFE_NO_PADDING),
+    password_verifier: sodium.to_base64(verifier, sodium.base64_variants.URLSAFE_NO_PADDING)
   }
   // Do not transmit password to server
   delete client.password

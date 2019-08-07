@@ -8,8 +8,7 @@ import {
   ConnectAccountInfo,
   ConnectAccountPrefs,
   ConnectOauth,
-  PostConnectOauthResponse,
-  PostConnectPrefsResponse
+  PostConnectOauthResponse
 } from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
 import { APIMessage } from './models/messages'

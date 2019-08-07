@@ -29,13 +29,13 @@ export async function encryptMessageBody(
   const ciphertext = sodium.crypto_box_easy(
     sodium.from_string(message.body),
     nonce,
-    sodium.from_base64(theirPublicKey, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    sodium.from_base64(keyPair.box_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
+    sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
+    sodium.from_base64(keyPair.box_secret_key, sodium.base64_variants.URLSAFE_NO_PADDING)
   )
   return {
     ...message,
-    body: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL_NO_PADDING),
-    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL_NO_PADDING),
+    body: sodium.to_base64(ciphertext, sodium.base64_variants.URLSAFE_NO_PADDING),
+    nonce: sodium.to_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
     recipient_public_key: theirPublicKey,
     sender_public_key: keyPair.box_public_key
   }
@@ -62,7 +62,7 @@ export async function hashMessage(message: APIMessage): Promise<APIMessage> {
   })
   const hash = sodium.to_base64(
     sodium.crypto_generichash(32, sodium.from_string(hashableMessageJson)),
-    sodium.base64_variants.ORIGINAL_NO_PADDING
+    sodium.base64_variants.URLSAFE_NO_PADDING
   )
 
   return {
@@ -88,9 +88,9 @@ export async function signMessage(message: APIMessage, keyPair: KeyPair): Promis
   const signature = sodium.to_base64(
     sodium.crypto_sign_detached(
       sodium.from_string(signableMessageJson),
-      sodium.from_base64(keyPair.signing_secret_key, sodium.base64_variants.ORIGINAL_NO_PADDING)
+      sodium.from_base64(keyPair.signing_secret_key, sodium.base64_variants.URLSAFE_NO_PADDING)
     ),
-    sodium.base64_variants.ORIGINAL_NO_PADDING
+    sodium.base64_variants.URLSAFE_NO_PADDING
   )
 
   return {

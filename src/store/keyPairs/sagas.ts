@@ -18,20 +18,20 @@ async function initializeKeys() {
     await db.keyPairs.add({
       box_public_key: sodium.to_base64(
         boxKeys.publicKey,
-        sodium.base64_variants.ORIGINAL_NO_PADDING
+        sodium.base64_variants.URLSAFE_NO_PADDING
       ),
       box_secret_key: sodium.to_base64(
         boxKeys.privateKey,
-        sodium.base64_variants.ORIGINAL_NO_PADDING
+        sodium.base64_variants.URLSAFE_NO_PADDING
       ),
       created_at: new Date(),
       signing_public_key: sodium.to_base64(
         signKeys.publicKey,
-        sodium.base64_variants.ORIGINAL_NO_PADDING
+        sodium.base64_variants.URLSAFE_NO_PADDING
       ),
       signing_secret_key: sodium.to_base64(
         signKeys.privateKey,
-        sodium.base64_variants.ORIGINAL_NO_PADDING
+        sodium.base64_variants.URLSAFE_NO_PADDING
       )
     })
   }
