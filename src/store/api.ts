@@ -99,7 +99,9 @@ export class API {
   }
 
   public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {
-    return this.client.put(`/client/${clientProfile.client_id}`, clientProfile)
+    return this.client
+      .put(`/client/${clientProfile.client_id}`, clientProfile)
+      .then(response => response.data)
   }
 
   public async fetchBalance(): Promise<Balance> {

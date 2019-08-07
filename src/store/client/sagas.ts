@@ -183,6 +183,7 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
+    const oldHandle = state.clientState.profile!.handle
     const res = yield call(updateClientProfile, credentials, payload)
 
     if (res.error) {
@@ -190,6 +191,10 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
     } else {
       yield put(updateClientProfileSuccess(res))
       yield call(setIsEditing, false)
+      const newHandle = res.handle
+      if (newHandle && newHandle !== '' && newHandle !== oldHandle) {
+        yield put(push(`/c/${newHandle}`))
+      }
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {

@@ -48,7 +48,7 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
       return { ...state, updateClientProfileFormErrors: undefined }
     }
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS: {
-      return { ...state, profile: action.payload.data }
+      return { ...state, profile: action.payload }
     }
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR: {
       return { ...state, updateClientProfileFormErrors: action.payload }

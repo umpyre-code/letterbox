@@ -12,13 +12,13 @@ import {
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
+import * as Router from 'react-router-dom'
 import { ApplicationState } from '../../store'
 import { API } from '../../store/api'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { ClientCredentials } from '../../store/models/client'
 import { Message } from '../../store/models/messages'
 import MessageBody from './MessageBody'
-import * as Router from 'react-router-dom'
 
 interface Props {
   message: Message
@@ -114,7 +114,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       <ListItem
         className={classes.listItem}
         button
-        onClick={() => history.push(`/m/${message.hash}`)}
+        onClick={() => history.push(`/m/${encodeURIComponent(message.hash!)}`)}
       >
         {renderAvatar()}
         <ListItemText

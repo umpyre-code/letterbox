@@ -19,7 +19,7 @@ import { ClientCredentials, ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
   readonly credentials?: ClientCredentials
-  readonly profile?: ClientProfile
+  readonly myProfile?: ClientProfile
 }
 
 interface MatchParams {
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
+const ProfilePageFC: React.FC<AllProps> = ({ credentials, match, myProfile }) => {
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles()
 
@@ -56,12 +56,11 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
         const res = await api.fetchClient(match.params.client_id)
         setProfile(res)
       } else {
-        const res = await api.fetchClient(credentials!.client_id)
-        setProfile(res)
+        setProfile(myProfile)
       }
     }
     fetchData()
-  }, [])
+  }, [match.params])
 
   function isEditable(): boolean {
     return (
@@ -93,7 +92,7 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match }) => {
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
   credentials: clientState.credentials!,
-  profile: clientState.profile!
+  myProfile: clientState.profile!
 })
 
 const mapDispatchToProps = {
