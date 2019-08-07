@@ -20,7 +20,7 @@ export const reducer: Reducer<AccountState> = (state = initialState, action) => 
     case AccountActionTypes.FETCH_BALANCE_SUCCESS: {
       return {
         ...state,
-        balance: action.payload.balance
+        balance: action.payload
       }
     }
     case AccountActionTypes.FETCH_CONNECT_ACCOUNT_ERROR:

@@ -7,8 +7,9 @@ import { initializeClientRequest } from '../store/client/actions'
 import Loading from './widgets/Loading'
 
 interface Props {
+  clientReady: boolean
+  credentialsReady: boolean
   loading: boolean
-  ready: boolean
 }
 
 interface PropsFromDispatch {
@@ -46,7 +47,13 @@ const NoStorageAvailable: React.FC = () => (
   </React.Fragment>
 )
 
-const ClientInitFC: React.FC<AllProps> = ({ children, initializeClient, loading, ready }) => {
+const ClientInitFC: React.FC<AllProps> = ({
+  children,
+  clientReady,
+  credentialsReady,
+  initializeClient,
+  loading
+}) => {
   const [storageAvailable, setStorageAvailable] = React.useState<boolean>(globalStorageIsAvailable)
   // console.log(globalClientIsInitialized)
 
@@ -63,7 +70,7 @@ const ClientInitFC: React.FC<AllProps> = ({ children, initializeClient, loading,
   }, [])
 
   React.useEffect(() => {
-    if (globalClientIsInitialized && !ready) {
+    if (globalClientIsInitialized && !clientReady) {
       initializeClient()
     }
   }, [storageIsAvailable])
@@ -72,7 +79,7 @@ const ClientInitFC: React.FC<AllProps> = ({ children, initializeClient, loading,
     return <Loading centerOnPage />
   } else if (!loading && !storageAvailable) {
     return <NoStorageAvailable />
-  } else if (!ready) {
+  } else if (!clientReady && !credentialsReady) {
     return <Loading centerOnPage />
   } else {
     return <React.Fragment>{children}</React.Fragment>
@@ -80,8 +87,9 @@ const ClientInitFC: React.FC<AllProps> = ({ children, initializeClient, loading,
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
-  loading: clientState.loading,
-  ready: clientState.ready
+  clientReady: clientState.clientReady,
+  credentialsReady: clientState.credentialsReady,
+  loading: clientState.loading
 })
 
 const mapDispatchToProps = {

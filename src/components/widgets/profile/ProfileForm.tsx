@@ -161,7 +161,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
               )
               setEditorState(updatedEditorState)
             }}
-            placeholder="Tell us about yourself"
+            placeholder="Tell us about you"
             readOnly={doneButtonDisabled()}
           />
         </CardContent>

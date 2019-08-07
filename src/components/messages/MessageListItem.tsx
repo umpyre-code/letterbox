@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   createStyles,
+  IconButton,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -9,6 +10,8 @@ import {
   Theme,
   Typography
 } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import moment from 'moment'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
@@ -16,26 +19,43 @@ import * as Router from 'react-router-dom'
 import { ApplicationState } from '../../store'
 import { API } from '../../store/api'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
+import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { Message } from '../../store/models/messages'
-import MessageBody from './MessageBody'
 
 interface Props {
   message: Message
+  shaded: boolean
+  button: boolean
 }
 
 interface PropsFromState {
   credentials: ClientCredentials
 }
 
+interface PropsFromDispatch {
+  deleteMessage: typeof deleteMessageRequest
+}
+
 interface MatchParams {}
 
 interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
 
-type AllProps = Props & PropsFromState & PropsFromRouter
+type AllProps = Props & PropsFromState & PropsFromRouter & PropsFromDispatch
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    deleteButton: {
+      '& .messageDeleteButton': {
+        display: 'none'
+      },
+      '&:hover .messageDeleteButton': {
+        display: 'inline'
+      },
+      height: 48,
+      margin: theme.spacing(1),
+      width: 48
+    },
     inline: {
       display: 'inline'
     },
@@ -45,9 +65,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface MessageValueProps {
   message: Message
+  textColour: string
 }
-const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
-  <Typography variant="h5">
+
+const MessageValue: React.FC<MessageValueProps> = ({ message, textColour }) => (
+  <Typography variant="h5" color={textColour}>
     <NumberFormat
       allowNegative={false}
       decimalScale={0}
@@ -59,12 +81,35 @@ const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
   </Typography>
 )
 
+interface MessageDeleteProps {
+  message: Message
+  deleteMessage: typeof deleteMessageRequest
+}
+const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message }) => {
+  const classes = useStyles()
+
+  return (
+    <IconButton
+      className={classes.deleteButton}
+      aria-label="delete"
+      onClick={event => {
+        event.stopPropagation()
+        deleteMessage(message.hash!)
+      }}
+    >
+      <DeleteIcon className="messageDeleteButton" />
+    </IconButton>
+  )
+}
+
 const MessageListItemFC: React.FunctionComponent<AllProps> = ({
+  button,
   credentials,
+  deleteMessage,
   message,
-  history
+  history,
+  shaded
 }) => {
-  const [isBodyVisible, setIsBodyVisible] = React.useState(false)
   const [fromProfile, setFromProfile] = React.useState(
     ClientProfileHelper.FROM(loadingClientProfile)
   )
@@ -80,18 +125,6 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     }
     fetchData()
   }, [])
-
-  function renderBody() {
-    if (isBodyVisible) {
-      return (
-        <ListItem>
-          <MessageBody body={message.body} />
-        </ListItem>
-      )
-    } else {
-      return null
-    }
-  }
 
   function renderAvatar() {
     if (fromProfile.full_name.length > 0) {
@@ -109,12 +142,31 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     }
   }
 
+  function getMessageDate() {
+    const now = moment()
+    const then = moment(message.received_at)
+    const hoursSince = now.diff(then, 'hours')
+    if (hoursSince > 168) {
+      return then.format('ddd, MMM M YYYY')
+    } else if (hoursSince > 24) {
+      return then.format('ddd, hA')
+    } else {
+      return then.format('h:mm A')
+    }
+  }
+
+  const textColour = shaded ? 'textSecondary' : 'textPrimary'
+
   return (
     <Box>
       <ListItem
         className={classes.listItem}
-        button
-        onClick={() => history.push(`/m/${message.hash!}`)}
+        button={button}
+        onClick={() => {
+          if (button) {
+            history.push(`/m/${message.hash!}`)
+          }
+        }}
       >
         {renderAvatar()}
         <ListItemText
@@ -124,7 +176,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                 component="span"
                 variant="h5"
                 className={classes.inline}
-                color="textPrimary"
+                color={textColour}
               >
                 {message.pda}
               </Typography>
@@ -136,16 +188,17 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                 component="span"
                 variant="body2"
                 className={classes.inline}
-                color="textPrimary"
+                color={textColour}
               >
-                {fromProfile.full_name}
+                <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}{' '}
+                <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent</span> {getMessageDate()}
               </Typography>
             </React.Fragment>
           }
         />
-        <MessageValue message={message} />
+        <MessageDelete message={message} deleteMessage={deleteMessage} />
+        <MessageValue message={message} textColour={textColour} />
       </ListItem>
-      {renderBody()}
     </Box>
   )
 }
@@ -154,4 +207,13 @@ const mapStateToProps = ({ clientState }: ApplicationState) => ({
   credentials: clientState.credentials!
 })
 
-export const MessageListItem = Router.withRouter(connect(mapStateToProps)(MessageListItemFC))
+const mapDispatchToProps = {
+  deleteMessage: deleteMessageRequest
+}
+
+export const MessageListItem = Router.withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(MessageListItemFC)
+)

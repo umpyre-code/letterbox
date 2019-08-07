@@ -50,3 +50,9 @@ export interface PostConnectOauthResponse {
   client_id: string
   connect_account: ConnectAccountInfo
 }
+
+export interface SettlePaymentResponse {
+  fee_cents: number
+  payment_cents: number
+  balance: Balance
+}

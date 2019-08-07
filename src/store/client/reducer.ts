@@ -2,11 +2,12 @@ import { Reducer } from 'redux'
 import { ClientActionTypes, ClientState } from './types'
 
 export const initialState: ClientState = {
+  clientReady: false,
   credentials: undefined,
+  credentialsReady: false,
   errors: undefined,
   loading: true,
-  profile: undefined,
-  ready: false
+  profile: undefined
 }
 
 export const reducer: Reducer<ClientState> = (state = initialState, action) => {
@@ -19,21 +20,21 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
       return {
         ...state,
         credentials: action.payload,
-        loading: false,
-        ready: true
+        credentialsReady: true,
+        loading: false
       }
     }
     case ClientActionTypes.FETCH_CLIENT_SUCCESS: {
       return {
         ...state,
+        clientReady: true,
         loading: false,
-        profile: action.payload,
-        ready: true
+        profile: action.payload
       }
     }
     case ClientActionTypes.INITIALIZE_CLIENT_ERROR:
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
-      return { ...state, loading: false, errors: action.payload, ready: false }
+      return { ...state, loading: false, errors: action.payload, clientReady: true }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST: {
       return { ...state, loading: true, signUpFormErrors: undefined }

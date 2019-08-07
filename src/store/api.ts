@@ -8,10 +8,11 @@ import {
   ConnectAccountInfo,
   ConnectAccountPrefs,
   ConnectOauth,
-  PostConnectOauthResponse
+  PostConnectOauthResponse,
+  SettlePaymentResponse
 } from './models/account'
 import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
-import { APIMessage } from './models/messages'
+import { APIMessage, MessageHash } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
 
@@ -119,7 +120,11 @@ export class API {
     return this.client.post('/account/oauth', oauth).then(response => response.data)
   }
 
-  public async updateConnectPrefs(prefs: ConnectAccountPrefs): Promise<PostConnectPrefsResponse> {
+  public async updateConnectPrefs(prefs: ConnectAccountPrefs): Promise<ConnectAccountInfo> {
     return this.client.post('/account/connect/prefs', prefs).then(response => response.data)
+  }
+
+  public async settlePayment(hash: MessageHash): Promise<SettlePaymentResponse> {
+    return this.client.put(`/messages/${hash}/settle`).then(response => response.data)
   }
 }

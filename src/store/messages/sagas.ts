@@ -12,18 +12,25 @@ import {
 import { ApplicationState } from '../'
 import { db } from '../../db/db'
 import { BloomFilter } from '../../util/BloomFilter'
-import { fetchBalanceRequest } from '../account/actions'
+import { fetchBalanceRequest, fetchBalanceSuccess } from '../account/actions'
 import { API } from '../api'
 import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
+import { SettlePaymentResponse } from '../models/account'
 import { ClientCredentials } from '../models/client'
-import { APIMessage, fromApiMessage, Message, MessageBody } from '../models/messages'
+import { APIMessage, fromApiMessage, Message, MessageBody, MessageHash } from '../models/messages'
 import {
+  deleteMessageError,
+  deleteMessageRequest,
+  deleteMessageSuccess,
   fetchMessagesError,
   fetchMessagesRequest,
   fetchMessagesSuccess,
   initializeMessagesError,
   initializeMessagesSuccess,
+  messageReadError,
+  messageReadRequest,
+  messageReadSuccess,
   sendMessageError,
   sendMessageRequest,
   sendMessageSuccess,
@@ -37,14 +44,21 @@ import { MessagesActionTypes } from './types'
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
-async function getMessagesWithoutBody(withinDays: number): Promise<Message[]> {
+async function getMessagesWithoutBody(
+  withinDays: number,
+  includeDeleted: boolean
+): Promise<Message[]> {
   const fromDate = new Date()
   fromDate.setDate(fromDate.getDate() - withinDays)
 
   return db.messageInfos
     .orderBy('received_at')
     .filter(message => {
-      return message.received_at !== undefined && message.received_at > fromDate
+      return (
+        (!message.deleted || includeDeleted) &&
+        message.received_at !== undefined &&
+        message.received_at > fromDate
+      )
     })
     .toArray()
 }
@@ -53,7 +67,7 @@ function* handleInitializeMessages() {
   try {
     // Update message sketch first
     yield put(updateSketchRequest())
-    const res = yield call(getMessagesWithoutBody, 30)
+    const res = yield call(getMessagesWithoutBody, 30, false)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -82,14 +96,6 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
-async function fetchMessages(
-  credentials: ClientCredentials,
-  sketch: string
-): Promise<APIMessage[]> {
-  const api = new API(credentials)
-  return api.fetchMessages(sketch)
-}
-
 async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   const decryptedMessages = await Promise.all(
     messages.map((message: APIMessage) => decryptMessage(message))
@@ -106,7 +112,7 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
     await db.messageInfos.bulkAdd(messageInfos)
     await db.messageBodies.bulkAdd(messageBodies)
   })
-  return getMessagesWithoutBody(30)
+  return getMessagesWithoutBody(30, false)
 }
 
 async function decryptMessage(message: APIMessage): Promise<Message> {
@@ -141,6 +147,14 @@ async function decryptMessageBody(
       sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
     )
   )
+}
+
+async function fetchMessages(
+  credentials: ClientCredentials,
+  sketch: string
+): Promise<APIMessage[]> {
+  const api = new API(credentials)
+  return api.fetchMessages(sketch)
 }
 
 // Message fetch main loop: this saga runs forever and ever
@@ -215,7 +229,7 @@ function* watchSendMessageRequest() {
 }
 
 async function calculateMessageSketch(): Promise<string> {
-  const messagesFromLast31days = await getMessagesWithoutBody(31)
+  const messagesFromLast31days = await getMessagesWithoutBody(31, true)
 
   // Construct bloom filter
   const bf = new BloomFilter()
@@ -234,10 +248,97 @@ function* watchUpdateSketchRequest() {
   yield takeLatest(MessagesActionTypes.UPDATE_SKETCH_REQUEST, handleUpdateSketch)
 }
 
+async function settlePayment(
+  credentials: ClientCredentials,
+  hash: MessageHash
+): Promise<SettlePaymentResponse | undefined> {
+  // fetch the message first, check if the value is >0
+  const message = await db.messageInfos.get(hash)
+  if (message && message.value_cents > 0) {
+    const api = new API(credentials)
+    return api.settlePayment(hash)
+  } else {
+    return Promise.resolve(undefined)
+  }
+}
+
+async function markMessageAsRead(hash: MessageHash) {
+  return db.messageInfos.update(hash, { read: true })
+}
+
+// Message fetch main loop: this saga runs forever and ever
+function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
+  const { payload } = values
+  try {
+    const state: ApplicationState = yield select()
+    const credentials = state.clientState.credentials!
+    const res = yield call(settlePayment, credentials, payload)
+
+    if (res && res.error) {
+      yield put(messageReadError(res.error))
+    } else if (res) {
+      yield put(fetchBalanceSuccess(res.balance))
+    }
+
+    // No result from settlePayment() just means the message was $0, so there's no need to hit the
+    // API.
+    yield call(markMessageAsRead, payload)
+    // Reload messages from DB
+    const messages = yield call(getMessagesWithoutBody, 30, false)
+    yield put(messageReadSuccess(messages))
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(messageReadError(err.response.data.message))
+    } else if (err.message) {
+      yield put(messageReadError(err.message))
+    } else {
+      yield put(messageReadError(err))
+    }
+  }
+}
+
+function* watchMessageReadRequest() {
+  yield takeEvery(MessagesActionTypes.MESSAGE_READ_REQUEST, handleMessageRead)
+}
+
+async function markMessageDeleted(hash: MessageHash) {
+  await db.messageBodies.delete(hash)
+  await db.messageInfos.update(hash, { deleted: true })
+  return getMessagesWithoutBody(30, false)
+}
+
+function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
+  const { payload } = values
+  try {
+    const state: ApplicationState = yield select()
+    const res = yield call(markMessageDeleted, payload)
+
+    if (res.error) {
+      yield put(deleteMessageError(res.error))
+    } else {
+      yield put(deleteMessageSuccess(res))
+    }
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(deleteMessageError(err.response.data.message))
+    } else if (err.message) {
+      yield put(deleteMessageError(err.message))
+    } else {
+      yield put(deleteMessageError(err))
+    }
+  }
+}
+
+function* watchDeleteMessageRequest() {
+  yield takeEvery(MessagesActionTypes.DELETE_MESSAGE_REQUEST, handleDeleteMessage)
+}
+
 export function* sagas() {
   yield all([
-    fork(watchInitializeMessagesRequest),
+    fork(watchDeleteMessageRequest),
     fork(watchFetchMessagesRequest),
+    fork(watchInitializeMessagesRequest),
+    fork(watchMessageReadRequest),
     fork(watchSendMessageRequest),
     fork(watchUpdateSketchRequest)
   ])

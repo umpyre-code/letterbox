@@ -43,7 +43,6 @@
     "axios-retry": "^3.1.2",
     "components": "^0.1.0",
     "connected-react-router": "^6.5.2",
-    "db": "^1.1.1",
     "dexie": "^2.0.4",
     "dompurify": "^1.0.11",
     "draft-js": "^0.11.0",

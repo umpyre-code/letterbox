@@ -36,7 +36,7 @@ function* handleFetchBalance() {
     if (res.error) {
       yield put(fetchBalanceError(res.error))
     } else {
-      yield put(fetchBalanceSuccess(res))
+      yield put(fetchBalanceSuccess(res.balance))
     }
   } catch (err) {
     if (err instanceof Error) {

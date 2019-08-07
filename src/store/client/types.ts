@@ -17,12 +17,13 @@ export const enum ClientActionTypes {
 }
 
 export interface ClientState {
+  readonly clientReady: boolean
   readonly credentials?: ClientCredentials
-  readonly profile?: ClientProfile
+  readonly credentialsReady: boolean
   readonly errors?: string
-  readonly signUpFormErrors?: string
   readonly loading: boolean
-  readonly ready: boolean
+  readonly profile?: ClientProfile
+  readonly signUpFormErrors?: string
 }
 
 export interface NewClientMeta {

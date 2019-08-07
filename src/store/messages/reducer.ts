@@ -27,7 +27,10 @@ function cmp(first: Message, second: Message): number {
 function rankMessages(messages: Message[]): RankedMessages {
   return {
     readMessages: messages.filter(message => message.read === true).sort(cmp),
-    unreadMessages: messages.filter(message => message.read === false).sort(cmp)
+    unreadMessages: messages
+      .filter(message => message.read === false)
+      .sort(cmp)
+      .slice(0, 5)
   }
 }
 
@@ -57,6 +60,32 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {
+      return { ...state, loading: false, errors: action.payload }
+    }
+    case MessagesActionTypes.DELETE_MESSAGE_REQUEST: {
+      return { ...state, loading: true }
+    }
+    case MessagesActionTypes.DELETE_MESSAGE_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        ...rankMessages(action.payload)
+      }
+    }
+    case MessagesActionTypes.DELETE_MESSAGE_ERROR: {
+      return { ...state, loading: false, errors: action.payload }
+    }
+    case MessagesActionTypes.MESSAGE_READ_REQUEST: {
+      return { ...state, loading: true }
+    }
+    case MessagesActionTypes.MESSAGE_READ_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        ...rankMessages(action.payload)
+      }
+    }
+    case MessagesActionTypes.MESSAGE_READ_ERROR: {
       return { ...state, loading: false, errors: action.payload }
     }
     case MessagesActionTypes.UPDATE_SKETCH_SUCCESS: {

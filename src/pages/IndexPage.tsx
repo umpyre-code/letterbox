@@ -26,9 +26,9 @@ import { ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
   balance?: Balance
+  clientReady: boolean
   messagesState: MessagesState
   profile: ClientProfile
-  ready: boolean
 }
 
 interface PropsFromDispatch {
@@ -58,10 +58,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, profile, ready }) => {
+const IndexPageFC: React.FC<AllProps> = ({
+  addDraft,
+  balance,
+  messagesState,
+  profile,
+  clientReady
+}) => {
   const classes = useStyles()
 
-  if (ready && !profile) {
+  if (clientReady && !profile) {
     // ready without a profile? redirect to sign up page
     return <Router.Redirect to="/signup" />
   }
@@ -101,10 +107,20 @@ const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, pro
         <DraftList />
       </Container>
       <Container className={classes.messageListContainer}>
-        <MessageList messages={messagesState.unreadMessages} messageType="unread" />
+        <MessageList
+          messages={messagesState.unreadMessages}
+          messageType="unread"
+          shaded={false}
+          button={true}
+        />
       </Container>
       <Container className={classes.messageListContainer}>
-        <MessageList messages={messagesState.readMessages} messageType="read" />
+        <MessageList
+          messages={messagesState.readMessages}
+          messageType="read"
+          shaded={true}
+          button={true}
+        />
       </Container>
     </ClientInit>
   )
@@ -112,9 +128,9 @@ const IndexPageFC: React.FC<AllProps> = ({ addDraft, balance, messagesState, pro
 
 const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
   balance: accountState.balance!,
+  clientReady: clientState.clientReady,
   messagesState,
-  profile: clientState.profile!,
-  ready: clientState.ready
+  profile: clientState.profile!
 })
 
 const mapDispatchToProps = {

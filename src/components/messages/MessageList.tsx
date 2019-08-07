@@ -5,19 +5,25 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  Container
 } from '@material-ui/core'
 import * as React from 'react'
 import { Message } from '../../store/models/messages'
 import { Emoji } from '../widgets/Emoji'
 import { MessageListItem } from './MessageListItem'
 
+interface Props {
+  button: boolean
+  shaded: boolean
+}
+
 interface PropsFromState {
   messages: Message[]
   messageType: string
 }
 
-type AllProps = PropsFromState
+type AllProps = Props & PropsFromState
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +44,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const MessageList: React.FunctionComponent<AllProps> = ({ messages, messageType }) => {
+export const MessageList: React.FunctionComponent<AllProps> = ({
+  button,
+  messages,
+  messageType,
+  shaded
+}) => {
   const classes = useStyles()
 
   function renderInner() {
@@ -48,16 +59,18 @@ export const MessageList: React.FunctionComponent<AllProps> = ({ messages, messa
           {messages.map((message, index) => (
             <React.Fragment key={message.hash}>
               {index > 0 && <Divider />}
-              <MessageListItem message={message} />
+              <MessageListItem message={message} shaded={shaded} button={button} />
             </React.Fragment>
           ))}
         </List>
       )
     } else {
       return (
-        <Typography className={classes.noMessages}>
-          no {messageType} messages <Emoji>😀</Emoji>
-        </Typography>
+        <Container style={{ padding: 5 }}>
+          <Typography className={classes.noMessages}>
+            no {messageType} messages <Emoji>😀</Emoji>
+          </Typography>
+        </Container>
       )
     }
   }
