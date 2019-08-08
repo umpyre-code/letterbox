@@ -23,11 +23,11 @@ export const deleteMessageSuccess = (messages: Message[]) =>
 export const deleteMessageError = (errorMessage: string) =>
   action(MessagesActionTypes.DELETE_MESSAGE_ERROR, errorMessage)
 
-export const sendMessageRequest = (draft: Draft) =>
-  action(MessagesActionTypes.SEND_MESSAGE_REQUEST, draft)
-export const sendMessageSuccess = () => action(MessagesActionTypes.SEND_MESSAGE_SUCCESS)
-export const sendMessageError = (errorMessage: string) =>
-  action(MessagesActionTypes.SEND_MESSAGE_ERROR, errorMessage)
+export const sendMessagesRequest = (drafts: Draft) =>
+  action(MessagesActionTypes.SEND_MESSAGES_REQUEST, draft)
+export const sendMessagesSuccess = () => action(MessagesActionTypes.SEND_MESSAGES_SUCCESS)
+export const sendMessagesError = (errorMessage: string) =>
+  action(MessagesActionTypes.SEND_MESSAGES_ERROR, errorMessage)
 
 export const updateSketchRequest = () => action(MessagesActionTypes.UPDATE_SKETCH_REQUEST)
 export const updateSketchSuccess = (sketch: string) =>

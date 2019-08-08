@@ -5,7 +5,7 @@ import { API } from '../api'
 import { KeyPair } from '../keyPairs/types'
 import { sendMessageRequest } from '../messages/actions'
 import { encryptMessageBody, hashMessage, signMessage, toApiMessage } from '../messages/utils'
-import { ClientCredentials, ClientProfile } from '../models/client'
+import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
 import {
   addDraftError,
@@ -53,7 +53,7 @@ async function addDraft(): Promise<Draft[]> {
     created_at: new Date(),
     editorContent: undefined,
     pda: '',
-    recipient: '',
+    recipients: [],
     sending: false,
     value_cents: 0
   })
@@ -155,18 +155,26 @@ function* watchUpdateDraftRequest() {
 async function prepareMessage(
   credentials: ClientCredentials,
   keyPair: KeyPair,
-  message: Message
-): Promise<APIMessage> {
+  message: Message,
+  recipients: ClientID[]
+): Promise<APIMessage[]> {
   const api = new API(credentials)
-  const recipientProfile: ClientProfile = await api.fetchClient(message.to)
-  const apiMessage = toApiMessage(message, credentials.client_id)
-  const encryptedMessage = await encryptMessageBody(
-    apiMessage,
-    keyPair,
-    recipientProfile.box_public_key
-  )
-  const hashedMessage = await hashMessage(encryptedMessage)
-  return signMessage(hashedMessage, keyPair)
+  const res = recipients.map(recipient => {
+    async function inner() {
+      const recipientProfile: ClientProfile = await api.fetchClient(message.to)
+      const apiMessage = toApiMessage(message, credentials.client_id)
+      const encryptedMessage = await encryptMessageBody(
+        apiMessage,
+        keyPair,
+        recipientProfile.box_public_key
+      )
+      const hashedMessage = await hashMessage(encryptedMessage)
+      return signMessage(hashedMessage, keyPair)
+    }
+    return inner()
+  })
+
+  return Promise.all(res)
 }
 
 function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
@@ -176,14 +184,20 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(prepareMessage, credentials, state.keysState.current_key!, message!)
+    const res = yield call(
+      prepareMessage,
+      credentials,
+      state.keysState.current_key!,
+      message!,
+      draft.recipients
+    )
 
     if (res.error) {
       yield put(sendDraftError(res.error))
     } else {
       // Save the message to the DB
-      const apiMessage: APIMessage = res
-      const draftToSend: Draft = { ...draft, apiMessage }
+      const apiMessages: APIMessage[] = res
+      const draftToSend: Draft = { ...draft, apiMessages }
       yield put(updateDraftRequest(draftToSend))
 
       // Trigger send loop

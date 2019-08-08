@@ -37,11 +37,18 @@ export interface NewClient {
 }
 
 export interface ClientProfile {
-  client_id: string
+  client_id: ClientID
   full_name: string
   box_public_key: string
   signing_public_key: string
   handle?: string
   profile?: string
   joined: number
+}
+
+export interface ClientSearchResult {
+  client_id: ClientID
+  full_name: string
+  handle: string
+  suggest: string[]
 }

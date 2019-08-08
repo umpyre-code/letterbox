@@ -55,21 +55,6 @@ export const DiscardButton: React.FC<DiscardButtonProps> = ({
   </Box>
 )
 
-interface RecipientFieldProps {
-  setRecipient: (value: string) => void
-  initialValue: string
-}
-
-export const RecipientField: React.FC<RecipientFieldProps> = ({ setRecipient, initialValue }) => (
-  <TextField
-    id="recipient"
-    label="Recipient"
-    defaultValue={initialValue}
-    fullWidth
-    onChange={event => setRecipient(event.target.value)}
-  />
-)
-
 interface PDAFieldProps {
   setPda: (value: string) => void
   initialValue: string
@@ -78,7 +63,6 @@ interface PDAFieldProps {
 export const PDAField: React.FC<PDAFieldProps> = ({ setPda, initialValue }) => (
   <TextField
     id="pda"
-    label="PDA"
     defaultValue={initialValue}
     placeholder="Public display of affection"
     fullWidth

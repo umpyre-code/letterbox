@@ -31,9 +31,9 @@ import {
   messageReadError,
   messageReadRequest,
   messageReadSuccess,
-  sendMessageError,
-  sendMessageRequest,
-  sendMessageSuccess,
+  sendMessagesError,
+  sendMessagesRequest,
+  sendMessagesSuccess,
   updateSketchRequest,
   updateSketchSuccess
 } from './actions'
@@ -188,44 +188,44 @@ function* watchFetchMessagesRequest() {
   yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
-async function sendMessage(
+async function sendMessages(
   credentials: ClientCredentials,
-  apiMessage: APIMessage
-): Promise<APIMessage> {
+  apiMessages: APIMessage[]
+): Promise<APIMessage[]> {
   const api = new API(credentials)
-  return api.sendMessages([apiMessage]).then(messages => messages[0])
+  return api.sendMessages(apiMessages)
 }
 
-function* handleSendMessage(values: ReturnType<typeof sendMessageRequest>) {
+function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
   const { payload } = values
   const draft: Draft = payload
-  const { apiMessage } = draft
+  const { apiMessages } = draft
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(sendMessage, credentials, apiMessage!)
+    const res = yield call(sendMessages, credentials, apiMessages!)
 
     if (res.error) {
-      yield put(sendMessageError(res.error))
+      yield put(sendMessagesError(res.error))
       yield put(removeDraftRequest({ ...draft, sending: false }))
     } else {
-      yield put(sendMessageSuccess())
+      yield put(sendMessagesSuccess())
       yield put(removeDraftRequest(draft))
       yield put(fetchBalanceRequest())
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
-      yield put(sendMessageError(err.response.data.message))
+      yield put(sendMessagesError(err.response.data.message))
     } else if (err.message) {
-      yield put(sendMessageError(err.message))
+      yield put(sendMessagesError(err.message))
     } else {
-      yield put(sendMessageError(err))
+      yield put(sendMessagesError(err))
     }
   }
 }
 
-function* watchSendMessageRequest() {
-  yield takeEvery(MessagesActionTypes.SEND_MESSAGE_REQUEST, handleSendMessage)
+function* watchSendMessagesRequest() {
+  yield takeEvery(MessagesActionTypes.SEND_MESSAGES_REQUEST, handleSendMessages)
 }
 
 async function calculateMessageSketch(): Promise<string> {
@@ -339,7 +339,7 @@ export function* sagas() {
     fork(watchFetchMessagesRequest),
     fork(watchInitializeMessagesRequest),
     fork(watchMessageReadRequest),
-    fork(watchSendMessageRequest),
+    fork(watchSendMessagesRequest),
     fork(watchUpdateSketchRequest)
   ])
 }

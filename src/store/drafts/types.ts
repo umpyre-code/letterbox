@@ -1,3 +1,4 @@
+import { ClientID } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
 
 export interface Draft {
@@ -7,13 +8,13 @@ export interface Draft {
   // dependencies in the main app bundle
   editorContent?: string
 
-  recipient: string
+  recipients: ClientID[]
   pda: string
   created_at: Date
   value_cents: number
   sending: boolean
   message?: Message
-  apiMessage?: APIMessage
+  apiMessages?: APIMessage[]
 }
 
 export interface FetchDraftsResponse {

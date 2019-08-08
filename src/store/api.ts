@@ -11,7 +11,13 @@ import {
   PostConnectOauthResponse,
   SettlePaymentResponse
 } from './models/account'
-import { ClientCredentials, ClientID, ClientProfile, NewClient } from './models/client'
+import {
+  ClientCredentials,
+  ClientID,
+  ClientProfile,
+  ClientSearchResult,
+  NewClient
+} from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
@@ -126,5 +132,9 @@ export class API {
 
   public async settlePayment(hash: MessageHash): Promise<SettlePaymentResponse> {
     return this.client.put(`/messages/${hash}/settle`).then(response => response.data)
+  }
+
+  public async searchClient(prefix: string): Promise<ClientSearchResult[]> {
+    return this.client.post(`/client/search/${prefix}`).then(response => response.data)
   }
 }

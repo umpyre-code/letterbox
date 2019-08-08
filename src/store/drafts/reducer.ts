@@ -12,7 +12,7 @@ export const reducer: Reducer<DraftsState> = (state = initialState, action) => {
     case DraftsActionTypes.ADD_DRAFT_REQUEST:
     case DraftsActionTypes.INITIALIZE_DRAFTS_REQUEST:
     case DraftsActionTypes.REMOVE_DRAFT_REQUEST:
-    case DraftsActionTypes.SEND_DRAFT_REQUEST:
+    case DraftsActionTypes.SEND_DRAFTS_REQUEST:
     case DraftsActionTypes.UPDATE_DRAFT_REQUEST: {
       return state
     }
@@ -29,7 +29,7 @@ export const reducer: Reducer<DraftsState> = (state = initialState, action) => {
     case DraftsActionTypes.ADD_DRAFT_ERROR:
     case DraftsActionTypes.INITIALIZE_DRAFTS_ERROR:
     case DraftsActionTypes.REMOVE_DRAFT_ERROR:
-    case DraftsActionTypes.SEND_DRAFT_ERROR:
+    case DraftsActionTypes.SEND_DRAFTS_ERROR:
     case DraftsActionTypes.UPDATE_DRAFT_ERROR: {
       return { ...state, errors: action.payload }
     }
