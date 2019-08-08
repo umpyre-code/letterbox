@@ -3,7 +3,7 @@ import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
 import { KeyPair } from '../keyPairs/types'
-import { sendMessageRequest } from '../messages/actions'
+import { sendMessagesRequest } from '../messages/actions'
 import { encryptMessageBody, hashMessage, signMessage, toApiMessage } from '../messages/utils'
 import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
@@ -201,7 +201,7 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
       yield put(updateDraftRequest(draftToSend))
 
       // Trigger send loop
-      yield put(sendMessageRequest(draftToSend))
+      yield put(sendMessagesRequest(draftToSend))
 
       yield put(updateDraftSuccess(res))
     }
