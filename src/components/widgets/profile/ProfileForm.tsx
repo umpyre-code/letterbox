@@ -165,18 +165,6 @@ export const ProfileFormFC: React.FC<AllProps> = ({
             readOnly={doneButtonDisabled()}
           />
         </CardContent>
-        {/* {this.props.client.signUpFormErrors && (
-          <Grid item>
-            <SnackbarContent
-              message={
-                <h3>
-                  <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
-                  {this.props.client.signUpFormErrors}
-                </h3>
-              }
-            />
-          </Grid>
-        )} */}
         {isSubmitting && <LinearProgress />}
       </Form>
     )
