@@ -72,7 +72,7 @@
     "prop-types": "^15.6.2",
     "qs": "^6.7.0",
     "querystringify": "^2.1.1",
-    "react": "^15.5.0 || ^16.0.0-rc",
+    "react": "^16.9.0",
     "react-dom": "^15.5.0 || ^16.0.0-rc",
     "react-number-format": "^4.2.0",
     "react-redux": "^7.1.0",
