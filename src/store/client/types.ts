@@ -5,9 +5,9 @@ export const enum ClientActionTypes {
   FETCH_CLIENT_ERROR = '@@client/FETCH_CLIENT_ERROR',
   FETCH_CLIENT_REQUEST = '@@client/FETCH_CLIENT_REQUEST',
   FETCH_CLIENT_SUCCESS = '@@client/FETCH_CLIENT_SUCCESS',
-  INITIALIZE_CLIENT_ERROR = '@@client/INITIALIZE_CLIENT_ERROR',
-  INITIALIZE_CLIENT_REQUEST = '@@client/INITIALIZE_CLIENT_REQUEST',
-  INITIALIZE_CLIENT_SUCCESS = '@@client/INITIALIZE_CLIENT_SUCCESS',
+  LOAD_CREDENTIALS_ERROR = '@@client/LOAD_CREDENTIALS_ERROR',
+  LOAD_CREDENTIALS_REQUEST = '@@client/LOAD_CREDENTIALS_REQUEST',
+  LOAD_CREDENTIALS_SUCCESS = '@@client/LOAD_CREDENTIALS_SUCCESS',
   SUBMIT_NEW_CLIENT_ERROR = '@@client/SUBMIT_NEW_CLIENT_ERROR',
   SUBMIT_NEW_CLIENT_REQUEST = '@@client/SUBMIT_NEW_CLIENT_REQUEST',
   SUBMIT_NEW_CLIENT_SUCCESS = '@@client/SUBMIT_NEW_CLIENT_SUCCESS',
@@ -18,10 +18,11 @@ export const enum ClientActionTypes {
 
 export interface ClientState {
   readonly clientReady: boolean
+  readonly clientLoading: boolean
   readonly credentials?: ClientCredentials
+  readonly credentialsLoading: boolean
   readonly credentialsReady: boolean
   readonly errors?: string
-  readonly loading: boolean
   readonly profile?: ClientProfile
   readonly signUpFormErrors?: string
 }

@@ -2,11 +2,11 @@ import { action } from 'typesafe-actions'
 import { ClientProfile, NewClient } from '../models/client'
 import { ClientActionTypes, NewClientMeta, UpdateClientProfileMeta } from './types'
 
-export const initializeClientRequest = () => action(ClientActionTypes.INITIALIZE_CLIENT_REQUEST)
-export const initializeClientSuccess = (data: Client) =>
-  action(ClientActionTypes.INITIALIZE_CLIENT_SUCCESS, data)
-export const initializeClientError = (message: string) =>
-  action(ClientActionTypes.INITIALIZE_CLIENT_ERROR, message)
+export const loadCredentialsRequest = () => action(ClientActionTypes.LOAD_CREDENTIALS_REQUEST)
+export const loadCredentialsSuccess = (data: Client) =>
+  action(ClientActionTypes.LOAD_CREDENTIALS_SUCCESS, data)
+export const loadCredentialsError = (message: string) =>
+  action(ClientActionTypes.LOAD_CREDENTIALS_ERROR, message)
 
 export const fetchClientRequest = () => action(ClientActionTypes.FETCH_CLIENT_REQUEST)
 export const fetchClientSuccess = (data: Client) =>

@@ -11,6 +11,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { Elements, StripeProvider } from 'react-stripe-elements'
+import ClientInit from '../components/ClientInit'
 import AddCreditsForm from '../components/forms/AddCreditsForm'
 import Loading from '../components/widgets/Loading'
 import { ApplicationState } from '../store'
@@ -61,7 +62,7 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
 
   if (balance) {
     return (
-      <React.Fragment>
+      <ClientInit>
         <CssBaseline />
         <Container className={classes.headerContainer}>
           <Typography variant="h2" component="h2">
@@ -85,7 +86,7 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
             )}
           </Container>
         </Container>
-      </React.Fragment>
+      </ClientInit>
     )
   } else {
     return <Loading />

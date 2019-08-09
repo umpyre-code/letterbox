@@ -2,37 +2,40 @@ import { Reducer } from 'redux'
 import { ClientActionTypes, ClientState } from './types'
 
 export const initialState: ClientState = {
+  clientLoading: false,
   clientReady: false,
   credentials: undefined,
+  credentialsLoading: false,
   credentialsReady: false,
   errors: undefined,
-  loading: true,
   profile: undefined
 }
 
 export const reducer: Reducer<ClientState> = (state = initialState, action) => {
   switch (action.type) {
-    case ClientActionTypes.INITIALIZE_CLIENT_REQUEST:
-    case ClientActionTypes.FETCH_CLIENT_REQUEST: {
-      return { ...state, loading: true, errors: undefined }
+    case ClientActionTypes.LOAD_CREDENTIALS_REQUEST: {
+      return { ...state, credentialsLoading: true, errors: undefined }
     }
-    case ClientActionTypes.INITIALIZE_CLIENT_SUCCESS: {
+    case ClientActionTypes.FETCH_CLIENT_REQUEST: {
+      return { ...state, clientLoading: true, errors: undefined }
+    }
+    case ClientActionTypes.LOAD_CREDENTIALS_SUCCESS: {
       return {
         ...state,
         credentials: action.payload,
-        credentialsReady: true,
-        loading: false
+        credentialsLoading: false,
+        credentialsReady: true
       }
     }
     case ClientActionTypes.FETCH_CLIENT_SUCCESS: {
       return {
         ...state,
+        clientLoading: false,
         clientReady: true,
-        loading: false,
         profile: action.payload
       }
     }
-    case ClientActionTypes.INITIALIZE_CLIENT_ERROR:
+    case ClientActionTypes.LOAD_CREDENTIALS_ERROR:
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
       return { ...state, loading: false, errors: action.payload, clientReady: true }
     }

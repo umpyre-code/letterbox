@@ -3,17 +3,18 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import { storageIsAvailable } from '../db/storageIsAvailable'
 import { ApplicationState } from '../store'
-import { initializeClientRequest } from '../store/client/actions'
+import { loadCredentialsRequest } from '../store/client/actions'
 import Loading from './widgets/Loading'
 
 interface Props {
+  clientLoading: boolean
   clientReady: boolean
+  credentialsLoading: boolean
   credentialsReady: boolean
-  loading: boolean
 }
 
 interface PropsFromDispatch {
-  initializeClient: typeof initializeClientRequest
+  loadCredentials: typeof loadCredentialsRequest
 }
 
 // Global initialization variable
@@ -49,10 +50,11 @@ const NoStorageAvailable: React.FC = () => (
 
 const ClientInitFC: React.FC<AllProps> = ({
   children,
+  clientLoading,
   clientReady,
+  credentialsLoading,
   credentialsReady,
-  initializeClient,
-  loading
+  loadCredentials
 }) => {
   const [storageAvailable, setStorageAvailable] = React.useState<boolean>(globalStorageIsAvailable)
   // console.log(globalClientIsInitialized)
@@ -71,13 +73,13 @@ const ClientInitFC: React.FC<AllProps> = ({
 
   React.useEffect(() => {
     if (globalClientIsInitialized && !clientReady) {
-      initializeClient()
+      loadCredentials()
     }
   }, [storageIsAvailable])
 
   if (!globalClientIsInitialized) {
     return <Loading centerOnPage />
-  } else if (!loading && !storageAvailable) {
+  } else if (!credentialsLoading && !clientLoading && !storageAvailable) {
     return <NoStorageAvailable />
   } else if (!clientReady && !credentialsReady) {
     return <Loading centerOnPage />
@@ -87,13 +89,14 @@ const ClientInitFC: React.FC<AllProps> = ({
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
+  clientLoading: clientState.clientLoading,
   clientReady: clientState.clientReady,
-  credentialsReady: clientState.credentialsReady,
-  loading: clientState.loading
+  credentialsLoading: clientState.credentialsLoading,
+  credentialsReady: clientState.credentialsReady
 })
 
 const mapDispatchToProps = {
-  initializeClient: initializeClientRequest
+  loadCredentials: loadCredentialsRequest
 }
 
 const ClientInit = connect(

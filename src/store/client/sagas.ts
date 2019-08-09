@@ -16,8 +16,8 @@ import {
   fetchClientError,
   fetchClientRequest,
   fetchClientSuccess,
-  initializeClientError,
-  initializeClientSuccess,
+  loadCredentialsError,
+  loadCredentialsSuccess,
   submitNewClientError,
   submitNewClientRequest,
   submitNewClientSuccess,
@@ -32,7 +32,7 @@ import { ClientActionTypes } from './types'
 // tslint:disable-next-line
 const sodium = require('libsodium-wrappers')
 
-async function initializeClient() {
+async function loadCredentials() {
   return db.apiTokens
     .orderBy('created_at')
     .reverse()
@@ -40,14 +40,14 @@ async function initializeClient() {
     .first()
 }
 
-function* handleInitializeClientRequest() {
+function* handleLoadCredentialsRequest() {
   try {
-    const res = yield call(initializeClient)
+    const res = yield call(loadCredentials)
 
     if (res && res.error) {
-      yield put(initializeClientError(res.error))
+      yield put(loadCredentialsError(res.error))
     } else {
-      yield put(initializeClientSuccess(res))
+      yield put(loadCredentialsSuccess(res))
       if (res && res.client_id) {
         // If we got a client API token, kick off other init actions
         yield put(fetchClientRequest())
@@ -59,11 +59,11 @@ function* handleInitializeClientRequest() {
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
-      yield put(initializeClientError(err.response.data.message))
+      yield put(loadCredentialsError(err.response.data.message))
     } else if (err.message) {
-      yield put(initializeClientError(err.message))
+      yield put(loadCredentialsError(err.message))
     } else {
-      yield put(initializeClientError(err))
+      yield put(loadCredentialsError(err))
     }
   }
 }
@@ -208,8 +208,8 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
   yield call(actions.setSubmitting, false)
 }
 
-function* watchInitializeClientRequest() {
-  yield takeEvery(ClientActionTypes.INITIALIZE_CLIENT_REQUEST, handleInitializeClientRequest)
+function* watchLoadCredentialsRequest() {
+  yield takeEvery(ClientActionTypes.LOAD_CREDENTIALS_REQUEST, handleLoadCredentialsRequest)
 }
 
 function* watchFetchClientRequest() {
@@ -230,7 +230,7 @@ function* watchUpdateClientProfileRequest() {
 export function* sagas() {
   yield all([
     fork(watchFetchClientRequest),
-    fork(watchInitializeClientRequest),
+    fork(watchLoadCredentialsRequest),
     fork(watchSubmitNewClientRequest),
     fork(watchUpdateClientProfileRequest)
   ])

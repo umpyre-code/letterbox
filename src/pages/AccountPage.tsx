@@ -14,6 +14,7 @@ import {
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { Link, Route, Switch } from 'react-router-dom'
+import ClientInit from '../components/ClientInit'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
@@ -83,7 +84,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
 
   if (balance && profile && credentials) {
     return (
-      <React.Fragment>
+      <ClientInit>
         <CssBaseline />
         <Container className={classes.headerContainer}>
           <Typography variant="h2" component="h2">
@@ -162,7 +163,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
             />
           </Paper>
         </Container>
-      </React.Fragment>
+      </ClientInit>
     )
   } else {
     return <Loading />
