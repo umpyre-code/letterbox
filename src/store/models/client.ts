@@ -34,6 +34,7 @@ export interface NewClient {
   phone_number: PhoneNumber
   box_public_key?: string
   signing_public_key?: string
+  phone_sms_verified: boolean
 }
 
 export interface ClientProfile {
@@ -44,6 +45,7 @@ export interface ClientProfile {
   handle?: string
   profile?: string
   joined: number
+  phone_sms_verified: boolean
 }
 
 export interface ClientSearchResult {
@@ -51,4 +53,9 @@ export interface ClientSearchResult {
   full_name: string
   handle: string
   suggest: string[]
+}
+
+export interface VerifyPhoneResult {
+  result: string
+  client?: ClientProfile
 }

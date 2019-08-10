@@ -18,31 +18,6 @@ import { BalanceTable, makeRow, makeRowsFromBalance } from '../widgets/BalanceTa
 import { PaymentInput } from '../widgets/PaymentInput'
 import { CardSectionForm } from './CardSectionForm'
 
-interface NumberFormatCustomProps {
-  inputRef: (instance: NumberFormat | null) => void
-  onChange: (event: { target: { value: string } }) => void
-}
-
-function numberFormatCustom(props: NumberFormatCustomProps) {
-  const { inputRef, onChange, ...other } = props
-
-  return (
-    <NumberFormat
-      {...other}
-      getInputRef={inputRef}
-      onValueChange={values => {
-        onChange({
-          target: {
-            value: values.value
-          }
-        })
-      }}
-      thousandSeparator
-      prefix="$"
-    />
-  )
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     contentContainer: { padding: theme.spacing(4, 0, 0, 0) },

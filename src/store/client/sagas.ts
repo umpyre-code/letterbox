@@ -23,7 +23,10 @@ import {
   submitNewClientSuccess,
   updateClientProfileError,
   updateClientProfileRequest,
-  updateClientProfileSuccess
+  updateClientProfileSuccess,
+  verifyPhoneRequest,
+  verifyPhoneError,
+  verifyPhoneSuccess
 } from './actions'
 import { ClientActionTypes } from './types'
 
@@ -227,11 +230,44 @@ function* watchUpdateClientProfileRequest() {
   )
 }
 
+async function verifyPhone(credentials: ClientCredentials, code: number) {
+  const api = new API(credentials)
+  return api.verifyPhone(code)
+}
+
+function* handleVerifyPhoneRequest(values: ReturnType<typeof verifyPhoneRequest>) {
+  const { payload } = values
+  try {
+    const state: ApplicationState = yield select()
+    const credentials = state.clientState.credentials!
+    const res = yield call(verifyPhone, credentials, payload)
+
+    if (res.error) {
+      yield put(verifyPhoneError(res.error))
+    } else if (res && res.client) {
+      yield put(verifyPhoneSuccess(res.client))
+    }
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      yield put(verifyPhoneError(err.response.data.message))
+    } else if (err.message) {
+      yield put(verifyPhoneError(err.message))
+    } else {
+      yield put(verifyPhoneError(err))
+    }
+  }
+}
+
+function* watchVerifyPhoneRequest() {
+  yield takeLatest(ClientActionTypes.VERIFY_PHONE_REQUEST, handleVerifyPhoneRequest)
+}
+
 export function* sagas() {
   yield all([
     fork(watchFetchClientRequest),
     fork(watchLoadCredentialsRequest),
     fork(watchSubmitNewClientRequest),
-    fork(watchUpdateClientProfileRequest)
+    fork(watchUpdateClientProfileRequest),
+    fork(watchVerifyPhoneRequest)
   ])
 }

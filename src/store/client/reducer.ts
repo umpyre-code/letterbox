@@ -8,6 +8,8 @@ export const initialState: ClientState = {
   credentialsLoading: false,
   credentialsReady: false,
   errors: undefined,
+  phoneVerificationError: undefined,
+  phoneVerifying: false,
   profile: undefined
 }
 
@@ -37,16 +39,16 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     }
     case ClientActionTypes.LOAD_CREDENTIALS_ERROR:
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
-      return { ...state, loading: false, errors: action.payload, clientReady: true }
+      return { ...state, clientLoading: false, errors: action.payload, clientReady: true }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST: {
-      return { ...state, loading: true, signUpFormErrors: undefined }
+      return { ...state, clientLoading: true, signUpFormErrors: undefined }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS: {
-      return { ...state, loading: false, credentials: action.payload }
+      return { ...state, clientLoading: false, credentials: action.payload }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
-      return { ...state, loading: false, signUpFormErrors: action.payload }
+      return { ...state, clientLoading: false, signUpFormErrors: action.payload }
     }
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST: {
       return { ...state, updateClientProfileFormErrors: undefined }
@@ -56,6 +58,20 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     }
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR: {
       return { ...state, updateClientProfileFormErrors: action.payload }
+    }
+    case ClientActionTypes.VERIFY_PHONE_REQUEST: {
+      return { ...state, phoneVerificationError: undefined, phoneVerifying: true }
+    }
+    case ClientActionTypes.VERIFY_PHONE_SUCCESS: {
+      return {
+        ...state,
+        phoneVerificationError: undefined,
+        phoneVerifying: false,
+        profile: action.payload
+      }
+    }
+    case ClientActionTypes.VERIFY_PHONE_ERROR: {
+      return { ...state, phoneVerificationError: action.payload, phoneVerifying: false }
     }
     default: {
       return state

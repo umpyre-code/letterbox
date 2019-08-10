@@ -16,7 +16,8 @@ import {
   ClientID,
   ClientProfile,
   ClientSearchResult,
-  NewClient
+  NewClient,
+  VerifyPhoneResult
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
@@ -136,5 +137,13 @@ export class API {
 
   public async searchClient(prefix: string): Promise<ClientSearchResult[]> {
     return this.client.post(`/client/search/${prefix}`).then(response => response.data)
+  }
+
+  public async verifyPhone(code: number): Promise<VerifyPhoneResult> {
+    return this.client.post(`/client/verify_phone/${code}`).then(response => response.data)
+  }
+
+  public async sendVerificationCode(): Promise<any> {
+    return this.client.post(`/client/verify_phone`).then(response => response.data)
   }
 }

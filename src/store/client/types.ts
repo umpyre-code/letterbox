@@ -13,16 +13,21 @@ export const enum ClientActionTypes {
   SUBMIT_NEW_CLIENT_SUCCESS = '@@client/SUBMIT_NEW_CLIENT_SUCCESS',
   UPDATE_CLIENT_PROFILE_ERROR = '@@client/UPDATE_CLIENT_PROFILE_ERROR',
   UPDATE_CLIENT_PROFILE_REQUEST = '@@client/UPDATE_CLIENT_PROFILE_REQUEST',
-  UPDATE_CLIENT_PROFILE_SUCCESS = '@@client/UPDATE_CLIENT_PROFILE_SUCCESS'
+  UPDATE_CLIENT_PROFILE_SUCCESS = '@@client/UPDATE_CLIENT_PROFILE_SUCCESS',
+  VERIFY_PHONE_ERROR = '@@client/VERIFY_PHONE_ERROR',
+  VERIFY_PHONE_REQUEST = '@@client/VERIFY_PHONE_REQUEST',
+  VERIFY_PHONE_SUCCESS = '@@client/VERIFY_PHONE_SUCCESS'
 }
 
 export interface ClientState {
-  readonly clientReady: boolean
   readonly clientLoading: boolean
+  readonly clientReady: boolean
   readonly credentials?: ClientCredentials
   readonly credentialsLoading: boolean
   readonly credentialsReady: boolean
   readonly errors?: string
+  readonly phoneVerificationError?: string
+  readonly phoneVerifying: boolean
   readonly profile?: ClientProfile
   readonly signUpFormErrors?: string
 }

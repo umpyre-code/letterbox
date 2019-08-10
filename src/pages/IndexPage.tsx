@@ -17,6 +17,7 @@ import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
+import PhoneVerification from '../components/widgets/PhoneVerification'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store'
 import { addDraftRequest } from '../store/drafts/actions'
@@ -27,6 +28,7 @@ import { ClientProfile } from '../store/models/client'
 interface PropsFromState {
   balance?: Balance
   clientReady: boolean
+  credentialsReady: boolean
   messagesState: MessagesState
   profile: ClientProfile
 }
@@ -63,29 +65,60 @@ const IndexPageFC: React.FC<AllProps> = ({
   balance,
   messagesState,
   profile,
-  clientReady
+  clientReady,
+  credentialsReady
 }) => {
   const classes = useStyles()
 
-  if (clientReady && !profile) {
+  if (clientReady && credentialsReady && !profile) {
     // ready without a profile? redirect to sign up page
     return <Router.Redirect to="/signup" />
+  }
+
+  function getBody() {
+    if (profile && !profile.phone_sms_verified) {
+      return <PhoneVerification />
+    } else {
+      return (
+        <React.Fragment>
+          <Container className={classes.draftContainer}>
+            <DraftList />
+          </Container>
+          <Container className={classes.messageListContainer}>
+            <MessageList
+              messages={messagesState.unreadMessages}
+              messageType="unread"
+              shaded={false}
+              button={true}
+            />
+          </Container>
+          <Container className={classes.messageListContainer}>
+            <MessageList
+              messages={messagesState.readMessages}
+              messageType="read"
+              shaded={true}
+              button={true}
+            />
+          </Container>
+          <Tooltip title="Compose a new message">
+            <Fab
+              className={classes.composeButton}
+              color="primary"
+              aria-label="Compose"
+              onClick={addDraft}
+            >
+              <Edit />
+            </Fab>
+          </Tooltip>
+        </React.Fragment>
+      )
+    }
   }
 
   return (
     <ClientInit>
       <CssBaseline />
       <Container className={classes.headerContainer}>
-        <Tooltip title="Compose a new message">
-          <Fab
-            className={classes.composeButton}
-            color="primary"
-            aria-label="Compose"
-            onClick={addDraft}
-          >
-            <Edit />
-          </Fab>
-        </Tooltip>
         <Grid container spacing={1} justify="space-between">
           <Grid item xs={7}>
             <Typography variant="h2" component="h2">
@@ -103,25 +136,7 @@ const IndexPageFC: React.FC<AllProps> = ({
           </Grid>
         </Grid>
       </Container>
-      <Container className={classes.draftContainer}>
-        <DraftList />
-      </Container>
-      <Container className={classes.messageListContainer}>
-        <MessageList
-          messages={messagesState.unreadMessages}
-          messageType="unread"
-          shaded={false}
-          button={true}
-        />
-      </Container>
-      <Container className={classes.messageListContainer}>
-        <MessageList
-          messages={messagesState.readMessages}
-          messageType="read"
-          shaded={true}
-          button={true}
-        />
-      </Container>
+      {getBody()}
     </ClientInit>
   )
 }
@@ -129,6 +144,7 @@ const IndexPageFC: React.FC<AllProps> = ({
 const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
   balance: accountState.balance!,
   clientReady: clientState.clientReady,
+  credentialsReady: clientState.credentialsReady,
   messagesState,
   profile: clientState.profile!
 })

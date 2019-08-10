@@ -29,3 +29,10 @@ export const updateClientProfileSuccess = (data: Client) =>
   action(ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS, data)
 export const updateClientProfileError = (message: string) =>
   action(ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR, message)
+
+export const verifyPhoneRequest = (code: number) =>
+  action(ClientActionTypes.VERIFY_PHONE_REQUEST, code)
+export const verifyPhoneSuccess = (data: Client) =>
+  action(ClientActionTypes.VERIFY_PHONE_SUCCESS, data)
+export const verifyPhoneError = (message: string) =>
+  action(ClientActionTypes.VERIFY_PHONE_ERROR, message)

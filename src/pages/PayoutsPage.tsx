@@ -250,7 +250,12 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
           <Typography variant="body1">Your Stripe Connect account is active.</Typography>
         </Box>
         <Box className={classes.buttonBox}>
-          <Link href={connectAccount.login_link_url} target="_blank" className="stripe-connect">
+          <Link
+            href={connectAccount.login_link_url}
+            target="_blank"
+            rel="noopener"
+            className="stripe-connect"
+          >
             <span>Stripe Connect Dashboard</span>
           </Link>
         </Box>
