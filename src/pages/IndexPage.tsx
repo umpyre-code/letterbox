@@ -33,6 +33,7 @@ interface PropsFromState {
   credentialsReady: boolean
   messagesState: MessagesState
   profile: ClientProfile
+  reload: boolean
 }
 
 interface PropsFromDispatch {
@@ -70,9 +71,15 @@ const IndexPageFC: React.FC<AllProps> = ({
   clientLoading,
   clientReady,
   credentialsLoading,
-  credentialsReady
+  credentialsReady,
+  reload
 }) => {
   const classes = useStyles()
+
+  if (reload) {
+    // force a page reload
+    location.reload(true)
+  }
 
   if (!credentialsLoading && !clientLoading && !profile) {
     // ready without a profile? redirect to sign up page
@@ -152,7 +159,8 @@ const mapStateToProps = ({ clientState, accountState, messagesState }: Applicati
   credentialsLoading: clientState.credentialsLoading,
   credentialsReady: clientState.credentialsReady,
   messagesState,
-  profile: clientState.profile!
+  profile: clientState.profile!,
+  reload: clientState.reload
 })
 
 const mapDispatchToProps = {

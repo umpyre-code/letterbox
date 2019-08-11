@@ -12,15 +12,20 @@ export interface KeyPair {
 export type KeyMap = Map<string, KeyPair>
 
 export const enum KeysActionTypes {
+  GENERATE_SEED_SUCCESS = '@@keys/GENERATE_SEED_SUCCESS',
+  INITIALIZE_KEYS_ERROR = '@@keys/INITIALIZE_KEYS_ERROR',
   INITIALIZE_KEYS_REQUEST = '@@keys/INITIALIZE_KEYS_REQUEST',
   INITIALIZE_KEYS_SUCCESS = '@@keys/INITIALIZE_KEYS_SUCCESS',
-  INITIALIZE_KEYS_ERROR = '@@keys/INITIALIZE_KEYS_ERROR'
+  LOAD_KEYS_ERROR = '@@keys/LOAD_KEYS_ERROR',
+  LOAD_KEYS_REQUEST = '@@keys/LOAD_KEYS_REQUEST',
+  LOAD_KEYS_SUCCESS = '@@keys/LOAD_KEYS_SUCCESS'
 }
 
 export interface KeysState {
-  readonly ready: boolean
-  readonly loading: boolean
-  readonly keys: KeyMap
   readonly current_key?: KeyPair
   readonly errors?: string
+  readonly keys: KeyMap
+  readonly loading: boolean
+  readonly ready: boolean
+  readonly seedWords?: string[]
 }

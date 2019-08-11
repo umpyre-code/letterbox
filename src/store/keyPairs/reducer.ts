@@ -6,7 +6,8 @@ export const initialState: KeysState = {
   errors: undefined,
   keys: new Map(),
   loading: false,
-  ready: false
+  ready: false,
+  seedWords: undefined
 }
 
 export const reducer: Reducer<KeysState> = (state = initialState, action) => {
@@ -25,6 +26,24 @@ export const reducer: Reducer<KeysState> = (state = initialState, action) => {
     }
     case KeysActionTypes.INITIALIZE_KEYS_ERROR: {
       return { ...state, loading: false, errors: action.payload }
+    }
+    case KeysActionTypes.LOAD_KEYS_REQUEST: {
+      return { ...state, loading: true }
+    }
+    case KeysActionTypes.LOAD_KEYS_SUCCESS: {
+      return {
+        ...state,
+        current_key: action.payload[0],
+        keys: action.payload[1],
+        loading: false,
+        ready: true
+      }
+    }
+    case KeysActionTypes.LOAD_KEYS_ERROR: {
+      return { ...state, loading: false, errors: action.payload }
+    }
+    case KeysActionTypes.GENERATE_SEED_SUCCESS: {
+      return { ...state, seedWords: action.payload }
     }
     default: {
       return state

@@ -89,7 +89,7 @@ const SignupFormSchema = Yup.object().shape({
 })
 
 class SignUp extends React.Component<AllProps> {
-  public componentWillMount() {
+  public componentDidMount() {
     this.props.initializeKeysRequest()
   }
 

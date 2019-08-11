@@ -117,7 +117,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
         <Link to="/account">My Account</Link>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
-        <Link to="/logout">Logout</Link>
+        <Link to="/signout">Sign out</Link>
       </MenuItem>
     </Menu>
   )

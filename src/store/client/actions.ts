@@ -36,3 +36,6 @@ export const verifyPhoneSuccess = (data: Client) =>
   action(ClientActionTypes.VERIFY_PHONE_SUCCESS, data)
 export const verifyPhoneError = (message: string) =>
   action(ClientActionTypes.VERIFY_PHONE_ERROR, message)
+
+export const signoutRequest = () => action(ClientActionTypes.SIGNOUT_REQUEST)
+export const signoutSuccess = () => action(ClientActionTypes.SIGNOUT_SUCCESS)

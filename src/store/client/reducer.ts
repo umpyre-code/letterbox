@@ -10,7 +10,8 @@ export const initialState: ClientState = {
   errors: undefined,
   phoneVerificationError: undefined,
   phoneVerifying: false,
-  profile: undefined
+  profile: undefined,
+  reload: false
 }
 
 export const reducer: Reducer<ClientState> = (state = initialState, action) => {
@@ -37,7 +38,9 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
         profile: action.payload
       }
     }
-    case ClientActionTypes.LOAD_CREDENTIALS_ERROR:
+    case ClientActionTypes.LOAD_CREDENTIALS_ERROR: {
+      return { ...state, credentialsLoading: false, errors: action.payload, credentialsReady: true }
+    }
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
       return { ...state, clientLoading: false, errors: action.payload, clientReady: true }
     }
@@ -72,6 +75,15 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     }
     case ClientActionTypes.VERIFY_PHONE_ERROR: {
       return { ...state, phoneVerificationError: action.payload, phoneVerifying: false }
+    }
+    case ClientActionTypes.SIGNOUT_REQUEST: {
+      return state
+    }
+    case ClientActionTypes.SIGNOUT_SUCCESS: {
+      return {
+        ...state,
+        reload: true
+      }
     }
     default: {
       return state

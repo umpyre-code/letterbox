@@ -8,7 +8,7 @@ import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { initializeDraftsRequest } from '../drafts/actions'
-import { initializeKeysRequest } from '../keyPairs/actions'
+import { loadKeysRequest } from '../keyPairs/actions'
 import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
@@ -18,6 +18,8 @@ import {
   fetchClientSuccess,
   loadCredentialsError,
   loadCredentialsSuccess,
+  signoutRequest,
+  signoutSuccess,
   submitNewClientError,
   submitNewClientRequest,
   submitNewClientSuccess,
@@ -54,7 +56,7 @@ function* handleLoadCredentialsRequest() {
       if (res && res.client_id) {
         // If we got a client API token, kick off other init actions
         yield put(fetchClientRequest())
-        yield put(initializeKeysRequest())
+        yield put(loadKeysRequest())
         yield put(initializeDraftsRequest())
         yield put(initializeMessagesRequest())
         yield put(fetchBalanceRequest())
@@ -155,7 +157,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       const credentials = yield call(saveClientToken, res)
       yield put(submitNewClientSuccess(credentials))
       yield put(fetchBalanceRequest())
-      yield put(push('/'))
+      yield put(push('/flashseed'))
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
@@ -262,10 +264,31 @@ function* watchVerifyPhoneRequest() {
   yield takeLatest(ClientActionTypes.VERIFY_PHONE_REQUEST, handleVerifyPhoneRequest)
 }
 
+async function signout() {
+  // Delete the DB
+  await db.delete()
+}
+
+function* handleSignoutRequest(values: ReturnType<typeof signoutRequest>) {
+  try {
+    const res = yield call(signout)
+    yield put(signoutSuccess())
+    yield put(push('/'))
+  } catch (err) {
+    // caught an error
+    console.log(err)
+  }
+}
+
+function* watchSignoutRequest() {
+  yield takeLatest(ClientActionTypes.SIGNOUT_REQUEST, handleSignoutRequest)
+}
+
 export function* sagas() {
   yield all([
     fork(watchFetchClientRequest),
     fork(watchLoadCredentialsRequest),
+    fork(watchSignoutRequest),
     fork(watchSubmitNewClientRequest),
     fork(watchUpdateClientProfileRequest),
     fork(watchVerifyPhoneRequest)

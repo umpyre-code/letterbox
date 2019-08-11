@@ -8,6 +8,8 @@ export const enum ClientActionTypes {
   LOAD_CREDENTIALS_ERROR = '@@client/LOAD_CREDENTIALS_ERROR',
   LOAD_CREDENTIALS_REQUEST = '@@client/LOAD_CREDENTIALS_REQUEST',
   LOAD_CREDENTIALS_SUCCESS = '@@client/LOAD_CREDENTIALS_SUCCESS',
+  SIGNOUT_REQUEST = '@@client/SIGNOUT_REQUEST',
+  SIGNOUT_SUCCESS = '@@client/SIGNOUT_SUCCESS',
   SUBMIT_NEW_CLIENT_ERROR = '@@client/SUBMIT_NEW_CLIENT_ERROR',
   SUBMIT_NEW_CLIENT_REQUEST = '@@client/SUBMIT_NEW_CLIENT_REQUEST',
   SUBMIT_NEW_CLIENT_SUCCESS = '@@client/SUBMIT_NEW_CLIENT_SUCCESS',
@@ -30,6 +32,7 @@ export interface ClientState {
   readonly phoneVerifying: boolean
   readonly profile?: ClientProfile
   readonly signUpFormErrors?: string
+  readonly reload: boolean
 }
 
 export interface NewClientMeta {

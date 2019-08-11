@@ -12,10 +12,12 @@ interface PropsFromState {
 
 const LazyAccountPage = React.lazy(() => import('./pages/AccountPage'))
 const LazyAddCreditsPage = React.lazy(() => import('./pages/AddCreditsPage'))
+const LazyFlashSeedPage = React.lazy(() => import('./pages/FlashSeedPage'))
 const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
-const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
-const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
 const LazyMessagePage = React.lazy(() => import('./pages/MessagePage'))
+const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
+const LazySignOutPage = React.lazy(() => import('./pages/SignOutPage'))
+const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
 
 const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
   <React.Suspense fallback={<Loading centerOnPage={true} />}>
@@ -23,6 +25,8 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
       <Switch>
         <Route exact path="/" component={LazyIndexPage} />
         <Route exact path="/signup" component={LazySignUpPage} />
+        <Route exact path="/flashseed" component={LazyFlashSeedPage} />
+        <Route exact path="/signout" component={LazySignOutPage} />
         <Route path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />
         <Route exact path="/addcredits" component={LazyAddCreditsPage} />

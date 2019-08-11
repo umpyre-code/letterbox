@@ -1,3 +1,10 @@
+// These wordlists are from BIP-39, see:
+// https://github.com/bitcoin/bips/blob/master/bip-0039/bip-0039-wordlists.md
+//
+// Note that we don't actually _follow_ BIP39 (instead we just join the words
+// and hash the string) to derive keys. We're just using a similar and somewhat
+// familiar UX pattern for key recovery.
+
 export type WordList = string[]
 
 export const englishWords: WordList = [

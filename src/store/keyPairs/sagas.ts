@@ -1,6 +1,12 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { db } from '../../db/db'
-import { initializeKeysError, initializeKeysSuccess } from './actions'
+import {
+  initializeKeysError,
+  initializeKeysSuccess,
+  generateSeedSuccess,
+  loadKeysError,
+  loadKeysSuccess
+} from './actions'
 import { KeyMap, KeyPair, KeysActionTypes } from './types'
 import { wordLists } from './wordLists'
 
@@ -54,20 +60,60 @@ function generateSeedWords() {
 }
 
 async function initializeKeys(seedWords: string[]) {
-  const keyCount = await db.keyPairs.count()
-  if (keyCount === 0) {
-    // This is a fresh new instance. Create the first key.
-    await sodium.ready
+  await sodium.ready
 
-    const masterKey = sodium.randombytes_buf_deterministic(
-      sodium.crypto_kdf_KEYBYTES,
-      sodium.crypto_generichash(sodium.crypto_kdf_KEYBYTES, seedWords.join())
-    )
+  const masterKey = sodium.randombytes_buf_deterministic(
+    sodium.crypto_kdf_KEYBYTES,
+    sodium.crypto_generichash(sodium.crypto_kdf_KEYBYTES, seedWords.join())
+  )
 
-    await db.keyPairs.add(await deriveKeys(masterKey, 0))
-  }
+  await db.keyPairs.add(await deriveKeys(masterKey, 0))
 
   // Fetch keys from DB now
+  return loadKeys()
+}
+
+async function calculateCheckWord(seedWords: string[]) {
+  await sodium.ready
+
+  const check = sodium.crypto_generichash(2, seedWords.join())
+  // Convert to UInt16
+  const checkNumber = new Uint16Array(1)
+  checkNumber[0] = check[1]
+  // tslint:disable-next-line: no-bitwise
+  checkNumber[0] = checkNumber[0] | (check[0] << 8)
+  checkNumber[0] = checkNumber[0] % 2048
+  return Promise.resolve(wordLists.english[checkNumber[0]])
+}
+
+function* handleInitializeKeys() {
+  try {
+    // To call async functions, use redux-saga's `call()`.
+    const seedWords = generateSeedWords()
+    const res = yield call(initializeKeys, seedWords)
+    const checkWord = yield call(calculateCheckWord, seedWords)
+    seedWords.push(checkWord) // 13th word is check word
+
+    if (res.error) {
+      yield put(initializeKeysError(res.error))
+    } else {
+      yield put(generateSeedSuccess(seedWords))
+      yield put(initializeKeysSuccess(res))
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      yield put(initializeKeysError(err.stack!))
+    } else {
+      yield put(initializeKeysError('An unknown error occured.'))
+    }
+  }
+}
+
+function* watchInitializeKeysRequest() {
+  yield takeEvery(KeysActionTypes.INITIALIZE_KEYS_REQUEST, handleInitializeKeys)
+}
+
+async function loadKeys() {
   return db.keyPairs
     .orderBy('created_at')
     .reverse()
@@ -85,30 +131,28 @@ async function initializeKeys(seedWords: string[]) {
     )
 }
 
-function* handleInitializeKeys() {
+function* handleLoadKeys() {
   try {
-    // To call async functions, use redux-saga's `call()`.
-    const seedWords = generateSeedWords()
-    const res = yield call(initializeKeys, seedWords)
+    const res = yield call(loadKeys)
 
     if (res.error) {
-      yield put(initializeKeysError(res.error))
+      yield put(loadKeysError(res.error))
     } else {
-      yield put(initializeKeysSuccess(res))
+      yield put(loadKeysSuccess(res))
     }
   } catch (err) {
     if (err instanceof Error) {
-      yield put(initializeKeysError(err.stack!))
+      yield put(loadKeysError(err.stack!))
     } else {
-      yield put(initializeKeysError('An unknown error occured.'))
+      yield put(loadKeysError('An unknown error occured.'))
     }
   }
 }
 
-function* watchInitializeKeysRequest() {
-  yield takeEvery(KeysActionTypes.INITIALIZE_KEYS_REQUEST, handleInitializeKeys)
+function* watchLoadKeysRequest() {
+  yield takeEvery(KeysActionTypes.LOAD_KEYS_REQUEST, handleLoadKeys)
 }
 
 export function* sagas() {
-  yield all([fork(watchInitializeKeysRequest)])
+  yield all([fork(watchInitializeKeysRequest), fork(watchLoadKeysRequest)])
 }
