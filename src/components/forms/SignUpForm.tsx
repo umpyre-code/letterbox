@@ -22,6 +22,7 @@ import { ClientState } from '../../store/client/types'
 import { KeysState } from '../../store/keyPairs/types'
 import { CountryCodes } from './CountryCodes'
 import { initializeKeysRequest } from '../../store/keyPairs/actions'
+import * as Router from 'react-router-dom'
 
 interface PhoneNumber {
   country_code?: string
@@ -45,6 +46,8 @@ interface PropsFromDispatch {
   initializeKeysRequest: typeof initializeKeysRequest
 }
 
+interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
+
 const PhoneNumberTextField = (props: TextFieldProps) => (
   <MuiTextField
     {...fieldToTextField(props)}
@@ -62,7 +65,7 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
   />
 )
 
-type AllProps = PropsFromDispatch & PropsFromState
+type AllProps = PropsFromDispatch & PropsFromState & PropsFromRouter
 
 function testPassword(value: string): boolean {
   return zxcvbn(value).score > 2
@@ -184,8 +187,12 @@ class SignUp extends React.Component<AllProps> {
             />
           </Grid>
         )}
+        {isSubmitting && (
+          <Grid item>
+            <LinearProgress />
+          </Grid>
+        )}
         <Grid item>
-          {isSubmitting && <LinearProgress />}
           <Button
             variant="contained"
             color="primary"
@@ -194,6 +201,19 @@ class SignUp extends React.Component<AllProps> {
             fullWidth
           >
             Sign Up 👍
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={isSubmitting}
+            onClick={() => {
+              this.props.history.push('/signin')
+            }}
+            fullWidth
+          >
+            I already have an account
           </Button>
         </Grid>
       </Grid>
@@ -211,7 +231,9 @@ const mapDispatchToProps = {
   submitNewClientRequest
 }
 
-export const SignUpForm = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SignUp)
+export const SignUpForm = Router.withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(SignUp)
+)

@@ -16,6 +16,7 @@ const LazyFlashSeedPage = React.lazy(() => import('./pages/FlashSeedPage'))
 const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 const LazyMessagePage = React.lazy(() => import('./pages/MessagePage'))
 const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
+const LazySignInPage = React.lazy(() => import('./pages/SignInPage'))
 const LazySignOutPage = React.lazy(() => import('./pages/SignOutPage'))
 const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
 
@@ -26,6 +27,7 @@ const RoutesFC: React.FunctionComponent<PropsFromState> = ({ clientState }) => (
         <Route exact path="/" component={LazyIndexPage} />
         <Route exact path="/signup" component={LazySignUpPage} />
         <Route exact path="/flashseed" component={LazyFlashSeedPage} />
+        <Route exact path="/signin" component={LazySignInPage} />
         <Route exact path="/signout" component={LazySignOutPage} />
         <Route path="/account" component={LazyAccountPage} />
         <Route exact path="/profile" component={LazyProfilePage} />
