@@ -27,7 +27,9 @@ import { ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
   balance?: Balance
+  clientLoading: boolean
   clientReady: boolean
+  credentialsLoading: boolean
   credentialsReady: boolean
   messagesState: MessagesState
   profile: ClientProfile
@@ -65,12 +67,14 @@ const IndexPageFC: React.FC<AllProps> = ({
   balance,
   messagesState,
   profile,
+  clientLoading,
   clientReady,
+  credentialsLoading,
   credentialsReady
 }) => {
   const classes = useStyles()
 
-  if (clientReady && credentialsReady && !profile) {
+  if (!credentialsLoading && !clientLoading && !profile) {
     // ready without a profile? redirect to sign up page
     return <Router.Redirect to="/signup" />
   }
@@ -143,7 +147,9 @@ const IndexPageFC: React.FC<AllProps> = ({
 
 const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
   balance: accountState.balance!,
+  clientLoading: clientState.clientLoading,
   clientReady: clientState.clientReady,
+  credentialsLoading: clientState.credentialsLoading,
   credentialsReady: clientState.credentialsReady,
   messagesState,
   profile: clientState.profile!

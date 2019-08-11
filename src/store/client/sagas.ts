@@ -24,8 +24,8 @@ import {
   updateClientProfileError,
   updateClientProfileRequest,
   updateClientProfileSuccess,
-  verifyPhoneRequest,
   verifyPhoneError,
+  verifyPhoneRequest,
   verifyPhoneSuccess
 } from './actions'
 import { ClientActionTypes } from './types'

@@ -1,10 +1,12 @@
 export interface KeyPair {
-  id?: number
   box_public_key: string
   box_secret_key: string
+  created_at: Date
+  id?: number
+  index: number
+  masterKey: Uint8Array
   signing_public_key: string
   signing_secret_key: string
-  created_at: Date
 }
 
 export type KeyMap = Map<string, KeyPair>

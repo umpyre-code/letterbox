@@ -5,7 +5,7 @@ export const initialState: ClientState = {
   clientLoading: false,
   clientReady: false,
   credentials: undefined,
-  credentialsLoading: false,
+  credentialsLoading: true,
   credentialsReady: false,
   errors: undefined,
   phoneVerificationError: undefined,
