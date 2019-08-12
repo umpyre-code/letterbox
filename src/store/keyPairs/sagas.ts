@@ -1,9 +1,9 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { db } from '../../db/db'
 import {
+  generateSeedSuccess,
   initializeKeysError,
   initializeKeysSuccess,
-  generateSeedSuccess,
   loadKeysError,
   loadKeysSuccess
 } from './actions'

@@ -8,7 +8,7 @@ import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { initializeDraftsRequest } from '../drafts/actions'
-import { loadKeysRequest } from '../keyPairs/actions'
+import { loadKeysRequest, initializeKeysRequest } from '../keyPairs/actions'
 import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
@@ -149,6 +149,12 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   const { payload, meta } = values
   const { actions } = meta
   try {
+    // First, clear out any old state
+    yield call(signoutRequest)
+    // Generate new keys
+    yield call(initializeKeysRequest)
+
+    // Now we can proceed with fresh state
     const state: ApplicationState = yield select()
     const currentKeyPair = state.keysState.current_key!
     const res = yield call(submitNewClient, payload, currentKeyPair)
@@ -268,7 +274,7 @@ function* watchVerifyPhoneRequest() {
 
 async function signout() {
   // Delete the DB
-  await db.delete()
+  await db.deleteAndReset()
 }
 
 function* handleSignoutRequest(values: ReturnType<typeof signoutRequest>) {

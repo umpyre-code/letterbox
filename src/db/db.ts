@@ -32,6 +32,17 @@ class UmpyreDb extends Dexie {
 
   public constructor() {
     super('Umpyre')
+    this.init()
+  }
+
+  public async deleteAndReset() {
+    await this.delete()
+    await this.close()
+    this.init()
+    await this.open()
+  }
+
+  private init() {
     this.version(1).stores({
       api_tokens: '++id, client_id, token, created_at',
       drafts: '++id, recipient, created_at',
