@@ -21,6 +21,7 @@ import { ApplicationState } from '../../store'
 import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { CountryCodes } from './CountryCodes'
+import { initializeKeysRequest } from '../../store/keyPairs/actions'
 
 interface PhoneNumber {
   country_code?: string
@@ -100,7 +101,8 @@ class SignUp extends React.Component<AllProps> {
       this.props.client &&
       this.props.client.clientReady &&
       this.props.client.credentialsReady &&
-      this.props.client.profile
+      this.props.client.profile &&
+      !this.props.client.newClientSubmitting
     ) {
       // How did we get here? already have a client, so let's redirect to the
       // signout page to make sure this is intentional
@@ -231,7 +233,7 @@ class SignUp extends React.Component<AllProps> {
   )
 }
 
-const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
+const mapStateToProps = ({ clientState }: ApplicationState) => ({
   client: clientState
 })
 

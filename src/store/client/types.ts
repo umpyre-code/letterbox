@@ -29,11 +29,12 @@ export interface ClientState {
   readonly credentialsLoading: boolean
   readonly credentialsReady: boolean
   readonly errors?: string
+  readonly newClientSubmitting: boolean
   readonly phoneVerificationError?: string
   readonly phoneVerifying: boolean
   readonly profile?: ClientProfile
-  readonly signUpFormErrors?: string
   readonly reload: boolean
+  readonly signUpFormErrors?: string
 }
 
 export interface NewClientMeta {

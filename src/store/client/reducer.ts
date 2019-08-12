@@ -9,6 +9,7 @@ export const initialState: ClientState = {
   credentialsLoading: false,
   credentialsReady: false,
   errors: undefined,
+  newClientSubmitting: false,
   phoneVerificationError: undefined,
   phoneVerifying: false,
   profile: undefined,
@@ -51,10 +52,20 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
       return { ...state, clientLoading: false, errors: action.payload, clientReady: true }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST: {
-      return { ...state, clientLoading: true, signUpFormErrors: undefined }
+      return {
+        ...state,
+        clientLoading: true,
+        newClientSubmitting: true,
+        signUpFormErrors: undefined
+      }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS: {
-      return { ...state, clientLoading: false, credentials: action.payload }
+      return {
+        ...state,
+        clientLoading: false,
+        credentials: action.payload,
+        newClientSubmitting: false
+      }
     }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
       return { ...state, clientLoading: false, signUpFormErrors: action.payload }

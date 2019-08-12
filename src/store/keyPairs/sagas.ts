@@ -86,7 +86,7 @@ async function calculateCheckWord(seedWords: string[]) {
   return Promise.resolve(wordLists.english[checkNumber[0]])
 }
 
-function* handleInitializeKeys() {
+export function* handleInitializeKeys() {
   try {
     // To call async functions, use redux-saga's `call()`.
     const seedWords = generateSeedWords()

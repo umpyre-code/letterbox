@@ -8,7 +8,8 @@ import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { initializeDraftsRequest } from '../drafts/actions'
-import { loadKeysRequest, initializeKeysRequest } from '../keyPairs/actions'
+import { loadKeysRequest } from '../keyPairs/actions'
+import { handleInitializeKeys } from '../keyPairs/sagas'
 import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
@@ -150,9 +151,9 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   const { actions } = meta
   try {
     // First, clear out any old state
-    yield call(signoutRequest)
+    yield call(signout)
     // Generate new keys
-    yield call(initializeKeysRequest)
+    yield call(handleInitializeKeys)
 
     // Now we can proceed with fresh state
     const state: ApplicationState = yield select()
@@ -165,11 +166,20 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       const credentials = yield call(saveClientToken, res)
       yield put(submitNewClientSuccess(credentials))
       yield put(fetchBalanceRequest())
+      yield put(fetchClientRequest())
       yield put(push('/flashseed'))
     }
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
-      yield put(submitNewClientError(err.response.data.message))
+      if (err.response.data.code && err.response.data.code === 3) {
+        yield put(
+          submitNewClientError(
+            'Either the email address or phone number you provided is already in use'
+          )
+        )
+      } else {
+        yield put(submitNewClientError(err.response.data.message))
+      }
     } else if (err.message) {
       yield put(submitNewClientError(err.message))
     } else {
@@ -177,9 +187,6 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     }
   }
   yield call(actions.setSubmitting, false)
-
-  // Fetch the client profile
-  yield put(fetchClientRequest())
 }
 
 async function updateClientProfile(
