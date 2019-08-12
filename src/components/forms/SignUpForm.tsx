@@ -14,15 +14,13 @@ import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-mate
 import { AsYouType } from 'libphonenumber-js'
 import * as React from 'react'
 import { connect } from 'react-redux'
+import * as Router from 'react-router-dom'
 import * as Yup from 'yup'
 import zxcvbn from 'zxcvbn'
 import { ApplicationState } from '../../store'
-import { submitNewClientRequest } from '../../store/client/actions'
+import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
-import { KeysState } from '../../store/keyPairs/types'
 import { CountryCodes } from './CountryCodes'
-import { initializeKeysRequest } from '../../store/keyPairs/actions'
-import * as Router from 'react-router-dom'
 
 interface PhoneNumber {
   country_code?: string
@@ -38,12 +36,11 @@ interface Values {
 
 interface PropsFromState {
   client: ClientState
-  keys: KeysState
 }
 
 interface PropsFromDispatch {
   submitNewClientRequest: typeof submitNewClientRequest
-  initializeKeysRequest: typeof initializeKeysRequest
+  loadCredentials: typeof loadCredentialsRequest
 }
 
 interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
@@ -93,34 +90,47 @@ const SignupFormSchema = Yup.object().shape({
 
 class SignUp extends React.Component<AllProps> {
   public componentDidMount() {
-    this.props.initializeKeysRequest()
+    // Load credentials first, just to make sure we don't unintentionally wipe
+    // out local state. Creating a new client will reset the local DB.
+    this.props.loadCredentials()
   }
 
   public render() {
-    return (
-      <Formik
-        initialValues={{
-          email: '',
-          full_name: '',
-          password: '',
-          phone_number: {
-            country_code: 'US',
-            national_number: ''
-          }
-        }}
-        validationSchema={SignupFormSchema}
-        onSubmit={(values, actions) => {
-          const newClient = {
-            ...values
-          }
-          delete newClient.password
-          this.props.submitNewClientRequest(newClient, {
-            actions
-          })
-        }}
-        render={this.handleFormRender}
-      />
-    )
+    if (
+      this.props.client &&
+      this.props.client.clientReady &&
+      this.props.client.credentialsReady &&
+      this.props.client.profile
+    ) {
+      // How did we get here? already have a client, so let's redirect to the
+      // signout page to make sure this is intentional
+      return <Router.Redirect to="/signout" />
+    } else {
+      return (
+        <Formik
+          initialValues={{
+            email: '',
+            full_name: '',
+            password: '',
+            phone_number: {
+              country_code: 'US',
+              national_number: ''
+            }
+          }}
+          validationSchema={SignupFormSchema}
+          onSubmit={(values, actions) => {
+            const newClient = {
+              ...values
+            }
+            delete newClient.password
+            this.props.submitNewClientRequest(newClient, {
+              actions
+            })
+          }}
+          render={this.handleFormRender}
+        />
+      )
+    }
   }
 
   private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
@@ -222,12 +232,11 @@ class SignUp extends React.Component<AllProps> {
 }
 
 const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
-  client: clientState,
-  keys: keysState
+  client: clientState
 })
 
 const mapDispatchToProps = {
-  initializeKeysRequest,
+  loadCredentials: loadCredentialsRequest,
   submitNewClientRequest
 }
 
