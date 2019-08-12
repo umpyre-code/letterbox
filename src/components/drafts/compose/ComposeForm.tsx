@@ -101,11 +101,13 @@ const ComposeFormFC: React.FC<AllProps> = ({
     }
     const messageDraft = {
       ...draft,
-      body: JSON.stringify(messageBody),
-      pda,
-      recipients,
-      sent_at: new Date(),
-      value_cents: (messageValue ? messageValue : 0) * 100
+      message: {
+        body: JSON.stringify(messageBody),
+        pda,
+        sent_at: new Date(),
+        value_cents: (messageValue ? messageValue : 0) * 100
+      },
+      recipients
     }
     sendDraft(messageDraft)
   }
@@ -155,7 +157,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
         <Grid item xs={12}>
           <RecipientField
             credentials={credentials}
-            // initialValue={draft.recipients}
+            initialValues={draft.recipients}
             setRecipients={(value: ClientID[]) => {
               setRecipients(value)
               updateDraft({ ...draft, recipients: value })

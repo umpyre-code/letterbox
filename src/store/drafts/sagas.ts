@@ -161,8 +161,8 @@ async function prepareMessage(
   const api = new API(credentials)
   const res = recipients.map(recipient => {
     async function inner() {
-      const recipientProfile: ClientProfile = await api.fetchClient(message.to)
-      const apiMessage = toApiMessage(message, credentials.client_id)
+      const recipientProfile: ClientProfile = await api.fetchClient(recipient)
+      const apiMessage = toApiMessage({ ...message, to: recipient }, credentials.client_id)
       const encryptedMessage = await encryptMessageBody(
         apiMessage,
         keyPair,
@@ -206,10 +206,11 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
       yield put(updateDraftSuccess(res))
     }
   } catch (err) {
+    console.log(err)
     if (err instanceof Error) {
-      yield put(updateDraftError(err.stack!))
+      yield put(sendDraftError(err.stack!))
     } else {
-      yield put(updateDraftError('An unknown error occured.'))
+      yield put(sendDraftError('An unknown error occured.'))
     }
   }
 }

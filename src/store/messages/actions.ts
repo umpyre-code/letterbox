@@ -23,7 +23,7 @@ export const deleteMessageSuccess = (messages: Message[]) =>
 export const deleteMessageError = (errorMessage: string) =>
   action(MessagesActionTypes.DELETE_MESSAGE_ERROR, errorMessage)
 
-export const sendMessagesRequest = (drafts: Draft) =>
+export const sendMessagesRequest = (draft: Draft) =>
   action(MessagesActionTypes.SEND_MESSAGES_REQUEST, draft)
 export const sendMessagesSuccess = () => action(MessagesActionTypes.SEND_MESSAGES_SUCCESS)
 export const sendMessagesError = (errorMessage: string) =>

@@ -21,7 +21,6 @@ import { ApplicationState } from '../../store'
 import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { CountryCodes } from './CountryCodes'
-import { initializeKeysRequest } from '../../store/keyPairs/actions'
 
 interface PhoneNumber {
   country_code?: string

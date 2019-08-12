@@ -9,12 +9,12 @@ import deburr from 'lodash/deburr'
 import PropTypes from 'prop-types'
 import * as React from 'react'
 import { API } from '../../../store/api'
-import { ClientCredentials, ClientSearchResult } from '../../../store/models/client'
+import { ClientCredentials, ClientID, ClientSearchResult } from '../../../store/models/client'
 
 interface RecipientFieldProps {
   credentials: ClientCredentials
   setRecipients: (value: ClientID[]) => void
-  initialValue: string
+  initialValues: ClientID[]
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const RecipientField: React.FC<RecipientFieldProps> = ({
   credentials,
   setRecipients,
-  initialValue
+  initialValues
 }) => {
   const classes = useStyles()
   return (
@@ -75,7 +75,12 @@ export const RecipientField: React.FC<RecipientFieldProps> = ({
           setRecipient(event.target.value)
         }}
       /> */}
-      <DownshiftMultiple classes={classes} credentials={credentials} />
+      <DownshiftMultiple
+        classes={classes}
+        credentials={credentials}
+        setRecipients={setRecipients}
+        initialValues={initialValues}
+      />
     </React.Fragment>
   )
 }
@@ -172,14 +177,33 @@ async function getSuggestions(
 interface DownshiftMultipleProps {
   classes: ReturnType<typeof useStyles>
   credentials: ClientCredentials
+  setRecipients: (value: ClientID[]) => void
+  initialValues: ClientID[]
 }
 
 // tslint:disable-next-line: max-func-body-length
 function DownshiftMultiple(props: DownshiftMultipleProps) {
-  const { classes, credentials } = props
+  const { classes, credentials, initialValues, setRecipients } = props
   const [inputValue, setInputValue] = React.useState('')
   const [selectedItem, setSelectedItem] = React.useState<Suggestion[]>([])
   const [suggestions, setSuggestions] = React.useState<Suggestion[]>([])
+
+  React.useEffect(() => {
+    async function populateInitialValues() {
+      const api = new API(credentials)
+      const results = await Promise.all(initialValues.map(clientId => api.fetchClient(clientId)))
+      results.forEach(client => {
+        if (!selectedItem.find(item => item.client_id === client.client_id)) {
+          handleChange(client as Suggestion)
+        }
+      })
+    }
+    populateInitialValues()
+  }, [props.initialValues])
+
+  React.useEffect(() => {
+    setRecipients(selectedItem.map(si => si.client_id))
+  }, [selectedItem])
 
   function handleKeyDown(event: React.KeyboardEvent) {
     if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {

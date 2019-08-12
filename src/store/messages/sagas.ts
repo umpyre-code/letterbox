@@ -100,11 +100,21 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   const decryptedMessages = await Promise.all(
     messages.map((message: APIMessage) => decryptMessage(message))
   )
-  const messageBodies = decryptedMessages.map(message => ({
-    body: message.body!,
-    hash: message.hash!
+  // Look for messages that already exist in the DB, but were returned by the API
+  const existingMessages = await Promise.all(
+    decryptedMessages.filter(message => message).map(message => db.messageInfos.get(message!.hash!))
+  )
+  // Filter out any existing messages
+  const newMessages = decryptedMessages.filter(
+    message => message && !existingMessages.find(m => m && m!.hash === message!.hash)
+  )
+
+  // Split messages into info and body parts
+  const messageBodies = newMessages.map(message => ({
+    body: message!.body!,
+    hash: message!.hash!
   }))
-  const messageInfos = decryptedMessages.map(message => ({
+  const messageInfos = newMessages.map(message => ({
     ...message,
     body: undefined
   }))
@@ -115,20 +125,24 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   return getMessagesWithoutBody(30, false)
 }
 
-async function decryptMessage(message: APIMessage): Promise<Message> {
+async function decryptMessage(message: APIMessage): Promise<Message | undefined> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
   const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
-  return {
-    ...fromApiMessage(message),
-    body: JSON.parse(
-      await decryptMessageBody(
-        message.body,
-        message.nonce,
-        myKeyPair!.box_secret_key,
-        message.sender_public_key
-      )
-    ) as MessageBody
+  if (myKeyPair) {
+    return {
+      ...fromApiMessage(message),
+      body: JSON.parse(
+        await decryptMessageBody(
+          message.body,
+          message.nonce,
+          myKeyPair!.box_secret_key,
+          message.sender_public_key
+        )
+      ) as MessageBody
+    }
+  } else {
+    return undefined
   }
 }
 
@@ -168,11 +182,12 @@ function* handleFetchMessages() {
     if (messages.error) {
       yield put(fetchMessagesError(messages.error))
     } else if (messages.length > 0) {
-      yield put(updateSketchRequest())
       const res = yield call(decryptStoreAndRetrieveMessages, messages)
       yield put(fetchMessagesSuccess(res))
+      yield put(updateSketchRequest())
     }
   } catch (err) {
+    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       yield put(fetchMessagesError(err.response.data.message))
     } else if (err.message) {
@@ -198,7 +213,7 @@ async function sendMessages(
 
 function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
   const { payload } = values
-  const draft: Draft = payload
+  const draft: Draft = payload as Draft
   const { apiMessages } = draft
   try {
     const state: ApplicationState = yield select()
