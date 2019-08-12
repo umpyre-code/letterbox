@@ -29,6 +29,7 @@ interface PropsFromState {
   balance?: Balance
   clientLoading: boolean
   clientReady: boolean
+  credentialsError?: string
   credentialsLoading: boolean
   credentialsReady: boolean
   messagesState: MessagesState
@@ -70,6 +71,7 @@ const IndexPageFC: React.FC<AllProps> = ({
   profile,
   clientLoading,
   clientReady,
+  credentialsError,
   credentialsLoading,
   credentialsReady,
   reload
@@ -81,7 +83,7 @@ const IndexPageFC: React.FC<AllProps> = ({
     location.reload(true)
   }
 
-  if (!credentialsLoading && !clientLoading && !profile) {
+  if (credentialsReady && (clientReady || credentialsError) && !profile) {
     // ready without a profile? redirect to sign up page
     return <Router.Redirect to="/signup" />
   }
@@ -156,6 +158,7 @@ const mapStateToProps = ({ clientState, accountState, messagesState }: Applicati
   balance: accountState.balance!,
   clientLoading: clientState.clientLoading,
   clientReady: clientState.clientReady,
+  credentialsError: clientState.credentialsError,
   credentialsLoading: clientState.credentialsLoading,
   credentialsReady: clientState.credentialsReady,
   messagesState,

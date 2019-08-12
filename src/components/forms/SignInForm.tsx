@@ -41,8 +41,8 @@ type AllProps = PropsFromDispatch & PropsFromState & PropsFromRouter
 const SignupFormSchema = Yup.object().shape({
   email: Yup.string()
     .email("That doesn't look right")
-    .required('We need a way to occasionally reach you'),
-  password: Yup.string().required('We need this')
+    .required('Tell us who you are'),
+  password: Yup.string().required('Tell us what you know')
 })
 
 class SignIn extends React.Component<AllProps> {

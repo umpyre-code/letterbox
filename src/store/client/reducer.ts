@@ -5,7 +5,8 @@ export const initialState: ClientState = {
   clientLoading: false,
   clientReady: false,
   credentials: undefined,
-  credentialsLoading: true,
+  credentialsError: undefined,
+  credentialsLoading: false,
   credentialsReady: false,
   errors: undefined,
   phoneVerificationError: undefined,
@@ -17,7 +18,7 @@ export const initialState: ClientState = {
 export const reducer: Reducer<ClientState> = (state = initialState, action) => {
   switch (action.type) {
     case ClientActionTypes.LOAD_CREDENTIALS_REQUEST: {
-      return { ...state, credentialsLoading: true, errors: undefined }
+      return { ...state, credentialsLoading: true, credentialsError: undefined }
     }
     case ClientActionTypes.FETCH_CLIENT_REQUEST: {
       return { ...state, clientLoading: true, errors: undefined }
@@ -39,7 +40,12 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
       }
     }
     case ClientActionTypes.LOAD_CREDENTIALS_ERROR: {
-      return { ...state, credentialsLoading: false, errors: action.payload, credentialsReady: true }
+      return {
+        ...state,
+        credentialsError: action.payload,
+        credentialsLoading: false,
+        credentialsReady: true
+      }
     }
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
       return { ...state, clientLoading: false, errors: action.payload, clientReady: true }

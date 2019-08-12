@@ -25,6 +25,7 @@ export interface ClientState {
   readonly clientLoading: boolean
   readonly clientReady: boolean
   readonly credentials?: ClientCredentials
+  readonly credentialsError?: string
   readonly credentialsLoading: boolean
   readonly credentialsReady: boolean
   readonly errors?: string

@@ -52,14 +52,16 @@ function* handleLoadCredentialsRequest() {
     if (res && res.error) {
       yield put(loadCredentialsError(res.error))
     } else {
-      yield put(loadCredentialsSuccess(res))
       if (res && res.client_id) {
+        yield put(loadCredentialsSuccess(res))
         // If we got a client API token, kick off other init actions
         yield put(fetchClientRequest())
         yield put(loadKeysRequest())
         yield put(initializeDraftsRequest())
         yield put(initializeMessagesRequest())
         yield put(fetchBalanceRequest())
+      } else {
+        yield put(loadCredentialsError('no credentials found'))
       }
     }
   } catch (err) {
