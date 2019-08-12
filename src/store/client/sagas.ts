@@ -80,7 +80,7 @@ function* handleFetchClientRequest() {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const res = yield call(API.FETCH_CLIENT, credentials, state.clientState.credentials!.client_id)
+    const res = yield call(API.FETCH_CLIENT, credentials, 'self')
 
     if (res.error) {
       yield put(fetchClientError(res.error))

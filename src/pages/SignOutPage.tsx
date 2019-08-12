@@ -64,17 +64,7 @@ const SignOutPageFC: React.FC<AllProps> = ({ history, signout }) => {
           <Grid container alignContent="flex-end">
             <Grid item xs>
               <Box className={classes.box}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    if (history.length > 0) {
-                      history.goBack()
-                    } else {
-                      history.push('/')
-                    }
-                  }}
-                >
+                <Button variant="contained" color="secondary" onClick={() => history.push('/')}>
                   👈 No, take me back
                 </Button>
               </Box>
