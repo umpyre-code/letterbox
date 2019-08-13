@@ -111,8 +111,8 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
 
   // Split messages into info and body parts
   const messageBodies = newMessages.map(message => ({
-    body: message!.body!,
-    hash: message!.hash!
+    body: message!.body,
+    hash: message!.hash
   }))
   const messageInfos = newMessages.map(message => ({
     ...message,
