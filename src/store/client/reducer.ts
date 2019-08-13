@@ -2,6 +2,9 @@ import { Reducer } from 'redux'
 import { ClientActionTypes, ClientState } from './types'
 
 export const initialState: ClientState = {
+  authError: undefined,
+  authResult: undefined,
+  authSubmitting: false,
   clientLoading: false,
   clientReady: false,
   credentials: undefined,
@@ -18,6 +21,15 @@ export const initialState: ClientState = {
 
 export const reducer: Reducer<ClientState> = (state = initialState, action) => {
   switch (action.type) {
+    case ClientActionTypes.AUTH_REQUEST: {
+      return { ...state, authSubmitting: true, authError: undefined }
+    }
+    case ClientActionTypes.AUTH_SUCCESS: {
+      return { ...state, authSubmitting: false, authError: undefined, authResult: action.payload }
+    }
+    case ClientActionTypes.AUTH_ERROR: {
+      return { ...state, authSubmitting: false, authError: action.payload }
+    }
     case ClientActionTypes.LOAD_CREDENTIALS_REQUEST: {
       return { ...state, credentialsLoading: true, credentialsError: undefined }
     }

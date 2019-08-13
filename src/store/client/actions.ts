@@ -1,6 +1,12 @@
 import { action } from 'typesafe-actions'
-import { ClientProfile, NewClient } from '../models/client'
-import { ClientActionTypes, NewClientMeta, UpdateClientProfileMeta } from './types'
+import { ClientCredentials, ClientProfile, NewClient } from '../models/client'
+import {
+  AuthCreds,
+  AuthMeta,
+  ClientActionTypes,
+  NewClientMeta,
+  UpdateClientProfileMeta
+} from './types'
 
 export const loadCredentialsRequest = () => action(ClientActionTypes.LOAD_CREDENTIALS_REQUEST)
 export const loadCredentialsSuccess = (data: Client) =>
@@ -39,3 +45,9 @@ export const verifyPhoneError = (message: string) =>
 
 export const signoutRequest = () => action(ClientActionTypes.SIGNOUT_REQUEST)
 export const signoutSuccess = () => action(ClientActionTypes.SIGNOUT_SUCCESS)
+
+export const authRequest = (creds: AuthCreds, meta: AuthMeta) =>
+  action(ClientActionTypes.AUTH_REQUEST, creds, meta)
+export const authSuccess = (clientCreds: ClientCredentials) =>
+  action(ClientActionTypes.AUTH_SUCCESS, clientCreds)
+export const authError = (message: string) => action(ClientActionTypes.AUTH_ERROR, message)

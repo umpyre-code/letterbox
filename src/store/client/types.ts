@@ -1,7 +1,10 @@
 import { FormikActions } from 'formik'
-import { ClientCredentials, ClientProfile } from '../models/client'
+import { AuthVerifyResponse, ClientCredentials, ClientProfile } from '../models/client'
 
 export const enum ClientActionTypes {
+  AUTH_ERROR = '@@client/AUTH_ERROR',
+  AUTH_REQUEST = '@@client/AUTH_REQUEST',
+  AUTH_SUCCESS = '@@client/AUTH_SUCCESS',
   FETCH_CLIENT_ERROR = '@@client/FETCH_CLIENT_ERROR',
   FETCH_CLIENT_REQUEST = '@@client/FETCH_CLIENT_REQUEST',
   FETCH_CLIENT_SUCCESS = '@@client/FETCH_CLIENT_SUCCESS',
@@ -22,6 +25,9 @@ export const enum ClientActionTypes {
 }
 
 export interface ClientState {
+  readonly authError?: string
+  readonly authResult?: AuthVerifyResponse
+  readonly authSubmitting: boolean
   readonly clientLoading: boolean
   readonly clientReady: boolean
   readonly credentials?: ClientCredentials
@@ -35,6 +41,15 @@ export interface ClientState {
   readonly profile?: ClientProfile
   readonly reload: boolean
   readonly signUpFormErrors?: string
+}
+
+export interface AuthCreds {
+  email: string
+  password: string
+}
+
+export interface AuthMeta {
+  actions: FormikActions<{}>
 }
 
 export interface NewClientMeta {

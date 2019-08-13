@@ -120,11 +120,7 @@ class SignUp extends React.Component<AllProps> {
           }}
           validationSchema={SignupFormSchema}
           onSubmit={(values, actions) => {
-            const newClient = {
-              ...values
-            }
-            delete newClient.password
-            this.props.submitNewClientRequest(newClient, {
+            this.props.submitNewClientRequest(values, {
               actions
             })
           }}

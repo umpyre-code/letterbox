@@ -14,6 +14,9 @@ import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
 import {
+  authError,
+  authRequest,
+  authSuccess,
   fetchClientError,
   fetchClientRequest,
   fetchClientSuccess,
@@ -31,7 +34,7 @@ import {
   verifyPhoneRequest,
   verifyPhoneSuccess
 } from './actions'
-import { ClientActionTypes } from './types'
+import { AuthCreds, ClientActionTypes } from './types'
 
 // This doesn't work unless we use the old-style of import. I gave up trying to
 // figure out why.
@@ -117,21 +120,42 @@ async function saveClientToken(credentials: ClientCredentials) {
   return Promise.resolve(verifiedCredentials)
 }
 
+async function computePrivateKey(email: string, password: string, salt: string): Promise<string> {
+  await sodium.ready
+  return sodium.to_hex(
+    sodium.crypto_pwhash(
+      64,
+      `${email}:${password}`,
+      sodium.from_hex(salt),
+      sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE,
+      sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE,
+      sodium.crypto_pwhash_ALG_DEFAULT
+    )
+  )
+}
+
 async function withPassword(newClient: NewClient): Promise<NewClient> {
   await sodium.ready
-  const salt = srp.generateSalt()
-  const hash = new SHA3(512)
-  hash.update(salt, 'hex')
-  hash.update(`${newClient.email}:${newClient.password!}`)
-  const privateKey = hash.digest('hex')
+
+  const salt = sodium.to_hex(sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES))
+  console.log(salt)
+
+  const privateKey = srp.derivePrivateKey(salt, newClient.email, newClient.password!)
+  // const privateKey = await computePrivateKey(newClient.email, newClient.password!, salt)
+
   const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
   const client = {
     ...newClient,
-    password_salt: sodium.to_base64(salt, sodium.base64_variants.URLSAFE_NO_PADDING),
+    password_salt: sodium.to_base64(
+      sodium.from_hex(salt),
+      sodium.base64_variants.URLSAFE_NO_PADDING
+    ),
     password_verifier: sodium.to_base64(verifier, sodium.base64_variants.URLSAFE_NO_PADDING)
   }
+
   // Do not transmit password to server
   delete client.password
+
   return client
 }
 
@@ -299,8 +323,83 @@ function* watchSignoutRequest() {
   yield takeLatest(ClientActionTypes.SIGNOUT_REQUEST, handleSignoutRequest)
 }
 
+async function authenticate(creds: AuthCreds) {
+  await sodium.ready
+
+  const clientEphemeral = srp.generateEphemeral()
+  const aPub = sodium.to_base64(
+    sodium.from_hex(clientEphemeral.public),
+    sodium.base64_variants.URLSAFE_NO_PADDING
+  )
+
+  const handshake = await API.AUTH_HANDSHAKE({
+    a_pub: aPub,
+    email: creds.email
+  })
+  console.log(handshake)
+
+  const salt = sodium.to_hex(
+    sodium.from_base64(handshake.salt, sodium.base64_variants.URLSAFE_NO_PADDING)
+  )
+
+  // const privateKey = await computePrivateKey(creds.email, creds.password, salt)
+  const privateKey = srp.derivePrivateKey(salt, creds.email, creds.password)
+
+  const session = srp.deriveSession(
+    clientEphemeral.secret,
+    sodium.to_hex(sodium.from_base64(handshake.b_pub, sodium.base64_variants.URLSAFE_NO_PADDING)),
+    salt,
+    creds.email,
+    privateKey
+  )
+
+  const clientProof = sodium.to_base64(
+    sodium.from_hex(session.proof),
+    sodium.base64_variants.URLSAFE_NO_PADDING
+  )
+
+  return API.AUTH_VERIFY({
+    a_pub: aPub,
+    client_proof: clientProof,
+    email: creds.email
+  })
+}
+
+function* handleAuthRequest(values: ReturnType<typeof authRequest>) {
+  const { payload, meta } = values
+  const { actions } = meta
+  try {
+    console.log(payload)
+    const res = yield call(authenticate, payload)
+    console.log(res)
+
+    if (res && res.error) {
+      yield put(authError(res.error))
+    } else if (res) {
+      yield put(authSuccess(res))
+    }
+  } catch (err) {
+    console.log(err)
+    if (err.response && err.response.data && err.response.data.message) {
+      if (err.response.data.code && err.response.data.code === 3) {
+        yield put(authError(err.response.data.message))
+      }
+    } else if (err.message) {
+      yield put(authError(err.message))
+    } else {
+      yield put(authError(err))
+    }
+  }
+  yield call(actions.setSubmitting, false)
+}
+
+function* watchAuthRequest() {
+  yield takeLatest(ClientActionTypes.AUTH_REQUEST, handleAuthRequest)
+}
+
 export function* sagas() {
   yield all([
+    fork(watchAuthRequest),
     fork(watchFetchClientRequest),
     fork(watchLoadCredentialsRequest),
     fork(watchSignoutRequest),

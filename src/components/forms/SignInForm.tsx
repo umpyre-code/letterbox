@@ -7,22 +7,10 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import * as Yup from 'yup'
 import { ApplicationState } from '../../store'
-import { submitNewClientRequest } from '../../store/client/actions'
+import { authRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
-import { initializeKeysRequest } from '../../store/keyPairs/actions'
 import { KeysState } from '../../store/keyPairs/types'
-
-interface PhoneNumber {
-  country_code?: string
-  national_number?: string
-}
-
-interface Values {
-  full_name: string
-  email: string
-  password: string
-  phone_number: PhoneNumber
-}
+import { Emoji } from '../widgets/Emoji'
 
 interface PropsFromState {
   client: ClientState
@@ -30,19 +18,18 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  submitNewClientRequest: typeof submitNewClientRequest
-  initializeKeysRequest: typeof initializeKeysRequest
+  authRequest: typeof authRequest
 }
 
 interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
 
 type AllProps = PropsFromDispatch & PropsFromState & PropsFromRouter
 
-const SignupFormSchema = Yup.object().shape({
+const SigninFormSchema = Yup.object().shape({
   email: Yup.string()
     .email("That doesn't look right")
-    .required('Tell us who you are'),
-  password: Yup.string().required('Tell us what you know')
+    .required('Please tell us who you are'),
+  password: Yup.string().required('Please tell us what you know')
 })
 
 class SignIn extends React.Component<AllProps> {
@@ -53,15 +40,11 @@ class SignIn extends React.Component<AllProps> {
           email: '',
           password: ''
         }}
-        validationSchema={SignupFormSchema}
+        validationSchema={SigninFormSchema}
         onSubmit={(values, actions) => {
-          const newClient = {
-            ...values
-          }
-          delete newClient.password
-          // this.props.submitNewClientRequest(newClient, {
-          //   actions
-          // })
+          this.props.authRequest(values, {
+            actions
+          })
         }}
         render={this.handleFormRender}
       />
@@ -81,13 +64,12 @@ class SignIn extends React.Component<AllProps> {
             <Field type="password" label="Password" name="password" component={TextField} />
           </FormControl>
         </Grid>
-        {this.props.client.signInFormErrors && (
+        {this.props.client.authError && (
           <Grid item>
             <SnackbarContent
               message={
                 <h3>
-                  <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
-                  {this.props.client.signInFormErrors}
+                  <Emoji>😳</Emoji>&nbsp;Those credentials don't look right! Try again :)
                 </h3>
               }
             />
@@ -132,7 +114,9 @@ const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({
   keys: keysState
 })
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+  authRequest
+}
 
 export const SignInForm = Router.withRouter(
   connect(

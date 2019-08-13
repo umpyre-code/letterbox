@@ -59,3 +59,25 @@ export interface VerifyPhoneResult {
   result: string
   client?: ClientProfile
 }
+
+export interface AuthHandshakeRequest {
+  email: string
+  a_pub: string
+}
+
+export interface AuthHandshakeResponse {
+  b_pub: string
+  salt: string
+}
+
+export interface AuthVerifyRequest {
+  a_pub: string
+  client_proof: string
+  email: string
+}
+
+export interface AuthVerifyResponse {
+  client_id: ClientID
+  server_proof: string
+  jwt: Jwt
+}

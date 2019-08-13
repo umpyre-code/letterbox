@@ -12,6 +12,10 @@ import {
   SettlePaymentResponse
 } from './models/account'
 import {
+  AuthHandshakeRequest,
+  AuthHandshakeResponse,
+  AuthVerifyRequest,
+  AuthVerifyResponse,
   ClientCredentials,
   ClientID,
   ClientProfile,
@@ -21,11 +25,23 @@ import {
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT || 'https://api.staging.umpyre.io'
+const API_ENDPOINT = process.env.API_ENDPOINT || 'https://api.staging.umpyre.io'
 
 export class API {
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
     return axios.post(API_ENDPOINT + '/client', newClient).then(response => response.data)
+  }
+
+  public static async AUTH_HANDSHAKE(
+    request: AuthHandshakeRequest
+  ): Promise<AuthHandshakeResponse> {
+    return axios
+      .post(API_ENDPOINT + '/client/auth/handshake', request)
+      .then(response => response.data)
+  }
+
+  public static async AUTH_VERIFY(request: AuthVerifyRequest): Promise<AuthVerifyResponse> {
+    return axios.post(API_ENDPOINT + '/client/auth/verify', request).then(response => response.data)
   }
 
   public static async FETCH_CLIENT(
