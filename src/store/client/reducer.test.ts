@@ -4,6 +4,7 @@ test('new_client_reducer', () => {
   let state
   state = reducer(
     {
+      authSubmitting: false,
       clientLoading: false,
       clientReady: false,
       credentialsLoading: false,
@@ -25,6 +26,7 @@ test('new_client_reducer', () => {
     }
   )
   expect(state).toEqual({
+    authSubmitting: false,
     clientLoading: false,
     clientReady: false,
     credentials: {
