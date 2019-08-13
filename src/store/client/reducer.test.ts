@@ -8,6 +8,7 @@ test('new_client_reducer', () => {
       clientReady: false,
       credentialsLoading: false,
       credentialsReady: false,
+      newClientSubmitting: true,
       phoneVerifying: false,
       reload: false
     },
@@ -36,6 +37,7 @@ test('new_client_reducer', () => {
     },
     credentialsLoading: false,
     credentialsReady: false,
+    newClientSubmitting: false,
     phoneVerifying: false,
     reload: false
   })
