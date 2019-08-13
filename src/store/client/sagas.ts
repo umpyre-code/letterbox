@@ -104,7 +104,7 @@ function* handleFetchClientRequest() {
 function verifyJwt(credentials: ClientCredentials): ClientCredentials {
   const verifiedJwt: Jwt = {
     ...credentials.jwt,
-    claims: jwt.verify(credentials.jwt.token, credentials.jwt.secret, {
+    claims: jwt.verify(credentials.jwt.token, Buffer.from(credentials.jwt.secret!), {
       clockTolerance: 300
     }) as JwtClaims
   }
@@ -138,10 +138,8 @@ async function withPassword(newClient: NewClient): Promise<NewClient> {
   await sodium.ready
 
   const salt = sodium.to_hex(sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES))
-  console.log(salt)
 
-  const privateKey = srp.derivePrivateKey(salt, newClient.email, newClient.password!)
-  // const privateKey = await computePrivateKey(newClient.email, newClient.password!, salt)
+  const privateKey = await computePrivateKey(newClient.email, newClient.password!, salt)
 
   const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
   const client = {
@@ -187,7 +185,9 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     if (res.error) {
       yield put(submitNewClientError(res.error))
     } else {
-      const credentials = yield call(saveClientToken, res)
+      const authres = yield call(authenticate, payload as AuthCreds)
+      console.log(authres)
+      const credentials = yield call(saveClientToken, authres)
       yield put(submitNewClientSuccess(credentials))
       yield put(fetchBalanceRequest())
       yield put(fetchClientRequest())
@@ -315,7 +315,6 @@ function* handleSignoutRequest(values: ReturnType<typeof signoutRequest>) {
     yield put(push('/'))
   } catch (err) {
     // caught an error
-    console.log(err)
   }
 }
 
@@ -323,7 +322,7 @@ function* watchSignoutRequest() {
   yield takeLatest(ClientActionTypes.SIGNOUT_REQUEST, handleSignoutRequest)
 }
 
-async function authenticate(creds: AuthCreds) {
+async function authenticate(creds: AuthCreds): Promise<ClientCredentials> {
   await sodium.ready
 
   const clientEphemeral = srp.generateEphemeral()
@@ -336,14 +335,12 @@ async function authenticate(creds: AuthCreds) {
     a_pub: aPub,
     email: creds.email
   })
-  console.log(handshake)
 
   const salt = sodium.to_hex(
     sodium.from_base64(handshake.salt, sodium.base64_variants.URLSAFE_NO_PADDING)
   )
 
-  // const privateKey = await computePrivateKey(creds.email, creds.password, salt)
-  const privateKey = srp.derivePrivateKey(salt, creds.email, creds.password)
+  const privateKey = await computePrivateKey(creds.email, creds.password, salt)
 
   const session = srp.deriveSession(
     clientEphemeral.secret,
@@ -358,10 +355,26 @@ async function authenticate(creds: AuthCreds) {
     sodium.base64_variants.URLSAFE_NO_PADDING
   )
 
-  return API.AUTH_VERIFY({
+  const response = await API.AUTH_VERIFY({
     a_pub: aPub,
     client_proof: clientProof,
     email: creds.email
+  })
+
+  srp.verifySession(
+    clientEphemeral.public,
+    session,
+    sodium.to_hex(
+      sodium.from_base64(response.server_proof, sodium.base64_variants.URLSAFE_NO_PADDING)
+    )
+  )
+
+  return Promise.resolve({
+    client_id: response.client_id,
+    jwt: {
+      ...response.jwt,
+      secret: sodium.from_hex(session.key)
+    }
   })
 }
 
@@ -369,9 +382,7 @@ function* handleAuthRequest(values: ReturnType<typeof authRequest>) {
   const { payload, meta } = values
   const { actions } = meta
   try {
-    console.log(payload)
     const res = yield call(authenticate, payload)
-    console.log(res)
 
     if (res && res.error) {
       yield put(authError(res.error))
@@ -379,7 +390,6 @@ function* handleAuthRequest(values: ReturnType<typeof authRequest>) {
       yield put(authSuccess(res))
     }
   } catch (err) {
-    console.log(err)
     if (err.response && err.response.data && err.response.data.message) {
       if (err.response.data.code && err.response.data.code === 3) {
         yield put(authError(err.response.data.message))

@@ -11,7 +11,7 @@ export interface JwtClaims {
 
 export interface Jwt {
   token: string
-  secret: string
+  secret?: ArrayBuffer
   claims?: JwtClaims
 }
 

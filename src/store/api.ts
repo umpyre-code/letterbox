@@ -76,7 +76,7 @@ export class API {
       delete claims.iat
       delete claims.exp
       delete claims.nbf
-      const token = jwt.sign(credentials.jwt.claims!, credentials.jwt.secret, {
+      const token = jwt.sign(credentials.jwt.claims!, Buffer.from(credentials.jwt.secret!), {
         expiresIn: '5m',
         notBefore: 0
       })

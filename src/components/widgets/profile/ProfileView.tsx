@@ -132,11 +132,15 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
 
   function getDateJoined() {
     const secondsSince = Date.now() / 1000 - profile!.joined
-    return `joined ${moment
-      .duration(secondsSince, 'seconds')
-      .format('y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]', {
-        largest: 1
-      })} ago`
+    if (secondsSince < 300) {
+      return 'joined just now'
+    } else {
+      return `joined ${moment
+        .duration(secondsSince, 'seconds')
+        .format('y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]', {
+          largest: 1
+        })} ago`
+    }
   }
 
   if (profile && profile.handle && profile.handle.length > 0) {
