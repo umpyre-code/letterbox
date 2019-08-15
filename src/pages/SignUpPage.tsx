@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 const SignUpPage = () => {
-  const classes = useStyles()
+  const classes = useStyles({})
   return (
     <Container maxWidth="sm" className={classes.container}>
       <Paper className={classes.paper}>

@@ -55,7 +55,7 @@ export const RecipientField: React.FC<RecipientFieldProps> = ({
   setRecipients,
   initialValues
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   return (
     <React.Fragment>
       {/* <TextField
@@ -125,7 +125,7 @@ interface RenderSuggestionProps {
 function renderSuggestion(suggestionProps: RenderSuggestionProps) {
   const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps
   const isHighlighted = highlightedIndex === index
-  const isSelected = (selectedItem.client_id || '').indexOf(suggestion.client_id) > -1
+  const isSelected = (selectedItem.client_id || '').includes(suggestion.client_id)
 
   return (
     <MenuItem
@@ -188,6 +188,15 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
   const [selectedItem, setSelectedItem] = React.useState<Suggestion[]>([])
   const [suggestions, setSuggestions] = React.useState<Suggestion[]>([])
 
+  function handleChange(item: Suggestion) {
+    let newSelectedItem = [...selectedItem]
+    if (!newSelectedItem.includes(item)) {
+      newSelectedItem = [...newSelectedItem, item]
+    }
+    setInputValue('')
+    setSelectedItem(newSelectedItem)
+  }
+
   React.useEffect(() => {
     async function populateInitialValues() {
       const api = new API(credentials)
@@ -206,7 +215,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
   }, [selectedItem])
 
   function handleKeyDown(event: React.KeyboardEvent) {
-    if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
+    if (selectedItem.length !== 0 && inputValue.length === 0 && event.key === 'Backspace') {
       setSelectedItem(selectedItem.slice(0, selectedItem.length - 1))
     }
   }
@@ -215,21 +224,15 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
     const input = event.target.value
     setInputValue(input)
     if (isOpen) {
-      getSuggestions(credentials, input).then(result => {
-        setSuggestions(result)
-      })
+      getSuggestions(credentials, input)
+        .then(result => {
+          setSuggestions(result)
+          return true
+        })
+        .catch(error => {})
     } else {
       setSuggestions([])
     }
-  }
-
-  function handleChange(item: Suggestion) {
-    let newSelectedItem = [...selectedItem]
-    if (newSelectedItem.indexOf(item) === -1) {
-      newSelectedItem = [...newSelectedItem, item]
-    }
-    setInputValue('')
-    setSelectedItem(newSelectedItem)
   }
 
   const handleDelete = (item: Suggestion) => () => {

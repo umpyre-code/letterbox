@@ -31,7 +31,7 @@ function numberFormatCustom(props: NumberFormatCustomProps) {
 }
 
 interface PaymentInputProps {
-  inputClicked?: (event: React.ChangeEvent<HTMLDivElement>) => void
+  inputClicked?: (event: React.MouseEvent<HTMLDivElement>) => void
 }
 
 type AllProps = (StandardTextFieldProps | OutlinedTextFieldProps) & PaymentInputProps

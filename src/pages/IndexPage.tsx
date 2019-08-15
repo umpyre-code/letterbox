@@ -76,7 +76,7 @@ const IndexPageFC: React.FC<AllProps> = ({
   credentialsReady,
   reload
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   if (reload) {
     // force a page reload

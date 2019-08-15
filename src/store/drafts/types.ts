@@ -21,7 +21,7 @@ export interface FetchDraftsResponse {
   drafts: Draft[]
 }
 
-export const enum DraftsActionTypes {
+export enum DraftsActionTypes {
   ADD_DRAFT_ERROR = '@@drafts/ADD_DRAFT_ERROR',
   ADD_DRAFT_REQUEST = '@@drafts/ADD_DRAFT_REQUEST',
   ADD_DRAFT_SUCCESS = '@@drafts/ADD_DRAFT_SUCCESS',

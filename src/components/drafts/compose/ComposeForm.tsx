@@ -61,7 +61,7 @@ export function calculateMessageCost(amountCents: number) {
 }
 
 interface Props {
-  balance: Balance
+  balance?: Balance
   credentials: ClientCredentials
   draft: Draft
 }
@@ -93,7 +93,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
     Math.trunc(draft.value_cents / 100)
   )
-  const classes = useStyles()
+  const classes = useStyles({})
 
   function handleSend() {
     const messageBody: MessageBody = {
@@ -103,8 +103,15 @@ const ComposeFormFC: React.FC<AllProps> = ({
       ...draft,
       message: {
         body: JSON.stringify(messageBody),
+        deleted: false,
+        from: '',
+        nonce: '',
         pda,
+        read: false,
+        recipient_public_key: '',
+        sender_public_key: '',
         sent_at: new Date(),
+        to: '',
         value_cents: (messageValue ? messageValue : 0) * 100
       },
       recipients
@@ -119,6 +126,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   function balanceIsSufficient() {
     return (
       (messageValue &&
+        balance &&
         calculateMessageCost(messageValue * 100) <= balance.balance_cents + balance.promo_cents) ||
       messageValue === 0
     )
@@ -131,7 +139,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
       pda !== '' &&
       balanceIsSufficient()
     ) {
-      return true
+      return !draft.sending
     } else {
       return false
     }
@@ -141,13 +149,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
     if (!balanceIsSufficient()) {
       return <AddCreditsButton />
     } else {
-      return (
-        <SendButton
-          classes={classes}
-          enabled={readyToSend() && !draft.sending}
-          handleSend={handleSend}
-        />
-      )
+      return <SendButton classes={classes} enabled={readyToSend()} handleSend={handleSend} />
     }
   }
 

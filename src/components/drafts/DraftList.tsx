@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 const DraftListFC: React.FunctionComponent<AllProps> = ({ draftsState }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   const drafts = draftsState.drafts
 
   if (drafts.length > 0) {

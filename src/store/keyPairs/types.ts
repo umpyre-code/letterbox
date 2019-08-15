@@ -11,7 +11,7 @@ export interface KeyPair {
 
 export type KeyMap = Map<string, KeyPair>
 
-export const enum KeysActionTypes {
+export enum KeysActionTypes {
   GENERATE_SEED_SUCCESS = '@@keys/GENERATE_SEED_SUCCESS',
   INITIALIZE_KEYS_ERROR = '@@keys/INITIALIZE_KEYS_ERROR',
   INITIALIZE_KEYS_REQUEST = '@@keys/INITIALIZE_KEYS_REQUEST',

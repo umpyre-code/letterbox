@@ -1,3 +1,4 @@
+import sodium from 'libsodium-wrappers'
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
 import { db } from '../../db/db'
 import {
@@ -9,11 +10,6 @@ import {
 } from './actions'
 import { KeyMap, KeyPair, KeysActionTypes } from './types'
 import { wordLists } from './wordLists'
-
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
 
 async function deriveKeys(masterKey: Uint8Array, index: number) {
   await sodium.ready
@@ -49,6 +45,24 @@ async function deriveKeys(masterKey: Uint8Array, index: number) {
       sodium.base64_variants.URLSAFE_NO_PADDING
     )
   }
+}
+
+async function loadKeys() {
+  return db.keyPairs
+    .orderBy('created_at')
+    .reverse()
+    .toArray()
+    .then((arr: KeyPair[]) =>
+      // Convert the result into a map, and set the special `current` key to point
+      // to the most recent key by using the highest ID. This is returned as a tuple.
+      [
+        arr[0],
+        arr.reduce((map: KeyMap, key) => {
+          map.set(key.box_public_key, key)
+          return map
+        }, new Map())
+      ]
+    )
 }
 
 function generateSeedWords() {
@@ -100,9 +114,9 @@ export function* handleInitializeKeys() {
       yield put(generateSeedSuccess(seedWords))
       yield put(initializeKeysSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(initializeKeysError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(initializeKeysError(error.stack!))
     } else {
       yield put(initializeKeysError('An unknown error occured.'))
     }
@@ -111,24 +125,6 @@ export function* handleInitializeKeys() {
 
 function* watchInitializeKeysRequest() {
   yield takeEvery(KeysActionTypes.INITIALIZE_KEYS_REQUEST, handleInitializeKeys)
-}
-
-async function loadKeys() {
-  return db.keyPairs
-    .orderBy('created_at')
-    .reverse()
-    .toArray()
-    .then((arr: KeyPair[]) =>
-      // Convert the result into a map, and set the special `current` key to point
-      // to the most recent key by using the highest ID. This is returned as a tuple.
-      [
-        arr[0],
-        arr.reduce((map: KeyMap, key) => {
-          map.set(key.box_public_key, key)
-          return map
-        }, new Map())
-      ]
-    )
 }
 
 function* handleLoadKeys() {
@@ -140,9 +136,9 @@ function* handleLoadKeys() {
     } else {
       yield put(loadKeysSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(loadKeysError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(loadKeysError(error.stack!))
     } else {
       yield put(loadKeysError('An unknown error occured.'))
     }

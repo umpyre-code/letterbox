@@ -123,7 +123,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
   const [editorState, setEditorState] = React.useState(getInitialState(profile))
 
   const clientProfileHelper = ClientProfileHelper.FROM(profile!)
-  const classes = useStyles()
+  const classes = useStyles({})
 
   const handleFormRender = (props: FormikProps<FormikValues>) => {
     const { submitForm, isSubmitting, isValid, isValidating } = props

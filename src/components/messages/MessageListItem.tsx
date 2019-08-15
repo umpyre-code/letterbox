@@ -22,6 +22,7 @@ import { ClientProfileHelper, loadingClientProfile } from '../../store/client/ty
 import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { Message } from '../../store/models/messages'
+import { TypographyProps } from '@material-ui/core/Typography'
 
 interface Props {
   message: Message
@@ -37,11 +38,7 @@ interface PropsFromDispatch {
   deleteMessage: typeof deleteMessageRequest
 }
 
-interface MatchParams {}
-
-interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
-
-type AllProps = Props & PropsFromState & PropsFromRouter & PropsFromDispatch
+type AllProps = Props & PropsFromState & PropsFromDispatch & Router.RouteComponentProps<{}>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -65,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface MessageValueProps {
   message: Message
-  textColour: string
+  textColour: TypographyProps['color']
 }
 
 const MessageValue: React.FC<MessageValueProps> = ({ message, textColour }) => (
@@ -86,7 +83,7 @@ interface MessageDeleteProps {
   deleteMessage: typeof deleteMessageRequest
 }
 const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <IconButton
@@ -113,7 +110,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   const [fromProfile, setFromProfile] = React.useState(
     ClientProfileHelper.FROM(loadingClientProfile)
   )
-  const classes = useStyles()
+  const classes = useStyles({})
 
   React.useEffect(() => {
     async function fetchData() {
@@ -133,13 +130,12 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           <Avatar alt={fromProfile.full_name}>{fromProfile.getInitials()}</Avatar>
         </ListItemAvatar>
       )
-    } else {
-      return (
-        <ListItemAvatar>
-          <Avatar alt="Loading">??</Avatar>
-        </ListItemAvatar>
-      )
     }
+    return (
+      <ListItemAvatar>
+        <Avatar alt="Loading">??</Avatar>
+      </ListItemAvatar>
+    )
   }
 
   function getMessageDate() {
@@ -148,11 +144,11 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     const hoursSince = now.diff(then, 'hours')
     if (hoursSince > 168) {
       return then.format('ddd, MMM M YYYY')
-    } else if (hoursSince > 24) {
-      return then.format('ddd, hA')
-    } else {
-      return then.format('h:mm A')
     }
+    if (hoursSince > 24) {
+      return then.format('ddd, hA')
+    }
+    return then.format('h:mm A')
   }
 
   const textColour = shaded ? 'textSecondary' : 'textPrimary'
@@ -160,8 +156,8 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   return (
     <Box>
       <ListItem
+        button
         className={classes.listItem}
-        button={button}
         onClick={() => {
           if (button) {
             history.push(`/m/${message.hash!}`)

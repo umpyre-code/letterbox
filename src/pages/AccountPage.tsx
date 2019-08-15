@@ -30,9 +30,7 @@ interface PropsFromState {
   credentials?: ClientCredentials
 }
 
-interface PropsFromDispatch {}
-
-type AccountPageProps = PropsFromState & PropsFromDispatch
+type AccountPageProps = PropsFromState
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,7 +78,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, name, ...other }) => (
 )
 
 const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentials }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   if (balance && profile && credentials) {
     return (
@@ -133,7 +131,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           <TabPanel name="account">
                             <Typography variant="h5">Account info</Typography>
                             <Typography>
-                              Looking good <Emoji>😎</Emoji>
+                              Looking good <Emoji ariaLabel="cool">😎</Emoji>
                             </Typography>
                           </TabPanel>
                         )}

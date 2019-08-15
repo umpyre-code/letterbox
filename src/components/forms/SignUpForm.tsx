@@ -43,8 +43,6 @@ interface PropsFromDispatch {
   loadCredentials: typeof loadCredentialsRequest
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
-
 const PhoneNumberTextField = (props: TextFieldProps) => (
   <MuiTextField
     {...fieldToTextField(props)}
@@ -62,7 +60,7 @@ const PhoneNumberTextField = (props: TextFieldProps) => (
   />
 )
 
-type AllProps = PropsFromDispatch & PropsFromState & PropsFromRouter
+type AllProps = PropsFromDispatch & PropsFromState & Router.RouteComponentProps<{}>
 
 function testPassword(value: string): boolean {
   return zxcvbn(value).score > 2

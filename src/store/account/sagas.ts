@@ -38,9 +38,9 @@ function* handleFetchBalance() {
     } else {
       yield put(fetchBalanceSuccess(res.balance))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(fetchBalanceError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(fetchBalanceError(error.stack!))
     } else {
       yield put(fetchBalanceError('An unknown error occured.'))
     }
@@ -67,9 +67,9 @@ function* handleFetchConnectAccount() {
     } else {
       yield put(fetchConnectAccountSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(fetchConnectAccountError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(fetchConnectAccountError(error.stack!))
     } else {
       yield put(fetchConnectAccountError('An unknown error occured.'))
     }
@@ -102,9 +102,9 @@ function* handleCharge(values: ReturnType<typeof chargeRequest>) {
         yield put(chargeApiError(res))
       }
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(chargeError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(chargeError(error.stack!))
     } else {
       yield put(chargeError('An unknown error occured.'))
     }
@@ -132,9 +132,9 @@ function* handlePostOauth(values: ReturnType<typeof postConnectOauthRequest>) {
     } else {
       yield put(postConnectOauthSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(postConnectOauthError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(postConnectOauthError(error.stack!))
     } else {
       yield put(postConnectOauthError('An unknown error occured.'))
     }
@@ -162,9 +162,9 @@ function* handlePostPrefs(values: ReturnType<typeof postConnectPrefsRequest>) {
     } else {
       yield put(postConnectPrefsSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(postConnectPrefsError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(postConnectPrefsError(error.stack!))
     } else {
       yield put(postConnectPrefsError('An unknown error occured.'))
     }

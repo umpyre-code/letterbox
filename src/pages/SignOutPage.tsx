@@ -32,12 +32,10 @@ interface PropsFromDispatch {
   signout: typeof signoutRequest
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
-
-type AllProps = PropsFromDispatch & PropsFromRouter
+type AllProps = PropsFromDispatch & Router.RouteComponentProps<{}>
 
 const SignOutPageFC: React.FC<AllProps> = ({ history, signout }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <React.Fragment>

@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const LazyComposeForm = React.lazy(() => import('./compose/ComposeForm'))
 
 export const DraftListItem: React.FunctionComponent<AllProps> = ({ draft }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <ListItem className={classes.listItem}>

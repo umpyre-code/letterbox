@@ -1,5 +1,6 @@
 import { Theme } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/styles'
+import PropTypes from 'prop-types'
 import * as React from 'react'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -10,7 +11,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const Emoji: React.FC = props => {
-  const classes = useStyles()
-  return <span className={classes.emoji}>{props.children}</span>
+interface Props {
+  ariaLabel: string
+  children: React.ReactNode
+}
+
+export const Emoji: React.FC<Props> = props => {
+  const classes = useStyles({})
+  return (
+    <span role="img" className={classes.emoji} aria-label={props.ariaLabel}>
+      {props.children}
+    </span>
+  )
 }

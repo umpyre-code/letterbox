@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const MessageBody: React.FunctionComponent<MessageBodyProps> = ({ body }) => {
-  const classes = useStyles()
+const MessageBodyFc: React.FunctionComponent<MessageBodyProps> = ({ body }) => {
+  const classes = useStyles({})
   return (
     <Box>
       {/* tslint:disable-next-line: react-no-dangerous-html */}
@@ -40,4 +40,4 @@ const MessageBody: React.FunctionComponent<MessageBodyProps> = ({ body }) => {
   )
 }
 
-export default MessageBody
+export default MessageBodyFc

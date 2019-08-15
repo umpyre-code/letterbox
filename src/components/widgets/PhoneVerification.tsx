@@ -77,7 +77,7 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
   verifyPhone,
   phoneVerificationError
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   const [flashError, setFlashError] = React.useState<boolean>(false)
   const [showResend, setShowResend] = React.useState<boolean>(true)
 

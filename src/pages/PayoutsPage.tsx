@@ -81,13 +81,17 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
   updatingPrefs,
   updatePrefs
 }) => {
-  const classes = sliderStyles()
+  const classes = sliderStyles({})
   const [payoutAmount, setPayoutAmount] = React.useState(
     Math.trunc(connectAccount.preferences.automatic_payout_threshold_cents / 100)
   )
   const [wasChanged, setWasChanged] = React.useState(false)
-  const handleSliderChange = (event: any, newValue: number) => {
-    setPayoutAmount(newValue)
+  const handleSliderChange = (event: React.ChangeEvent<{}>, newValue: number | number[]) => {
+    if (newValue instanceof Array) {
+      setPayoutAmount(newValue[0])
+    } else {
+      setPayoutAmount(newValue)
+    }
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,15 +115,14 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
   function showProgress() {
     if (updatingPrefs) {
       return <CircularProgress />
-    } else {
-      return (
-        <Fade timeout={500} in={wasChanged}>
-          <Typography style={{ color: 'pink' }}>
-            Saved! <Emoji>😇</Emoji>
-          </Typography>
-        </Fade>
-      )
     }
+    return (
+      <Fade timeout={500} in={wasChanged}>
+        <Typography style={{ color: 'pink' }}>
+          Saved! <Emoji ariaLabel="angel">😇</Emoji>
+        </Typography>
+      </Fade>
+    )
   }
 
   return (
@@ -163,7 +166,6 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
           <TextField
             disabled={!connectAccount.preferences.enable_automatic_payouts}
             label="Amount"
-            inputProps={{ 'aria-label': 'payout-threshold-amount' }}
             variant="outlined"
             margin="dense"
             className={classes.textField}
@@ -171,6 +173,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
             onBlur={handleBlur}
             onChange={handleInputChange}
             InputProps={{
+              'aria-label': 'payout-threshold-amount',
               inputComponent: numberFormatCustom as any
             }}
           />
@@ -202,7 +205,7 @@ const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({
   updatingPrefs,
   updatePrefs
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <React.Fragment>
@@ -238,7 +241,7 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
   updatingPrefs,
   updatePrefs
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
     connectAccount.preferences.enable_automatic_payouts
   )
@@ -266,7 +269,8 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
         />
       </React.Fragment>
     )
-  } else if (connectAccount.state === 'ineligible') {
+  }
+  if (connectAccount.state === 'ineligible') {
     return (
       <React.Fragment>
         <Box className={classes.wordBox}>
@@ -277,12 +281,13 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
         </Box>
       </React.Fragment>
     )
-  } else if (connectAccount.oauth_url) {
+  }
+  if (connectAccount.oauth_url) {
     return (
       <React.Fragment>
         <Box className={classes.wordBox}>
           <Typography variant="body1">
-            To enable payouts, you'll need a Stripe Connect account.
+            {"To enable payouts, you'll need a Stripe Connect account."}
           </Typography>
         </Box>
         <Box className={classes.buttonBox}>
@@ -293,22 +298,23 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
         <Box className={classes.wordBox}>
           <Typography variant="body1">
             <em>
-              Payouts are currently only available to clients in the US or Canada. If you're outside
-              the US or Canada and want to withdraw credits, please contact{' '}
-              <Router.Link to="/c/support">/c/support</Router.Link> or send an email to{' '}
+              {
+                "Payouts are currently only available to clients in the US or Canada. If you're outside the US or Canada and want to withdraw credits, please contact"
+              }
+              <Router.Link to="/c/support">/c/support</Router.Link>
+              {'or send an email to'}
               <Link href="mailto:support@umpyre.com">support@umpyre.com</Link>.
             </em>
           </Typography>
         </Box>
       </React.Fragment>
     )
-  } else {
-    return (
-      <Box className={classes.wordBox}>
-        <Typography variant="body1">Payouts can't be enabled at this time.</Typography>
-      </Box>
-    )
   }
+  return (
+    <Box className={classes.wordBox}>
+      <Typography variant="body1">Payouts can&apos;t be enabled at this time.</Typography>
+    </Box>
+  )
 }
 
 interface PayoutsProps {
@@ -332,7 +338,7 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
   updatingPrefs,
   updatePrefs
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   React.useEffect(() => {
     const oauthParams = qs.parse(searchString, { ignoreQueryPrefix: true })
@@ -358,9 +364,8 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
         />
       </React.Fragment>
     )
-  } else {
-    return <Loading />
   }
+  return <Loading />
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({

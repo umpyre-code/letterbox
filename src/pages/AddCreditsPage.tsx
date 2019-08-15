@@ -27,9 +27,7 @@ interface PropsFromState {
   profile: ClientProfile
 }
 
-interface PropsFromDispatch {}
-
-type AllProps = PropsFromState & PropsFromDispatch
+type AllProps = PropsFromState
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,10 +48,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
   const [stripe, setStripe] = React.useState(null)
-  const classes = useStyles()
+  const classes = useStyles({})
 
   function stripeLoaded() {
-    setStripe(window.Stripe(STRIPE_API_PK))
+    setStripe((window as any).Stripe(STRIPE_API_PK))
   }
 
   React.useEffect(() => {

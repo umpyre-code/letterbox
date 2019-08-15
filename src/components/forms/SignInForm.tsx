@@ -21,9 +21,7 @@ interface PropsFromDispatch {
   authRequest: typeof authRequest
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
-
-type AllProps = PropsFromDispatch & PropsFromState & PropsFromRouter
+type AllProps = PropsFromDispatch & PropsFromState & Router.RouteComponentProps<{}>
 
 const SigninFormSchema = Yup.object().shape({
   email: Yup.string()
@@ -69,7 +67,8 @@ class SignIn extends React.Component<AllProps> {
             <SnackbarContent
               message={
                 <h3>
-                  <Emoji>😳</Emoji>&nbsp;Those credentials don't look right! Try again :)
+                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don't look right! Try
+                  again :)
                 </h3>
               }
             />

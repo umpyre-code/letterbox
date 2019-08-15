@@ -50,7 +50,7 @@ export const MessageList: React.FunctionComponent<AllProps> = ({
   messageType,
   shaded
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   function renderInner() {
     if (messages.length > 0) {
@@ -68,7 +68,7 @@ export const MessageList: React.FunctionComponent<AllProps> = ({
       return (
         <Container style={{ padding: 5 }}>
           <Typography className={classes.noMessages}>
-            no {messageType} messages <Emoji>😀</Emoji>
+            no {messageType} messages <Emoji ariaLabel="smile">😀</Emoji>
           </Typography>
         </Container>
       )

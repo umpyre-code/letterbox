@@ -36,12 +36,10 @@ interface PropsFromState {
   seedWords: string[]
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<{}> {}
-
-type AllProps = PropsFromState & PropsFromRouter
+type AllProps = PropsFromState & Router.RouteComponentProps<{}>
 
 const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   return (
     <React.Fragment>

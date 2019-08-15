@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export const BalanceTable: React.FC<BalanceTableProps> = ({ rows }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   function getCellClass(index: number) {
     if (index < rows.length - 1) {
       return classes.tableCell

@@ -31,7 +31,12 @@ export const Editor: React.FC<Props> = ({ placeholder, editorState, onChange, re
   const editor = React.useRef(null)
 
   function focusEditor() {
-    if (editor && editor.current) {
+    if (
+      editor !== null &&
+      editor !== undefined &&
+      editor.current !== null &&
+      editor.current !== undefined
+    ) {
       editor.current.focus()
     }
   }

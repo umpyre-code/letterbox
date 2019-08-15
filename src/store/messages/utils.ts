@@ -1,15 +1,12 @@
 import { KeyPair } from '../keyPairs/types'
 import { ClientID } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
-
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
+import sodium from 'libsodium-wrappers'
 
 export function toApiMessage(message: Message, from: ClientID): APIMessage {
   return {
     ...message,
+    body: message.body as string,
     from,
     received_at: undefined,
     sent_at: {

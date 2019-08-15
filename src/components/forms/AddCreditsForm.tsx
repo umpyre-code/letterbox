@@ -39,8 +39,8 @@ interface RadioButtonsProps {
 const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
   const [radioValue, setRadioValue] = React.useState('20')
   const [customAmountValue, setCustomAmountValue] = React.useState(0)
-  const classes = useStyles()
-  const customAmountRef = React.createRef()
+  const classes = useStyles({})
+  const customAmountRef = React.createRef<HTMLInputElement>()
 
   function handleRadioChange(event: React.ChangeEvent<unknown>) {
     const value = (event.target as HTMLInputElement).value
@@ -66,7 +66,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
     customAmountRef.current.focus()
   }
 
-  function customAmountInputClicked(event: React.ChangeEvent<HTMLDivElement>) {
+  function customAmountInputClicked(event: React.MouseEvent<HTMLDivElement>) {
     setRadioValue('custom')
     setCreditAmount(customAmountValue)
   }
@@ -132,9 +132,9 @@ function calculateStripeFee(amount: number) {
 
 const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
   const [creditAmount, setCreditAmount] = React.useState(20)
-  const classes = useStyles()
+  const classes = useStyles({})
 
-  const newBalance = creditAmount + (balance.balance_cents + balance.promo_cents) / 100.0
+  const newBalance = creditAmount + (balance.balance_cents + balance.promo_cents) / 100
   const stripeFee = calculateStripeFee(creditAmount) / 100 - creditAmount
   const chargeAmount = stripeFee + creditAmount
   const currentRows = makeRowsFromBalance(balance)

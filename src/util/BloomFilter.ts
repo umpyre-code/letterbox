@@ -36,36 +36,36 @@ export function popcnt(value: number) {
   return (((value + (value >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24
 }
 
-// Fowler/Noll/Vo hashing.
-// Nonstandard variation: this function optionally takes a seed value that is incorporated
-// into the offset basis. According to http://www.isthe.com/chongo/tech/comp/fnv/index.html
-// "almost any offset_basis will serve so long as it is non-zero".
-export function fnv_1a(value: string, seed?: number): number {
-  let a = 2166136261 ^ (seed || 0)
-  for (let i = 0, n = value.length; i < n; ++i) {
-    const c = value.charCodeAt(i)
-    const d = c & 0xff00
-    if (d) {
-      a = fnv_multiply(a ^ (d >> 8))
-    }
-    a = fnv_multiply(a ^ (c & 0xff))
-  }
-  return fnv_mix(a)
-}
-
 // a * 16777619 mod 2**32
-function fnv_multiply(a: number) {
+function fnvMultiply(a: number) {
   return a + (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
 }
 
 // See https://web.archive.org/web/20131019013225/http://home.comcast.net/~bretm/hash/6.html
-function fnv_mix(a: number) {
+function fnvMix(a: number) {
   a += a << 13
   a ^= a >>> 7
   a += a << 3
   a ^= a >>> 17
   a += a << 5
   return a & 0xffffffff
+}
+
+// Fowler/Noll/Vo hashing.
+// Nonstandard variation: this function optionally takes a seed value that is incorporated
+// into the offset basis. According to http://www.isthe.com/chongo/tech/comp/fnv/index.html
+// "almost any offset_basis will serve so long as it is non-zero".
+export function fnv1a(value: string, seed?: number): number {
+  let a = 2166136261 ^ (seed || 0)
+  for (let i = 0, n = value.length; i < n; ++i) {
+    const c = value.charCodeAt(i)
+    const d = c & 0xff00
+    if (d) {
+      a = fnvMultiply(a ^ (d >> 8))
+    }
+    a = fnvMultiply(a ^ (c & 0xff))
+  }
+  return fnvMix(a)
 }
 
 export class BloomFilter {
@@ -95,8 +95,8 @@ export class BloomFilter {
 
   // See http://willwhim.wpengine.com/2011/09/03/producing-n-hash-functions-by-hashing-only-once/
   public locations(value: string): Uint16Array {
-    const a = fnv_1a(value)
-    const b = fnv_1a(value, 872958581) // The seed value is chosen randomly
+    const a = fnv1a(value)
+    const b = fnv1a(value, 872958581) // The seed value is chosen randomly
     let x = a % this.m
     for (let i = 0; i < this.k; ++i) {
       this.locationsBuffer[i] = x < 0 ? x + this.m : x
@@ -123,7 +123,7 @@ export class BloomFilter {
     return true
   }
 
-  public as_bytes(): Uint8Array {
+  public asBytes(): Uint8Array {
     return this.buckets
   }
 }

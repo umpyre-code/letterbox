@@ -4,7 +4,7 @@ export interface FetchMessagesResponse {
   messages: Message[]
 }
 
-export const enum MessagesActionTypes {
+export enum MessagesActionTypes {
   DELETE_MESSAGE_ERROR = '@@messages/DELETE_MESSAGE_ERROR',
   DELETE_MESSAGE_REQUEST = '@@messages/DELETE_MESSAGE_REQUEST',
   DELETE_MESSAGE_SUCCESS = '@@messages/DELETE_MESSAGE_SUCCESS',

@@ -27,9 +27,7 @@ interface MatchParams {
   readonly client_id?: string
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
-
-type AllProps = PropsFromState & PropsFromRouter
+type AllProps = PropsFromState & Router.RouteComponentProps<MatchParams>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ProfilePageFC: React.FC<AllProps> = ({ credentials, match, myProfile }) => {
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
-  const classes = useStyles()
+  const classes = useStyles({})
 
   React.useEffect(() => {
     async function fetchData() {

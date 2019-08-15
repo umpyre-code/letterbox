@@ -1,5 +1,6 @@
-# Parcel output
+# Webpack/parcel output
 dist/
+build/
 
 # Logs
 logs

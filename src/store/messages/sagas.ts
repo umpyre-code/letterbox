@@ -1,3 +1,4 @@
+import sodium from 'libsodium-wrappers'
 import {
   all,
   call,
@@ -9,7 +10,6 @@ import {
   takeEvery,
   takeLatest
 } from 'redux-saga/effects'
-import { ApplicationState } from '../'
 import { db } from '../../db/db'
 import { BloomFilter } from '../../util/BloomFilter'
 import { fetchBalanceRequest, fetchBalanceSuccess } from '../account/actions'
@@ -38,11 +38,7 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-
-// This doesn't work unless we use the old-style of import. I gave up trying to
-// figure out why.
-// tslint:disable-next-line
-const sodium = require('libsodium-wrappers')
+import { ApplicationState } from '..'
 
 async function getMessagesWithoutBody(
   withinDays: number,
@@ -63,6 +59,49 @@ async function getMessagesWithoutBody(
     .toArray()
 }
 
+function* delayThenFetchMessages() {
+  const fetchIntervalMillis = 2000
+  yield delay(fetchIntervalMillis)
+  yield put(fetchMessagesRequest())
+}
+
+async function decryptMessageBody(
+  body: string,
+  nonce: string,
+  myPrivateKey: string,
+  theirPublicKey: string
+): Promise<string> {
+  await sodium.ready
+  return sodium.to_string(
+    sodium.crypto_box_open_easy(
+      sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
+    )
+  )
+}
+
+async function decryptMessage(message: APIMessage): Promise<Message | undefined> {
+  // Need to gracefully handle the case where this DB doesn't contain this public
+  // key
+  const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
+  if (myKeyPair) {
+    return {
+      ...fromApiMessage(message),
+      body: JSON.parse(
+        await decryptMessageBody(
+          message.body,
+          message.nonce,
+          myKeyPair!.box_secret_key,
+          message.sender_public_key
+        )
+      ) as MessageBody
+    }
+  }
+  return undefined
+}
+
 function* handleInitializeMessages() {
   try {
     // Update message sketch first
@@ -74,9 +113,9 @@ function* handleInitializeMessages() {
     } else {
       yield put(initializeMessagesSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(initializeMessagesError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(initializeMessagesError(error.stack!))
     } else {
       yield put(initializeMessagesError('An unknown error occured.'))
     }
@@ -88,12 +127,6 @@ function* handleInitializeMessages() {
 
 function* watchInitializeMessagesRequest() {
   yield takeEvery(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST, handleInitializeMessages)
-}
-
-function* delayThenFetchMessages() {
-  const fetchIntervalMillis = 2000
-  yield delay(fetchIntervalMillis)
-  yield put(fetchMessagesRequest())
 }
 
 async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
@@ -125,44 +158,6 @@ async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
   return getMessagesWithoutBody(30, false)
 }
 
-async function decryptMessage(message: APIMessage): Promise<Message | undefined> {
-  // Need to gracefully handle the case where this DB doesn't contain this public
-  // key
-  const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
-  if (myKeyPair) {
-    return {
-      ...fromApiMessage(message),
-      body: JSON.parse(
-        await decryptMessageBody(
-          message.body,
-          message.nonce,
-          myKeyPair!.box_secret_key,
-          message.sender_public_key
-        )
-      ) as MessageBody
-    }
-  } else {
-    return undefined
-  }
-}
-
-async function decryptMessageBody(
-  body: string,
-  nonce: string,
-  myPrivateKey: string,
-  theirPublicKey: string
-): Promise<string> {
-  await sodium.ready
-  return sodium.to_string(
-    sodium.crypto_box_open_easy(
-      sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
-    )
-  )
-}
-
 async function fetchMessages(
   credentials: ClientCredentials,
   sketch: string
@@ -186,14 +181,14 @@ function* handleFetchMessages() {
       yield put(fetchMessagesSuccess(res))
       yield put(updateSketchRequest())
     }
-  } catch (err) {
-    console.log(err)
-    if (err.response && err.response.data && err.response.data.message) {
-      yield put(fetchMessagesError(err.response.data.message))
-    } else if (err.message) {
-      yield put(fetchMessagesError(err.message))
+  } catch (error) {
+    console.log(error)
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(fetchMessagesError(error.response.data.message))
+    } else if (error.message) {
+      yield put(fetchMessagesError(error.message))
     } else {
-      yield put(fetchMessagesError(err))
+      yield put(fetchMessagesError(error))
     }
   }
   yield spawn(delayThenFetchMessages)
@@ -228,13 +223,13 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       yield put(removeDraftRequest(draft))
       yield put(fetchBalanceRequest())
     }
-  } catch (err) {
-    if (err.response && err.response.data && err.response.data.message) {
-      yield put(sendMessagesError(err.response.data.message))
-    } else if (err.message) {
-      yield put(sendMessagesError(err.message))
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(sendMessagesError(error.response.data.message))
+    } else if (error.message) {
+      yield put(sendMessagesError(error.message))
     } else {
-      yield put(sendMessagesError(err))
+      yield put(sendMessagesError(error))
     }
   }
 }
@@ -251,7 +246,7 @@ async function calculateMessageSketch(): Promise<string> {
   messagesFromLast31days.forEach(message => bf.add(message.hash!))
 
   await sodium.ready
-  return sodium.to_base64(bf.as_bytes(), sodium.base64_variants.URLSAFE_NO_PADDING)
+  return sodium.to_base64(bf.asBytes(), sodium.base64_variants.URLSAFE_NO_PADDING)
 }
 
 function* handleUpdateSketch(values: ReturnType<typeof updateSketchRequest>) {
@@ -301,13 +296,13 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     // Reload messages from DB
     const messages = yield call(getMessagesWithoutBody, 30, false)
     yield put(messageReadSuccess(messages))
-  } catch (err) {
-    if (err.response && err.response.data && err.response.data.message) {
-      yield put(messageReadError(err.response.data.message))
-    } else if (err.message) {
-      yield put(messageReadError(err.message))
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(messageReadError(error.response.data.message))
+    } else if (error.message) {
+      yield put(messageReadError(error.message))
     } else {
-      yield put(messageReadError(err))
+      yield put(messageReadError(error))
     }
   }
 }
@@ -333,13 +328,13 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
     } else {
       yield put(deleteMessageSuccess(res))
     }
-  } catch (err) {
-    if (err.response && err.response.data && err.response.data.message) {
-      yield put(deleteMessageError(err.response.data.message))
-    } else if (err.message) {
-      yield put(deleteMessageError(err.message))
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(deleteMessageError(error.response.data.message))
+    } else if (error.message) {
+      yield put(deleteMessageError(error.message))
     } else {
-      yield put(deleteMessageError(err))
+      yield put(deleteMessageError(error))
     }
   }
 }

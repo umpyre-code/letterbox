@@ -15,7 +15,6 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
-import MessageBody from '../components/messages/MessageBody'
 import { MessageListItem } from '../components/messages/MessageListItem'
 import { Profile } from '../components/widgets/profile/Profile'
 import { db } from '../db/db'
@@ -24,8 +23,7 @@ import { messageReadRequest } from '../store/messages/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { Message } from '../store/models/messages'
-
-interface Props {}
+import MessageBodyFc from '../components/messages/MessageBodyFc'
 
 interface PropsFromState {
   balance?: Balance
@@ -41,9 +39,7 @@ interface MatchParams {
   readonly message_hash: string
 }
 
-interface PropsFromRouter extends Router.RouteComponentProps<MatchParams> {}
-
-type AllProps = Props & PropsFromState & PropsFromDispatch & PropsFromRouter
+type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<MatchParams>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,16 +60,16 @@ const MessagePageFC: React.FC<AllProps> = ({
   messageRead,
   profile
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   const [messages, setMessages] = React.useState<Message[]>([])
 
   React.useEffect(() => {
     // need to wait until creds have loaded
     if (credentials) {
-      const message_hash = match.params.message_hash
+      const messageHash = match.params.message_hash
       async function fetchMessages() {
-        const thisMessageBody = await db.messageBodies.get(message_hash)
-        const thisMessage = await db.messageInfos.get(message_hash)
+        const thisMessageBody = await db.messageBodies.get(messageHash)
+        const thisMessage = await db.messageInfos.get(messageHash)
         if (thisMessageBody && thisMessage) {
           if (!thisMessage.read) {
             // mark as read
@@ -92,7 +88,7 @@ const MessagePageFC: React.FC<AllProps> = ({
       <Container className={classes.bodyContainer} key={index}>
         <Paper>
           <MessageListItem message={message} shaded={false} button={false} />
-          <MessageBody body={message.body!} />
+          {/* <MessageBodyFc body={message.body!} /> */}
         </Paper>
       </Container>
     ))

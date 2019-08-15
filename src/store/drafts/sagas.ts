@@ -39,9 +39,9 @@ function* handleInitializeDrafts() {
     } else {
       yield put(initializeDraftsSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(initializeDraftsError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(initializeDraftsError(error.stack!))
     } else {
       yield put(initializeDraftsError('An unknown error occured.'))
     }
@@ -72,9 +72,9 @@ function* handleAddDraft() {
     } else {
       yield put(addDraftSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(addDraftError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(addDraftError(error.stack!))
     } else {
       yield put(addDraftError('An unknown error occured.'))
     }
@@ -99,9 +99,9 @@ function* handleRemoveDraft(values: ReturnType<typeof removeDraftRequest>) {
     } else {
       yield put(removeDraftSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(removeDraftError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(removeDraftError(error.stack!))
     } else {
       yield put(removeDraftError('An unknown error occured.'))
     }
@@ -126,9 +126,9 @@ function* handleUpdateDraft(values: ReturnType<typeof updateDraftRequest>) {
     } else {
       yield put(updateDraftSuccess(res))
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      yield put(updateDraftError(err.stack!))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(updateDraftError(error.stack!))
     } else {
       yield put(updateDraftError('An unknown error occured.'))
     }
@@ -205,10 +205,10 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
 
       yield put(updateDraftSuccess(res))
     }
-  } catch (err) {
-    console.log(err)
-    if (err instanceof Error) {
-      yield put(sendDraftError(err.stack!))
+  } catch (error) {
+    console.log(error)
+    if (error instanceof Error) {
+      yield put(sendDraftError(error.stack!))
     } else {
       yield put(sendDraftError('An unknown error occured.'))
     }

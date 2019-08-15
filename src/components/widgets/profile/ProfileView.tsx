@@ -128,18 +128,19 @@ interface HandleProps {
 }
 
 export const Handle: React.FC<HandleProps> = ({ profile }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   function getDateJoined() {
     const secondsSince = Date.now() / 1000 - profile!.joined
     if (secondsSince < 300) {
       return 'joined just now'
     } else {
-      return `joined ${moment
-        .duration(secondsSince, 'seconds')
-        .format('y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]', {
+      return `joined ${(moment.duration(secondsSince, 'seconds') as any).format(
+        'y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]',
+        {
           largest: 1
-        })} ago`
+        }
+      )} ago`
     }
   }
 
@@ -204,7 +205,7 @@ interface BalanceProps {
 }
 
 export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
 
   if (balance !== undefined) {
     const amount = Math.floor((balance.balance_cents + balance.promo_cents) / 100)
@@ -228,7 +229,7 @@ export const ProfileView: React.FC<Props> = ({
   profile,
   setIsEditing
 }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   const [menuAnchorElement, setMenuAnchorElement] = React.useState<null | HTMLElement>(null)
 
   const profileMenu = (
@@ -285,10 +286,6 @@ export const ProfileView: React.FC<Props> = ({
     }
   }
 
-  function getCardBody() {
-    return <React.Fragment>{getProfileContent()}</React.Fragment>
-  }
-
   function getProfileContent() {
     if (fullProfile && profile && profile.profile && profile.profile.length > 0) {
       return (
@@ -309,6 +306,10 @@ export const ProfileView: React.FC<Props> = ({
     } else {
       return null
     }
+  }
+
+  function getCardBody() {
+    return <React.Fragment>{getProfileContent()}</React.Fragment>
   }
 
   return (

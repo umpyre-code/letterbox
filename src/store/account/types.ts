@@ -1,6 +1,6 @@
 import { Balance, ChargeErrorResponse, ChargeResponse, ConnectAccountInfo } from '../models/account'
 
-export const enum AccountActionTypes {
+export enum AccountActionTypes {
   CHARGE_API_ERROR = '@@account/CHARGE_API_ERROR',
   CHARGE_ERROR = '@@account/CHARGE_ERROR',
   CHARGE_REQUEST = '@@account/CHARGE_REQUEST',

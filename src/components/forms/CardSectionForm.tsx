@@ -41,7 +41,7 @@ interface WarningProps {
 }
 
 const Warning: React.FC<WarningProps> = ({ message }) => {
-  const classes = useStyles()
+  const classes = useStyles({})
   return (
     <SnackbarContent
       className={classes.snackbar}

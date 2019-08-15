@@ -34,7 +34,6 @@ export interface NewClient {
   phone_number: PhoneNumber
   box_public_key?: string
   signing_public_key?: string
-  phone_sms_verified: boolean
 }
 
 export interface ClientProfile {

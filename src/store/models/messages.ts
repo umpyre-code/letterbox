@@ -17,12 +17,12 @@ export interface MessageBody {
 // The message body as it's stored in the DB
 export interface DBMessageBody {
   hash: MessageHash
-  body: MessageBody
+  body: MessageBody | string
 }
 
 // Our internal representation of a message
 export interface Message {
-  body?: MessageBody
+  body?: MessageBody | string
   deleted: boolean
   from: ClientID
   hash?: MessageHash

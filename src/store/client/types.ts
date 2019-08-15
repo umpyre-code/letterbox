@@ -1,7 +1,7 @@
 import { FormikActions } from 'formik'
 import { AuthVerifyResponse, ClientCredentials, ClientProfile } from '../models/client'
 
-export const enum ClientActionTypes {
+export enum ClientActionTypes {
   AUTH_ERROR = '@@client/AUTH_ERROR',
   AUTH_REQUEST = '@@client/AUTH_REQUEST',
   AUTH_SUCCESS = '@@client/AUTH_SUCCESS',
@@ -66,6 +66,8 @@ export const emptyClientProfile: ClientProfile = {
   client_id: '',
   full_name: '',
   handle: undefined,
+  joined: 0,
+  phone_sms_verified: false,
   profile: undefined,
   signing_public_key: ''
 }
@@ -75,6 +77,8 @@ export const loadingClientProfile: ClientProfile = {
   client_id: '',
   full_name: 'Unknown Person',
   handle: undefined,
+  joined: 0,
+  phone_sms_verified: false,
   profile: undefined,
   signing_public_key: ''
 }
@@ -85,12 +89,14 @@ export class ClientProfileHelper implements ClientProfile {
   }
 
   // tslint:disable variable-name
-  public box_public_key: string = ''
-  public client_id: string = ''
-  public full_name: string = ''
+  public box_public_key = ''
+  public client_id = ''
+  public full_name = ''
   public handle?: string
   public profile?: string
-  public signing_public_key: string = ''
+  public signing_public_key = ''
+  public joined = 0
+  public phone_sms_verified = false
 
   constructor(clientProfile: ClientProfile) {
     this.box_public_key = clientProfile.box_public_key
