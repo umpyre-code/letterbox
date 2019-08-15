@@ -9,4 +9,4 @@ steps:
     entrypoint: 'yarn'
     args: ['run', 'build']
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'dist/*', 'gs://staging.umpyre.io/']
+    args: ['cp', 'build/*', 'gs://staging.umpyre.io/']
