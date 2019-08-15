@@ -1,5 +1,5 @@
 import * as crypto from 'crypto'
-import { BloomFilter, fnv_1a, popcnt } from './BloomFilter'
+import { BloomFilter, fnv1a, popcnt } from './BloomFilter'
 
 test('adds entries to the bloomfilter and tests them', () => {
   const bf = new BloomFilter()
@@ -85,41 +85,37 @@ function toUint32(x: number) {
   return modulo(toInteger(x), Math.pow(2, 32))
 }
 
-test('fnv_1a with known values has expected results', () => {
-  expect(fnv_1a('lyle')).toBe(1334908444)
-  expect(fnv_1a('lyle', 123)).toBe(1631759920)
+test('fnv1a with known values has expected results', () => {
+  expect(fnv1a('lyle')).toBe(1334908444)
+  expect(fnv1a('lyle', 123)).toBe(1631759920)
 
-  expect(toUint32(fnv_1a('1/fT/HwFDKYio/n/ZzxTXHpy8U0vzogzJhv+gculEhI'))).toBe(2344490131)
-  expect(toUint32(fnv_1a('5Y6kvOWSehVNYBbkFkWjvcyEV584Hr61oN5z5ZDhKsI'))).toBe(3296761108)
-  expect(toUint32(fnv_1a('b1wsxEazqgDI6ZMXfg3FN/5vOFElRkI340FQ7Mjh13s'))).toBe(709866909)
-  expect(toUint32(fnv_1a('bpcfrG1CJ31wrdEJcOxPmXa41+PjkEbdvUrJ2VyGFWA'))).toBe(2024372548)
-  expect(toUint32(fnv_1a('JmrQQJ/cYfehndWIxwYXrbV4upKEAF0kGoDmn6+BBRg'))).toBe(1830223429)
-  expect(toUint32(fnv_1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8'))).toBe(32938565)
-  expect(toUint32(fnv_1a('R8x1axhFobtSMkUi1nUkkugT1CfPLYMP32PNMNpB148'))).toBe(869529502)
-  expect(toUint32(fnv_1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8'))).toBe(32938565)
-  expect(toUint32(fnv_1a('ZI36t/aBiqlHlNp790hdEzEQYgYIkZZn0osEjsJK5oU'))).toBe(1559313349)
+  expect(toUint32(fnv1a('1/fT/HwFDKYio/n/ZzxTXHpy8U0vzogzJhv+gculEhI'))).toBe(2344490131)
+  expect(toUint32(fnv1a('5Y6kvOWSehVNYBbkFkWjvcyEV584Hr61oN5z5ZDhKsI'))).toBe(3296761108)
+  expect(toUint32(fnv1a('b1wsxEazqgDI6ZMXfg3FN/5vOFElRkI340FQ7Mjh13s'))).toBe(709866909)
+  expect(toUint32(fnv1a('bpcfrG1CJ31wrdEJcOxPmXa41+PjkEbdvUrJ2VyGFWA'))).toBe(2024372548)
+  expect(toUint32(fnv1a('JmrQQJ/cYfehndWIxwYXrbV4upKEAF0kGoDmn6+BBRg'))).toBe(1830223429)
+  expect(toUint32(fnv1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8'))).toBe(32938565)
+  expect(toUint32(fnv1a('R8x1axhFobtSMkUi1nUkkugT1CfPLYMP32PNMNpB148'))).toBe(869529502)
+  expect(toUint32(fnv1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8'))).toBe(32938565)
+  expect(toUint32(fnv1a('ZI36t/aBiqlHlNp790hdEzEQYgYIkZZn0osEjsJK5oU'))).toBe(1559313349)
 
-  expect(toUint32(fnv_1a('1/fT/HwFDKYio/n/ZzxTXHpy8U0vzogzJhv+gculEhI', 2344490131))).toBe(
+  expect(toUint32(fnv1a('1/fT/HwFDKYio/n/ZzxTXHpy8U0vzogzJhv+gculEhI', 2344490131))).toBe(
     2482345007
   )
-  expect(toUint32(fnv_1a('5Y6kvOWSehVNYBbkFkWjvcyEV584Hr61oN5z5ZDhKsI', 3296761108))).toBe(
+  expect(toUint32(fnv1a('5Y6kvOWSehVNYBbkFkWjvcyEV584Hr61oN5z5ZDhKsI', 3296761108))).toBe(
     3727186510
   )
-  expect(toUint32(fnv_1a('b1wsxEazqgDI6ZMXfg3FN/5vOFElRkI340FQ7Mjh13s', 709866909))).toBe(
-    2119017804
-  )
-  expect(toUint32(fnv_1a('bpcfrG1CJ31wrdEJcOxPmXa41+PjkEbdvUrJ2VyGFWA', 2024372548))).toBe(
+  expect(toUint32(fnv1a('b1wsxEazqgDI6ZMXfg3FN/5vOFElRkI340FQ7Mjh13s', 709866909))).toBe(2119017804)
+  expect(toUint32(fnv1a('bpcfrG1CJ31wrdEJcOxPmXa41+PjkEbdvUrJ2VyGFWA', 2024372548))).toBe(
     2524436491
   )
-  expect(toUint32(fnv_1a('JmrQQJ/cYfehndWIxwYXrbV4upKEAF0kGoDmn6+BBRg', 1830223429))).toBe(
+  expect(toUint32(fnv1a('JmrQQJ/cYfehndWIxwYXrbV4upKEAF0kGoDmn6+BBRg', 1830223429))).toBe(
     1366223816
   )
-  expect(toUint32(fnv_1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8', 32938565))).toBe(3503597509)
-  expect(toUint32(fnv_1a('R8x1axhFobtSMkUi1nUkkugT1CfPLYMP32PNMNpB148', 869529502))).toBe(
-    1351347067
-  )
-  expect(toUint32(fnv_1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8', 32938565))).toBe(3503597509)
-  expect(toUint32(fnv_1a('ZI36t/aBiqlHlNp790hdEzEQYgYIkZZn0osEjsJK5oU', 1559313349))).toBe(
+  expect(toUint32(fnv1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8', 32938565))).toBe(3503597509)
+  expect(toUint32(fnv1a('R8x1axhFobtSMkUi1nUkkugT1CfPLYMP32PNMNpB148', 869529502))).toBe(1351347067)
+  expect(toUint32(fnv1a('OzLSeTgwfpp7Mq4kDZKGpqgSuR8ZkzQb5F8kSC9q4W8', 32938565))).toBe(3503597509)
+  expect(toUint32(fnv1a('ZI36t/aBiqlHlNp790hdEzEQYgYIkZZn0osEjsJK5oU', 1559313349))).toBe(
     2819523972
   )
 })
