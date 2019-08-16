@@ -11,4 +11,6 @@ steps:
     entrypoint: 'yarn'
     args: ['run', 'build']
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'build/*', 'gs://staging.umpyre.io/']
+    args: ['-m', 'rsync', '-r', 'build/*', 'gs://staging.umpyre.io/']
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['-m', 'rsync', '-d', '-r', 'build/*', 'gs://staging.umpyre.io/']
