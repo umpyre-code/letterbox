@@ -24,10 +24,10 @@ install dependencies:
 build dist:
   stage: build
   script:
-    - yarn run build
+    - yarn build
   artifacts:
     paths:
-      - dist/
+      - build/
     expire_in: 1 week
   tags:
     - docker
@@ -43,8 +43,3 @@ check style:
   stage: checks
   script:
     - yarn run prettier -c src/**
-
-check tslint:
-  stage: checks
-  script:
-    - yarn tslint -c tslint.json src/**/*.ts
