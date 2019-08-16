@@ -218,5 +218,8 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  }
+  },
+  "sideEffects": [
+    "*.css"
+  ]
 }
