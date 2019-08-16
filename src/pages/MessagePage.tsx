@@ -22,7 +22,7 @@ import { ApplicationState } from '../store/ApplicationState'
 import { messageReadRequest } from '../store/messages/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
-import { Message } from '../store/models/messages'
+import { MessageBase } from '../store/models/messages'
 
 interface PropsFromState {
   balance?: Balance
@@ -60,7 +60,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   profile
 }) => {
   const classes = useStyles({})
-  const [messages, setMessages] = React.useState<Message[]>([])
+  const [messages, setMessages] = React.useState<MessageBase[]>([])
 
   async function fetchMessages() {
     const messageHash = match.params.message_hash
@@ -71,7 +71,7 @@ const MessagePageFC: React.FC<AllProps> = ({
         // mark as read
         messageRead(thisMessage.hash!)
       }
-      setMessages([{ ...thisMessage, body: thisMessageBody.body }])
+      setMessages([thisMessage])
     }
     return Promise.resolve()
   }

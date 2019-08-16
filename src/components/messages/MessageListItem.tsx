@@ -22,10 +22,10 @@ import { API } from '../../store/api'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
-import { Message } from '../../store/models/messages'
+import { MessageBase } from '../../store/models/messages'
 
 interface Props {
-  message: Message
+  message: MessageBase
   shaded: boolean
   button: boolean
 }
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface MessageValueProps {
-  message: Message
+  message: MessageBase
   textColour: TypographyProps['color']
 }
 
@@ -79,7 +79,7 @@ const MessageValue: React.FC<MessageValueProps> = ({ message, textColour }) => (
 )
 
 interface MessageDeleteProps {
-  message: Message
+  message: MessageBase
   deleteMessage: typeof deleteMessageRequest
 }
 const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message }) => {
@@ -91,7 +91,7 @@ const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message })
       aria-label="delete"
       onClick={event => {
         event.stopPropagation()
-        deleteMessage(message.hash!)
+        deleteMessage(message.hash)
       }}
     >
       <DeleteIcon className="messageDeleteButton" />

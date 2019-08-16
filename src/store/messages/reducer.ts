@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { Message } from '../models/messages'
+import { MessageBase } from '../models/messages'
 import { MessagesActionTypes, MessagesState } from './types'
 
 export const initialState: MessagesState = {
@@ -11,11 +11,11 @@ export const initialState: MessagesState = {
 }
 
 interface RankedMessages {
-  readMessages: Message[]
-  unreadMessages: Message[]
+  readMessages: MessageBase[]
+  unreadMessages: MessageBase[]
 }
 
-function cmp(first: Message, second: Message): number {
+function cmp(first: MessageBase, second: MessageBase): number {
   if (first.value_cents > second.value_cents) {
     return -1
   }
@@ -25,7 +25,7 @@ function cmp(first: Message, second: Message): number {
   return 0
 }
 
-function rankMessages(messages: Message[]): RankedMessages {
+function rankMessages(messages: MessageBase[]): RankedMessages {
   return {
     readMessages: messages.filter(message => message.read === true).sort(cmp),
     unreadMessages: messages

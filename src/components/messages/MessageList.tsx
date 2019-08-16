@@ -9,7 +9,7 @@ import {
   Typography
 } from '@material-ui/core'
 import * as React from 'react'
-import { Message } from '../../store/models/messages'
+import { MessageBase } from '../../store/models/messages'
 import { Emoji } from '../widgets/Emoji'
 import { MessageListItem } from './MessageListItem'
 
@@ -19,7 +19,7 @@ interface Props {
 }
 
 interface PropsFromState {
-  messages: Message[]
+  messages: MessageBase[]
   messageType: string
 }
 

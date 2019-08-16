@@ -10,19 +10,18 @@ export type MessageHash = string
 export interface MessageBody {
   // The markdown message body
   markdown: string
-  // Parent message hash, if this is a reply.
+  // Parent message hash, used for message replies
   parent?: MessageHash
 }
 
-// The message body as it's stored in the DB
+// The message body when it's stored in the DB
 export interface DBMessageBody {
   hash: MessageHash
-  body: MessageBody | string
+  body: string
 }
 
 // Our internal representation of a message
-export interface Message {
-  body?: MessageBody | string
+export interface MessageBase {
   deleted: boolean
   from: ClientID
   hash?: MessageHash
@@ -36,6 +35,14 @@ export interface Message {
   signature?: string
   to: ClientID
   value_cents: number
+}
+
+export interface DecryptedMessage extends MessageBase {
+  body?: MessageBody
+}
+
+export interface EncryptedMessage extends MessageBase {
+  body?: string
 }
 
 // The API's actual representation of a message
@@ -58,12 +65,12 @@ export interface MessagesResponse {
   messages: APIMessage[]
 }
 
-export function fromApiMessage(message: APIMessage): Message {
+export function fromApiMessage(message: APIMessage): EncryptedMessage {
   return {
     ...message,
     deleted: false,
     read: false,
-    received_at: new Date(message.received_at!.seconds * 1000 + message.received_at!.nanos / 1e6),
+    received_at: new Date(message.received_at.seconds * 1000 + message.received_at.nanos / 1e6),
     sent_at: new Date(message.sent_at.seconds * 1000 + message.sent_at.nanos / 1e6)
   }
 }

@@ -48,7 +48,7 @@ type AllProps = Props & PropsFromState & PropsFromDispatch
 
 function getInitialState(profile?: ClientProfile): EditorState {
   if (profile && profile.profile) {
-    const markup = markdownToHtml(profile.profile!)
+    const markup = markdownToHtml(profile.profile)
     const blocksFromHTML = convertFromHTML(markup)
     return EditorState.createWithContent(
       ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap)

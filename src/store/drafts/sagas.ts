@@ -6,7 +6,7 @@ import { KeyPair } from '../keyPairs/types'
 import { sendMessagesRequest } from '../messages/actions'
 import { encryptMessageBody, hashMessage, signMessage, toApiMessage } from '../messages/utils'
 import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
-import { APIMessage, Message } from '../models/messages'
+import { APIMessage, MessageBase } from '../models/messages'
 import {
   addDraftError,
   addDraftSuccess,
@@ -82,7 +82,7 @@ function* handleAddDraft() {
 }
 
 async function removeDraft(draft: Draft): Promise<Draft[]> {
-  db.drafts.delete(draft.id!)
+  db.drafts.delete(draft.id)
   return db.drafts
     .orderBy('created_at')
     .reverse()
@@ -109,7 +109,7 @@ function* handleRemoveDraft(values: ReturnType<typeof removeDraftRequest>) {
 }
 
 async function updateDraft(draft: Draft) {
-  db.drafts.update(draft.id!, draft)
+  await db.drafts.update(draft.id, draft)
   return db.drafts
     .orderBy('created_at')
     .reverse()
@@ -155,12 +155,12 @@ function* watchUpdateDraftRequest() {
 async function prepareMessage(
   credentials: ClientCredentials,
   keyPair: KeyPair,
-  message: Message,
+  message: MessageBase,
   recipients: ClientID[]
 ): Promise<APIMessage[]> {
   const api = new API(credentials)
   const res = recipients.map(recipient => {
-    async function inner() {
+    async function inner(): Promise<APIMessage> {
       const recipientProfile: ClientProfile = await api.fetchClient(recipient)
       const apiMessage = toApiMessage({ ...message, to: recipient }, credentials.client_id)
       const encryptedMessage = await encryptMessageBody(
@@ -198,12 +198,9 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
       // Save the message to the DB
       const apiMessages: APIMessage[] = res
       const draftToSend: Draft = { ...draft, apiMessages }
-      yield put(updateDraftRequest(draftToSend))
 
       // Trigger send loop
       yield put(sendMessagesRequest(draftToSend))
-
-      yield put(updateDraftSuccess(res))
     }
   } catch (error) {
     console.log(error)

@@ -1,24 +1,24 @@
 import { action } from 'typesafe-actions'
 import { Draft } from '../drafts/types'
-import { Message, MessageHash } from '../models/messages'
+import { MessageBase, MessageHash } from '../models/messages'
 import { MessagesActionTypes } from './types'
 
 export const initializeMessagesRequest = (): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST)
-export const initializeMessagesSuccess = (messages: Message[]): any =>
+export const initializeMessagesSuccess = (messages: MessageBase[]): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_SUCCESS, messages)
 export const initializeMessagesError = (errorMessage: string): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_ERROR, errorMessage)
 
 export const fetchMessagesRequest = (): any => action(MessagesActionTypes.FETCH_MESSAGES_REQUEST)
-export const fetchMessagesSuccess = (messages: Message[]): any =>
+export const fetchMessagesSuccess = (messages: MessageBase[]): any =>
   action(MessagesActionTypes.FETCH_MESSAGES_SUCCESS, messages)
 export const fetchMessagesError = (errorMessage: string): any =>
   action(MessagesActionTypes.FETCH_MESSAGES_ERROR, errorMessage)
 
 export const deleteMessageRequest = (hash: MessageHash): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_REQUEST, hash)
-export const deleteMessageSuccess = (messages: Message[]): any =>
+export const deleteMessageSuccess = (messages: MessageBase[]): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_SUCCESS, messages)
 export const deleteMessageError = (errorMessage: string): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_ERROR, errorMessage)
@@ -35,7 +35,7 @@ export const updateSketchSuccess = (sketch: string): any =>
 
 export const messageReadRequest = (hash: MessageHash): any =>
   action(MessagesActionTypes.MESSAGE_READ_REQUEST, hash)
-export const messageReadSuccess = (messages: Message[]): any =>
+export const messageReadSuccess = (messages: MessageBase[]): any =>
   action(MessagesActionTypes.MESSAGE_READ_SUCCESS, messages)
 export const messageReadError = (errorMessage: string): any =>
   action(MessagesActionTypes.MESSAGE_READ_ERROR, errorMessage)

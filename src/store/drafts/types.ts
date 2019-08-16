@@ -1,5 +1,5 @@
 import { ClientID } from '../models/client'
-import { APIMessage, Message } from '../models/messages'
+import { APIMessage, MessageBase } from '../models/messages'
 
 export interface Draft {
   id?: number
@@ -13,7 +13,7 @@ export interface Draft {
   created_at: Date
   value_cents: number
   sending: boolean
-  message?: Message
+  message?: MessageBase
   apiMessages?: APIMessage[]
 }
 

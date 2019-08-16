@@ -19,7 +19,7 @@ import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { SettlePaymentResponse } from '../models/account'
 import { ClientCredentials } from '../models/client'
-import { APIMessage, fromApiMessage, Message, MessageBody, MessageHash } from '../models/messages'
+import { APIMessage, MessageHash } from '../models/messages'
 import {
   deleteMessageError,
   deleteMessageRequest,
@@ -39,67 +39,12 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-
-async function getMessagesWithoutBody(
-  withinDays: number,
-  includeDeleted: boolean
-): Promise<Message[]> {
-  const fromDate = new Date()
-  fromDate.setDate(fromDate.getDate() - withinDays)
-
-  return db.messageInfos
-    .orderBy('received_at')
-    .filter(message => {
-      return (
-        (!message.deleted || includeDeleted) &&
-        message.received_at !== undefined &&
-        message.received_at > fromDate
-      )
-    })
-    .toArray()
-}
+import { getMessagesWithoutBody, fetchMessages, decryptStoreAndRetrieveMessages } from './utils'
 
 function* delayThenFetchMessages() {
   const fetchIntervalMillis = 2000
   yield delay(fetchIntervalMillis)
   yield put(fetchMessagesRequest())
-}
-
-async function decryptMessageBody(
-  body: string,
-  nonce: string,
-  myPrivateKey: string,
-  theirPublicKey: string
-): Promise<string> {
-  await sodium.ready
-  return sodium.to_string(
-    sodium.crypto_box_open_easy(
-      sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
-    )
-  )
-}
-
-async function decryptMessage(message: APIMessage): Promise<Message | undefined> {
-  // Need to gracefully handle the case where this DB doesn't contain this public
-  // key
-  const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
-  if (myKeyPair) {
-    return {
-      ...fromApiMessage(message),
-      body: JSON.parse(
-        await decryptMessageBody(
-          message.body,
-          message.nonce,
-          myKeyPair!.box_secret_key,
-          message.sender_public_key
-        )
-      ) as MessageBody
-    }
-  }
-  return undefined
 }
 
 function* handleInitializeMessages() {
@@ -115,7 +60,7 @@ function* handleInitializeMessages() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(initializeMessagesError(error.stack!))
+      yield put(initializeMessagesError(error.stack))
     } else {
       yield put(initializeMessagesError('An unknown error occured.'))
     }
@@ -127,43 +72,6 @@ function* handleInitializeMessages() {
 
 function* watchInitializeMessagesRequest() {
   yield takeEvery(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST, handleInitializeMessages)
-}
-
-async function decryptStoreAndRetrieveMessages(messages: APIMessage[]) {
-  const decryptedMessages = await Promise.all(
-    messages.map((message: APIMessage) => decryptMessage(message))
-  )
-  // Look for messages that already exist in the DB, but were returned by the API
-  const existingMessages = await Promise.all(
-    decryptedMessages.filter(message => message).map(message => db.messageInfos.get(message!.hash!))
-  )
-  // Filter out any existing messages
-  const newMessages = decryptedMessages.filter(
-    message => message && !existingMessages.find(m => m && m!.hash === message!.hash)
-  )
-
-  // Split messages into info and body parts
-  const messageBodies = newMessages.map(message => ({
-    body: message!.body,
-    hash: message!.hash
-  }))
-  const messageInfos = newMessages.map(message => ({
-    ...message,
-    body: undefined
-  }))
-  await db.transaction('rw', db.messageInfos, db.messageBodies, async () => {
-    await db.messageInfos.bulkAdd(messageInfos)
-    await db.messageBodies.bulkAdd(messageBodies)
-  })
-  return getMessagesWithoutBody(30, false)
-}
-
-async function fetchMessages(
-  credentials: ClientCredentials,
-  sketch: string
-): Promise<APIMessage[]> {
-  const api = new API(credentials)
-  return api.fetchMessages(sketch)
 }
 
 // Message fetch main loop: this saga runs forever and ever
@@ -224,6 +132,7 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       yield put(fetchBalanceRequest())
     }
   } catch (error) {
+    console.log(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(sendMessagesError(error.response.data.message))
     } else if (error.message) {

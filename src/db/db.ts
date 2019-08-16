@@ -3,7 +3,7 @@ import Dexie from 'dexie'
 import { Draft } from '../store/drafts/types'
 import { KeyPair } from '../store/keyPairs/types'
 import { ClientCredentials } from '../store/models/client'
-import { DBMessageBody, Message, MessageHash } from '../store/models/messages'
+import { DBMessageBody, MessageBase, MessageHash } from '../store/models/messages'
 
 interface Token extends ClientCredentials {
   created_at: Date
@@ -29,7 +29,7 @@ class UmpyreDb extends Dexie {
   // the bodies are only ever loaded when a message is explicitly read.
 
   // messageInfos includes everything _except_ the body
-  public messageInfos: Dexie.Table<Message, MessageHash>
+  public messageInfos: Dexie.Table<MessageBase, MessageHash>
 
   // messageBodies is _just_ the message body
   public messageBodies: Dexie.Table<DBMessageBody, MessageHash>
