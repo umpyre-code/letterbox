@@ -30,9 +30,9 @@ export enum MessagesActionTypes {
 
 export interface MessagesState {
   readonly errors?: string
+  readonly loadedMessages: DecryptedMessage[]
   readonly loading: boolean
   readonly readMessages: MessageBase[]
   readonly sketch: string
   readonly unreadMessages: MessageBase[]
-  readonly loadedMessages: DecryptedMessage[]
 }
