@@ -5,6 +5,8 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'yarn'
     args: ['run', 'test']
+    env:
+      - 'CI=true'
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'yarn'
     args: ['run', 'build']
