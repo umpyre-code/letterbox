@@ -11,7 +11,7 @@ import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { ApplicationState } from '../../../store'
+import { ApplicationState } from '../../../store/ApplicationState'
 import {
   removeDraftRequest,
   sendDraftRequest,
@@ -55,9 +55,8 @@ const useStyles = makeStyles((theme: Theme) =>
 export function calculateMessageCost(amountCents: number) {
   if (amountCents === 0) {
     return 0
-  } else {
-    return Math.round(amountCents * (1 - UMPYRE_MESSAGE_SEND_FEE))
   }
+  return Math.round(amountCents * (1 - UMPYRE_MESSAGE_SEND_FEE))
 }
 
 interface Props {
@@ -112,7 +111,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
         sender_public_key: '',
         sent_at: new Date(),
         to: '',
-        value_cents: (messageValue ? messageValue : 0) * 100
+        value_cents: messageValue * 100
       },
       recipients
     }
@@ -140,17 +139,15 @@ const ComposeFormFC: React.FC<AllProps> = ({
       balanceIsSufficient()
     ) {
       return !draft.sending
-    } else {
-      return false
     }
+    return false
   }
 
   function showAddCreditsButton() {
     if (!balanceIsSufficient()) {
       return <AddCreditsButton />
-    } else {
-      return <SendButton classes={classes} enabled={readyToSend()} handleSend={handleSend} />
     }
+    return <SendButton classes={classes} enabled={readyToSend()} handleSend={handleSend} />
   }
 
   return (

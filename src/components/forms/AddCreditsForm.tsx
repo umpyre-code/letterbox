@@ -12,7 +12,6 @@ import {
   Typography
 } from '@material-ui/core'
 import React from 'react'
-import NumberFormat from 'react-number-format'
 import { Balance } from '../../store/models/account'
 import { BalanceTable, makeRow, makeRowsFromBalance } from '../widgets/BalanceTable'
 import { PaymentInput } from '../widgets/PaymentInput'
@@ -43,7 +42,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
   const customAmountRef = React.createRef<HTMLInputElement>()
 
   function handleRadioChange(event: React.ChangeEvent<unknown>) {
-    const value = (event.target as HTMLInputElement).value
+    const { value } = event.target as HTMLInputElement
     setRadioValue(value)
     if (value !== 'custom') {
       setCreditAmount(parseInt(value, 10))
@@ -53,7 +52,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
   function customAmountChanged(event: React.ChangeEvent<HTMLInputElement>) {
     setRadioValue('custom')
     const value = parseInt((event.target as HTMLInputElement).value, 10)
-    if (!isNaN(value)) {
+    if (!Number.isNaN(value)) {
       setCreditAmount(value)
       setCustomAmountValue(value)
     } else {

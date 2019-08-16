@@ -18,7 +18,7 @@ import ClientInit from '../components/ClientInit'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
@@ -163,9 +163,8 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
         </Container>
       </ClientInit>
     )
-  } else {
-    return <Loading />
   }
+  return <Loading />
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({

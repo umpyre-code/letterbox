@@ -93,11 +93,12 @@ async function calculateCheckWord(seedWords: string[]) {
   const check = sodium.crypto_generichash(2, seedWords.join())
   // Convert to UInt16
   const checkNumber = new Uint16Array(1)
-  checkNumber[0] = check[1]
-  // tslint:disable-next-line: no-bitwise
-  checkNumber[0] = checkNumber[0] | (check[0] << 8)
-  checkNumber[0] = checkNumber[0] % 2048
-  return Promise.resolve(wordLists.english[checkNumber[0]])
+  const index = 0
+  checkNumber[index] = check[index]
+  // eslint-disable-next-line no-bitwise
+  checkNumber[index] |= check[index] << 8
+  checkNumber[index] %= 2048
+  return Promise.resolve(wordLists.english[checkNumber[index]])
 }
 
 export function* handleInitializeKeys() {

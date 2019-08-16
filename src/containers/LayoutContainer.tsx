@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { ReactReduxContext } from 'react-redux'
-
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 
 interface LayoutContainerProps {}
 

@@ -4,7 +4,7 @@ module.exports = {
     es6: true
   },
   extends: [
-    // "airbnb-typescript",
+    'airbnb-typescript',
     'plugin:@typescript-eslint/recommended',
     'plugin:eslint-comments/recommended',
     'plugin:jest/recommended',
@@ -28,10 +28,14 @@ module.exports = {
     project: './tsconfig.json'
   },
 
-  plugins: ['@typescript-eslint', 'eslint-comments', 'jest', 'promise', 'unicorn'],
+  plugins: ['@typescript-eslint', 'react', 'eslint-comments', 'jest', 'promise', 'unicorn'],
 
   parser: '@typescript-eslint/parser',
   rules: {
+    'react/prop-types': 'off',
+    'react/require-default-props': 'off',
+    'react/forbid-prop-types': 'off',
+    // note you must disable the base rule as it can report incorrect errors
     camelcase: 'off',
     '@typescript-eslint/camelcase': [
       'error',

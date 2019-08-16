@@ -20,7 +20,7 @@ import { TextField } from 'formik-material-ui'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Yup from 'yup'
-import { ApplicationState } from '../../../store'
+import { ApplicationState } from '../../../store/ApplicationState'
 import { API } from '../../../store/api'
 import { updateClientProfileRequest } from '../../../store/client/actions'
 import { ClientProfileHelper } from '../../../store/client/types'
@@ -53,9 +53,8 @@ function getInitialState(profile?: ClientProfile): EditorState {
     return EditorState.createWithContent(
       ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap)
     )
-  } else {
-    return EditorState.createEmpty()
   }
+  return EditorState.createEmpty()
 }
 
 function getStateWithMaxLengthEnsured(
@@ -67,15 +66,14 @@ function getStateWithMaxLengthEnsured(
   const oldContent = oldState.getCurrentContent()
   if (contentState === oldContent || contentState.getPlainText().length <= maxLength) {
     return newState
-  } else {
-    return EditorState.undo(
-      EditorState.push(
-        oldState,
-        ContentState.createFromText(oldContent.getPlainText()),
-        'delete-character'
-      )
-    )
   }
+  return EditorState.undo(
+    EditorState.push(
+      oldState,
+      ContentState.createFromText(oldContent.getPlainText()),
+      'delete-character'
+    )
+  )
 }
 
 async function testHandle(
@@ -86,7 +84,8 @@ async function testHandle(
   if (profile.handle && value.toLowerCase() === profile.handle.toLowerCase()) {
     // if the handle hasn't changed, that's fine
     return Promise.resolve(true)
-  } else if (value === null || value.length === 0) {
+  }
+  if (value === null || value.length === 0) {
     // if the handle is null/empty, that's fine too
     return Promise.resolve(true)
   }
@@ -178,7 +177,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
           handle: profile!.handle || ''
         }}
         validationSchema={getSchema(credentials, profile!)}
-        isInitialValid={true}
+        isInitialValid
         onSubmit={(values, actions) => {
           updateClientProfile(
             {

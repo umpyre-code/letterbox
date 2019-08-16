@@ -24,12 +24,10 @@ export const Profile: React.FC<Props> = props => {
   if (profile) {
     if (isEditing) {
       return <ProfileForm {...props} setIsEditing={setIsEditing} />
-    } else {
-      return <ProfileView {...props} setIsEditing={setIsEditing} />
     }
-  } else {
-    return <Loading />
+    return <ProfileView {...props} setIsEditing={setIsEditing} />
   }
+  return <Loading />
 }
 
 Profile.defaultProps = {

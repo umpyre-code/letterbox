@@ -23,12 +23,12 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
-import { ApplicationState } from '../store'
 import {
   fetchConnectAccountRequest,
   postConnectOauthRequest,
   postConnectPrefsRequest
 } from '../store/account/actions'
+import { ApplicationState } from '../store/ApplicationState'
 import { Balance, ConnectAccountInfo } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import './stripe-connect-button.css'

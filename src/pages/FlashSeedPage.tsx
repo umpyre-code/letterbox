@@ -13,7 +13,8 @@ import {
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import { ApplicationState } from '../store'
+import stringHash from 'string-hash'
+import { ApplicationState } from '../store/ApplicationState'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,7 +57,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           </Box>
           <Grid container>
             {seedWords.slice(0, 12).map((word: string, index: number) => (
-              <Grid item xs={4} key={index}>
+              <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
                 <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
                   <Typography variant="subtitle1">
                     <Box className={classes.wordBox} fontFamily="Monospace">
@@ -85,7 +86,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           </Box>
           <Box className={classes.box}>
             <Button color="primary" variant="contained" onClick={() => history.push('/')}>
-              I've written down my recovery phrase
+              I&apos;ve written down my recovery phrase
             </Button>
           </Box>
         </Paper>

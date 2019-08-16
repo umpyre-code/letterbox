@@ -1,7 +1,7 @@
+import sodium from 'libsodium-wrappers'
 import { KeyPair } from '../keyPairs/types'
 import { ClientID } from '../models/client'
 import { APIMessage, Message } from '../models/messages'
-import sodium from 'libsodium-wrappers'
 
 export function toApiMessage(message: Message, from: ClientID): APIMessage {
   return {
@@ -56,6 +56,7 @@ export async function hashMessage(message: APIMessage): Promise<APIMessage> {
     if (value !== null) {
       return value
     }
+    return undefined
   })
   const hash = sodium.to_base64(
     sodium.crypto_generichash(32, sodium.from_string(hashableMessageJson)),

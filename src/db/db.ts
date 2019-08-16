@@ -17,8 +17,11 @@ interface KeyValue {
 
 class UmpyreDb extends Dexie {
   public apiTokens: Dexie.Table<Token, number>
+
   public drafts: Dexie.Table<Draft, number>
+
   public keyPairs: Dexie.Table<KeyPair, number>
+
   public keyValues: Dexie.Table<KeyValue, string>
 
   // The message info (i.e., everything except the body) and the message body
@@ -27,6 +30,7 @@ class UmpyreDb extends Dexie {
 
   // messageInfos includes everything _except_ the body
   public messageInfos: Dexie.Table<Message, MessageHash>
+
   // messageBodies is _just_ the message body
   public messageBodies: Dexie.Table<DBMessageBody, MessageHash>
 

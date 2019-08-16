@@ -1,7 +1,7 @@
 import { createStyles, List, makeStyles, Theme } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { DraftsState } from '../../store/drafts/types'
 import { DraftListItem } from './DraftListItem'
 
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const DraftListFC: React.FunctionComponent<AllProps> = ({ draftsState }) => {
   const classes = useStyles({})
-  const drafts = draftsState.drafts
+  const { drafts } = draftsState
 
   if (drafts.length > 0) {
     return (
@@ -34,9 +34,8 @@ const DraftListFC: React.FunctionComponent<AllProps> = ({ draftsState }) => {
         ))}
       </List>
     )
-  } else {
-    return null
   }
+  return null
 }
 
 const mapStateToProps = ({ draftsState }: ApplicationState) => ({

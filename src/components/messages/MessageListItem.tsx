@@ -10,19 +10,19 @@ import {
   Theme,
   Typography
 } from '@material-ui/core'
+import { TypographyProps } from '@material-ui/core/Typography'
 import DeleteIcon from '@material-ui/icons/Delete'
 import moment from 'moment'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { API } from '../../store/api'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { Message } from '../../store/models/messages'
-import { TypographyProps } from '@material-ui/core/Typography'
 
 interface Props {
   message: Message

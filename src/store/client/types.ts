@@ -88,14 +88,20 @@ export class ClientProfileHelper implements ClientProfile {
     return new ClientProfileHelper(clientProfile)
   }
 
-  // tslint:disable variable-name
   public box_public_key = ''
+
   public client_id = ''
+
   public full_name = ''
+
   public handle?: string
+
   public profile?: string
+
   public signing_public_key = ''
+
   public joined = 0
+
   public phone_sms_verified = false
 
   constructor(clientProfile: ClientProfile) {
@@ -112,8 +118,7 @@ export class ClientProfileHelper implements ClientProfile {
       .filter(s => s != null && s !== '')
     if (splat.length >= 2) {
       return splat[0][0] + splat[splat.length - 1][0]
-    } else {
-      return this.full_name[0]
     }
+    return this.full_name[0]
   }
 }

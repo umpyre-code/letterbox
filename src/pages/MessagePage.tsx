@@ -18,12 +18,11 @@ import ClientInit from '../components/ClientInit'
 import { MessageListItem } from '../components/messages/MessageListItem'
 import { Profile } from '../components/widgets/profile/Profile'
 import { db } from '../db/db'
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 import { messageReadRequest } from '../store/messages/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { Message } from '../store/models/messages'
-import MessageBodyFc from '../components/messages/MessageBodyFc'
 
 interface PropsFromState {
   balance?: Balance
@@ -63,29 +62,30 @@ const MessagePageFC: React.FC<AllProps> = ({
   const classes = useStyles({})
   const [messages, setMessages] = React.useState<Message[]>([])
 
+  async function fetchMessages() {
+    const messageHash = match.params.message_hash
+    const thisMessageBody = await db.messageBodies.get(messageHash)
+    const thisMessage = await db.messageInfos.get(messageHash)
+    if (thisMessageBody && thisMessage) {
+      if (!thisMessage.read) {
+        // mark as read
+        messageRead(thisMessage.hash!)
+      }
+      setMessages([{ ...thisMessage, body: thisMessageBody.body }])
+    }
+    return Promise.resolve()
+  }
+
   React.useEffect(() => {
     // need to wait until creds have loaded
     if (credentials) {
-      const messageHash = match.params.message_hash
-      async function fetchMessages() {
-        const thisMessageBody = await db.messageBodies.get(messageHash)
-        const thisMessage = await db.messageInfos.get(messageHash)
-        if (thisMessageBody && thisMessage) {
-          if (!thisMessage.read) {
-            // mark as read
-            messageRead(thisMessage.hash!)
-          }
-          setMessages([{ ...thisMessage, body: thisMessageBody.body }])
-        }
-        return Promise.resolve()
-      }
       fetchMessages()
     }
   }, [credentials, match.params.message_hash])
 
   function messageBodies() {
     return messages.map((message, index) => (
-      <Container className={classes.bodyContainer} key={index}>
+      <Container className={classes.bodyContainer} key={message.hash}>
         <Paper>
           <MessageListItem message={message} shaded={false} button={false} />
           {/* <MessageBodyFc body={message.body!} /> */}
@@ -109,7 +109,7 @@ const MessagePageFC: React.FC<AllProps> = ({
           <Grid item xs={5}>
             <Profile profile={profile} balance={balance} menu />
           </Grid>
-          <Grid item xs style={{ position: 'relative' }}></Grid>
+          <Grid item xs style={{ position: 'relative' }} />
           <Grid item xs={12}>
             <Divider />
           </Grid>

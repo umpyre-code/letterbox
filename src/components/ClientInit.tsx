@@ -2,7 +2,7 @@ import { Container, CssBaseline, Link, Paper, Typography } from '@material-ui/co
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { storageIsAvailable } from '../db/storageIsAvailable'
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 import { loadCredentialsRequest } from '../store/client/actions'
 import Loading from './widgets/Loading'
 
@@ -37,10 +37,11 @@ const NoStorageAvailable: React.FC = () => (
           <Typography variant="body1">
             Umpyre uses local storage (
             <Link href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API">
-              your browser's IndexedDB API
+              {"your browser's IndexedDB API"}
             </Link>
-            ) for storing data. If you're using an older browser, or trying to use Umpyre in private
-            browsing mode, it will not work.
+            {
+              ") for storing data. If you're using an older browser, or trying to use Umpyre in private browsing mode, it will not work."
+            }
           </Typography>
         </Container>
       </Paper>
@@ -57,15 +58,15 @@ const ClientInitFC: React.FC<AllProps> = ({
   loadCredentials
 }) => {
   const [storageAvailable, setStorageAvailable] = React.useState<boolean>(globalStorageIsAvailable)
-  // console.log(globalClientIsInitialized)
+
+  async function init() {
+    const available = await storageIsAvailable()
+    setStorageAvailable(available)
+    globalStorageIsAvailable = available
+  }
 
   React.useEffect(() => {
     if (!globalClientIsInitialized) {
-      async function init() {
-        const available = await storageIsAvailable()
-        setStorageAvailable(available)
-        globalStorageIsAvailable = available
-      }
       init()
     }
     globalClientIsInitialized = true
@@ -79,13 +80,14 @@ const ClientInitFC: React.FC<AllProps> = ({
 
   if (!globalClientIsInitialized) {
     return <Loading centerOnPage />
-  } else if (!credentialsLoading && !clientLoading && !storageAvailable) {
-    return <NoStorageAvailable />
-  } else if (!clientReady && !credentialsReady) {
-    return <Loading centerOnPage />
-  } else {
-    return <React.Fragment>{children}</React.Fragment>
   }
+  if (!credentialsLoading && !clientLoading && !storageAvailable) {
+    return <NoStorageAvailable />
+  }
+  if (!clientReady && !credentialsReady) {
+    return <Loading centerOnPage />
+  }
+  return <React.Fragment>{children}</React.Fragment>
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({

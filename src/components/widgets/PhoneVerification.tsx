@@ -7,14 +7,15 @@ import {
   Paper,
   TextField,
   Theme,
-  Typography
+  Typography,
+  Button
 } from '@material-ui/core'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import Autorenew from '@material-ui/icons/Autorenew'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { API } from '../../store/api'
 import { verifyPhoneRequest } from '../../store/client/actions'
 import { ClientCredentials } from '../../store/models/client'
@@ -94,9 +95,8 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
   function getHelperText() {
     if (phoneVerificationError && flashError) {
       return 'Invalid code'
-    } else {
-      return null
     }
+    return null
   }
 
   function resendCode() {
@@ -126,9 +126,9 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
         </Box>
         {showResend && (
           <Box className={classes.box}>
-            <Link className={classes.box} onClick={resendCode}>
+            <Button className={classes.box} onClick={resendCode}>
               <Autorenew /> Resend code
-            </Link>
+            </Button>
           </Box>
         )}
         <Box className={classes.box}>

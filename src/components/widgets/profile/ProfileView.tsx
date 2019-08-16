@@ -89,9 +89,8 @@ interface ProfileMenuProps {
 function getProfileUrl(profile: ClientProfile) {
   if (profile.handle && profile.handle !== '') {
     return `/c/${profile.handle}`
-  } else {
-    return `/u/${profile.client_id}`
   }
+  return `/u/${profile.client_id}`
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
@@ -134,14 +133,13 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
     const secondsSince = Date.now() / 1000 - profile!.joined
     if (secondsSince < 300) {
       return 'joined just now'
-    } else {
-      return `joined ${(moment.duration(secondsSince, 'seconds') as any).format(
-        'y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]',
-        {
-          largest: 1
-        }
-      )} ago`
     }
+    return `joined ${(moment.duration(secondsSince, 'seconds') as any).format(
+      'y [years], w [weeks], d [days], h [hours], m [minutes], s [seconds]',
+      {
+        largest: 1
+      }
+    )} ago`
   }
 
   if (profile && profile.handle && profile.handle.length > 0) {
@@ -150,13 +148,12 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
         <Link to={getProfileUrl(profile)}>{profile.handle}</Link>&nbsp;{getDateJoined()}
       </Typography>
     )
-  } else {
-    return (
-      <Typography className={classes.handleText} variant="subtitle2">
-        {getDateJoined()}
-      </Typography>
-    )
   }
+  return (
+    <Typography className={classes.handleText} variant="subtitle2">
+      {getDateJoined()}
+    </Typography>
+  )
 }
 
 interface ActionProps {
@@ -178,7 +175,8 @@ export const Action: React.FC<ActionProps> = ({
         <EditButton color="secondary" />
       </IconButton>
     )
-  } else if (menu) {
+  }
+  if (menu) {
     return (
       <IconButton
         aria-label="Settings"
@@ -187,9 +185,8 @@ export const Action: React.FC<ActionProps> = ({
         <MoreVertIcon />
       </IconButton>
     )
-  } else {
-    return null
   }
+  return null
 }
 
 const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
@@ -216,9 +213,8 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
         </Button>
       </Tooltip>
     )
-  } else {
-    return null
   }
+  return null
 }
 
 export const ProfileView: React.FC<Props> = ({
@@ -281,9 +277,8 @@ export const ProfileView: React.FC<Props> = ({
           subheader={<Handle profile={profile} />}
         />
       )
-    } else {
-      return <Loading />
     }
+    return <Loading />
   }
 
   function getProfileContent() {
@@ -303,9 +298,8 @@ export const ProfileView: React.FC<Props> = ({
           </Container>
         </CardContent>
       )
-    } else {
-      return null
     }
+    return null
   }
 
   function getCardBody() {

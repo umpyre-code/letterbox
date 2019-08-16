@@ -17,7 +17,7 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import * as Yup from 'yup'
 import zxcvbn from 'zxcvbn'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { CountryCodes } from './CountryCodes'
@@ -93,41 +93,6 @@ class SignUp extends React.Component<AllProps> {
     this.props.loadCredentials()
   }
 
-  public render() {
-    if (
-      this.props.client &&
-      this.props.client.clientReady &&
-      this.props.client.credentialsReady &&
-      this.props.client.profile &&
-      !this.props.client.newClientSubmitting
-    ) {
-      // How did we get here? already have a client, so let's redirect to the
-      // signout page to make sure this is intentional
-      return <Router.Redirect to="/signout" />
-    } else {
-      return (
-        <Formik
-          initialValues={{
-            email: '',
-            full_name: '',
-            password: '',
-            phone_number: {
-              country_code: 'US',
-              national_number: ''
-            }
-          }}
-          validationSchema={SignupFormSchema}
-          onSubmit={(values, actions) => {
-            this.props.submitNewClientRequest(values, {
-              actions
-            })
-          }}
-          render={this.handleFormRender}
-        />
-      )
-    }
-  }
-
   private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
@@ -148,7 +113,7 @@ class SignUp extends React.Component<AllProps> {
         </Grid>
         <Grid item>
           <FormControl fullWidth>
-            <FormGroup row={true}>
+            <FormGroup row>
               <Grid container>
                 <Grid item>
                   <InputLabel htmlFor="phone_number.country_code">Country Code</InputLabel>
@@ -224,6 +189,40 @@ class SignUp extends React.Component<AllProps> {
       </Grid>
     </Form>
   )
+
+  public render() {
+    if (
+      this.props.client &&
+      this.props.client.clientReady &&
+      this.props.client.credentialsReady &&
+      this.props.client.profile &&
+      !this.props.client.newClientSubmitting
+    ) {
+      // How did we get here? already have a client, so let's redirect to the
+      // signout page to make sure this is intentional
+      return <Router.Redirect to="/signout" />
+    }
+    return (
+      <Formik
+        initialValues={{
+          email: '',
+          full_name: '',
+          password: '',
+          phone_number: {
+            country_code: 'US',
+            national_number: ''
+          }
+        }}
+        validationSchema={SignupFormSchema}
+        onSubmit={(values, actions) => {
+          this.props.submitNewClientRequest(values, {
+            actions
+          })
+        }}
+        render={this.handleFormRender}
+      />
+    )
+  }
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({

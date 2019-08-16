@@ -1,7 +1,7 @@
 import { all, call, fork, put, select, takeEvery, throttle } from 'redux-saga/effects'
-import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { API } from '../api'
+import { ApplicationState } from '../ApplicationState'
 import { KeyPair } from '../keyPairs/types'
 import { sendMessagesRequest } from '../messages/actions'
 import { encryptMessageBody, hashMessage, signMessage, toApiMessage } from '../messages/utils'

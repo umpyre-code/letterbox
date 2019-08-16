@@ -5,8 +5,8 @@ import { Provider } from 'react-redux'
 import { Store } from 'redux'
 import 'typeface-aleo'
 import 'typeface-lato'
-import Routes from './Routes'
-import { ApplicationState } from './store'
+import { Routes } from './Routes'
+import { ApplicationState } from './store/ApplicationState'
 
 interface MainProps {
   store: Store<ApplicationState>

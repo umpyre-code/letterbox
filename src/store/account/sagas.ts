@@ -1,7 +1,7 @@
 import { goBack } from 'connected-react-router'
 import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
-import { ApplicationState } from '..'
 import { API } from '../api'
+import { ApplicationState } from '../ApplicationState'
 import { ChargeRequest, ConnectAccountPrefs, ConnectOauth } from '../models/account'
 import { ClientCredentials } from '../models/client'
 import {
@@ -94,13 +94,12 @@ function* handleCharge(values: ReturnType<typeof chargeRequest>) {
 
     if (res.error) {
       yield put(chargeError(res.error))
+    }
+    if (res.result === 'success') {
+      yield put(chargeSuccess(res))
+      yield put(goBack())
     } else {
-      if (res.result === 'success') {
-        yield put(chargeSuccess(res))
-        yield put(goBack())
-      } else {
-        yield put(chargeApiError(res))
-      }
+      yield put(chargeApiError(res))
     }
   } catch (error) {
     if (error instanceof Error) {

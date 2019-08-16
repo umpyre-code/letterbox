@@ -19,7 +19,7 @@ import { DraftList } from '../components/drafts/DraftList'
 import { MessageList } from '../components/messages/MessageList'
 import PhoneVerification from '../components/widgets/PhoneVerification'
 import { Profile } from '../components/widgets/profile/Profile'
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
@@ -80,7 +80,7 @@ const IndexPageFC: React.FC<AllProps> = ({
 
   if (reload) {
     // force a page reload
-    location.reload(true)
+    window.location.reload(true)
   }
 
   if (credentialsReady && (clientReady || credentialsError) && !profile) {
@@ -91,41 +91,35 @@ const IndexPageFC: React.FC<AllProps> = ({
   function getBody() {
     if (profile && !profile.phone_sms_verified) {
       return <PhoneVerification />
-    } else {
-      return (
-        <React.Fragment>
-          <Container className={classes.draftContainer}>
-            <DraftList />
-          </Container>
-          <Container className={classes.messageListContainer}>
-            <MessageList
-              messages={messagesState.unreadMessages}
-              messageType="unread"
-              shaded={false}
-              button={true}
-            />
-          </Container>
-          <Container className={classes.messageListContainer}>
-            <MessageList
-              messages={messagesState.readMessages}
-              messageType="read"
-              shaded={true}
-              button={true}
-            />
-          </Container>
-          <Tooltip title="Compose a new message">
-            <Fab
-              className={classes.composeButton}
-              color="primary"
-              aria-label="Compose"
-              onClick={addDraft}
-            >
-              <Edit />
-            </Fab>
-          </Tooltip>
-        </React.Fragment>
-      )
     }
+    return (
+      <React.Fragment>
+        <Container className={classes.draftContainer}>
+          <DraftList />
+        </Container>
+        <Container className={classes.messageListContainer}>
+          <MessageList
+            messages={messagesState.unreadMessages}
+            messageType="unread"
+            shaded={false}
+            button
+          />
+        </Container>
+        <Container className={classes.messageListContainer}>
+          <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
+        </Container>
+        <Tooltip title="Compose a new message">
+          <Fab
+            className={classes.composeButton}
+            color="primary"
+            aria-label="Compose"
+            onClick={addDraft}
+          >
+            <Edit />
+          </Fab>
+        </Tooltip>
+      </React.Fragment>
+    )
   }
 
   return (
@@ -143,7 +137,7 @@ const IndexPageFC: React.FC<AllProps> = ({
           <Grid item xs={5}>
             <Profile profile={profile} balance={balance} menu />
           </Grid>
-          <Grid item xs style={{ position: 'relative' }}></Grid>
+          <Grid item xs style={{ position: 'relative' }} />
           <Grid item xs={12}>
             <Divider />
           </Grid>

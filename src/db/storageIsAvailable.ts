@@ -64,9 +64,8 @@ async function tryPersistWithoutPromtingUser() {
     persisted = await navigator.storage.persist()
     if (persisted) {
       return 'persisted'
-    } else {
-      throw new Error('Failed to persist')
     }
+    throw new Error('Failed to persist')
   }
   if ((permission as any).status === 'prompt') {
     return 'prompt'

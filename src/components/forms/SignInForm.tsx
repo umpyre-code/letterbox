@@ -6,7 +6,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import * as Yup from 'yup'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { authRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { KeysState } from '../../store/keyPairs/types'
@@ -31,24 +31,6 @@ const SigninFormSchema = Yup.object().shape({
 })
 
 class SignIn extends React.Component<AllProps> {
-  public render() {
-    return (
-      <Formik
-        initialValues={{
-          email: '',
-          password: ''
-        }}
-        validationSchema={SigninFormSchema}
-        onSubmit={(values, actions) => {
-          this.props.authRequest(values, {
-            actions
-          })
-        }}
-        render={this.handleFormRender}
-      />
-    )
-  }
-
   private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
@@ -67,8 +49,8 @@ class SignIn extends React.Component<AllProps> {
             <SnackbarContent
               message={
                 <h3>
-                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don't look right! Try
-                  again :)
+                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don&apos;t look right!
+                  Try again :)
                 </h3>
               }
             />
@@ -100,12 +82,30 @@ class SignIn extends React.Component<AllProps> {
             }}
             fullWidth
           >
-            I don't have an account
+            I don&apos;t have an account
           </Button>
         </Grid>
       </Grid>
     </Form>
   )
+
+  public render(): React.ReactNode {
+    return (
+      <Formik
+        initialValues={{
+          email: '',
+          password: ''
+        }}
+        validationSchema={SigninFormSchema}
+        onSubmit={(values, actions) => {
+          this.props.authRequest(values, {
+            actions
+          })
+        }}
+        render={this.handleFormRender}
+      />
+    )
+  }
 }
 
 const mapStateToProps = ({ clientState, keysState }: ApplicationState) => ({

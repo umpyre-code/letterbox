@@ -14,6 +14,7 @@ import { db } from '../../db/db'
 import { BloomFilter } from '../../util/BloomFilter'
 import { fetchBalanceRequest, fetchBalanceSuccess } from '../account/actions'
 import { API } from '../api'
+import { ApplicationState } from '../ApplicationState'
 import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { SettlePaymentResponse } from '../models/account'
@@ -38,7 +39,6 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-import { ApplicationState } from '..'
 
 async function getMessagesWithoutBody(
   withinDays: number,
@@ -171,7 +171,7 @@ function* handleFetchMessages() {
   try {
     const state: ApplicationState = yield select()
     const credentials = state.clientState.credentials!
-    const sketch = state.messagesState.sketch
+    const { sketch } = state.messagesState
     const messages = yield call(fetchMessages, credentials, sketch)
 
     if (messages.error) {
@@ -267,9 +267,8 @@ async function settlePayment(
   if (message && message.value_cents > 0) {
     const api = new API(credentials)
     return api.settlePayment(hash)
-  } else {
-    return Promise.resolve(undefined)
   }
+  return Promise.resolve(undefined)
 }
 
 async function markMessageAsRead(hash: MessageHash) {

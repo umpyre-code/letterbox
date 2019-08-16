@@ -1,12 +1,12 @@
 import { push } from 'connected-react-router'
 import * as jwt from 'jsonwebtoken'
+import sodium from 'libsodium-wrappers'
 import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import * as srp from 'secure-remote-password/client'
-import { SHA3 } from 'sha3'
-import { ApplicationState } from '..'
 import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
+import { ApplicationState } from '../ApplicationState'
 import { initializeDraftsRequest } from '../drafts/actions'
 import { loadKeysRequest } from '../keyPairs/actions'
 import { handleInitializeKeys } from '../keyPairs/sagas'
@@ -35,7 +35,6 @@ import {
   verifyPhoneSuccess
 } from './actions'
 import { AuthCreds, ClientActionTypes } from './types'
-import sodium from 'libsodium-wrappers'
 
 async function loadCredentials() {
   return db.apiTokens
@@ -65,18 +64,16 @@ function* handleLoadCredentialsRequest() {
 
     if (res && res.error) {
       yield put(loadCredentialsError(res.error))
+    } else if (res && res.client_id) {
+      yield put(loadCredentialsSuccess(res))
+      // If we got a client API token, kick off other init actions
+      yield put(fetchClientRequest())
+      yield put(loadKeysRequest())
+      yield put(initializeDraftsRequest())
+      yield put(initializeMessagesRequest())
+      yield put(fetchBalanceRequest())
     } else {
-      if (res && res.client_id) {
-        yield put(loadCredentialsSuccess(res))
-        // If we got a client API token, kick off other init actions
-        yield put(fetchClientRequest())
-        yield put(loadKeysRequest())
-        yield put(initializeDraftsRequest())
-        yield put(initializeMessagesRequest())
-        yield put(fetchBalanceRequest())
-      } else {
-        yield put(loadCredentialsError('no credentials found'))
-      }
+      yield put(loadCredentialsError('no credentials found'))
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {

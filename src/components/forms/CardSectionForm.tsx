@@ -14,7 +14,7 @@ import React, { Component } from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
 import { CardElement, injectStripe } from 'react-stripe-elements'
-import { ApplicationState } from '../../store'
+import { ApplicationState } from '../../store/ApplicationState'
 import { chargeRequest, clearChargeErrors } from '../../store/account/actions'
 import { ChargeErrorResponse, ChargeResponse } from '../../store/models/account'
 import { ClientProfile } from '../../store/models/client'
@@ -70,6 +70,17 @@ interface CardSectionState {
   error?: string
 }
 
+// Stripe makes it really hard to remove their JS after it's no longer in use.
+// Their code injects iframes into the dom, and sets timers to re-inject those
+// iframes if they are removed. It also collects metrics and could
+// (theoretically) be malicious. Below we have to a) clear all timers in the
+// window and b) repeatedly remove the iframes because they may get re-injected
+// at any time.
+//
+// Stripe should do the right thing and make it easy to remove their
+// telemetry/tracking stuff. Better yet, they should not _ever_ be injecting
+// their own telemetry/tracking/metrics into their customer's pages.
+
 class CardSection extends Component<CardSectionProps, CardSectionState> {
   constructor(props: CardSectionProps) {
     super(props)
@@ -82,6 +93,69 @@ class CardSection extends Component<CardSectionProps, CardSectionState> {
     }
   }
 
+  /* eslint-disable no-underscore-dangle */
+  public componentWillUnmount(): void {
+    // Clear all timers
+    let id = window.setTimeout(() => {}, 0)
+    while (id) {
+      id -= 1
+      window.clearTimeout(id)
+    }
+
+    // Stop all listeners, remove iframes
+    this.props.stripe._controller._frames.__privateStripeFrame5._iframe.remove()
+    this.props.stripe._controller._frames.__privateStripeFrame5._removeAllListeners()
+    this.props.stripe._controller._controllerFrame._removeAllListeners()
+    this.props.stripe._controller._controllerFrame._iframe.remove()
+
+    const stripeIframes = [
+      document.querySelectorAll('[name^=__privateStripeMetricsController]'),
+      document.querySelectorAll('[name^=__privateStripeController]')
+    ]
+
+    stripeIframes.forEach(iframes =>
+      iframes.forEach(iframe => {
+        iframe.parentNode.removeChild(iframe)
+      })
+    )
+
+    this.removeStripeControllerFrame()
+
+    document.querySelector('#stripe-js').remove()
+  }
+
+  public onCardElementChanged(changes: any) {
+    this.props.clearErrors()
+    const { error } = changes
+    if (error) {
+      this.setState({ error: error.message })
+    } else {
+      this.setState({ error: undefined })
+    }
+  }
+
+  public getStripeControllerFrameNode(): HTMLIFrameElement | undefined {
+    const frameId =
+      this.props.stripe && this.props.stripe._controller && this.props.stripe._controller._id
+    if (!frameId) {
+      return undefined
+    }
+    // Note: Using `document` isn't full-proof as it may not work if <Provider>
+    // is rendered within an iFrame. This can be improved.
+    return document.querySelector(`[name='${frameId}']`)
+  }
+
+  public removeStripeControllerFrame(): void {
+    const frameNode = this.getStripeControllerFrameNode()
+    // Note: Does not work, unless Stripe is [ready]. Will need to hook into
+    // ready callback (somehow)
+    if (frameNode && frameNode.parentNode) {
+      frameNode.parentNode.removeChild(frameNode)
+    }
+  }
+
+  /* eslint-enable no-underscore-dangle */
+
   public async submit() {
     const { token } = (await this.props.stripe.createToken({
       name: this.props.profile.full_name
@@ -92,16 +166,6 @@ class CardSection extends Component<CardSectionProps, CardSectionState> {
         token
       }
       this.props.submitChargeRequest(charge)
-    }
-  }
-
-  public onCardElementChanged(changes: any) {
-    this.props.clearErrors()
-    const { error } = changes
-    if (error) {
-      this.setState({ ...this.state, error: error.message })
-    } else {
-      this.setState({ ...this.state, error: undefined })
     }
   }
 
@@ -130,7 +194,7 @@ class CardSection extends Component<CardSectionProps, CardSectionState> {
               value={this.props.chargeAmount}
               thousandSeparator
               decimalScale={2}
-              fixedDecimalScale={true}
+              fixedDecimalScale
               prefix="Charge $"
               displayType="text"
             />

@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+
 // This a modified version of the code from https://github.com/jasondavies/bloomfilter.js/tree/master
 // tslint:disable:no-bitwise
 //
@@ -31,9 +33,10 @@
 
 // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 export function popcnt(value: number) {
-  value -= (value >> 1) & 0x55555555
-  value = (value & 0x33333333) + ((value >> 2) & 0x33333333)
-  return (((value + (value >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24
+  let v = value
+  v -= (v >> 1) & 0x55555555
+  v = (v & 0x33333333) + ((value >> 2) & 0x33333333)
+  return (((v + (v >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24
 }
 
 // a * 16777619 mod 2**32
@@ -42,7 +45,8 @@ function fnvMultiply(a: number) {
 }
 
 // See https://web.archive.org/web/20131019013225/http://home.comcast.net/~bretm/hash/6.html
-function fnvMix(a: number) {
+function fnvMix(value: number) {
+  let a = value
   a += a << 13
   a ^= a >>> 7
   a += a << 3
@@ -57,7 +61,7 @@ function fnvMix(a: number) {
 // "almost any offset_basis will serve so long as it is non-zero".
 export function fnv1a(value: string, seed?: number): number {
   let a = 2166136261 ^ (seed || 0)
-  for (let i = 0, n = value.length; i < n; ++i) {
+  for (let i = 0, n = value.length; i < n; i += 1) {
     const c = value.charCodeAt(i)
     const d = c & 0xff00
     if (d) {
@@ -70,8 +74,11 @@ export function fnv1a(value: string, seed?: number): number {
 
 export class BloomFilter {
   private m: number
+
   private k: number
+
   private locationsBuffer: Uint16Array
+
   private buckets: Uint8Array
 
   // Creates a new bloom filter.  If *m* is an array-like object, with a length
@@ -83,7 +90,8 @@ export class BloomFilter {
     let m = 8 * 1024
     const k = 8
     const n = Math.ceil(m / 8)
-    this.m = m = n * 8
+    m = n * 8
+    this.m = m
     this.k = k
 
     const kbytes = 1 << Math.ceil(Math.log(Math.ceil(Math.log(m) / Math.LN2 / 8)) / Math.LN2)
@@ -98,23 +106,23 @@ export class BloomFilter {
     const a = fnv1a(value)
     const b = fnv1a(value, 872958581) // The seed value is chosen randomly
     let x = a % this.m
-    for (let i = 0; i < this.k; ++i) {
+    for (let i = 0; i < this.k; i += 1) {
       this.locationsBuffer[i] = x < 0 ? x + this.m : x
       x = (x + b) % this.m
     }
     return this.locationsBuffer
   }
 
-  public add(value: string) {
-    const l = this.locations(value + '')
-    for (let i = 0; i < this.k; ++i) {
+  public add(value: string): void {
+    const l = this.locations(value)
+    for (let i = 0; i < this.k; i += 1) {
       this.buckets[Math.floor(l[i] / 8)] |= 1 << l[i] % 8
     }
   }
 
-  public test(value: string) {
-    const l = this.locations(value + '')
-    for (let i = 0; i < this.k; ++i) {
+  public test(value: string): boolean {
+    const l = this.locations(value)
+    for (let i = 0; i < this.k; i += 1) {
       const b = l[i]
       if ((this.buckets[Math.floor(b / 8)] & (1 << b % 8)) === 0) {
         return false
@@ -127,3 +135,5 @@ export class BloomFilter {
     return this.buckets
   }
 }
+
+/* eslint-enable no-bitwise */

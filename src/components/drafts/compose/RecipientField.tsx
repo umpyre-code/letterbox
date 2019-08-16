@@ -169,9 +169,8 @@ async function getSuggestions(
         label: searchResult.full_name
       }))
     )
-  } else {
-    return Promise.resolve([])
   }
+  return Promise.resolve([])
 }
 
 interface DownshiftMultipleProps {

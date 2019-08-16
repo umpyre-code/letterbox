@@ -18,7 +18,8 @@ interface RankedMessages {
 function cmp(first: Message, second: Message): number {
   if (first.value_cents > second.value_cents) {
     return -1
-  } else if (second.value_cents > first.value_cents) {
+  }
+  if (second.value_cents > first.value_cents) {
     return 1
   }
   return 0

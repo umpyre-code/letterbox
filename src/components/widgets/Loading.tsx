@@ -19,7 +19,7 @@ const Loading: React.FC<LoadingProps> = ({ centerOnPage }) => {
 
   return (
     <div className="lds-heart" style={style}>
-      <div></div>
+      <div />
     </div>
   )
 }

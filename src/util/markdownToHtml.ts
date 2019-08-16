@@ -1,13 +1,15 @@
 import marked from 'marked'
+import dompurify from 'dompurify'
+import highlight from 'highlight.js'
 
 export function markdownToHtml(body: string): string {
   marked.setOptions({
     highlight: code => {
-      return require('highlight.js').highlightAuto(code).value
+      return highlight.highlightAuto(code).value
     },
     sanitize: true,
     sanitizer: html => {
-      return require('dompurify').sanitize(html)
+      return dompurify.sanitize(html)
     }
   })
   return marked.parse(body)

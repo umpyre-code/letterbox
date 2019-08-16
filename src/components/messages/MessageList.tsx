@@ -64,15 +64,14 @@ export const MessageList: React.FunctionComponent<AllProps> = ({
           ))}
         </List>
       )
-    } else {
-      return (
-        <Container style={{ padding: 5 }}>
-          <Typography className={classes.noMessages}>
-            no {messageType} messages <Emoji ariaLabel="smile">😀</Emoji>
-          </Typography>
-        </Container>
-      )
     }
+    return (
+      <Container style={{ padding: 5 }}>
+        <Typography className={classes.noMessages}>
+          no {messageType} messages <Emoji ariaLabel="smile">😀</Emoji>
+        </Typography>
+      </Container>
+    )
   }
 
   return <Paper className={classes.root}>{renderInner()}</Paper>

@@ -14,7 +14,7 @@ import { Elements, StripeProvider } from 'react-stripe-elements'
 import ClientInit from '../components/ClientInit'
 import AddCreditsForm from '../components/forms/AddCreditsForm'
 import Loading from '../components/widgets/Loading'
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
@@ -50,13 +50,32 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
   const [stripe, setStripe] = React.useState(null)
   const classes = useStyles({})
 
-  function stripeLoaded() {
+  function stripeLoaded(): void {
     setStripe((window as any).Stripe(STRIPE_API_PK))
   }
 
   React.useEffect(() => {
     loadScript('https://js.stripe.com/v3/', 'stripe-js', stripeLoaded)
   }, [])
+
+  React.useEffect(
+    () => () => {
+      delete (window as any).Stripe
+      const stripeIframes = [
+        document.querySelectorAll('[name^=__privateStripeMetricsController]'),
+        document.querySelectorAll('[name^=__privateStripeController]')
+      ]
+
+      stripeIframes.forEach(iframes =>
+        iframes.forEach(iframe => {
+          iframe.parentNode.removeChild(iframe)
+        })
+      )
+
+      delete (window as any).Stripe
+    },
+    []
+  )
 
   if (balance) {
     return (
@@ -86,9 +105,8 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
         </Container>
       </ClientInit>
     )
-  } else {
-    return <Loading />
   }
+  return <Loading />
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({

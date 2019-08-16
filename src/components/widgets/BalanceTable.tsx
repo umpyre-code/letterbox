@@ -44,19 +44,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const BalanceTable: React.FC<BalanceTableProps> = ({ rows }) => {
   const classes = useStyles({})
+
   function getCellClass(index: number) {
     if (index < rows.length - 1) {
       return classes.tableCell
-    } else {
-      return classes.lastTableCell
     }
+    return classes.lastTableCell
   }
+
   return (
     <Paper>
       <Table className={classes.table} size="small">
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={index}>
+            <TableRow key={row.name}>
               <TableCell component="th" scope="row" classes={{ root: getCellClass(index) }}>
                 {row.name}
               </TableCell>
@@ -67,7 +68,7 @@ export const BalanceTable: React.FC<BalanceTableProps> = ({ rows }) => {
                   prefix="$"
                   displayType="text"
                   decimalScale={2}
-                  fixedDecimalScale={true}
+                  fixedDecimalScale
                 />
               </TableCell>
             </TableRow>

@@ -3,42 +3,39 @@ import { Draft } from '../drafts/types'
 import { Message, MessageHash } from '../models/messages'
 import { MessagesActionTypes } from './types'
 
-export const initializeMessagesRequest = (): ReturnType<typeof action> =>
+export const initializeMessagesRequest = (): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST)
-export const initializeMessagesSuccess = (messages: Message[]): ReturnType<typeof action> =>
+export const initializeMessagesSuccess = (messages: Message[]): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_SUCCESS, messages)
-export const initializeMessagesError = (errorMessage: string): ReturnType<typeof action> =>
+export const initializeMessagesError = (errorMessage: string): any =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_ERROR, errorMessage)
 
-export const fetchMessagesRequest = (): ReturnType<typeof action> =>
-  action(MessagesActionTypes.FETCH_MESSAGES_REQUEST)
-export const fetchMessagesSuccess = (messages: Message[]): ReturnType<typeof action> =>
+export const fetchMessagesRequest = (): any => action(MessagesActionTypes.FETCH_MESSAGES_REQUEST)
+export const fetchMessagesSuccess = (messages: Message[]): any =>
   action(MessagesActionTypes.FETCH_MESSAGES_SUCCESS, messages)
-export const fetchMessagesError = (errorMessage: string): ReturnType<typeof action> =>
+export const fetchMessagesError = (errorMessage: string): any =>
   action(MessagesActionTypes.FETCH_MESSAGES_ERROR, errorMessage)
 
-export const deleteMessageRequest = (hash: MessageHash): ReturnType<typeof action> =>
+export const deleteMessageRequest = (hash: MessageHash): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_REQUEST, hash)
-export const deleteMessageSuccess = (messages: Message[]): ReturnType<typeof action> =>
+export const deleteMessageSuccess = (messages: Message[]): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_SUCCESS, messages)
-export const deleteMessageError = (errorMessage: string): ReturnType<typeof action> =>
+export const deleteMessageError = (errorMessage: string): any =>
   action(MessagesActionTypes.DELETE_MESSAGE_ERROR, errorMessage)
 
-export const sendMessagesRequest = (draft: Draft): ReturnType<typeof action> =>
+export const sendMessagesRequest = (draft: Draft): any =>
   action(MessagesActionTypes.SEND_MESSAGES_REQUEST, draft)
-export const sendMessagesSuccess = (): ReturnType<typeof action> =>
-  action(MessagesActionTypes.SEND_MESSAGES_SUCCESS)
-export const sendMessagesError = (errorMessage: string): ReturnType<typeof action> =>
+export const sendMessagesSuccess = (): any => action(MessagesActionTypes.SEND_MESSAGES_SUCCESS)
+export const sendMessagesError = (errorMessage: string): any =>
   action(MessagesActionTypes.SEND_MESSAGES_ERROR, errorMessage)
 
-export const updateSketchRequest = (): ReturnType<typeof action> =>
-  action(MessagesActionTypes.UPDATE_SKETCH_REQUEST)
-export const updateSketchSuccess = (sketch: string): ReturnType<typeof action> =>
+export const updateSketchRequest = (): any => action(MessagesActionTypes.UPDATE_SKETCH_REQUEST)
+export const updateSketchSuccess = (sketch: string): any =>
   action(MessagesActionTypes.UPDATE_SKETCH_SUCCESS, sketch)
 
-export const messageReadRequest = (hash: MessageHash): ReturnType<typeof action> =>
+export const messageReadRequest = (hash: MessageHash): any =>
   action(MessagesActionTypes.MESSAGE_READ_REQUEST, hash)
-export const messageReadSuccess = (messages: Message[]): ReturnType<typeof action> =>
+export const messageReadSuccess = (messages: Message[]): any =>
   action(MessagesActionTypes.MESSAGE_READ_SUCCESS, messages)
-export const messageReadError = (errorMessage: string): ReturnType<typeof action> =>
+export const messageReadError = (errorMessage: string): any =>
   action(MessagesActionTypes.MESSAGE_READ_ERROR, errorMessage)

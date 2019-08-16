@@ -4,7 +4,7 @@ import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 
-export const AddCreditsButton: React.FC = ({}) => (
+export const AddCreditsButton: React.FC = () => (
   <Tooltip title="Your balance is insufficient, you need to add credits first.">
     <Button variant="contained" color="primary">
       Add Credits

@@ -53,7 +53,7 @@ export const Editor: React.FC<Props> = ({ placeholder, editorState, onChange, re
         plugins={editorPlugins}
         onChange={onChange}
         placeholder={placeholder}
-        spellCheck={true}
+        spellCheck
         readOnly={readOnly}
       />
       <DraftInlineToolbar />
