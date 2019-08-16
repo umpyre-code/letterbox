@@ -15,27 +15,28 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
+import MessageBodyFc from '../components/messages/MessageBodyFc'
 import { MessageListItem } from '../components/messages/MessageListItem'
 import { Profile } from '../components/widgets/profile/Profile'
-import { db } from '../db/db'
 import { ApplicationState } from '../store/ApplicationState'
-import { messageReadRequest } from '../store/messages/actions'
+import { loadMessagesRequest, messageReadRequest } from '../store/messages/actions'
 import { Balance } from '../store/models/account'
-import { ClientCredentials, ClientProfile } from '../store/models/client'
-import { MessageBase } from '../store/models/messages'
+import { ClientProfile } from '../store/models/client'
+import { DecryptedMessage } from '../store/models/messages'
 
 interface PropsFromState {
   balance?: Balance
-  credentials?: ClientCredentials
   profile?: ClientProfile
+  loadedMessages: DecryptedMessage[]
 }
 
 interface PropsFromDispatch {
   messageRead: typeof messageReadRequest
+  loadMessages: typeof loadMessagesRequest
 }
 
 interface MatchParams {
-  readonly message_hash: string
+  readonly messageHash: string
 }
 
 type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<MatchParams>
@@ -53,42 +54,28 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const MessagePageFC: React.FC<AllProps> = ({
   balance,
-  credentials,
   history,
   match,
+  loadedMessages,
+  loadMessages,
   messageRead,
   profile
 }) => {
   const classes = useStyles({})
-  const [messages, setMessages] = React.useState<MessageBase[]>([])
-
-  async function fetchMessages() {
-    const messageHash = match.params.message_hash
-    const thisMessageBody = await db.messageBodies.get(messageHash)
-    const thisMessage = await db.messageInfos.get(messageHash)
-    if (thisMessageBody && thisMessage) {
-      if (!thisMessage.read) {
-        // mark as read
-        messageRead(thisMessage.hash!)
-      }
-      setMessages([thisMessage])
-    }
-    return Promise.resolve()
-  }
+  const { messageHash } = match.params
 
   React.useEffect(() => {
-    // need to wait until creds have loaded
-    if (credentials) {
-      fetchMessages()
-    }
-  }, [credentials, match.params.message_hash])
+    loadMessages(messageHash)
+    messageRead(messageHash)
+  }, [messageHash])
 
   function messageBodies() {
-    return messages.map((message, index) => (
+    return loadedMessages.map(message => (
       <Container className={classes.bodyContainer} key={message.hash}>
         <Paper>
           <MessageListItem message={message} shaded={false} button={false} />
-          {/* <MessageBodyFc body={message.body!} /> */}
+          <Divider />
+          <MessageBodyFc body={message.body} />
         </Paper>
       </Container>
     ))
@@ -133,14 +120,16 @@ const MessagePageFC: React.FC<AllProps> = ({
   )
 }
 
-const mapStateToProps = ({ accountState, clientState }: ApplicationState) => ({
+const mapStateToProps = ({ accountState, clientState, messagesState }: ApplicationState) => ({
   balance: accountState.balance,
   credentials: clientState.credentials,
-  profile: clientState.profile
+  profile: clientState.profile,
+  loadedMessages: messagesState.loadedMessages
 })
 
 const mapDispatchToProps = {
-  messageRead: messageReadRequest
+  messageRead: messageReadRequest,
+  loadMessages: loadMessagesRequest
 }
 
 const MessagePage = Router.withRouter(

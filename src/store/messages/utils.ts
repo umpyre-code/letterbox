@@ -147,7 +147,7 @@ async function decryptMessageBody(
   )
 }
 
-async function decryptMessage(message: EncryptedMessage): Promise<DecryptedMessage> {
+export async function decryptMessage(message: EncryptedMessage): Promise<DecryptedMessage> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
   const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })

@@ -69,10 +69,8 @@ const IndexPageFC: React.FC<AllProps> = ({
   balance,
   messagesState,
   profile,
-  clientLoading,
   clientReady,
   credentialsError,
-  credentialsLoading,
   credentialsReady,
   reload
 }) => {
@@ -98,6 +96,7 @@ const IndexPageFC: React.FC<AllProps> = ({
           <DraftList />
         </Container>
         <Container className={classes.messageListContainer}>
+          <Typography>Unread</Typography>
           <MessageList
             messages={messagesState.unreadMessages}
             messageType="unread"
@@ -106,6 +105,7 @@ const IndexPageFC: React.FC<AllProps> = ({
           />
         </Container>
         <Container className={classes.messageListContainer}>
+          <Typography>Read</Typography>
           <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
         </Container>
         <Tooltip title="Compose a new message">
@@ -149,14 +149,14 @@ const IndexPageFC: React.FC<AllProps> = ({
 }
 
 const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
-  balance: accountState.balance!,
+  balance: accountState.balance,
   clientLoading: clientState.clientLoading,
   clientReady: clientState.clientReady,
   credentialsError: clientState.credentialsError,
   credentialsLoading: clientState.credentialsLoading,
   credentialsReady: clientState.credentialsReady,
   messagesState,
-  profile: clientState.profile!,
+  profile: clientState.profile,
   reload: clientState.reload
 })
 

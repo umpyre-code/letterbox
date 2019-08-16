@@ -19,7 +19,7 @@ import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { SettlePaymentResponse } from '../models/account'
 import { ClientCredentials } from '../models/client'
-import { APIMessage, MessageHash } from '../models/messages'
+import { APIMessage, DecryptedMessage, MessageHash } from '../models/messages'
 import {
   deleteMessageError,
   deleteMessageRequest,
@@ -29,6 +29,9 @@ import {
   fetchMessagesSuccess,
   initializeMessagesError,
   initializeMessagesSuccess,
+  loadMessagesError,
+  loadMessagesRequest,
+  loadMessagesSuccess,
   messageReadError,
   messageReadRequest,
   messageReadSuccess,
@@ -39,7 +42,12 @@ import {
   updateSketchSuccess
 } from './actions'
 import { MessagesActionTypes } from './types'
-import { getMessagesWithoutBody, fetchMessages, decryptStoreAndRetrieveMessages } from './utils'
+import {
+  decryptMessage,
+  decryptStoreAndRetrieveMessages,
+  fetchMessages,
+  getMessagesWithoutBody
+} from './utils'
 
 function* delayThenFetchMessages() {
   const fetchIntervalMillis = 2000
@@ -228,7 +236,6 @@ async function markMessageDeleted(hash: MessageHash) {
 function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
   const { payload } = values
   try {
-    const state: ApplicationState = yield select()
     const res = yield call(markMessageDeleted, payload)
 
     if (res.error) {
@@ -251,11 +258,56 @@ function* watchDeleteMessageRequest() {
   yield takeEvery(MessagesActionTypes.DELETE_MESSAGE_REQUEST, handleDeleteMessage)
 }
 
+async function loadMessages(
+  hash: MessageHash,
+  messages: DecryptedMessage[]
+): Promise<DecryptedMessage[]> {
+  const messageInfo = await db.messageInfos.get({ hash })
+  const messageBody = await db.messageBodies.get({ hash })
+  const decryptedMessage = await decryptMessage({
+    ...messageInfo,
+    ...messageBody
+  })
+
+  const result = [...messages, decryptedMessage]
+
+  if (decryptedMessage.body.parent) {
+    return loadMessages(decryptedMessage.body.parent, result)
+  }
+  return Promise.resolve(result)
+}
+
+function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
+  const { payload } = values
+  try {
+    const res = yield call(loadMessages, payload, [])
+
+    if (res.error) {
+      yield put(loadMessagesError(res.error))
+    } else {
+      yield put(loadMessagesSuccess(res))
+    }
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(loadMessagesError(error.response.data.message))
+    } else if (error.message) {
+      yield put(loadMessagesError(error.message))
+    } else {
+      yield put(loadMessagesError(error))
+    }
+  }
+}
+
+function* watchLoadMessagesRequest() {
+  yield takeLatest(MessagesActionTypes.LOAD_MESSAGES_REQUEST, handleLoadMessages)
+}
+
 export function* sagas() {
   yield all([
     fork(watchDeleteMessageRequest),
     fork(watchFetchMessagesRequest),
     fork(watchInitializeMessagesRequest),
+    fork(watchLoadMessagesRequest),
     fork(watchMessageReadRequest),
     fork(watchSendMessagesRequest),
     fork(watchUpdateSketchRequest)

@@ -24,7 +24,7 @@ interface PropsFromState {
 
 interface MatchParams {
   readonly handle?: string
-  readonly client_id?: string
+  readonly clientId?: string
 }
 
 type AllProps = PropsFromState & Router.RouteComponentProps<MatchParams>
@@ -49,14 +49,14 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match, myProfile }) =>
       const api = new API(credentials)
       if (
         (myProfile && match.params.handle !== myProfile.handle) ||
-        (myProfile && match.params.client_id !== myProfile.handle)
+        (myProfile && match.params.clientId !== myProfile.handle)
       ) {
         setProfile(myProfile)
       } else if (match.params.handle) {
         const res = await api.fetchClientByHandle(match.params.handle)
         setProfile(res)
-      } else if (match.params.client_id) {
-        const res = await api.fetchClient(match.params.client_id)
+      } else if (match.params.clientId) {
+        const res = await api.fetchClient(match.params.clientId)
         setProfile(res)
       }
     }

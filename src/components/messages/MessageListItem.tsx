@@ -31,7 +31,7 @@ interface Props {
 }
 
 interface PropsFromState {
-  credentials: ClientCredentials
+  credentials?: ClientCredentials
 }
 
 interface PropsFromDispatch {
@@ -43,12 +43,6 @@ type AllProps = Props & PropsFromState & PropsFromDispatch & Router.RouteCompone
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     deleteButton: {
-      '& .messageDeleteButton': {
-        display: 'none'
-      },
-      '&:hover .messageDeleteButton': {
-        display: 'inline'
-      },
       height: 48,
       margin: theme.spacing(1),
       width: 48
@@ -56,17 +50,29 @@ const useStyles = makeStyles((theme: Theme) =>
     inline: {
       display: 'inline'
     },
-    listItem: { padding: theme.spacing(1) }
+    listItem: {
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.03)'
+      },
+      padding: theme.spacing(1)
+    },
+    listItemShaded: {
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.03)',
+        color: 'rgba(0, 0, 0, 1)'
+      },
+      color: 'rgba(0, 0, 0, 0.5)',
+      padding: theme.spacing(1)
+    }
   })
 )
 
 interface MessageValueProps {
   message: MessageBase
-  textColour: TypographyProps['color']
 }
 
-const MessageValue: React.FC<MessageValueProps> = ({ message, textColour }) => (
-  <Typography variant="h5" color={textColour}>
+const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
+  <Typography variant="h5" color="inherit">
     <NumberFormat
       allowNegative={false}
       decimalScale={0}
@@ -82,6 +88,7 @@ interface MessageDeleteProps {
   message: MessageBase
   deleteMessage: typeof deleteMessageRequest
 }
+
 const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message }) => {
   const classes = useStyles({})
 
@@ -110,7 +117,8 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   const [fromProfile, setFromProfile] = React.useState(
     ClientProfileHelper.FROM(loadingClientProfile)
   )
-  const classes = useStyles({})
+  const [showDelete, setShowDelete] = React.useState<boolean>(false)
+  const classes = useStyles({ shaded })
 
   React.useEffect(() => {
     async function fetchData() {
@@ -151,16 +159,26 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     return then.format('h:mm A')
   }
 
-  const textColour = shaded ? 'textSecondary' : 'textPrimary'
+  function getListItemClass() {
+    if (shaded) {
+      return classes.listItemShaded
+    }
+    return classes.listItem
+  }
 
   return (
     <Box>
       <ListItem
-        button
-        className={classes.listItem}
+        className={getListItemClass()}
+        onMouseEnter={() => {
+          setShowDelete(true)
+        }}
+        onMouseLeave={() => {
+          setShowDelete(false)
+        }}
         onClick={() => {
           if (button) {
-            history.push(`/m/${message.hash!}`)
+            history.push(`/m/${message.hash}`)
           }
         }}
       >
@@ -168,12 +186,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
         <ListItemText
           primary={
             <React.Fragment>
-              <Typography
-                component="span"
-                variant="h5"
-                className={classes.inline}
-                color={textColour}
-              >
+              <Typography component="span" variant="h5" className={classes.inline} color="inherit">
                 {message.pda}
               </Typography>
             </React.Fragment>
@@ -184,7 +197,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                 component="span"
                 variant="body2"
                 className={classes.inline}
-                color={textColour}
+                color="inherit"
               >
                 <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}{' '}
                 <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent</span> {getMessageDate()}
@@ -192,15 +205,15 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
             </React.Fragment>
           }
         />
-        <MessageDelete message={message} deleteMessage={deleteMessage} />
-        <MessageValue message={message} textColour={textColour} />
+        {showDelete && <MessageDelete message={message} deleteMessage={deleteMessage} />}
+        <MessageValue message={message} />
       </ListItem>
     </Box>
   )
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
-  credentials: clientState.credentials!
+  credentials: clientState.credentials
 })
 
 const mapDispatchToProps = {

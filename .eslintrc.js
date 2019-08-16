@@ -63,7 +63,7 @@ module.exports = {
     ],
     // Makes no sense to allow type inferrence for expression parameters, but require typing the response
     '@typescript-eslint/explicit-function-return-type': [
-      'warn',
+      'off',
       {
         allowExpressions: true,
         allowTypedFunctionExpressions: true

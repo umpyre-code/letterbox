@@ -26,8 +26,8 @@ export const Routes: React.FunctionComponent = () => (
         <Route exact path="/profile" component={LazyProfilePage} />
         <Route exact path="/addcredits" component={LazyAddCreditsPage} />
         <Route path="/c/:handle" component={LazyProfilePage} />
-        <Route path="/u/:client_id" component={LazyProfilePage} />
-        <Route path="/m/:message_hash" component={LazyMessagePage} />
+        <Route path="/u/:clientId" component={LazyProfilePage} />
+        <Route path="/m/:messageHash" component={LazyMessagePage} />
         <Route component={() => <div>Not Found</div>} />
       </Switch>
     </Root>
