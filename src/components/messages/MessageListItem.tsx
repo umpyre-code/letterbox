@@ -8,7 +8,9 @@ import {
   ListItemText,
   makeStyles,
   Theme,
-  Typography
+  Typography,
+  Tooltip,
+  withStyles
 } from '@material-ui/core'
 import { TypographyProps } from '@material-ui/core/Typography'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -21,8 +23,10 @@ import { ApplicationState } from '../../store/ApplicationState'
 import { API } from '../../store/api'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
-import { ClientCredentials } from '../../store/models/client'
+import { ClientCredentials, ClientProfile } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
+import { Profile } from '../widgets/profile/Profile'
+import { ProfileView } from '../widgets/profile/ProfileView'
 
 interface Props {
   message: MessageBase
@@ -63,6 +67,10 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       color: 'rgba(0, 0, 0, 0.5)',
       padding: theme.spacing(1)
+    },
+    profileTooltip: {
+      margin: 0,
+      padding: 0
     }
   })
 )
@@ -106,6 +114,31 @@ const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message })
   )
 }
 
+const ProfileTooltipStyled = withStyles(theme => ({
+  tooltip: {
+    margin: 0,
+    padding: 0,
+    boxShadow: theme.shadows[3],
+    color: 'rgba(0, 0, 0, 0.87)',
+    border: '0px'
+  }
+}))(Tooltip)
+
+interface ProfileTooltipProps {
+  profile: ClientProfile
+  children: React.ReactElement
+}
+
+const ProfileTooltip: React.FunctionComponent<ProfileTooltipProps> = ({ children, profile }) => (
+  <ProfileTooltipStyled
+    title={<ProfileView setIsEditing={() => {}} fullProfile={true} profile={profile} />}
+    enterDelay={750}
+    leaveDelay={200}
+  >
+    {children}
+  </ProfileTooltipStyled>
+)
+
 const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   button,
   credentials,
@@ -135,7 +168,9 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     if (fromProfile.full_name.length > 0) {
       return (
         <ListItemAvatar>
-          <Avatar alt={fromProfile.full_name}>{fromProfile.getInitials()}</Avatar>
+          <ProfileTooltip profile={fromProfile}>
+            <Avatar alt={fromProfile.full_name}>{fromProfile.getInitials()}</Avatar>
+          </ProfileTooltip>
         </ListItemAvatar>
       )
     }
@@ -194,15 +229,17 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           }
           secondary={
             <React.Fragment>
-              <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-                color="inherit"
-              >
-                <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}{' '}
-                <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent</span> {getMessageDate()}
-              </Typography>
+              <ProfileTooltip profile={fromProfile}>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  className={classes.inline}
+                  color="inherit"
+                >
+                  <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}{' '}
+                  <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent</span> {getMessageDate()}
+                </Typography>
+              </ProfileTooltip>
             </React.Fragment>
           }
         />

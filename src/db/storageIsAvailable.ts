@@ -60,14 +60,14 @@ async function tryPersistWithoutPromtingUser() {
   const permission = await navigator.permissions.query({
     name: 'persistent-storage'
   })
-  if ((permission as any).status === 'granted') {
+  if (permission.state === 'granted') {
     persisted = await navigator.storage.persist()
     if (persisted) {
       return 'persisted'
     }
     throw new Error('Failed to persist')
   }
-  if ((permission as any).status === 'prompt') {
+  if (permission.state === 'prompt') {
     return 'prompt'
   }
   return 'never'

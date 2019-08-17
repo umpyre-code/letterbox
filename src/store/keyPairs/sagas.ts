@@ -117,7 +117,7 @@ export function* handleInitializeKeys() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(initializeKeysError(error.stack!))
+      yield put(initializeKeysError(error.stack))
     } else {
       yield put(initializeKeysError('An unknown error occured.'))
     }

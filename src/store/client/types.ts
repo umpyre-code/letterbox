@@ -105,10 +105,7 @@ export class ClientProfileHelper implements ClientProfile {
   public phone_sms_verified = false
 
   constructor(clientProfile: ClientProfile) {
-    this.box_public_key = clientProfile.box_public_key
-    this.client_id = clientProfile.client_id
-    this.full_name = clientProfile.full_name
-    this.signing_public_key = clientProfile.signing_public_key
+    Object.assign(this, clientProfile)
   }
 
   public getInitials(): string {

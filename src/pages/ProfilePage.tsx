@@ -14,12 +14,16 @@ import { Profile } from '../components/widgets/profile/Profile'
 import { API } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
 import { emptyClientProfile } from '../store/client/types'
-import { addDraftRequest } from '../store/drafts/actions'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
+import { loadCredentialsRequest } from '../store/client/actions'
 
 interface PropsFromState {
   readonly credentials?: ClientCredentials
   readonly myProfile?: ClientProfile
+}
+
+interface PropsFromDispatch {
+  loadCredentials: typeof loadCredentialsRequest
 }
 
 interface MatchParams {
@@ -27,7 +31,7 @@ interface MatchParams {
   readonly clientId?: string
 }
 
-type AllProps = PropsFromState & Router.RouteComponentProps<MatchParams>
+type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<MatchParams>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,9 +44,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ProfilePageFC: React.FC<AllProps> = ({ credentials, match, myProfile }) => {
+const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match, myProfile }) => {
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles({})
+
+  React.useEffect(() => {
+    loadCredentials()
+  }, [])
 
   React.useEffect(() => {
     async function fetchData() {
@@ -92,12 +100,12 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, match, myProfile }) =>
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({
-  credentials: clientState.credentials!,
-  myProfile: clientState.profile!
+  credentials: clientState.credentials,
+  myProfile: clientState.profile
 })
 
 const mapDispatchToProps = {
-  addDraft: addDraftRequest
+  loadCredentials: loadCredentialsRequest
 }
 
 const ProfilePage = Router.withRouter(

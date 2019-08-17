@@ -231,7 +231,7 @@ const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
   chargeErrorResponse: accountState.chargeErrorResponse,
   chargeResponse: accountState.chargeResponse,
   charging: accountState.charging,
-  profile: clientState.profile!
+  profile: clientState.profile
 })
 
 export const CardSectionForm = connect(

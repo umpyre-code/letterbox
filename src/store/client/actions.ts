@@ -8,46 +8,46 @@ import {
   UpdateClientProfileMeta
 } from './types'
 
-export const loadCredentialsRequest = (): any => action(ClientActionTypes.LOAD_CREDENTIALS_REQUEST)
-export const loadCredentialsSuccess = (data: ClientProfile): any =>
+export const loadCredentialsRequest = () => action(ClientActionTypes.LOAD_CREDENTIALS_REQUEST)
+export const loadCredentialsSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.LOAD_CREDENTIALS_SUCCESS, data)
-export const loadCredentialsError = (message: string): any =>
+export const loadCredentialsError = (message: string) =>
   action(ClientActionTypes.LOAD_CREDENTIALS_ERROR, message)
 
-export const fetchClientRequest = (): any => action(ClientActionTypes.FETCH_CLIENT_REQUEST)
-export const fetchClientSuccess = (data: ClientProfile): any =>
+export const fetchClientRequest = () => action(ClientActionTypes.FETCH_CLIENT_REQUEST)
+export const fetchClientSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.FETCH_CLIENT_SUCCESS, data)
-export const fetchClientError = (message: string): any =>
+export const fetchClientError = (message: string) =>
   action(ClientActionTypes.FETCH_CLIENT_ERROR, message)
 
-export const submitNewClientRequest = (newClient: NewClient, meta: NewClientMeta): any =>
+export const submitNewClientRequest = (newClient: NewClient, meta: NewClientMeta) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST, newClient, meta)
-export const submitNewClientSuccess = (data: ClientProfile): any =>
+export const submitNewClientSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_SUCCESS, data)
-export const submitNewClientError = (message: string): any =>
+export const submitNewClientError = (message: string) =>
   action(ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR, message)
 
 export const updateClientProfileRequest = (
   clientProfile: ClientProfile,
   meta: UpdateClientProfileMeta
-): any => action(ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST, clientProfile, meta)
-export const updateClientProfileSuccess = (data: ClientProfile): any =>
+) => action(ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST, clientProfile, meta)
+export const updateClientProfileSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS, data)
-export const updateClientProfileError = (message: string): any =>
+export const updateClientProfileError = (message: string) =>
   action(ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR, message)
 
-export const verifyPhoneRequest = (code: number): any =>
+export const verifyPhoneRequest = (code: number) =>
   action(ClientActionTypes.VERIFY_PHONE_REQUEST, code)
-export const verifyPhoneSuccess = (data: ClientProfile): any =>
+export const verifyPhoneSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.VERIFY_PHONE_SUCCESS, data)
-export const verifyPhoneError = (message: string): any =>
+export const verifyPhoneError = (message: string) =>
   action(ClientActionTypes.VERIFY_PHONE_ERROR, message)
 
-export const signoutRequest = (): any => action(ClientActionTypes.SIGNOUT_REQUEST)
-export const signoutSuccess = (): any => action(ClientActionTypes.SIGNOUT_SUCCESS)
+export const signoutRequest = () => action(ClientActionTypes.SIGNOUT_REQUEST)
+export const signoutSuccess = () => action(ClientActionTypes.SIGNOUT_SUCCESS)
 
-export const authRequest = (creds: AuthCreds, meta: AuthMeta): any =>
+export const authRequest = (creds: AuthCreds, meta: AuthMeta) =>
   action(ClientActionTypes.AUTH_REQUEST, creds, meta)
-export const authSuccess = (clientCreds: ClientCredentials): any =>
+export const authSuccess = (clientCreds: ClientCredentials) =>
   action(ClientActionTypes.AUTH_SUCCESS, clientCreds)
-export const authError = (message: string): any => action(ClientActionTypes.AUTH_ERROR, message)
+export const authError = (message: string) => action(ClientActionTypes.AUTH_ERROR, message)

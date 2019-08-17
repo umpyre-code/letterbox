@@ -1,12 +1,9 @@
-import { createStyles, makeStyles, Theme } from '@material-ui/core'
 import * as React from 'react'
+import { Balance } from '../../../store/models/account'
 import { ClientProfile } from '../../../store/models/client'
 import Loading from '../Loading'
 import { ProfileForm } from './ProfileForm'
 import { ProfileView } from './ProfileView'
-import { Balance } from '../../../store/models/account'
-
-const useStyles = makeStyles((theme: Theme) => createStyles({}))
 
 interface Props {
   balance?: Balance
@@ -17,8 +14,7 @@ interface Props {
 }
 
 export const Profile: React.FC<Props> = props => {
-  const { editable, fullProfile, menu, profile } = props
-  const classes = useStyles({})
+  const { profile } = props
   const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
   if (profile) {

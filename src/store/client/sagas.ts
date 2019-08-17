@@ -1,14 +1,14 @@
 import { push } from 'connected-react-router'
 import * as jwt from 'jsonwebtoken'
 import sodium from 'libsodium-wrappers'
-import { all, call, fork, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
+import { all, call, fork, put, select, takeEvery, takeLatest, take } from 'redux-saga/effects'
 import * as srp from 'secure-remote-password/client'
 import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
 import { initializeDraftsRequest } from '../drafts/actions'
-import { loadKeysRequest } from '../keyPairs/actions'
+import { loadKeysRequest, initializeKeysSuccess } from '../keyPairs/actions'
 import { handleInitializeKeys } from '../keyPairs/sagas'
 import { KeyPair } from '../keyPairs/types'
 import { initializeMessagesRequest } from '../messages/actions'
@@ -167,7 +167,7 @@ async function authenticate(creds: AuthCreds): Promise<ClientCredentials> {
 function verifyJwt(credentials: ClientCredentials): ClientCredentials {
   const verifiedJwt: Jwt = {
     ...credentials.jwt,
-    claims: jwt.verify(credentials.jwt.token, Buffer.from(credentials.jwt.secret!), {
+    claims: jwt.verify(credentials.jwt.token, Buffer.from(credentials.jwt.secret), {
       clockTolerance: 300
     }) as JwtClaims
   }
@@ -188,7 +188,7 @@ async function withPassword(newClient: NewClient): Promise<NewClient> {
 
   const salt = sodium.to_hex(sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES))
 
-  const privateKey = await computePrivateKey(newClient.email, newClient.password!, salt)
+  const privateKey = await computePrivateKey(newClient.email, newClient.password, salt)
 
   const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
   const client = {
@@ -228,12 +228,13 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   try {
     // First, clear out any old state
     yield call(signout)
+
     // Generate new keys
     yield call(handleInitializeKeys)
 
-    // Now we can proceed with fresh state
+    // Proceed with fresh state
     const state: ApplicationState = yield select()
-    const currentKeyPair = state.keysState.current_key!
+    const currentKeyPair = state.keysState.current_key
     const res = yield call(submitNewClient, payload, currentKeyPair)
 
     if (res.error) {
@@ -249,11 +250,15 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
       if (error.response.data.code && error.response.data.code === 3) {
-        yield put(
-          submitNewClientError(
-            'Either the email address or phone number you provided is already in use'
+        if (error.response.data.message.startsWith('invalid email')) {
+          yield put(submitNewClientError('The email address provided is not valid'))
+        } else if (error.response.data.message.contains('unique violation')) {
+          yield put(
+            submitNewClientError(
+              'Either the email address or phone number you provided is already in use'
+            )
           )
-        )
+        }
       } else {
         yield put(submitNewClientError(error.response.data.message))
       }
@@ -279,8 +284,8 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
   const { actions, setIsEditing } = meta
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
-    const oldHandle = state.clientState.profile!.handle
+    const { credentials } = state.clientState
+    const oldHandle = state.clientState.profile.handle
     const res = yield call(updateClientProfile, credentials, payload)
 
     if (res.error) {

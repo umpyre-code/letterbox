@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 0,
       padding: theme.spacing(1)
     },
+    card: { padding: theme.spacing(1) },
     cardHeader: { padding: theme.spacing(1) },
     handleText: {
       color: 'rgba(0, 0, 0, 0.54)'
@@ -82,6 +83,7 @@ interface Props {
 }
 
 interface ProfileMenuProps {
+  profile?: ClientProfile
   menuAnchorElement: null | HTMLElement
   setMenuAnchorElementNull: () => void
 }
@@ -95,28 +97,39 @@ function getProfileUrl(profile: ClientProfile) {
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
   menuAnchorElement,
+  profile,
   setMenuAnchorElementNull
 }) => {
+  const ProfileLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+    (props, ref) => <Link innerRef={ref} to={getProfileUrl(profile)} {...props} />
+  )
+  const AccountLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+    (props, ref) => <Link innerRef={ref} to="/account" {...props} />
+  )
+  const SignoutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+    (props, ref) => <Link innerRef={ref} to="/signout" {...props} />
+  )
+
   function handleMenuClose() {
     setMenuAnchorElementNull()
   }
 
   return (
     <Menu
-      id="simple-menu"
+      id="account-menu"
       anchorEl={menuAnchorElement}
       keepMounted
       open={Boolean(menuAnchorElement)}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/profile">My Public Profile</Link>
+      <MenuItem button component={ProfileLink}>
+        My Public Profile
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/account">My Account</Link>
+      <MenuItem button component={AccountLink}>
+        My Account
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to="/signout">Sign out</Link>
+      <MenuItem button component={SignoutLink}>
+        Sign out
       </MenuItem>
     </Menu>
   )
@@ -130,7 +143,7 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
   const classes = useStyles({})
 
   function getDateJoined() {
-    const secondsSince = Date.now() / 1000 - profile!.joined
+    const secondsSince = Date.now() / 1000 - profile.joined
     if (secondsSince < 300) {
       return 'joined just now'
     }
@@ -189,12 +202,8 @@ export const Action: React.FC<ActionProps> = ({
   return null
 }
 
-const AdapterLink = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
-  <Link innerRef={ref as any} {...props} />
-))
-
-const CollisionLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-  (props, ref) => <Link innerRef={ref as any} to="/addcredits" {...props} />
+const AddCreditsLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+  (props, ref) => <Link innerRef={ref} to="/addcredits" {...props} />
 )
 
 interface BalanceProps {
@@ -208,7 +217,7 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
     const amount = Math.floor((balance.balance_cents + balance.promo_cents) / 100)
     return (
       <Tooltip title="Add credits" enterDelay={500}>
-        <Button className={classes.addCreditsButton} size="small" component={CollisionLink}>
+        <Button className={classes.addCreditsButton} size="small" component={AddCreditsLink}>
           <span className="plusButton">+&nbsp;</span>${amount}
         </Button>
       </Tooltip>
@@ -232,6 +241,7 @@ export const ProfileView: React.FC<Props> = ({
     <ProfileMenu
       menuAnchorElement={menuAnchorElement}
       setMenuAnchorElementNull={() => setMenuAnchorElement(null)}
+      profile={profile}
     />
   )
 
@@ -293,7 +303,7 @@ export const ProfileView: React.FC<Props> = ({
             {/* tslint:disable-next-line: react-no-dangerous-html */}
             <Typography
               className={classes.profileTypography}
-              dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile!) }}
+              dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile) }}
             />
           </Container>
         </CardContent>
@@ -307,7 +317,7 @@ export const ProfileView: React.FC<Props> = ({
   }
 
   return (
-    <Card>
+    <Card className={classes.card}>
       {getCardHeader()}
       {getCardBody()}
       {menu && profileMenu}
