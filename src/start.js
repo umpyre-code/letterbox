@@ -2,8 +2,12 @@ const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 
+const debug = require('electron-debug')
+
 const path = require('path')
 const url = require('url')
+
+debug()
 
 let mainWindow
 
@@ -18,7 +22,7 @@ function createWindow() {
         slashes: true
       })
   )
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -27,9 +31,7 @@ function createWindow() {
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('activate', () => {
