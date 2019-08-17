@@ -1,5 +1,4 @@
 import {
-  Button,
   Container,
   createStyles,
   CssBaseline,
@@ -10,7 +9,6 @@ import {
   Theme,
   Typography
 } from '@material-ui/core'
-import ArrowBack from '@material-ui/icons/ArrowBack'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
@@ -23,6 +21,7 @@ import { loadMessagesRequest, messageReadRequest } from '../store/messages/actio
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { DecryptedMessage } from '../store/models/messages'
+import { BackButton } from '../components/widgets/BackButton'
 
 interface PropsFromState {
   balance?: Balance
@@ -102,18 +101,8 @@ const MessagePageFC: React.FC<AllProps> = ({
           </Grid>
         </Grid>
       </Container>
-      <Container>
-        <Button
-          onClick={() => {
-            if (history.length > 0) {
-              history.goBack()
-            } else {
-              history.push('/')
-            }
-          }}
-        >
-          <ArrowBack /> Back
-        </Button>
+      <Container className={classes.bodyContainer}>
+        <BackButton />
         {messageBodies()}
       </Container>
     </ClientInit>

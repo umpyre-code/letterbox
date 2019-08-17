@@ -169,6 +169,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   return (
     <Box>
       <ListItem
+        button
         className={getListItemClass()}
         onMouseEnter={() => {
           setShowDelete(true)

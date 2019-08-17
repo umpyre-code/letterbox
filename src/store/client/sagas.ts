@@ -89,7 +89,7 @@ function* handleLoadCredentialsRequest() {
 function* handleFetchClientRequest() {
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(API.FETCH_CLIENT, credentials, 'self')
 
     if (res.error) {
@@ -240,7 +240,6 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(submitNewClientError(res.error))
     } else {
       const authres = yield call(authenticate, payload as AuthCreds)
-      console.log(authres)
       const credentials = yield call(saveClientToken, authres)
       yield put(submitNewClientSuccess(credentials))
       yield put(fetchBalanceRequest())

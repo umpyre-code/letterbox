@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import Root from './components/layout/Root'
 import Loading from './components/widgets/Loading'
 
+const LazyAboutPage = React.lazy(() => import('./pages/AboutPage'))
 const LazyAccountPage = React.lazy(() => import('./pages/AccountPage'))
 const LazyAddCreditsPage = React.lazy(() => import('./pages/AddCreditsPage'))
 const LazyFlashSeedPage = React.lazy(() => import('./pages/FlashSeedPage'))
@@ -18,6 +19,7 @@ export const Routes: React.FunctionComponent = () => (
     <Root>
       <Switch>
         <Route exact path="/" component={LazyIndexPage} />
+        <Route exact path="/about" component={LazyAboutPage} />
         <Route exact path="/signup" component={LazySignUpPage} />
         <Route exact path="/flashseed" component={LazyFlashSeedPage} />
         <Route exact path="/signin" component={LazySignInPage} />
