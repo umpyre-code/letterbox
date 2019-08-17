@@ -14,9 +14,7 @@ import { SignInForm } from '../components/forms/SignInForm'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     box: {
-      display: 'inline-flex',
-      margin: theme.spacing(1, 0, 1, 0),
-      padding: theme.spacing(1),
+      padding: theme.spacing(1, 0, 2, 0),
       verticalAlign: 'middle'
     },
     container: { padding: theme.spacing(5) },

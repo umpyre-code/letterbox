@@ -6,21 +6,30 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  Grid
 } from '@material-ui/core'
+import Info from '@material-ui/icons/Info'
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { SignUpForm } from '../components/forms/SignUpForm'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     box: {
-      display: 'inline-flex',
-      margin: theme.spacing(1, 0, 1, 0),
-      padding: theme.spacing(1),
+      padding: theme.spacing(1, 0, 2, 0),
       verticalAlign: 'middle'
     },
+    infoBox: {
+      display: 'inline-block',
+      padding: theme.spacing(1, 0, 2, 0),
+      verticalAlign: 'top'
+    },
     container: { padding: theme.spacing(5) },
-    paper: { padding: theme.spacing(2) }
+    paper: { padding: theme.spacing(2) },
+    infoIcon: {
+      padding: 0
+    }
   })
 )
 
@@ -35,6 +44,7 @@ const SignUpPage = () => {
         <Box className={classes.box}>
           <Typography>Umpyre is a better way to communicate online.</Typography>
         </Box>
+
         <Divider />
         <SignUpForm />
         <Box className={classes.box}>
@@ -43,6 +53,18 @@ const SignUpPage = () => {
             employer&apos;s computer. Your data is stored locally for your privacy, so make sure
             it&apos;s a device you control and trust.
           </Typography>
+        </Box>
+        <Box className={classes.infoBox}>
+          <Link to="/about">
+            <Grid container alignItems="center">
+              <Grid item>
+                <Info style={{ padding: 5 }} />
+              </Grid>
+              <Grid item>
+                <Typography variant="body2">Tell me more about Umpyre.</Typography>
+              </Grid>
+            </Grid>
+          </Link>
         </Box>
       </Paper>
     </Container>
