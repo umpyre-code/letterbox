@@ -110,7 +110,7 @@ export class ClientProfileHelper implements ClientProfile {
 
   public getInitials(): string {
     const splat = this.full_name
-      .split(/[ ,]+/)
+      .split(/[ ,.]+/)
       .map(s => s.trim())
       .filter(s => s != null && s !== '')
     if (splat.length >= 2) {

@@ -242,7 +242,6 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
 
   return (
     <Downshift
-      id="downshift-multiple"
       inputValue={inputValue}
       onChange={handleChange}
       selectedItem={selectedItem}

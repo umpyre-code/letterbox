@@ -361,9 +361,9 @@ function* watchVerifyPhoneRequest() {
   yield takeLatest(ClientActionTypes.VERIFY_PHONE_REQUEST, handleVerifyPhoneRequest)
 }
 
-function* handleSignoutRequest(values: ReturnType<typeof signoutRequest>) {
+function* handleSignoutRequest() {
   try {
-    const res = yield call(signout)
+    yield call(signout)
     yield put(signoutSuccess())
     yield put(push('/'))
   } catch (error) {

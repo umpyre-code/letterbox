@@ -66,9 +66,9 @@ async function loadKeys() {
 }
 
 function generateSeedWords() {
-  // Initialize a seed, 132 bits in length, represented by 12 seed words. Each
+  // Initialize a seed, 165 bits in length, represented by 15 seed words. Each
   // word represents 11 bits (2048 possible words).
-  const seeds = new Uint16Array(12)
+  const seeds = new Uint16Array(15)
   window.crypto.getRandomValues(seeds)
   return Array.from(seeds).map((seed: number) => wordLists.english[seed % 2048])
 }
@@ -87,7 +87,7 @@ async function initializeKeys(seedWords: string[]) {
   return loadKeys()
 }
 
-async function calculateCheckWord(seedWords: string[]) {
+export async function calculateCheckWord(seedWords: string[]) {
   await sodium.ready
 
   const check = sodium.crypto_generichash(2, seedWords.join())
@@ -107,7 +107,7 @@ export function* handleInitializeKeys() {
     const seedWords = generateSeedWords()
     const res = yield call(initializeKeys, seedWords)
     const checkWord = yield call(calculateCheckWord, seedWords)
-    seedWords.push(checkWord) // 13th word is check word
+    seedWords.push(checkWord) // 16th word is check word
 
     if (res.error) {
       yield put(initializeKeysError(res.error))

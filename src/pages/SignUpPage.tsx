@@ -1,17 +1,17 @@
 import {
   Box,
+  Button,
   Container,
   createStyles,
   Divider,
   makeStyles,
   Paper,
   Theme,
-  Typography,
-  Grid
+  Typography
 } from '@material-ui/core'
-import Info from '@material-ui/icons/Info'
+import HelpIcon from '@material-ui/icons/Help'
 import * as React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, LinkProps } from 'react-router-dom'
 import { SignUpForm } from '../components/forms/SignUpForm'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 0
     }
   })
+)
+
+const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
+  (props, ref) => <Link innerRef={ref} to="/about" {...props} />
 )
 
 const SignUpPage = () => {
@@ -55,16 +59,10 @@ const SignUpPage = () => {
           </Typography>
         </Box>
         <Box className={classes.infoBox}>
-          <Link to="/about">
-            <Grid container alignItems="center">
-              <Grid item>
-                <Info style={{ padding: 5 }} />
-              </Grid>
-              <Grid item>
-                <Typography variant="body2">Tell me more about Umpyre.</Typography>
-              </Grid>
-            </Grid>
-          </Link>
+          <Button component={AboutLink}>
+            <HelpIcon style={{ padding: 5 }}>tell me more</HelpIcon>
+            Tell me more about Umpyre
+          </Button>
         </Box>
       </Paper>
     </Container>

@@ -8,13 +8,21 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  SvgIcon
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import stringHash from 'string-hash'
 import { ApplicationState } from '../store/ApplicationState'
+import { Emoji } from '../components/widgets/Emoji'
+
+const CopyIcon: React.FC = () => (
+  <SvgIcon>
+    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+  </SvgIcon>
+)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,7 +48,12 @@ interface PropsFromState {
 type AllProps = PropsFromState & Router.RouteComponentProps<{}>
 
 const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
+  const [copied, setCopied] = React.useState<boolean>(false)
   const classes = useStyles({})
+
+  if (!seedWords || seedWords.length !== 16) {
+    return <Router.Redirect to="/" />
+  }
 
   return (
     <React.Fragment>
@@ -52,11 +65,11 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           </Box>
           <Box className={classes.box}>
             <Typography variant="h6">
-              Store these 13 words in a safe place, such as a password manager.
+              Store these 16 words in a safe place, such as a password manager
             </Typography>
           </Box>
           <Grid container>
-            {seedWords.slice(0, 12).map((word: string, index: number) => (
+            {seedWords.slice(0, 15).map((word: string, index: number) => (
               <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
                 <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
                   <Typography variant="subtitle1">
@@ -74,7 +87,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
             <Typography variant="subtitle1">
               <Box className={classes.wordBox} fontFamily="Monospace">
-                13. {seedWords[12]}
+                16. {seedWords[15]}
               </Box>
             </Typography>
           </Box>
@@ -84,11 +97,36 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
               your recovery phrase.
             </Typography>
           </Box>
-          <Box className={classes.box}>
-            <Button color="primary" variant="contained" onClick={() => history.push('/')}>
-              I&apos;ve written down my recovery phrase
-            </Button>
-          </Box>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item xs>
+              <Box className={classes.box}>
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(seedWords.join(' '))
+                    setCopied(true)
+                    setTimeout(() => {
+                      setCopied(false)
+                    }, 1000)
+                  }}
+                >
+                  <CopyIcon>copy</CopyIcon>
+                  Copy to clipboard
+                  {copied && (
+                    <React.Fragment>
+                      &nbsp;<Emoji ariaLabel="copied">✅</Emoji>
+                    </React.Fragment>
+                  )}
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item xs>
+              <Box className={classes.box}>
+                <Button color="primary" variant="contained" onClick={() => history.push('/')}>
+                  I&apos;ve saved my recovery phrase&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Paper>
       </Container>
     </React.Fragment>
@@ -99,5 +137,5 @@ const mapStateToProps = ({ keysState }: ApplicationState) => ({
   seedWords: keysState.seedWords
 })
 
-const FlashSeedPage = connect(mapStateToProps)(FlashSeedPageFC)
+const FlashSeedPage = Router.withRouter(connect(mapStateToProps)(FlashSeedPageFC))
 export default FlashSeedPage
