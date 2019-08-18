@@ -82,19 +82,16 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
           <Box className={classes.box}>
             <Button
               onClick={() => {
-                const { readText } = navigator.clipboard
-                if (readText) {
-                  readText().then(clipText => {
-                    const splat = clipText.split(/[^\w]/)
-                    const updatedSeedWords = Array.from(seedWords)
-                    splat.splice(0, 16).forEach((value, index) => {
-                      if (wordLists.english.includes(value)) {
-                        updatedSeedWords[index] = value
-                      }
-                    })
-                    setSeedWords(updatedSeedWords)
+                navigator.clipboard.readText().then(clipText => {
+                  const splat = clipText.split(/[^\w]/)
+                  const updatedSeedWords = Array.from(seedWords)
+                  splat.splice(0, 16).forEach((value, index) => {
+                    if (wordLists.english.includes(value)) {
+                      updatedSeedWords[index] = value
+                    }
                   })
-                }
+                  setSeedWords(updatedSeedWords)
+                })
                 setPasted(true)
                 setTimeout(() => {
                   setPasted(false)
@@ -141,15 +138,15 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
               If you lost your recovery phrase, you will not be able to read old messages.
             </Typography>
           </Box>
-          <Grid container>
-            <Grid item xs>
+          <Grid container justify="space-between">
+            <Grid item>
               <Box className={classes.box}>
                 <Button color="secondary" variant="contained" onClick={() => history.push('/')}>
                   I lost my recovery phrase&nbsp;<Emoji ariaLabel="shock">😲</Emoji>
                 </Button>
               </Box>
-            </Grid>{' '}
-            <Grid item xs>
+            </Grid>
+            <Grid item>
               <Box className={classes.box}>
                 <Button
                   disabled={!checkPassed}
@@ -157,7 +154,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
                   variant="contained"
                   onClick={() => history.push('/')}
                 >
-                  Continue with recovery phrase&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
+                  Continue &nbsp;<Emoji ariaLabel="continue">👉</Emoji>
                 </Button>
               </Box>
             </Grid>
