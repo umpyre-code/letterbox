@@ -105,7 +105,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
               Paste from clipboard
               {pasted && (
                 <React.Fragment>
-                  &nbsp;<Emoji ariaLabel="copied">✅</Emoji>
+                  &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
                 </React.Fragment>
               )}
             </Button>

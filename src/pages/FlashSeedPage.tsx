@@ -113,7 +113,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
                   Copy to clipboard
                   {copied && (
                     <React.Fragment>
-                      &nbsp;<Emoji ariaLabel="copied">✅</Emoji>
+                      &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
                     </React.Fragment>
                   )}
                 </Button>
