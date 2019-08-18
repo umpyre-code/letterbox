@@ -56,22 +56,16 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
   const classes = useStyles({})
 
   React.useEffect(() => {
-    navigator.permissions
-      .query({
-        name: 'clipboard-read'
-      } as any)
-      .then(permissionStatus => {
-        // Will be 'granted', 'denied' or 'prompt':
-        console.log(permissionStatus.state)
-      })
-  }, [])
+    checkWords()
+  }, [seedWords])
 
   async function checkWords() {
     const checkWord = await calculateCheckWord(seedWords.slice(0, 15))
     if (checkWord === seedWords[15]) {
       setCheckPassed(true)
+    } else {
+      setCheckPassed(false)
     }
-    setCheckPassed(false)
   }
 
   return (
@@ -122,12 +116,11 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
                 <SeedWordInput
                   label={(index + 1).toString()}
                   placeholder={undefined}
-                  initialSelectedItem={word}
+                  selectedItem={word}
                   onChange={(updatedWord: string) => {
                     const updatedWords = Array.from(seedWords)
                     updatedWords[index] = updatedWord
                     setSeedWords(updatedWords)
-                    checkWords()
                   }}
                 />
               </Grid>
@@ -136,12 +129,11 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
           <SeedWordInput
             label="16"
             placeholder="Check word"
-            initialSelectedItem={seedWords[15]}
+            selectedItem={seedWords[15]}
             onChange={(updatedWord: string) => {
               const updatedWords = Array.from(seedWords)
               updatedWords[15] = updatedWord
               setSeedWords(updatedWords)
-              checkWords()
             }}
           />
           <Box className={classes.box}>

@@ -121,19 +121,19 @@ interface SeedWordInputProps {
   label: string
   placeholder?: string
   onChange: (value: string) => void
-  initialSelectedItem: string
+  selectedItem: string
 }
 
 export const SeedWordInput: React.FC<SeedWordInputProps> = ({
   label,
   placeholder,
-  initialSelectedItem,
+  selectedItem,
   onChange
 }) => {
   const classes = useStyles({})
 
   return (
-    <Downshift initialSelectedItem={initialSelectedItem} onChange={onChange}>
+    <Downshift selectedItem={selectedItem} onChange={onChange}>
       {({
         getInputProps,
         getItemProps,
