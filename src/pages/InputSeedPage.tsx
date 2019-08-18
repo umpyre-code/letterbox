@@ -135,7 +135,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
           />
           <Box className={classes.box}>
             <Typography>
-              If you lost your recovery phrase, you will not be able to read old messages.
+              If you lost your recovery phrase, you won&apso;t be able to read old messages.
             </Typography>
           </Box>
           <Grid container justify="space-between">
