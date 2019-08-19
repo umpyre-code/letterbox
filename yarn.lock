@@ -1306,10 +1306,10 @@
   resolved "https://registry.yarnpkg.com/@types/dompurify/-/dompurify-0.0.33.tgz#bec490ba5a5b4b31679fb9e5a70e4d2f405516bd"
   integrity sha512-lUN9iC6b4txeaEef2PW7zIdhEKAp0Sw9bymOcXXZ7BaepB0nsDJYcLIrFfgpIkRSoZWBJ8IcYunB2hAXuHL1NA==
 
-"@types/draft-js@^0.10.34":
-  version "0.10.34"
-  resolved "https://registry.yarnpkg.com/@types/draft-js/-/draft-js-0.10.34.tgz#1f1c26a2e28dea8d3567d331fcf5b178b12eba92"
-  integrity sha512-w+Q8Bj/BRZZiumvlx3lkZv3WQ54HFpu+L+29zRkFw53upf9uslYh4DHXqle59NVWwuu9CjxdAoUSD66utaXsBg==
+"@types/draft-js@^0.10.35":
+  version "0.10.35"
+  resolved "https://registry.yarnpkg.com/@types/draft-js/-/draft-js-0.10.35.tgz#c05f1920a774b50136166431e56184a0146c283c"
+  integrity sha512-YSSyrJ+tnEJQRosHNJm0fbOjxNPpGEzUT9MNlrxTyTmbFNCv3Y+wzNtwx2UNUacyqUvdrLmvMNfGdbc7Nn2ZFQ==
   dependencies:
     "@types/react" "*"
     immutable "~3.7.4"
