@@ -141,8 +141,12 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
           <Grid container justify="space-between">
             <Grid item>
               <Box className={classes.box}>
-                <Button color="secondary" variant="contained" onClick={() => history.push('/')}>
-                  I lost my recovery phrase&nbsp;<Emoji ariaLabel="shock">😲</Emoji>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => console.log('lost phrase')}
+                >
+                  <Emoji ariaLabel="shock">😲</Emoji>&nbsp;I lost my recovery phrase
                 </Button>
               </Box>
             </Grid>

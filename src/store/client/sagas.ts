@@ -338,7 +338,7 @@ function* handleVerifyPhoneRequest(values: ReturnType<typeof verifyPhoneRequest>
   const { payload } = values
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(verifyPhone, credentials, payload)
 
     if (res.error) {
@@ -385,6 +385,7 @@ function* handleAuthRequest(values: ReturnType<typeof authRequest>) {
       yield put(authError(res.error))
     } else if (res) {
       yield put(authSuccess(res))
+      yield put(push('/inputseed'))
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
