@@ -1,4 +1,5 @@
 import { MessageBase, DecryptedMessage } from '../models/messages'
+import { ClientID } from '../models/client'
 
 export interface FetchMessagesResponse {
   messages: MessageBase[]
@@ -28,11 +29,18 @@ export enum MessagesActionTypes {
   UPDATE_SKETCH_SUCCESS = '@@messages/UPDATE_SKETCH_SUCCESS'
 }
 
+export interface RankedMessages {
+  readMessages: MessageBase[]
+  sentMessages: MessageBase[]
+  unreadMessages: MessageBase[]
+}
+
 export interface MessagesState {
   readonly errors?: string
   readonly loadedMessages: DecryptedMessage[]
   readonly loading: boolean
   readonly readMessages: MessageBase[]
+  readonly sentMessages: MessageBase[]
   readonly sketch: string
   readonly unreadMessages: MessageBase[]
 }

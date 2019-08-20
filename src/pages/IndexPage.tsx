@@ -108,6 +108,10 @@ const IndexPageFC: React.FC<AllProps> = ({
           <Typography>Read</Typography>
           <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
         </Container>
+        <Container className={classes.messageListContainer}>
+          <Typography>Sent</Typography>
+          <MessageList messages={messagesState.sentMessages} messageType="sent" shaded button />
+        </Container>
         <Tooltip title="Compose a new message">
           <Fab
             className={classes.composeButton}

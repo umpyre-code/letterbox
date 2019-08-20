@@ -1,5 +1,4 @@
 import { Reducer } from 'redux'
-import { MessageBase } from '../models/messages'
 import { MessagesActionTypes, MessagesState } from './types'
 
 export const initialState: MessagesState = {
@@ -7,33 +6,9 @@ export const initialState: MessagesState = {
   loadedMessages: Array.from([]),
   loading: false,
   readMessages: Array.from([]),
+  sentMessages: Array.from([]),
   sketch: '',
   unreadMessages: Array.from([])
-}
-
-interface RankedMessages {
-  readMessages: MessageBase[]
-  unreadMessages: MessageBase[]
-}
-
-function cmp(first: MessageBase, second: MessageBase): number {
-  if (first.value_cents > second.value_cents) {
-    return -1
-  }
-  if (second.value_cents > first.value_cents) {
-    return 1
-  }
-  return 0
-}
-
-function rankMessages(messages: MessageBase[]): RankedMessages {
-  return {
-    readMessages: messages.filter(message => message.read === true).sort(cmp),
-    unreadMessages: messages
-      .filter(message => message.read === false)
-      .sort(cmp)
-      .slice(0, 5)
-  }
 }
 
 export const reducer: Reducer<MessagesState> = (state = initialState, action) => {
@@ -45,7 +20,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        ...rankMessages(action.payload)
+        ...action.payload
       }
     }
     case MessagesActionTypes.INITIALIZE_MESSAGES_ERROR: {
@@ -58,7 +33,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        ...rankMessages(action.payload)
+        ...action.payload
       }
     }
     case MessagesActionTypes.FETCH_MESSAGES_ERROR: {
@@ -71,7 +46,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        ...rankMessages(action.payload)
+        ...action.payload
       }
     }
     case MessagesActionTypes.DELETE_MESSAGE_ERROR: {
@@ -84,7 +59,7 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return {
         ...state,
         loading: false,
-        ...rankMessages(action.payload)
+        ...action.payload
       }
     }
     case MessagesActionTypes.MESSAGE_READ_ERROR: {

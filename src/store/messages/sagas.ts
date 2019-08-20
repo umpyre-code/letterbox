@@ -5,6 +5,7 @@ import {
   delay,
   fork,
   put,
+  putResolve,
   select,
   spawn,
   takeEvery,
@@ -18,8 +19,8 @@ import { ApplicationState } from '../ApplicationState'
 import { removeDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { SettlePaymentResponse } from '../models/account'
-import { ClientCredentials } from '../models/client'
-import { APIMessage, DecryptedMessage, MessageHash } from '../models/messages'
+import { ClientCredentials, ClientID } from '../models/client'
+import { APIMessage, DecryptedMessage, MessageBase, MessageHash } from '../models/messages'
 import {
   deleteMessageError,
   deleteMessageRequest,
@@ -41,12 +42,12 @@ import {
   updateSketchRequest,
   updateSketchSuccess
 } from './actions'
-import { MessagesActionTypes } from './types'
+import { MessagesActionTypes, RankedMessages } from './types'
 import {
   decryptMessage,
-  decryptStoreAndRetrieveMessages,
   fetchMessages,
-  getMessagesWithoutBody
+  getMessagesWithoutBody,
+  storeAndRetrieveMessages
 } from './utils'
 
 function* delayThenFetchMessages() {
@@ -55,16 +56,42 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
+function cmp(first: MessageBase, second: MessageBase): number {
+  if (first.value_cents > second.value_cents) {
+    return -1
+  }
+  if (second.value_cents > first.value_cents) {
+    return 1
+  }
+  return 0
+}
+
+function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessages {
+  return {
+    readMessages: messages
+      .filter(message => message.read === true && message.to === clientId)
+      .sort(cmp),
+    sentMessages: messages.filter(message => message.from === clientId).sort(cmp),
+    unreadMessages: messages
+      .filter(message => message.read === false && message.to === clientId)
+      .sort(cmp)
+      .slice(0, 5)
+  }
+}
+
 function* handleInitializeMessages() {
   try {
     // Update message sketch first
-    yield put(updateSketchRequest())
+    yield putResolve(updateSketchRequest())
     const res = yield call(getMessagesWithoutBody, 30, false)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
     } else {
-      yield put(initializeMessagesSuccess(res))
+      const state: ApplicationState = yield select()
+      const clientId = state.clientState.credentials.client_id
+
+      yield put(initializeMessagesSuccess(rankMessages(clientId, res)))
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -86,19 +113,20 @@ function* watchInitializeMessagesRequest() {
 function* handleFetchMessages() {
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const { sketch } = state.messagesState
     const messages = yield call(fetchMessages, credentials, sketch)
 
     if (messages.error) {
       yield put(fetchMessagesError(messages.error))
     } else if (messages.length > 0) {
-      const res = yield call(decryptStoreAndRetrieveMessages, messages)
-      yield put(fetchMessagesSuccess(res))
+      const clientId = state.clientState.credentials.client_id
+
+      const res = yield call(storeAndRetrieveMessages, messages)
+      yield put(fetchMessagesSuccess(rankMessages(clientId, res)))
       yield put(updateSketchRequest())
     }
   } catch (error) {
-    console.log(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(fetchMessagesError(error.response.data.message))
     } else if (error.message) {
@@ -128,8 +156,8 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
   const { apiMessages } = draft
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
-    const res = yield call(sendMessages, credentials, apiMessages!)
+    const { credentials } = state.clientState
+    const res = yield call(sendMessages, credentials, apiMessages)
 
     if (res.error) {
       yield put(sendMessagesError(res.error))
@@ -140,7 +168,6 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       yield put(fetchBalanceRequest())
     }
   } catch (error) {
-    console.log(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(sendMessagesError(error.response.data.message))
     } else if (error.message) {
@@ -160,13 +187,13 @@ async function calculateMessageSketch(): Promise<string> {
 
   // Construct bloom filter
   const bf = new BloomFilter()
-  messagesFromLast31days.forEach(message => bf.add(message.hash!))
+  messagesFromLast31days.forEach(message => bf.add(message.hash))
 
   await sodium.ready
   return sodium.to_base64(bf.asBytes(), sodium.base64_variants.URLSAFE_NO_PADDING)
 }
 
-function* handleUpdateSketch(values: ReturnType<typeof updateSketchRequest>) {
+function* handleUpdateSketch() {
   const sketch = yield call(calculateMessageSketch)
   yield put(updateSketchSuccess(sketch))
 }
@@ -197,7 +224,7 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
   const { payload } = values
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(settlePayment, credentials, payload)
 
     if (res && res.error) {
@@ -211,7 +238,9 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     yield call(markMessageAsRead, payload)
     // Reload messages from DB
     const messages = yield call(getMessagesWithoutBody, 30, false)
-    yield put(messageReadSuccess(messages))
+    const clientId = state.clientState.credentials.client_id
+
+    yield put(messageReadSuccess(rankMessages(clientId, messages)))
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
       yield put(messageReadError(error.response.data.message))
@@ -241,7 +270,9 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
     if (res.error) {
       yield put(deleteMessageError(res.error))
     } else {
-      yield put(deleteMessageSuccess(res))
+      const state: ApplicationState = yield select()
+      const clientId = state.clientState.credentials.client_id
+      yield put(deleteMessageSuccess(rankMessages(clientId, res)))
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
@@ -259,12 +290,13 @@ function* watchDeleteMessageRequest() {
 }
 
 async function loadMessages(
+  clientId: ClientID,
   hash: MessageHash,
   messages: DecryptedMessage[]
 ): Promise<DecryptedMessage[]> {
   const messageInfo = await db.messageInfos.get({ hash })
   const messageBody = await db.messageBodies.get({ hash })
-  const decryptedMessage = await decryptMessage({
+  const decryptedMessage = await decryptMessage(clientId, {
     ...messageInfo,
     ...messageBody
   })
@@ -272,7 +304,7 @@ async function loadMessages(
   const result = [...messages, decryptedMessage]
 
   if (decryptedMessage.body.parent) {
-    return loadMessages(decryptedMessage.body.parent, result)
+    return loadMessages(clientId, decryptedMessage.body.parent, result)
   }
   return Promise.resolve(result)
 }
@@ -280,7 +312,9 @@ async function loadMessages(
 function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
   const { payload } = values
   try {
-    const res = yield call(loadMessages, payload, [])
+    const state: ApplicationState = yield select()
+    const clientId = state.clientState.credentials.client_id
+    const res = yield call(loadMessages, clientId, payload, [])
 
     if (res.error) {
       yield put(loadMessagesError(res.error))

@@ -147,10 +147,21 @@ async function decryptMessageBody(
   )
 }
 
-export async function decryptMessage(message: EncryptedMessage): Promise<DecryptedMessage> {
+function getBoxPublicKey(clientId: ClientID, message: EncryptedMessage): string {
+  if (message.from === clientId) {
+    return message.sender_public_key
+  }
+  return message.recipient_public_key
+}
+
+export async function decryptMessage(
+  clientId: ClientID,
+  message: EncryptedMessage
+): Promise<DecryptedMessage> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
-  const myKeyPair = await db.keyPairs.get({ box_public_key: message.recipient_public_key })
+  const publicKey = getBoxPublicKey(clientId, message)
+  const myKeyPair = await db.keyPairs.get({ box_public_key: publicKey })
   if (myKeyPair) {
     return {
       ...message,
@@ -159,7 +170,7 @@ export async function decryptMessage(message: EncryptedMessage): Promise<Decrypt
           message.body,
           message.nonce,
           myKeyPair.box_secret_key,
-          message.sender_public_key
+          message.recipient_public_key
         )
       ) as MessageBody
     }
@@ -167,9 +178,7 @@ export async function decryptMessage(message: EncryptedMessage): Promise<Decrypt
   return undefined
 }
 
-export async function decryptStoreAndRetrieveMessages(
-  messages: APIMessage[]
-): Promise<MessageBase[]> {
+export async function storeAndRetrieveMessages(messages: APIMessage[]): Promise<MessageBase[]> {
   // Look for messages that already exist in the DB, but were returned by the API
   const existingMessages = await Promise.all(
     messages.filter(message => message).map(message => db.messageInfos.get(message.hash))
