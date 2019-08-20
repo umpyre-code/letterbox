@@ -9,7 +9,7 @@ import * as Yup from 'yup'
 import { ApplicationState } from '../../store/ApplicationState'
 import { authRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
-import { KeysState } from '../../store/keyPairs/types'
+import { KeysState } from '../../store/keys/types'
 import { Emoji } from '../widgets/Emoji'
 
 interface PropsFromState {

@@ -8,9 +8,14 @@ import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
 import { initializeDraftsRequest } from '../drafts/actions'
-import { loadKeysRequest, initializeKeysSuccess } from '../keyPairs/actions'
-import { handleInitializeKeys } from '../keyPairs/sagas'
-import { KeyPair } from '../keyPairs/types'
+import {
+  loadKeysRequest,
+  initializeKeysRequest,
+  initializeKeysError,
+  initializeKeysSuccess
+} from '../keys/actions'
+import { handleInitializeKeys } from '../keys/sagas'
+import { KeyPair, KeysActionTypes } from '../keys/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
 import {
@@ -22,7 +27,6 @@ import {
   fetchClientSuccess,
   loadCredentialsError,
   loadCredentialsSuccess,
-  signoutRequest,
   signoutSuccess,
   submitNewClientError,
   submitNewClientRequest,
@@ -32,7 +36,10 @@ import {
   updateClientProfileSuccess,
   verifyPhoneError,
   verifyPhoneRequest,
-  verifyPhoneSuccess
+  verifyPhoneSuccess,
+  updateAndLoadCredentialsRequest,
+  updateAndLoadCredentialsError,
+  updateAndLoadCredentialsSuccess
 } from './actions'
 import { AuthCreds, ClientActionTypes } from './types'
 
@@ -230,7 +237,8 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     yield call(signout)
 
     // Generate new keys
-    yield call(handleInitializeKeys)
+    yield put(initializeKeysRequest())
+    yield take(KeysActionTypes.INITIALIZE_KEYS_SUCCESS)
 
     // Proceed with fresh state
     const state: ApplicationState = yield select()
@@ -281,7 +289,7 @@ async function updateClientProfile(
 
 function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClientProfileRequest>) {
   const { payload, meta } = values
-  const { actions, setIsEditing } = meta
+  const { actions, setIsEditing, redirect } = meta
   try {
     const state: ApplicationState = yield select()
     const { credentials } = state.clientState
@@ -292,9 +300,11 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
       yield put(updateClientProfileError(res.error))
     } else {
       yield put(updateClientProfileSuccess(res))
-      yield call(setIsEditing, false)
+      if (setIsEditing) {
+        yield call(setIsEditing, false)
+      }
       const newHandle = res.handle
-      if (newHandle && newHandle !== '' && newHandle !== oldHandle) {
+      if (redirect && newHandle && newHandle !== '' && newHandle !== oldHandle) {
         yield put(push(`/c/${newHandle}`))
       }
     }
@@ -307,7 +317,9 @@ function* handleUpdateClientProfileRequest(values: ReturnType<typeof updateClien
       yield put(updateClientProfileError(error))
     }
   }
-  yield call(actions.setSubmitting, false)
+  if (actions) {
+    yield call(actions.setSubmitting, false)
+  }
 }
 
 function* watchLoadCredentialsRequest() {
@@ -405,6 +417,44 @@ function* watchAuthRequest() {
   yield takeLatest(ClientActionTypes.AUTH_REQUEST, handleAuthRequest)
 }
 
+function* handleUpdateAndLoadCredentialsRequest(
+  values: ReturnType<typeof updateAndLoadCredentialsRequest>
+) {
+  const { payload } = values
+  try {
+    const res = yield call(saveClientToken, payload)
+
+    if (res && res.error) {
+      yield put(updateAndLoadCredentialsError(res.error))
+    } else if (res && res.client_id) {
+      yield put(updateAndLoadCredentialsSuccess(res))
+      // If we got a client API token, kick off other init actions
+      yield put(fetchClientRequest())
+      yield put(loadKeysRequest())
+      yield put(initializeDraftsRequest())
+      yield put(initializeMessagesRequest())
+      yield put(fetchBalanceRequest())
+    } else {
+      yield put(updateAndLoadCredentialsError('no credentials found'))
+    }
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(updateAndLoadCredentialsError(error.response.data.message))
+    } else if (error.message) {
+      yield put(updateAndLoadCredentialsError(error.message))
+    } else {
+      yield put(updateAndLoadCredentialsError(error))
+    }
+  }
+}
+
+function* watchUpdateAndLoadCredentialsRequest() {
+  yield takeLatest(
+    ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_REQUEST,
+    handleUpdateAndLoadCredentialsRequest
+  )
+}
+
 export function* sagas() {
   yield all([
     fork(watchAuthRequest),
@@ -412,6 +462,7 @@ export function* sagas() {
     fork(watchLoadCredentialsRequest),
     fork(watchSignoutRequest),
     fork(watchSubmitNewClientRequest),
+    fork(watchUpdateAndLoadCredentialsRequest),
     fork(watchUpdateClientProfileRequest),
     fork(watchVerifyPhoneRequest)
   ])

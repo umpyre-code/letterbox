@@ -12,9 +12,13 @@ export const initialState: KeysState = {
 
 export const reducer: Reducer<KeysState> = (state = initialState, action) => {
   switch (action.type) {
-    case KeysActionTypes.INITIALIZE_KEYS_REQUEST: {
+    case KeysActionTypes.INITIALIZE_KEYS_REQUEST:
+    case KeysActionTypes.RESET_KEYS_REQUEST:
+    case KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_REQUEST: {
       return { ...state, loading: true }
     }
+    case KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_SUCCESS:
+    case KeysActionTypes.RESET_KEYS_SUCCESS:
     case KeysActionTypes.INITIALIZE_KEYS_SUCCESS: {
       return {
         ...state,
@@ -24,6 +28,8 @@ export const reducer: Reducer<KeysState> = (state = initialState, action) => {
         ready: true
       }
     }
+    case KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_ERROR:
+    case KeysActionTypes.RESET_KEYS_ERROR:
     case KeysActionTypes.INITIALIZE_KEYS_ERROR: {
       return { ...state, loading: false, errors: action.payload }
     }

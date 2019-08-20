@@ -1,7 +1,7 @@
 // tslint:disable-next-line:import-name
 import Dexie from 'dexie'
 import { Draft } from '../store/drafts/types'
-import { KeyPair } from '../store/keyPairs/types'
+import { KeyPair } from '../store/keys/types'
 import { ClientCredentials } from '../store/models/client'
 import { DBMessageBody, MessageBase, MessageHash } from '../store/models/messages'
 

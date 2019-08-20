@@ -16,6 +16,9 @@ export enum ClientActionTypes {
   SUBMIT_NEW_CLIENT_ERROR = '@@client/SUBMIT_NEW_CLIENT_ERROR',
   SUBMIT_NEW_CLIENT_REQUEST = '@@client/SUBMIT_NEW_CLIENT_REQUEST',
   SUBMIT_NEW_CLIENT_SUCCESS = '@@client/SUBMIT_NEW_CLIENT_SUCCESS',
+  UPDATE_AND_LOAD_CREDENTIALS_SUCCESS = '@@client/UPDATE_AND_LOAD_CREDENTIALS_SUCCESS',
+  UPDATE_AND_LOAD_CREDENTIALS_ERROR = '@@client/UPDATE_AND_LOAD_CREDENTIALS_ERROR',
+  UPDATE_AND_LOAD_CREDENTIALS_REQUEST = '@@client/UPDATE_AND_LOAD_CREDENTIALS_REQUEST',
   UPDATE_CLIENT_PROFILE_ERROR = '@@client/UPDATE_CLIENT_PROFILE_ERROR',
   UPDATE_CLIENT_PROFILE_REQUEST = '@@client/UPDATE_CLIENT_PROFILE_REQUEST',
   UPDATE_CLIENT_PROFILE_SUCCESS = '@@client/UPDATE_CLIENT_PROFILE_SUCCESS',
@@ -57,8 +60,9 @@ export interface NewClientMeta {
 }
 
 export interface UpdateClientProfileMeta {
-  actions: FormikActions<{}>
-  setIsEditing: (arg0: boolean) => void
+  actions?: FormikActions<{}>
+  setIsEditing?: (arg0: boolean) => void
+  redirect: boolean
 }
 
 export const emptyClientProfile: ClientProfile = {

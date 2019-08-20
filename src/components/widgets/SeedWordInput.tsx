@@ -6,7 +6,7 @@ import Downshift, { GetLabelPropsOptions } from 'downshift'
 import deburr from 'lodash/deburr'
 import PropTypes from 'prop-types'
 import * as React from 'react'
-import { wordLists } from '../../store/keyPairs/wordLists'
+import { wordLists } from '../../store/keys/wordLists'
 
 const suggestions = wordLists.english.map((word: string) => ({ label: word }))
 

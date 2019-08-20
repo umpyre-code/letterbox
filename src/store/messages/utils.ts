@@ -1,5 +1,5 @@
 import sodium from 'libsodium-wrappers'
-import { KeyPair } from '../keyPairs/types'
+import { KeyPair } from '../keys/types'
 import { ClientID, ClientCredentials } from '../models/client'
 import {
   APIMessage,

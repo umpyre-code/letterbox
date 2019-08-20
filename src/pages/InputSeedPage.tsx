@@ -17,8 +17,10 @@ import * as Router from 'react-router-dom'
 import stringHash from 'string-hash'
 import { Emoji } from '../components/widgets/Emoji'
 import { SeedWordInput } from '../components/widgets/SeedWordInput'
-import { calculateCheckWord } from '../store/keyPairs/sagas'
-import { wordLists } from '../store/keyPairs/wordLists'
+import { ApplicationState } from '../store/ApplicationState'
+import { calculateCheckWord } from '../store/keys/sagas'
+import { wordLists } from '../store/keys/wordLists'
+import { resetKeysRequest } from '../store/keys/actions'
 
 const PasteIcon: React.FC = () => (
   <SvgIcon>
@@ -44,12 +46,16 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface PropsFromState {
-  seedWords: string[]
+  keysLoading: boolean
 }
 
-type AllProps = PropsFromState & Router.RouteComponentProps<{}>
+interface PropsFromDispatch {
+  resetKeys: typeof resetKeysRequest
+}
 
-const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
+type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<{}>
+
+const InputSeedPageFC: React.FC<AllProps> = ({ history, keysLoading, resetKeys }) => {
   const [pasted, setPasted] = React.useState<boolean>(false)
   const [checkPassed, setCheckPassed] = React.useState<boolean>(false)
   const [seedWords, setSeedWords] = React.useState<Array<string>>([...Array(16)].fill(''))
@@ -135,7 +141,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
           />
           <Box className={classes.box}>
             <Typography>
-              If you lost your recovery phrase, you won&apso;t be able to read old messages.
+              If you lost your recovery phrase, you won&apos;t be able to read old messages.
             </Typography>
           </Box>
           <Grid container justify="space-between">
@@ -144,7 +150,8 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
                 <Button
                   color="secondary"
                   variant="contained"
-                  onClick={() => console.log('lost phrase')}
+                  disabled={keysLoading}
+                  onClick={() => resetKeys()}
                 >
                   <Emoji ariaLabel="shock">😲</Emoji>&nbsp;I lost my recovery phrase
                 </Button>
@@ -169,10 +176,16 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history }) => {
   )
 }
 
-const mapDispatchToProps = {}
+const mapStateToProps = ({ keysState }: ApplicationState) => ({
+  keysLoading: keysState.loading
+})
+
+const mapDispatchToProps = {
+  resetKeys: resetKeysRequest
+}
 
 const InputSeedPage = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(InputSeedPageFC)
 export default InputSeedPage

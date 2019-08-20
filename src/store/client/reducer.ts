@@ -30,12 +30,14 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     case ClientActionTypes.AUTH_ERROR: {
       return { ...state, authSubmitting: false, authError: action.payload }
     }
+    case ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_REQUEST:
     case ClientActionTypes.LOAD_CREDENTIALS_REQUEST: {
       return { ...state, credentialsLoading: true, credentialsError: undefined }
     }
     case ClientActionTypes.FETCH_CLIENT_REQUEST: {
       return { ...state, clientLoading: true, errors: undefined }
     }
+    case ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_SUCCESS:
     case ClientActionTypes.LOAD_CREDENTIALS_SUCCESS: {
       return {
         ...state,
@@ -52,6 +54,7 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
         profile: action.payload
       }
     }
+    case ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_ERROR:
     case ClientActionTypes.LOAD_CREDENTIALS_ERROR: {
       return {
         ...state,

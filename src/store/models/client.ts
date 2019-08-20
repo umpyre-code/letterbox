@@ -75,8 +75,6 @@ export interface AuthVerifyRequest {
   email: string
 }
 
-export interface AuthVerifyResponse {
-  client_id: ClientID
+export interface AuthVerifyResponse extends ClientCredentials {
   server_proof: string
-  jwt: Jwt
 }

@@ -21,3 +21,8 @@ export const initializeKeysFromSeedSuccess = (keys: [KeyPair, KeyMap]) =>
   action(KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_SUCCESS, keys)
 export const initializeKeysFromSeedError = (message: string) =>
   action(KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_ERROR, message)
+
+export const resetKeysRequest = () => action(KeysActionTypes.RESET_KEYS_REQUEST)
+export const resetKeysSuccess = (keys: [KeyPair, KeyMap]) =>
+  action(KeysActionTypes.RESET_KEYS_SUCCESS, keys)
+export const resetKeysError = (message: string) => action(KeysActionTypes.RESET_KEYS_ERROR, message)

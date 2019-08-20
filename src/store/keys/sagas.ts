@@ -1,15 +1,30 @@
+import { push } from 'connected-react-router'
 import sodium from 'libsodium-wrappers'
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects'
+import { all, call, fork, put, select, takeEvery, take, putResolve } from 'redux-saga/effects'
 import { db } from '../../db/db'
+import { ApplicationState } from '../ApplicationState'
+import {
+  updateClientProfileRequest,
+  updateAndLoadCredentialsRequest,
+  updateAndLoadCredentialsSuccess,
+  updateClientProfileSuccess,
+  fetchClientSuccess
+} from '../client/actions'
 import {
   generateSeedSuccess,
   initializeKeysError,
+  initializeKeysFromSeedError,
+  initializeKeysFromSeedRequest,
+  initializeKeysFromSeedSuccess,
   initializeKeysSuccess,
   loadKeysError,
-  loadKeysSuccess
+  loadKeysSuccess,
+  resetKeysError,
+  resetKeysSuccess
 } from './actions'
 import { KeyMap, KeyPair, KeysActionTypes } from './types'
 import { wordLists } from './wordLists'
+import { ClientActionTypes } from '../client/types'
 
 async function deriveKeys(masterKey: Uint8Array, index: number) {
   await sodium.ready
@@ -139,7 +154,7 @@ function* handleLoadKeys() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(loadKeysError(error.stack!))
+      yield put(loadKeysError(error.stack))
     } else {
       yield put(loadKeysError('An unknown error occured.'))
     }
@@ -150,6 +165,88 @@ function* watchLoadKeysRequest() {
   yield takeEvery(KeysActionTypes.LOAD_KEYS_REQUEST, handleLoadKeys)
 }
 
+export function* handleInitializeKeysFromSeed(
+  values: ReturnType<typeof initializeKeysFromSeedRequest>
+) {
+  const { payload } = values
+  try {
+    // To call async functions, use redux-saga's `call()`.
+    const seedWords = payload as string[]
+    const res = yield call(initializeKeys, seedWords.slice(0, 15))
+
+    if (res.error) {
+      yield put(initializeKeysFromSeedError(res.error))
+    } else {
+      yield put(initializeKeysFromSeedSuccess(res))
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(initializeKeysFromSeedError(error.stack))
+    } else {
+      yield put(initializeKeysFromSeedError('An unknown error occured.'))
+    }
+  }
+}
+
+function* watchInitializeKeysFromSeedRequest() {
+  yield takeEvery(KeysActionTypes.INITIALIZE_KEYS_FROM_SEED_REQUEST, handleInitializeKeysFromSeed)
+}
+
+export function* handleResetKeysRequest() {
+  try {
+    // To call async functions, use redux-saga's `call()`.
+    const seedWords = generateSeedWords()
+    const res = yield call(initializeKeys, seedWords)
+    const checkWord = yield call(calculateCheckWord, seedWords)
+    seedWords.push(checkWord) // 16th word is check word
+
+    if (res.error) {
+      yield put(resetKeysError(res.error))
+    } else {
+      const keyPair = res[0]
+      const state: ApplicationState = yield select()
+      const { authResult } = state.clientState
+
+      yield putResolve(updateAndLoadCredentialsRequest(authResult))
+      yield take(ClientActionTypes.FETCH_CLIENT_SUCCESS)
+
+      const updatedState: ApplicationState = yield select()
+      const { profile } = updatedState.clientState
+      const updatedProfile = {
+        ...profile,
+        box_public_key: keyPair.box_public_key,
+        signing_public_key: keyPair.signing_public_key
+      }
+
+      yield putResolve(
+        updateClientProfileRequest(updatedProfile, {
+          actions: undefined,
+          setIsEditing: undefined,
+          redirect: false
+        })
+      )
+      yield put(generateSeedSuccess(seedWords))
+      yield put(resetKeysSuccess(res))
+      yield put(push('/flashseed'))
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(resetKeysError(error.stack))
+    } else {
+      yield put(resetKeysError('An unknown error occured.'))
+    }
+  }
+}
+
+function* watchResetKeysRequest() {
+  yield takeEvery(KeysActionTypes.RESET_KEYS_REQUEST, handleResetKeysRequest)
+}
+
 export function* sagas() {
-  yield all([fork(watchInitializeKeysRequest), fork(watchLoadKeysRequest)])
+  yield all([
+    fork(watchInitializeKeysFromSeedRequest),
+    fork(watchInitializeKeysRequest),
+    fork(watchLoadKeysRequest),
+    fork(watchResetKeysRequest)
+  ])
 }

@@ -14,6 +14,13 @@ export const loadCredentialsSuccess = (data: ClientProfile) =>
 export const loadCredentialsError = (message: string) =>
   action(ClientActionTypes.LOAD_CREDENTIALS_ERROR, message)
 
+export const updateAndLoadCredentialsRequest = (credentials: ClientCredentials) =>
+  action(ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_REQUEST, credentials)
+export const updateAndLoadCredentialsSuccess = (data: ClientProfile) =>
+  action(ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_SUCCESS, data)
+export const updateAndLoadCredentialsError = (message: string) =>
+  action(ClientActionTypes.UPDATE_AND_LOAD_CREDENTIALS_ERROR, message)
+
 export const fetchClientRequest = () => action(ClientActionTypes.FETCH_CLIENT_REQUEST)
 export const fetchClientSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.FETCH_CLIENT_SUCCESS, data)

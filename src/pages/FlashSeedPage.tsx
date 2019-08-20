@@ -65,7 +65,8 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           </Box>
           <Box className={classes.box}>
             <Typography variant="h6">
-              Store these 16 words in a safe place, such as a password manager
+              Store these 16 words in a safe place, such as a password manager, and don&apos;t share
+              them with anyone.
             </Typography>
           </Box>
           <Grid container>

@@ -185,7 +185,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
               ...values,
               profile: htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
             },
-            { actions, setIsEditing }
+            { actions, setIsEditing, redirect: true }
           )
         }}
         render={handleFormRender}
