@@ -20,7 +20,7 @@ import { SeedWordInput } from '../components/widgets/SeedWordInput'
 import { ApplicationState } from '../store/ApplicationState'
 import { calculateCheckWord } from '../store/keys/sagas'
 import { wordLists } from '../store/keys/wordLists'
-import { resetKeysRequest } from '../store/keys/actions'
+import { resetKeysRequest, initializeKeysFromSeedRequest } from '../store/keys/actions'
 
 const PasteIcon: React.FC = () => (
   <SvgIcon>
@@ -50,12 +50,17 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
+  initializeKeysFromSeed: typeof initializeKeysFromSeedRequest
   resetKeys: typeof resetKeysRequest
 }
 
 type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<{}>
 
-const InputSeedPageFC: React.FC<AllProps> = ({ history, keysLoading, resetKeys }) => {
+const InputSeedPageFC: React.FC<AllProps> = ({
+  initializeKeysFromSeed,
+  keysLoading,
+  resetKeys
+}) => {
   const [pasted, setPasted] = React.useState<boolean>(false)
   const [checkPassed, setCheckPassed] = React.useState<boolean>(false)
   const [seedWords, setSeedWords] = React.useState<Array<string>>([...Array(16)].fill(''))
@@ -163,7 +168,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({ history, keysLoading, resetKeys }
                   disabled={!checkPassed}
                   color="primary"
                   variant="contained"
-                  onClick={() => history.push('/')}
+                  onClick={() => initializeKeysFromSeed(seedWords)}
                 >
                   Continue &nbsp;<Emoji ariaLabel="continue">👉</Emoji>
                 </Button>
@@ -181,6 +186,7 @@ const mapStateToProps = ({ keysState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
+  initializeKeysFromSeed: initializeKeysFromSeedRequest,
   resetKeys: resetKeysRequest
 }
 

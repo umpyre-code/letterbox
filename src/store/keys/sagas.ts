@@ -177,7 +177,14 @@ export function* handleInitializeKeysFromSeed(
     if (res.error) {
       yield put(initializeKeysFromSeedError(res.error))
     } else {
+      const state: ApplicationState = yield select()
+      const { authResult } = state.clientState
+
+      yield putResolve(updateAndLoadCredentialsRequest(authResult))
+      yield take(ClientActionTypes.FETCH_CLIENT_SUCCESS)
+
       yield put(initializeKeysFromSeedSuccess(res))
+      yield put(push('/'))
     }
   } catch (error) {
     if (error instanceof Error) {
