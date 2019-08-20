@@ -260,7 +260,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       if (error.response.data.code && error.response.data.code === 3) {
         if (error.response.data.message.startsWith('invalid email')) {
           yield put(submitNewClientError('The email address provided is not valid'))
-        } else if (error.response.data.message.contains('unique violation')) {
+        } else if (error.response.data.message.includes('unique violation')) {
           yield put(
             submitNewClientError(
               'Either the email address or phone number you provided is already in use'
