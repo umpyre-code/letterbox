@@ -10,6 +10,8 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'yarn'
     args: ['run', 'build']
+    env:
+      - 'PUBLIC_URL=https://staging.umpyre.io'
   - name: 'gcr.io/cloud-builders/gsutil'
     # First copy everything excluding index.html. This provides us with some
     # atomicity, and reduces the likelihood of people winding up in a weird
