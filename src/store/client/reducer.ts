@@ -60,7 +60,8 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
         ...state,
         credentialsError: action.payload,
         credentialsLoading: false,
-        credentialsReady: true
+        credentialsReady: true,
+        clientReady: true
       }
     }
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
