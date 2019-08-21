@@ -133,25 +133,32 @@ export async function getMessagesWithoutBody(
 async function decryptMessageBody(
   body: string,
   nonce: string,
-  myPrivateKey: string,
-  theirPublicKey: string
+  publicKey: string,
+  privateKey: string
 ): Promise<string> {
   await sodium.ready
   return sodium.to_string(
     sodium.crypto_box_open_easy(
       sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
       sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(theirPublicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
-      sodium.from_base64(myPrivateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
+      sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
+      sodium.from_base64(privateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
     )
   )
 }
 
-function getBoxPublicKey(clientId: ClientID, message: EncryptedMessage): string {
+function getMyPublicKey(clientId: ClientID, message: EncryptedMessage): string {
   if (message.from === clientId) {
     return message.sender_public_key
   }
   return message.recipient_public_key
+}
+
+function getTheirPublicKey(clientId: ClientID, message: EncryptedMessage): string {
+  if (message.from === clientId) {
+    return message.recipient_public_key
+  }
+  return message.sender_public_key
 }
 
 export async function decryptMessage(
@@ -160,8 +167,9 @@ export async function decryptMessage(
 ): Promise<DecryptedMessage> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
-  const publicKey = getBoxPublicKey(clientId, message)
-  const myKeyPair = await db.keyPairs.get({ box_public_key: publicKey })
+  const myPublicKey = getMyPublicKey(clientId, message)
+  const theirPublicKey = getTheirPublicKey(clientId, message)
+  const myKeyPair = await db.keyPairs.get({ box_public_key: myPublicKey })
   if (myKeyPair) {
     return {
       ...message,
@@ -169,8 +177,8 @@ export async function decryptMessage(
         await decryptMessageBody(
           message.body,
           message.nonce,
-          myKeyPair.box_secret_key,
-          message.sender_public_key
+          theirPublicKey,
+          myKeyPair.box_secret_key
         )
       ) as MessageBody
     }
