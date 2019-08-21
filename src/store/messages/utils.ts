@@ -170,7 +170,7 @@ export async function decryptMessage(
           message.body,
           message.nonce,
           myKeyPair.box_secret_key,
-          message.recipient_public_key
+          message.sender_public_key
         )
       ) as MessageBody
     }
