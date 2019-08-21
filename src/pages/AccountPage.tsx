@@ -83,7 +83,6 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
   if (balance && profile && credentials) {
     return (
       <ClientInit>
-        <CssBaseline />
         <Container className={classes.headerContainer}>
           <Typography variant="h2" component="h2">
             <strong>

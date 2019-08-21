@@ -33,11 +33,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface RadioButtonsProps {
   setCreditAmount: (arg0: number) => void
+  initialAmount?: number
 }
 
-const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
-  const [radioValue, setRadioValue] = React.useState('20')
-  const [customAmountValue, setCustomAmountValue] = React.useState(0)
+const RadioButtons: React.FC<RadioButtonsProps> = ({ initialAmount, setCreditAmount }) => {
+  const [radioValue, setRadioValue] = React.useState(initialAmount > 0 ? 'custom' : '20')
+  const [customAmountValue, setCustomAmountValue] = React.useState(
+    initialAmount > 0 ? initialAmount : 0
+  )
   const classes = useStyles({})
   const customAmountRef = React.createRef<HTMLInputElement>()
 
@@ -106,6 +109,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
               inputProps={{ 'aria-label': 'custom' }}
               onChange={customAmountChanged}
               className={classes.customTextField}
+              initialValue={initialAmount}
               variant="outlined"
               margin="dense"
               style={{ width: 150 }}
@@ -120,6 +124,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ setCreditAmount }) => {
 
 interface AddCreditsFormProps {
   balance: Balance
+  amountCents?: number
 }
 
 function calculateStripeFee(amount: number) {
@@ -129,8 +134,8 @@ function calculateStripeFee(amount: number) {
   return Math.round((amountCents + fixedFee) / (1 - percentFee))
 }
 
-const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
-  const [creditAmount, setCreditAmount] = React.useState(20)
+const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ amountCents, balance }) => {
+  const [creditAmount, setCreditAmount] = React.useState(amountCents > 0 ? amountCents / 100 : 20)
   const classes = useStyles({})
 
   const newBalance = creditAmount + (balance.balance_cents + balance.promo_cents) / 100
@@ -153,7 +158,7 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ balance }) => {
       <Container className={classes.contentContainer}>
         <Typography variant="h6">Payment</Typography>
       </Container>
-      <RadioButtons setCreditAmount={setCreditAmount} />
+      <RadioButtons setCreditAmount={setCreditAmount} initialAmount={amountCents / 100} />
       <BalanceTable rows={updatedRows} />
       <Container className={classes.contentContainer}>
         <CardSectionForm chargeAmount={chargeAmount} />

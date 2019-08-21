@@ -14,6 +14,7 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { signoutRequest } from '../store/client/actions'
+import ClientInit from '../components/ClientInit'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,8 +39,7 @@ const SignOutPageFC: React.FC<AllProps> = ({ history, signout }) => {
   const classes = useStyles({})
 
   return (
-    <React.Fragment>
-      <CssBaseline />
+    <ClientInit>
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
           <Box className={classes.box}>
@@ -77,7 +77,7 @@ const SignOutPageFC: React.FC<AllProps> = ({ history, signout }) => {
           </Grid>
         </Paper>
       </Container>
-    </React.Fragment>
+    </ClientInit>
   )
 }
 

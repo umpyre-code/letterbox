@@ -3,11 +3,25 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import HelpIcon from '@material-ui/icons/HelpOutline'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
+import { Link, LinkProps } from 'react-router-dom'
 
-export const AddCreditsButton: React.FC = () => (
+interface AddCreditsButtonProps {
+  cents: number
+}
+
+const AdapterLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef'>>(
+  (props, ref) => <Link innerRef={ref} {...props} />
+)
+
+export const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({ cents }) => (
   <Tooltip title="Your balance is insufficient, you need to add credits first.">
-    <Button variant="contained" color="primary">
-      Add Credits
+    <Button
+      variant="contained"
+      color="primary"
+      component={AdapterLink}
+      to={`/addcredits?amount=${cents}`}
+    >
+      Add Credits for ${(cents / 100).toFixed(2)}
     </Button>
   </Tooltip>
 )
@@ -16,12 +30,13 @@ interface SendButtonProps {
   classes: Record<'sendIcon', string>
   enabled: boolean
   handleSend: () => void
+  cents: number
 }
 
-export const SendButton: React.FC<SendButtonProps> = ({ enabled, classes, handleSend }) => (
+export const SendButton: React.FC<SendButtonProps> = ({ cents, enabled, classes, handleSend }) => (
   <Tooltip title="Look good? Send it!">
     <Button variant="contained" color="primary" onClick={handleSend} disabled={!enabled}>
-      Send
+      Send for ${(cents / 100).toFixed(2)}
       <SendIcon className={classes.sendIcon} />
     </Button>
   </Tooltip>

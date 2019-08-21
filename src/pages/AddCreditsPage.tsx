@@ -1,12 +1,5 @@
-import {
-  Container,
-  createStyles,
-  CssBaseline,
-  Divider,
-  makeStyles,
-  Theme,
-  Typography
-} from '@material-ui/core'
+import { Container, createStyles, Divider, makeStyles, Theme, Typography } from '@material-ui/core'
+import qs from 'qs'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
@@ -17,17 +10,15 @@ import Loading from '../components/widgets/Loading'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
-import { ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 
 interface PropsFromState {
   balance?: Balance
-  profile: ClientProfile
 }
 
-type AllProps = PropsFromState
+type AllProps = PropsFromState & Router.RouteComponentProps<{}>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,9 +37,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
+const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location }) => {
   const [stripe, setStripe] = React.useState(null)
   const classes = useStyles({})
+
+  const searchParams = qs.parse(location.search, { ignoreQueryPrefix: true })
+  const amountCents = Number(searchParams.amountCents)
 
   function stripeLoaded(): void {
     setStripe((window as any).Stripe(STRIPE_API_PK))
@@ -80,7 +74,6 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
   if (balance) {
     return (
       <ClientInit>
-        <CssBaseline />
         <Container className={classes.headerContainer}>
           <Typography variant="h2" component="h2">
             <strong>
@@ -97,7 +90,7 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
             {stripe !== null && (
               <StripeProvider stripe={stripe}>
                 <Elements>
-                  <AddCreditsForm balance={balance} />
+                  <AddCreditsForm balance={balance} amountCents={amountCents} />
                 </Elements>
               </StripeProvider>
             )}
@@ -106,20 +99,25 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, profile }) => {
       </ClientInit>
     )
   }
-  return <Loading />
+  return (
+    <ClientInit>
+      <Loading centerOnPage />
+    </ClientInit>
+  )
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
-  balance: accountState.balance!,
-  profile: clientState.profile!
+  balance: accountState.balance
 })
 
 const mapDispatchToProps = {
   addDraft: addDraftRequest
 }
 
-const AddCreditsPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddCreditsPageFC)
+const AddCreditsPage = Router.withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AddCreditsPageFC)
+)
 export default AddCreditsPage

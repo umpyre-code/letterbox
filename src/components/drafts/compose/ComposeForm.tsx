@@ -56,7 +56,7 @@ export function calculateMessageCost(amountCents: number) {
   if (amountCents === 0) {
     return 0
   }
-  return Math.round(amountCents * (1 - UMPYRE_MESSAGE_SEND_FEE))
+  return Math.round(amountCents / (1 - UMPYRE_MESSAGE_SEND_FEE))
 }
 
 interface Props {
@@ -123,10 +123,9 @@ const ComposeFormFC: React.FC<AllProps> = ({
   }
 
   function balanceIsSufficient() {
+    const costToSend = calculateMessageCost(messageValue * 100) * recipients.length
     return (
-      (messageValue &&
-        balance &&
-        calculateMessageCost(messageValue * 100) <= balance.balance_cents + balance.promo_cents) ||
+      (messageValue && balance && costToSend <= balance.balance_cents + balance.promo_cents) ||
       messageValue === 0
     )
   }
@@ -144,10 +143,18 @@ const ComposeFormFC: React.FC<AllProps> = ({
   }
 
   function showAddCreditsButton() {
+    const costToSend = calculateMessageCost(messageValue * 100) * recipients.length
     if (!balanceIsSufficient()) {
-      return <AddCreditsButton />
+      return <AddCreditsButton cents={costToSend - (balance.balance_cents + balance.promo_cents)} />
     }
-    return <SendButton classes={classes} enabled={readyToSend()} handleSend={handleSend} />
+    return (
+      <SendButton
+        classes={classes}
+        enabled={readyToSend()}
+        handleSend={handleSend}
+        cents={costToSend}
+      />
+    )
   }
 
   return (
@@ -194,20 +201,22 @@ const ComposeFormFC: React.FC<AllProps> = ({
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        <Grid item xs={12} sm container alignContent="center" justify="flex-start">
-          <Grid item xs>
-            <PaymentInput
-              style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
-              placeholder="Message value"
-              label="Payment"
-              defaultValue={draft.value_cents / 100}
-              onChange={event => {
-                const value = Number(event.target.value)
-                setMessageValue(value)
-                updateDraft({ ...draft, value_cents: value * 100 })
-              }}
-            />
-            {showAddCreditsButton()}
+        <Grid container item xs={12} sm alignContent="center" justify="space-between">
+          <Grid item container xs spacing={1} justify="flex-start">
+            <Grid item>
+              <PaymentInput
+                style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
+                placeholder="Message value"
+                label="Payment"
+                defaultValue={draft.value_cents / 100}
+                onChange={event => {
+                  const value = Number(event.target.value)
+                  setMessageValue(value)
+                  updateDraft({ ...draft, value_cents: value * 100 })
+                }}
+              />
+            </Grid>
+            <Grid item>{showAddCreditsButton()}</Grid>
           </Grid>
           <Grid item xs>
             <DiscardButton
@@ -235,7 +244,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = ({ accountState, clientState }: ApplicationState) => ({
   balance: accountState.balance,
-  credentials: clientState.credentials!
+  credentials: clientState.credentials
 })
 
 const ComposeForm = connect(

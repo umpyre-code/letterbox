@@ -125,7 +125,6 @@ const IndexPageFC: React.FC<AllProps> = ({
 
   return (
     <ClientInit>
-      <CssBaseline />
       <Container className={classes.headerContainer}>
         <Grid container spacing={1} justify="space-between">
           <Grid item xs={7}>

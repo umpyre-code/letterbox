@@ -300,7 +300,6 @@ export const ProfileView: React.FC<Props> = ({
           </Typography>
           <Divider light />
           <Container className={classes.profileContainer}>
-            {/* tslint:disable-next-line: react-no-dangerous-html */}
             <Typography
               className={classes.profileTypography}
               dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile) }}

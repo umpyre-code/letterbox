@@ -173,10 +173,10 @@ export const ProfileFormFC: React.FC<AllProps> = ({
     <Card>
       <Formik
         initialValues={{
-          full_name: profile!.full_name!,
-          handle: profile!.handle || ''
+          full_name: profile.full_name,
+          handle: profile.handle || ''
         }}
-        validationSchema={getSchema(credentials, profile!)}
+        validationSchema={getSchema(credentials, profile)}
         isInitialValid
         onSubmit={(values, actions) => {
           updateClientProfile(
@@ -195,7 +195,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
 }
 
 const mapStateToProps = (appState: ApplicationState) => ({
-  credentials: appState.clientState.credentials!
+  credentials: appState.clientState.credentials
 })
 
 const mapDispatchToProps = {

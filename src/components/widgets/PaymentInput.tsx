@@ -32,6 +32,7 @@ function numberFormatCustom(props: NumberFormatCustomProps) {
 
 interface PaymentInputProps {
   inputClicked?: (event: React.MouseEvent<HTMLDivElement>) => void
+  initialValue?: number
 }
 
 type AllProps = (StandardTextFieldProps | OutlinedTextFieldProps) & PaymentInputProps
@@ -41,6 +42,7 @@ export const PaymentInput: React.FC<AllProps> = props => (
     {...props}
     variant="outlined"
     margin="dense"
+    defaultValue={props.initialValue}
     InputProps={{
       inputComponent: numberFormatCustom as any,
       onClick: props.inputClicked

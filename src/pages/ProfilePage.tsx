@@ -48,6 +48,8 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles({})
 
+  console.log(profile)
+
   React.useEffect(() => {
     loadCredentials()
   }, [])
@@ -69,7 +71,7 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match
       }
     }
     fetchData()
-  }, [match.params])
+  }, [match.params, myProfile])
 
   function isEditable(): boolean {
     return (
