@@ -25,6 +25,7 @@ import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
+import { Logotype } from '../components/widgets/Logotype'
 
 interface PropsFromState {
   balance?: Balance
@@ -146,18 +147,15 @@ const IndexPageFC: React.FC<AllProps> = ({
   return (
     <ClientInit>
       <Container className={classes.headerContainer}>
-        <Grid container spacing={1} justify="space-between">
-          <Grid item xs={7}>
-            <Typography variant="h2" component="h2">
-              <strong>
-                <Router.Link to="/">Umpyre</Router.Link>
-              </strong>
-            </Typography>
+        <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+          <Grid item xs={3}>
+            <Router.Link to="/">
+              <Logotype />
+            </Router.Link>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={7}>
             <Profile profile={profile} balance={balance} menu />
           </Grid>
-          <Grid item xs style={{ position: 'relative' }} />
           <Grid item xs={12}>
             <Divider />
           </Grid>

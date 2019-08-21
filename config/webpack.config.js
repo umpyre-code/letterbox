@@ -75,7 +75,11 @@ module.exports = function(webpackEnv) {
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
         loader: MiniCssExtractPlugin.loader,
-        options: shouldUseRelativeAssetPaths ? { publicPath: '../../' } : {}
+        options: shouldUseRelativeAssetPaths
+          ? {
+              publicPath: '../../'
+            }
+          : {}
       },
       {
         loader: require.resolve('css-loader'),
@@ -301,7 +305,11 @@ module.exports = function(webpackEnv) {
       strictExportPresence: true,
       rules: [
         // Disable require.ensure as it's not a standard language feature.
-        { parser: { requireEnsure: false } },
+        {
+          parser: {
+            requireEnsure: false
+          }
+        },
 
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
@@ -376,7 +384,12 @@ module.exports = function(webpackEnv) {
                 configFile: false,
                 compact: false,
                 presets: [
-                  [require.resolve('babel-preset-react-app/dependencies'), { helpers: true }]
+                  [
+                    require.resolve('babel-preset-react-app/dependencies'),
+                    {
+                      helpers: true
+                    }
+                  ]
                 ],
                 cacheDirectory: true,
                 cacheCompression: isEnvProduction,
