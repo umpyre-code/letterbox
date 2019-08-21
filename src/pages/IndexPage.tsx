@@ -6,7 +6,8 @@ import {
   makeStyles,
   Theme,
   Tooltip,
-  Typography
+  Typography,
+  Link
 } from '@material-ui/core'
 import Fab from '@material-ui/core/Fab'
 import Edit from '@material-ui/icons/Edit'
@@ -53,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     draftContainer: {
       padding: theme.spacing(1)
+    },
+    footerContainer: {
+      padding: theme.spacing(5, 0, 0, 0)
     },
     headerContainer: {
       padding: theme.spacing(1)
@@ -160,6 +164,23 @@ const IndexPageFC: React.FC<AllProps> = ({
         </Grid>
       </Container>
       {getBody()}
+      <Container className={classes.footerContainer}>
+        <Grid container justify="center" alignItems="center" spacing={2}>
+          <Grid item>
+            <Router.Link to="/about">
+              <Typography variant="subtitle1">About</Typography>
+            </Router.Link>
+          </Grid>
+          <Grid item>
+            <Divider orientation="vertical" style={{ height: 15 }} />
+          </Grid>
+          <Grid item>
+            <Link href="https://blog.umpyre.com" variant="subtitle2" underline="none">
+              <Typography variant="subtitle1">Blog</Typography>
+            </Link>
+          </Grid>
+        </Grid>
+      </Container>
     </ClientInit>
   )
 }
