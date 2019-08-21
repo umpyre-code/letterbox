@@ -35,9 +35,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: theme.spacing(1)
     },
     discardButton: {
-      backgroundColor: '#ccc',
-      position: 'absolute',
-      right: theme.spacing(0)
+      backgroundColor: '#ccc'
+      // position: 'absolute',
+      // right: theme.spacing(0)
     },
     progress: {
       margin: theme.spacing(1, 0, 0, 0)
@@ -144,8 +144,11 @@ const ComposeFormFC: React.FC<AllProps> = ({
 
   function showAddCreditsButton() {
     const costToSend = calculateMessageCost(messageValue * 100) * recipients.length
-    if (!balanceIsSufficient()) {
-      return <AddCreditsButton cents={costToSend - (balance.balance_cents + balance.promo_cents)} />
+    if (balance) {
+      const creditNeeded = costToSend - (balance.balance_cents + balance.promo_cents)
+      if (!balanceIsSufficient()) {
+        return <AddCreditsButton cents={creditNeeded} />
+      }
     }
     return (
       <SendButton
@@ -201,8 +204,8 @@ const ComposeFormFC: React.FC<AllProps> = ({
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        <Grid container item xs={12} sm alignContent="center" justify="space-between">
-          <Grid item container xs spacing={1} justify="flex-start">
+        <Grid container item xs={12} sm justify="space-between" alignItems="flex-end">
+          <Grid item container xs spacing={1} justify="flex-start" alignItems="flex-end">
             <Grid item>
               <PaymentInput
                 style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
@@ -218,7 +221,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
             </Grid>
             <Grid item>{showAddCreditsButton()}</Grid>
           </Grid>
-          <Grid item xs>
+          <Grid item>
             <DiscardButton
               classes={classes}
               enabled={!draft.sending}

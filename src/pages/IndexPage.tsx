@@ -1,7 +1,6 @@
 import {
   Container,
   createStyles,
-  CssBaseline,
   Divider,
   Grid,
   makeStyles,
@@ -21,6 +20,7 @@ import PhoneVerification from '../components/widgets/PhoneVerification'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
+import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
@@ -30,6 +30,7 @@ interface PropsFromState {
   clientLoading: boolean
   clientReady: boolean
   credentialsReady: boolean
+  drafts: Draft[]
   messagesState: MessagesState
   profile: ClientProfile
   reload: boolean
@@ -65,10 +66,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const IndexPageFC: React.FC<AllProps> = ({
   addDraft,
   balance,
-  messagesState,
-  profile,
   clientReady,
   credentialsReady,
+  drafts,
+  messagesState,
+  profile,
   reload
 }) => {
   const classes = useStyles({})
@@ -89,9 +91,15 @@ const IndexPageFC: React.FC<AllProps> = ({
     }
     return (
       <React.Fragment>
-        <Container className={classes.draftContainer}>
-          <DraftList />
-        </Container>
+        {drafts.length > 0 && (
+          <React.Fragment>
+            <Container className={classes.draftContainer}>
+              <Typography>Drafts</Typography>
+              <DraftList />
+            </Container>
+            <Divider />
+          </React.Fragment>
+        )}
         <Container className={classes.messageListContainer}>
           <Typography>Unread</Typography>
           <MessageList
@@ -101,14 +109,22 @@ const IndexPageFC: React.FC<AllProps> = ({
             button
           />
         </Container>
-        <Container className={classes.messageListContainer}>
-          <Typography>Read</Typography>
-          <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
-        </Container>
-        <Container className={classes.messageListContainer}>
-          <Typography>Sent</Typography>
-          <MessageList messages={messagesState.sentMessages} messageType="sent" shaded button />
-        </Container>
+        <Divider />
+        {messagesState.readMessages.length > 0 && (
+          <React.Fragment>
+            <Container className={classes.messageListContainer}>
+              <Typography>Read</Typography>
+              <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
+            </Container>
+            <Divider />
+          </React.Fragment>
+        )}
+        {messagesState.sentMessages.length > 0 && (
+          <Container className={classes.messageListContainer}>
+            <Typography>Sent</Typography>
+            <MessageList messages={messagesState.sentMessages} messageType="sent" shaded button />
+          </Container>
+        )}
         <Tooltip title="Compose a new message">
           <Fab
             className={classes.composeButton}
@@ -148,11 +164,17 @@ const IndexPageFC: React.FC<AllProps> = ({
   )
 }
 
-const mapStateToProps = ({ clientState, accountState, messagesState }: ApplicationState) => ({
+const mapStateToProps = ({
+  draftsState,
+  messagesState,
+  accountState,
+  clientState
+}: ApplicationState) => ({
   balance: accountState.balance,
   clientLoading: clientState.clientLoading,
   clientReady: clientState.clientReady,
   credentialsReady: clientState.credentialsReady,
+  drafts: draftsState.drafts,
   messagesState,
   profile: clientState.profile,
   reload: clientState.reload

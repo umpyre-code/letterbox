@@ -19,7 +19,7 @@ export const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({ cents }) => 
       variant="contained"
       color="primary"
       component={AdapterLink}
-      to={`/addcredits?amount=${cents}`}
+      to={`/addcredits?amountCents=${cents}`}
     >
       Add Credits for ${(cents / 100).toFixed(2)}
     </Button>
