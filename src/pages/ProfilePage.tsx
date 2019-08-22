@@ -16,6 +16,7 @@ import { ApplicationState } from '../store/ApplicationState'
 import { emptyClientProfile } from '../store/client/types'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { loadCredentialsRequest } from '../store/client/actions'
+import { Logotype } from '../components/widgets/Logotype'
 
 interface PropsFromState {
   readonly credentials?: ClientCredentials
@@ -87,11 +88,9 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match
     <React.Fragment>
       <CssBaseline />
       <Container className={classes.headerContainer}>
-        <Typography variant="h2" component="h2">
-          <strong>
-            <Router.Link to="/">Umpyre</Router.Link>
-          </strong>
-        </Typography>
+        <Router.Link to="/">
+          <Logotype />
+        </Router.Link>
       </Container>
       <Divider />
       <Container className={classes.profileContainer}>

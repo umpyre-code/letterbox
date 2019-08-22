@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   createStyles,
-  CssBaseline,
   makeStyles,
   Paper,
   Tab,
@@ -18,6 +17,7 @@ import ClientInit from '../components/ClientInit'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
+import { Logotype } from '../components/widgets/Logotype'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
@@ -84,11 +84,9 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
     return (
       <ClientInit>
         <Container className={classes.headerContainer}>
-          <Typography variant="h2" component="h2">
-            <strong>
-              <Link to="/">Umpyre</Link>
-            </strong>
-          </Typography>
+          <Link to="/">
+            <Logotype />
+          </Link>
         </Container>
         <Container>
           <Paper>

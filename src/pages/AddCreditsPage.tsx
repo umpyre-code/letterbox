@@ -11,6 +11,7 @@ import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { loadScript } from '../util/loadScript'
+import { Logotype } from '../components/widgets/Logotype'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 
@@ -75,11 +76,9 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location }) => {
     return (
       <ClientInit>
         <Container className={classes.headerContainer}>
-          <Typography variant="h2" component="h2">
-            <strong>
-              <Router.Link to="/">Umpyre</Router.Link>
-            </strong>
-          </Typography>
+          <Router.Link to="/">
+            <Logotype />
+          </Router.Link>
         </Container>
         <Divider />
         <Container className={classes.bodyContainer}>
