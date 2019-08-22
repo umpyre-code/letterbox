@@ -12,6 +12,7 @@ steps:
     args: ['run', 'build']
     env:
       - 'PUBLIC_URL=https://staging.umpyre.io'
+      - 'API_URL=https://api.staging.umpyre.io'
   - name: 'gcr.io/cloud-builders/gsutil'
     # First copy everything excluding index.html. This provides us with some
     # atomicity, and reduces the likelihood of people winding up in a weird

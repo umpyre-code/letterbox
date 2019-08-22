@@ -582,7 +582,7 @@ module.exports = function(webpackEnv) {
         new WorkboxWebpackPlugin.GenerateSW({
           clientsClaim: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
-          importWorkboxFrom: 'cdn',
+          importWorkboxFrom: 'local',
           navigateFallback: publicUrl + '/index.html',
           navigateFallbackBlacklist: [
             // Exclude URLs starting with /_, as they're likely an API call
@@ -592,6 +592,47 @@ module.exports = function(webpackEnv) {
             // URLs containing a "?" character won't be blacklisted as they're likely
             // a route with query params (e.g. auth callbacks).
             new RegExp('/[^/?]+\\.[^/]+$')
+          ],
+          runtimeCaching: [
+            {
+              // Match any same-origin request that contains 'api'.
+              urlPattern: new RegExp(/^https:\/\/(api\.staging\.umpyre\.io|api\.umpyre\.com)\//),
+              // Apply a network-first strategy.
+              handler: 'NetworkFirst',
+              options: {
+                // Fall back to the cache after 10 seconds.
+                networkTimeoutSeconds: 10,
+                // Use a custom cache name for this route.
+                cacheName: 'api-cache',
+                // Configure custom cache expiration.
+                expiration: {
+                  maxEntries: 5,
+                  maxAgeSeconds: 60
+                },
+                // Configure background sync.
+                backgroundSync: {
+                  name: 'bg-queue',
+                  options: {
+                    maxRetentionTime: 60 * 60
+                  }
+                },
+                // Configure which responses are considered cacheable.
+                cacheableResponse: {
+                  statuses: [0, 200]
+                },
+                // Configure the broadcast cache update plugin.
+                broadcastUpdate: {
+                  channelName: 'update-channel'
+                },
+                // matchOptions and fetchOptions are used to configure the handler.
+                fetchOptions: {
+                  mode: 'no-cors'
+                },
+                matchOptions: {
+                  ignoreSearch: true
+                }
+              }
+            }
           ]
         }),
       // TypeScript type checking
