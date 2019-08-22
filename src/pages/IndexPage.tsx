@@ -7,7 +7,8 @@ import {
   Theme,
   Tooltip,
   Typography,
-  Link
+  Link,
+  CssBaseline
 } from '@material-ui/core'
 import Fab from '@material-ui/core/Fab'
 import Edit from '@material-ui/icons/Edit'
@@ -144,6 +145,7 @@ const IndexPageFC: React.FC<AllProps> = ({
 
   return (
     <ClientInit>
+      <CssBaseline />
       <Container className={classes.headerContainer}>
         <Grid container spacing={1} justify="space-between" alignItems="flex-start">
           <Grid item>

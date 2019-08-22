@@ -3,23 +3,25 @@ import {
   createStyles,
   CssBaseline,
   Divider,
+  Grid,
   makeStyles,
-  Theme,
-  Typography
+  Theme
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
+import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import { Logotype } from '../components/widgets/Logotype'
 import { Profile } from '../components/widgets/profile/Profile'
 import { API } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
-import { emptyClientProfile } from '../store/client/types'
-import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { loadCredentialsRequest } from '../store/client/actions'
-import { Logotype } from '../components/widgets/Logotype'
-import { BackButton } from '../components/widgets/BackButton'
+import { emptyClientProfile } from '../store/client/types'
+import { Balance } from '../store/models/account'
+import { ClientCredentials, ClientProfile } from '../store/models/client'
 
 interface PropsFromState {
+  readonly balance?: Balance
   readonly credentials?: ClientCredentials
   readonly myProfile?: ClientProfile
 }
@@ -46,7 +48,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match, myProfile }) => {
+const ProfilePageFC: React.FC<AllProps> = ({
+  balance,
+  credentials,
+  loadCredentials,
+  match,
+  myProfile
+}) => {
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles({})
 
@@ -87,20 +95,32 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match
     <React.Fragment>
       <CssBaseline />
       <Container className={classes.headerContainer}>
-        <Router.Link to="/">
-          <Logotype />
-        </Router.Link>
+        <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+          <Grid item>
+            <Router.Link to="/">
+              <Logotype />
+            </Router.Link>
+          </Grid>
+          {myProfile && balance && (
+            <Grid item>
+              <Profile profile={myProfile} balance={balance} menu />
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+        </Grid>
       </Container>
-      <Divider />
       <Container className={classes.profileContainer}>
-        <BackButton />
+        <BackToIndexButton />
         <Profile profile={profile} editable={isEditable()} fullProfile />
       </Container>
     </React.Fragment>
   )
 }
 
-const mapStateToProps = ({ clientState }: ApplicationState) => ({
+const mapStateToProps = ({ accountState, clientState }: ApplicationState) => ({
+  balance: accountState.balance,
   credentials: clientState.credentials,
   myProfile: clientState.profile
 })

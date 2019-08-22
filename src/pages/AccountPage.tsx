@@ -8,11 +8,14 @@ import {
   Tab,
   Tabs,
   Theme,
-  Typography
+  Typography,
+  CssBaseline,
+  Grid,
+  Divider
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Route, Switch, Router } from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { Emoji } from '../components/widgets/Emoji'
@@ -23,7 +26,7 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
-import { BackButton } from '../components/widgets/BackButton'
+import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -84,13 +87,21 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
   if (balance && profile && credentials) {
     return (
       <ClientInit>
+        <CssBaseline />
         <Container className={classes.headerContainer}>
-          <Link to="/">
-            <Logotype />
-          </Link>
+          <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+            <Grid item>
+              <Link to="/">
+                <Logotype />
+              </Link>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider />
+            </Grid>
+          </Grid>
         </Container>
         <Container>
-          <BackButton />
+          <BackToIndexButton />
           <Paper>
             <Route
               path="/account"
@@ -163,7 +174,11 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
       </ClientInit>
     )
   }
-  return <Loading />
+  return (
+    <ClientInit>
+      <Loading centerOnPage />
+    </ClientInit>
+  )
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({

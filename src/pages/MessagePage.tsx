@@ -7,7 +7,8 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  CssBaseline
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/Reply'
@@ -17,13 +18,14 @@ import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import MessageBodyFc from '../components/messages/MessageBodyFc'
 import { MessageListItem } from '../components/messages/MessageListItem'
-import { BackButton } from '../components/widgets/BackButton'
+import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
 import { loadMessagesRequest, messageReadRequest } from '../store/messages/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { DecryptedMessage } from '../store/models/messages'
+import { Logotype } from '../components/widgets/Logotype'
 
 interface PropsFromState {
   balance?: Balance
@@ -106,26 +108,24 @@ const MessagePageFC: React.FC<AllProps> = ({
 
   return (
     <ClientInit>
+      <CssBaseline />
       <Container className={classes.headerContainer}>
-        <Grid container spacing={1} justify="space-between">
-          <Grid item xs={7}>
-            <Typography variant="h2" component="h2">
-              <strong>
-                <Router.Link to="/">Umpyre</Router.Link>
-              </strong>
-            </Typography>
+        <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+          <Grid item>
+            <Router.Link to="/">
+              <Logotype />
+            </Router.Link>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item>
             <Profile profile={profile} balance={balance} menu />
           </Grid>
-          <Grid item xs style={{ position: 'relative' }} />
           <Grid item xs={12}>
             <Divider />
           </Grid>
         </Grid>
       </Container>
       <Container className={classes.bodyContainer}>
-        <BackButton />
+        <BackToIndexButton />
         {messageBodies()}
       </Container>
     </ClientInit>

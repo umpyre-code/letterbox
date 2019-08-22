@@ -9,7 +9,7 @@ import {
   Typography
 } from '@material-ui/core'
 import * as React from 'react'
-import { BackButton } from '../components/widgets/BackButton'
+import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,7 +29,7 @@ const AboutPage = () => {
       <CssBaseline />
       <Container maxWidth="sm" className={classes.container}>
         <Box className={classes.box}>
-          <BackButton />
+          <BackToIndexButton />
         </Box>
         <Paper className={classes.paper}>
           <Box className={classes.box}>
