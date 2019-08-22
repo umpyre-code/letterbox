@@ -175,20 +175,20 @@ class CardSection extends Component<CardSectionProps, CardSectionState> {
 
   public render() {
     return (
-      <Grid container justify="center" alignItems="flex-end">
-        <Grid item xs>
+      <Grid container alignItems="flex-end" spacing={2}>
+        <Grid item xs={12} sm>
           <FormLabel>
             Credit or debit card
             <CardElement onChange={this.onCardElementChanged} />
           </FormLabel>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} sm={4}>
           <Button
             disabled={this.buttonDisabled()}
             variant="contained"
             color="primary"
             onClick={this.submit}
-            style={{ height: '40px', margin: '0px 0px 0px 6px', padding: '6px 12px' }}
+            style={{ height: '40px', margin: '0px 0px 0px 6px' }}
           >
             <NumberFormat
               value={this.props.chargeAmount}
