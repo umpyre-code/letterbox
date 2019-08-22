@@ -17,6 +17,7 @@ import { emptyClientProfile } from '../store/client/types'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { loadCredentialsRequest } from '../store/client/actions'
 import { Logotype } from '../components/widgets/Logotype'
+import { BackButton } from '../components/widgets/BackButton'
 
 interface PropsFromState {
   readonly credentials?: ClientCredentials
@@ -48,8 +49,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match, myProfile }) => {
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles({})
-
-  console.log(profile)
 
   React.useEffect(() => {
     loadCredentials()
@@ -94,6 +93,7 @@ const ProfilePageFC: React.FC<AllProps> = ({ credentials, loadCredentials, match
       </Container>
       <Divider />
       <Container className={classes.profileContainer}>
+        <BackButton />
         <Profile profile={profile} editable={isEditable()} fullProfile />
       </Container>
     </React.Fragment>

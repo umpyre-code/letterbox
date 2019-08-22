@@ -8,25 +8,21 @@ import {
   ListItemText,
   makeStyles,
   Theme,
-  Typography,
-  Tooltip,
-  withStyles
+  Typography
 } from '@material-ui/core'
-import { TypographyProps } from '@material-ui/core/Typography'
 import DeleteIcon from '@material-ui/icons/Delete'
 import moment from 'moment'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import { ApplicationState } from '../../store/ApplicationState'
 import { API } from '../../store/api'
+import { ApplicationState } from '../../store/ApplicationState'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
-import { ClientCredentials, ClientProfile } from '../../store/models/client'
+import { ClientCredentials } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
-import { Profile } from '../widgets/profile/Profile'
-import { ProfileView } from '../widgets/profile/ProfileView'
+import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
 
 interface Props {
   message: MessageBase
@@ -113,31 +109,6 @@ const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message })
     </IconButton>
   )
 }
-
-const ProfileTooltipStyled = withStyles(theme => ({
-  tooltip: {
-    margin: 0,
-    padding: 0,
-    boxShadow: theme.shadows[3],
-    color: 'rgba(0, 0, 0, 0.87)',
-    border: '0px'
-  }
-}))(Tooltip)
-
-interface ProfileTooltipProps {
-  profile: ClientProfile
-  children: React.ReactElement
-}
-
-const ProfileTooltip: React.FunctionComponent<ProfileTooltipProps> = ({ children, profile }) => (
-  <ProfileTooltipStyled
-    title={<ProfileView setIsEditing={() => {}} fullProfile={true} profile={profile} />}
-    enterDelay={750}
-    leaveDelay={200}
-  >
-    {children}
-  </ProfileTooltipStyled>
-)
 
 const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   button,

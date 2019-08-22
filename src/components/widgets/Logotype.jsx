@@ -3,7 +3,7 @@ import { ReactComponent as SvgLogotype } from './logotype.svg'
 import { ReactComponent as SvgLogomark } from './logomark.svg'
 
 export function Logotype() {
-  if (window.innerWidth > 400) {
+  if (window.innerWidth > 500) {
     return (
       <div
         style={{

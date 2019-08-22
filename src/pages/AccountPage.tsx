@@ -23,6 +23,7 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
+import { BackButton } from '../components/widgets/BackButton'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -89,6 +90,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
           </Link>
         </Container>
         <Container>
+          <BackButton />
           <Paper>
             <Route
               path="/account"

@@ -1,4 +1,4 @@
-import { TextField, Typography } from '@material-ui/core'
+import { TextField, Typography, Avatar } from '@material-ui/core'
 import Chip from '@material-ui/core/Chip'
 import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
@@ -9,7 +9,14 @@ import deburr from 'lodash/deburr'
 import PropTypes from 'prop-types'
 import * as React from 'react'
 import { API } from '../../../store/api'
-import { ClientCredentials, ClientID, ClientSearchResult } from '../../../store/models/client'
+import {
+  ClientCredentials,
+  ClientID,
+  ClientSearchResult,
+  ClientProfile
+} from '../../../store/models/client'
+import { ProfileTooltip } from '../../widgets/profile/ProfileTooltip'
+import { ClientProfileHelper } from '../../../store/client/types'
 
 interface RecipientFieldProps {
   credentials: ClientCredentials
@@ -118,7 +125,7 @@ interface RenderSuggestionProps {
   highlightedIndex: number | null
   index: number
   itemProps: MenuItemProps<'div', { button?: never }>
-  selectedItem: Suggestion
+  selectedItem: ClientProfile
   suggestion: Suggestion
 }
 
@@ -150,8 +157,16 @@ renderSuggestion.propTypes = {
   highlightedIndex: PropTypes.number,
   index: PropTypes.number,
   itemProps: PropTypes.object,
-  selectedItem: PropTypes.string,
+  selectedItem: PropTypes.object,
   suggestion: PropTypes.shape({ label: PropTypes.string }).isRequired
+}
+
+async function getProfileFor(
+  credentials: ClientCredentials,
+  suggestion: Suggestion
+): Promise<ClientProfile> {
+  const api = new API(credentials)
+  return api.fetchClient(suggestion.client_id)
 }
 
 async function getSuggestions(
@@ -184,16 +199,18 @@ interface DownshiftMultipleProps {
 function DownshiftMultiple(props: DownshiftMultipleProps) {
   const { classes, credentials, initialValues, setRecipients } = props
   const [inputValue, setInputValue] = React.useState('')
-  const [selectedItem, setSelectedItem] = React.useState<Suggestion[]>([])
+  const [selectedItem, setSelectedItem] = React.useState<ClientProfile[]>([])
   const [suggestions, setSuggestions] = React.useState<Suggestion[]>([])
 
   function handleChange(item: Suggestion) {
     let newSelectedItem = [...selectedItem]
-    if (!newSelectedItem.includes(item)) {
-      newSelectedItem = [...newSelectedItem, item]
-    }
-    setInputValue('')
-    setSelectedItem(newSelectedItem)
+    getProfileFor(credentials, item).then(profile => {
+      if (!newSelectedItem.includes(profile)) {
+        newSelectedItem = [...newSelectedItem, profile]
+      }
+      setInputValue('')
+      setSelectedItem(newSelectedItem)
+    })
   }
 
   React.useEffect(() => {
@@ -234,9 +251,9 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
     }
   }
 
-  const handleDelete = (item: Suggestion) => () => {
+  const handleDelete = (profile: ClientProfile) => () => {
     const newSelectedItem = [...selectedItem]
-    newSelectedItem.splice(newSelectedItem.indexOf(item), 1)
+    newSelectedItem.splice(newSelectedItem.indexOf(profile), 1)
     setSelectedItem(newSelectedItem)
   }
 
@@ -273,14 +290,17 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
                   onChange!(event as React.ChangeEvent<HTMLInputElement>)
                 },
                 onFocus,
-                startAdornment: selectedItem.map(item => (
-                  <Chip
-                    key={item.client_id}
-                    tabIndex={-1}
-                    label={item.full_name}
-                    className={classes.chip}
-                    onDelete={handleDelete(item)}
-                  />
+                startAdornment: selectedItem.map(profile => (
+                  <ProfileTooltip profile={profile}>
+                    <Chip
+                      avatar={<Avatar>{ClientProfileHelper.FROM(profile).getInitials()}</Avatar>}
+                      key={profile.client_id}
+                      tabIndex={-1}
+                      label={profile.full_name}
+                      className={classes.chip}
+                      onDelete={handleDelete(profile)}
+                    />
+                  </ProfileTooltip>
                 ))
               },
               classes,

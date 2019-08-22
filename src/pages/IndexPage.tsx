@@ -114,14 +114,12 @@ const IndexPageFC: React.FC<AllProps> = ({
             button
           />
         </Container>
-        <Divider />
         {messagesState.readMessages.length > 0 && (
           <React.Fragment>
             <Container className={classes.messageListContainer}>
               <Typography>Read</Typography>
               <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
             </Container>
-            <Divider />
           </React.Fragment>
         )}
         {messagesState.sentMessages.length > 0 && (
