@@ -1,0 +1,29 @@
+diff --git a/node_modules/formik/dist/formik.esm.js b/node_modules/formik/dist/formik.esm.js
+index 738e3dc..5844469 100644
+--- a/node_modules/formik/dist/formik.esm.js
++++ b/node_modules/formik/dist/formik.esm.js
+@@ -736,15 +736,17 @@ function warnAboutMissingIdentifier(_a) {
+ function yupToFormErrors(yupError) {
+   var errors = {};
+ 
+-  if (yupError.inner.length === 0) {
+-    return setIn(errors, yupError.path, yupError.message);
+-  }
++  if (yupError.inner) {
++    if (yupError.inner.length === 0) {
++      return setIn(errors, yupError.path, yupError.message);
++    }
+ 
+-  for (var _i = 0, _a = yupError.inner; _i < _a.length; _i++) {
+-    var err = _a[_i];
++    for (var _i = 0, _a = yupError.inner; _i < _a.length; _i++) {
++      var err = _a[_i];
+ 
+-    if (!errors[err.path]) {
+-      errors = setIn(errors, err.path, err.message);
++      if (!errors[err.path]) {
++        errors = setIn(errors, err.path, err.message);
++      }
+     }
+   }
+ 

@@ -81,12 +81,12 @@ async function testHandle(
   credentials: ClientCredentials,
   profile: ClientProfile
 ): Promise<boolean> {
-  if (profile.handle && value.toLowerCase() === profile.handle.toLowerCase()) {
-    // if the handle hasn't changed, that's fine
+  if (value === null || value.length === 0) {
+    // if the handle is null/empty, that's fine
     return Promise.resolve(true)
   }
-  if (value === null || value.length === 0) {
-    // if the handle is null/empty, that's fine too
+  if (profile.handle && value.toLowerCase() === profile.handle.toLowerCase()) {
+    // if the handle hasn't changed, that's fine
     return Promise.resolve(true)
   }
   return API.FETCH_CLIENT_BY_HANDLE(credentials, value)
@@ -98,15 +98,15 @@ function getSchema(credentials: ClientCredentials, profile: ClientProfile) {
   return Yup.object().shape({
     full_name: Yup.string()
       .max(100, 'Keep it under 100 characters')
-      .required('How shall we address F?'),
+      .required('How shall we address you?'),
     handle: Yup.string()
+      .nullable()
       .max(100, 'Keep it under 100 characters')
       .trim()
       .matches(
         /^[a-zA-Z0-9_.-]*$/,
         "Your handle can't contain special characters; only A to Z, 0 to 9, _, ., and -."
       )
-      .nullable()
       .test('is available', "that's not available", async value =>
         testHandle(value, credentials, profile)
       )

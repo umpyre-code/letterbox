@@ -27,6 +27,7 @@ import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import { Profile } from '../components/widgets/profile/Profile'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -94,6 +95,9 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
               <Link to="/">
                 <Logotype />
               </Link>
+            </Grid>
+            <Grid item>
+              <Profile profile={profile} balance={balance} menu />
             </Grid>
             <Grid item xs={12}>
               <Divider />
