@@ -624,10 +624,6 @@ module.exports = function(webpackEnv) {
                 broadcastUpdate: {
                   channelName: 'update-channel'
                 },
-                // matchOptions and fetchOptions are used to configure the handler.
-                fetchOptions: {
-                  mode: 'no-cors'
-                },
                 matchOptions: {
                   ignoreSearch: true
                 }
