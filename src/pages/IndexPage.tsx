@@ -148,12 +148,12 @@ const IndexPageFC: React.FC<AllProps> = ({
     <ClientInit>
       <Container className={classes.headerContainer}>
         <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-          <Grid item xs={3}>
+          <Grid item>
             <Router.Link to="/">
               <Logotype />
             </Router.Link>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item>
             <Profile profile={profile} balance={balance} menu />
           </Grid>
           <Grid item xs={12}>
