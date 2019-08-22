@@ -29,8 +29,6 @@ import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import { Editor } from '../../drafts/compose/Editor'
 
-const useStyles = makeStyles((theme: Theme) => createStyles({}))
-
 interface Props {
   profile?: ClientProfile
   setIsEditing: (arg0: boolean) => void
@@ -122,7 +120,6 @@ export const ProfileFormFC: React.FC<AllProps> = ({
   const [editorState, setEditorState] = React.useState(getInitialState(profile))
 
   const clientProfileHelper = ClientProfileHelper.FROM(profile)
-  const classes = useStyles({})
 
   const handleFormRender = (props: FormikProps<FormikValues>) => {
     const { submitForm, isSubmitting, isValid, isValidating } = props
