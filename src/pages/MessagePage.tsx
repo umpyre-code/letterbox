@@ -2,13 +2,12 @@ import {
   Button,
   Container,
   createStyles,
+  CssBaseline,
   Divider,
   Grid,
   makeStyles,
   Paper,
-  Theme,
-  Typography,
-  CssBaseline
+  Theme
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/Reply'
@@ -19,13 +18,17 @@ import ClientInit from '../components/ClientInit'
 import MessageBodyFc from '../components/messages/MessageBodyFc'
 import { MessageListItem } from '../components/messages/MessageListItem'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import { Logotype } from '../components/widgets/Logotype'
 import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
-import { loadMessagesRequest, messageReadRequest } from '../store/messages/actions'
+import {
+  deleteMessageRequest,
+  loadMessagesRequest,
+  messageReadRequest
+} from '../store/messages/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { DecryptedMessage } from '../store/models/messages'
-import { Logotype } from '../components/widgets/Logotype'
 
 interface PropsFromState {
   balance?: Balance
@@ -37,6 +40,7 @@ interface PropsFromState {
 interface PropsFromDispatch {
   messageRead: typeof messageReadRequest
   loadMessages: typeof loadMessagesRequest
+  deleteMessage: typeof deleteMessageRequest
 }
 
 interface MatchParams {
@@ -62,6 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const MessagePageFC: React.FC<AllProps> = ({
   balance,
   credentials,
+  deleteMessage,
   history,
   match,
   loadedMessages,
@@ -94,7 +99,14 @@ const MessagePageFC: React.FC<AllProps> = ({
                 </Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="secondary">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    deleteMessage(message.hash)
+                    history.push('/')
+                  }}
+                >
                   <DeleteIcon />
                   Delete
                 </Button>
@@ -140,6 +152,7 @@ const mapStateToProps = ({ accountState, clientState, messagesState }: Applicati
 })
 
 const mapDispatchToProps = {
+  deleteMessage: deleteMessageRequest,
   messageRead: messageReadRequest,
   loadMessages: loadMessagesRequest
 }

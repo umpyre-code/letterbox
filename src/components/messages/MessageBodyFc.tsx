@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1, 3, 1, 3)
     },
     messageBody: {
+      '& a:link': {
+        textDecoration: 'underline'
+      },
       fontFamily: [
         'Aleo',
         '-apple-system',

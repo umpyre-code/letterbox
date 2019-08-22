@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 1, 0, 1)
     },
     profileTypography: {
+      '& a:link': {
+        textDecoration: 'underline'
+      },
       fontFamily: [
         'Aleo',
         '-apple-system',
