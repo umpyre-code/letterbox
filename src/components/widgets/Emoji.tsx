@@ -5,7 +5,7 @@ import * as React from 'react'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     emoji: {
-      fontSize: '1.3rem'
+      fontSize: '1.5rem'
     }
   })
 )
