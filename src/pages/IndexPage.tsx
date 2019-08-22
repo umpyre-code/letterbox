@@ -48,10 +48,10 @@ type AllProps = PropsFromState & PropsFromDispatch
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     composeButton: {
-      bottom: theme.spacing(2),
+      bottom: theme.spacing(3),
       margin: '0 auto',
       position: 'fixed',
-      right: theme.spacing(2),
+      right: theme.spacing(3),
       zIndex: 1
     },
     draftContainer: {
