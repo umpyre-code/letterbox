@@ -1,4 +1,13 @@
-import { Container, createStyles, Divider, makeStyles, Theme, Typography } from '@material-ui/core'
+import {
+  Container,
+  createStyles,
+  CssBaseline,
+  Divider,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography
+} from '@material-ui/core'
 import qs from 'qs'
 import * as React from 'react'
 import { connect } from 'react-redux'
@@ -7,23 +16,26 @@ import { Elements, StripeProvider } from 'react-stripe-elements'
 import ClientInit from '../components/ClientInit'
 import AddCreditsForm from '../components/forms/AddCreditsForm'
 import Loading from '../components/widgets/Loading'
+import { Logotype } from '../components/widgets/Logotype'
+import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
+import { ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
-import { Logotype } from '../components/widgets/Logotype'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 
 interface PropsFromState {
   balance?: Balance
+  profile?: ClientProfile
 }
 
 type AllProps = PropsFromState & Router.RouteComponentProps<{}>
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    bodyContainer: { padding: theme.spacing(5) },
+    bodyContainer: { padding: theme.spacing(1) },
     bodyContentContainer: { padding: theme.spacing(0, 0, 3, 0) },
     composeButton: {
       bottom: theme.spacing(2),
@@ -38,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location }) => {
+const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location, profile }) => {
   const [stripe, setStripe] = React.useState(null)
   const classes = useStyles({})
 
@@ -75,12 +87,22 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location }) => {
   if (balance) {
     return (
       <ClientInit>
+        <CssBaseline />
         <Container className={classes.headerContainer}>
-          <Router.Link to="/">
-            <Logotype />
-          </Router.Link>
+          <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+            <Grid item>
+              <Router.Link to="/">
+                <Logotype />
+              </Router.Link>
+            </Grid>
+            <Grid item>
+              <Profile profile={profile} balance={balance} menu />
+            </Grid>
+            <Grid item xs={12}>
+              <Divider />
+            </Grid>
+          </Grid>
         </Container>
-        <Divider />
         <Container className={classes.bodyContainer}>
           <Container className={classes.bodyContentContainer}>
             <Typography variant="h4">Add credits</Typography>
@@ -106,7 +128,8 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location }) => {
 }
 
 const mapStateToProps = ({ clientState, accountState }: ApplicationState) => ({
-  balance: accountState.balance
+  balance: accountState.balance,
+  profile: clientState.profile
 })
 
 const mapDispatchToProps = {

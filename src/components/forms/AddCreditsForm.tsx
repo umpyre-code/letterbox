@@ -49,6 +49,8 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ initialAmount, setCreditAmo
     setRadioValue(value)
     if (value !== 'custom') {
       setCreditAmount(parseInt(value, 10))
+    } else {
+      setCreditAmount(customAmountValue)
     }
   }
 
@@ -145,8 +147,8 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ amountCents, balance })
   const updatedRows = [
     makeRow('Additional credits', creditAmount),
     makeRow('Card fee', stripeFee),
-    makeRow('Charge total', chargeAmount),
-    makeRow('Balance after charge', newBalance)
+    makeRow('Balance after charge', newBalance),
+    makeRow('Charge total', chargeAmount)
   ]
 
   return (
