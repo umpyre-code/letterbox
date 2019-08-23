@@ -1,22 +1,19 @@
 import { Box } from '@material-ui/core'
 import { EditorState } from 'draft-js'
-import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
-import createMarkdownPlugin from 'draft-js-markdown-plugin'
 import PluginEditor from 'draft-js-plugins-editor'
 import createPrismPlugin from 'draft-js-prism-plugin'
 import Prism from 'prismjs'
 import 'prismjs/themes/prism.css'
 import * as React from 'react'
 import './Draft.css'
-import { DraftInlineToolbar, inlineToolbarPlugin } from './DraftInlineToolbar'
+import { DraftToolbar, staticToolbarPlugin } from './DraftToolbar'
 
 const editorPlugins = [
-  inlineToolbarPlugin,
+  staticToolbarPlugin,
   createPrismPlugin({
     prism: Prism
   }),
-  createMarkdownPlugin(),
   createLinkifyPlugin()
 ]
 
@@ -56,7 +53,7 @@ export const Editor: React.FC<Props> = ({ placeholder, editorState, onChange, re
         spellCheck
         readOnly={readOnly}
       />
-      <DraftInlineToolbar />
+      <DraftToolbar />
     </Box>
   )
 }

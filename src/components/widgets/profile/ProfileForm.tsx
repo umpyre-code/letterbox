@@ -3,25 +3,21 @@ import {
   Card,
   CardContent,
   CardHeader,
-  createStyles,
   Divider,
   IconButton,
   LinearProgress,
-  makeStyles,
-  Theme,
   Typography
 } from '@material-ui/core'
 import DoneIcon from '@material-ui/icons/Done'
 import { ContentState, convertFromHTML, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
-import 'draft-js-inline-toolbar-plugin/lib/plugin.css'
 import { Field, Form, Formik, FormikProps, FormikValues } from 'formik'
 import { TextField } from 'formik-material-ui'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Yup from 'yup'
-import { ApplicationState } from '../../../store/ApplicationState'
 import { API } from '../../../store/api'
+import { ApplicationState } from '../../../store/ApplicationState'
 import { updateClientProfileRequest } from '../../../store/client/actions'
 import { ClientProfileHelper } from '../../../store/client/types'
 import { ClientCredentials, ClientProfile } from '../../../store/models/client'
