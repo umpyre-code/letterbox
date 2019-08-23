@@ -3,8 +3,8 @@
 }
 
 .button {
-  background: #ddd;
-  color: #fff;
+  background: #fcfcfc;
+  color: #888;
   font-size: 18px;
   border: 0;
   padding-top: 5px;
@@ -15,20 +15,20 @@
 }
 
 .button svg {
-  fill: #fff;
+  fill: #888;
 }
 
 .button:hover,
 .button:focus {
-  background: #444;
+  background: #ce93d83f;
   outline: 0;
   /* reset for :focus */
 }
 
 .active {
-  color: #16aec9;
+  color: #000;
 }
 
 .active svg {
-  fill: #16aec9;
+  fill: #000;
 }

@@ -28,7 +28,12 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"'
-      ].join(',')
+      ].join(','),
+      '& blockquote': {
+        background: '#fafafa',
+        borderLeft: '6px solid #eaeaea',
+        padding: theme.spacing(1)
+      }
     }
   })
 )
