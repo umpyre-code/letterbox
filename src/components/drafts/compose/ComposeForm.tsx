@@ -56,7 +56,7 @@ export function calculateMessageCost(amountCents: number) {
   if (amountCents === 0) {
     return 0
   }
-  return Math.ceil(amountCents / (1 - UMPYRE_MESSAGE_SEND_FEE))
+  return Math.ceil(amountCents * (1 + UMPYRE_MESSAGE_SEND_FEE))
 }
 
 interface Props {
