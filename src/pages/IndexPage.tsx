@@ -2,13 +2,10 @@ import {
   Container,
   createStyles,
   Divider,
-  Grid,
   makeStyles,
   Theme,
   Tooltip,
-  Typography,
-  Link,
-  CssBaseline
+  Typography
 } from '@material-ui/core'
 import Fab from '@material-ui/core/Fab'
 import Edit from '@material-ui/icons/Edit'
@@ -17,17 +14,15 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import { DraftList } from '../components/drafts/DraftList'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { MessageList } from '../components/messages/MessageList'
 import PhoneVerification from '../components/widgets/PhoneVerification'
-import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
-import { Logotype } from '../components/widgets/Logotype'
-import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   balance?: Balance

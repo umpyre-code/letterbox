@@ -1,17 +1,9 @@
-import {
-  Container,
-  createStyles,
-  CssBaseline,
-  Divider,
-  Grid,
-  makeStyles,
-  Theme
-} from '@material-ui/core'
+import { Container, createStyles, makeStyles, Theme } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
-import { Logotype } from '../components/widgets/Logotype'
 import { Profile } from '../components/widgets/profile/Profile'
 import { API } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
@@ -19,7 +11,6 @@ import { loadCredentialsRequest } from '../store/client/actions'
 import { emptyClientProfile } from '../store/client/types'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
-import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   readonly balance?: Balance

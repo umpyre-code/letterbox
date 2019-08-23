@@ -2,7 +2,6 @@ import {
   Button,
   Container,
   createStyles,
-  CssBaseline,
   Divider,
   Grid,
   makeStyles,
@@ -16,12 +15,13 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
+import { DraftListItem } from '../components/drafts/DraftListItem'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 import MessageBodyFc from '../components/messages/MessageBodyFc'
 import { MessageListItem } from '../components/messages/MessageListItem'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
-import { Logotype } from '../components/widgets/Logotype'
-import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
+import { addDraftRequest } from '../store/drafts/actions'
 import { Draft } from '../store/drafts/types'
 import {
   deleteMessageRequest,
@@ -31,9 +31,6 @@ import {
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { DecryptedMessage } from '../store/models/messages'
-import { addDraftRequest } from '../store/drafts/actions'
-import { DraftListItem } from '../components/drafts/DraftListItem'
-import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   balance?: Balance

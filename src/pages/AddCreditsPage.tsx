@@ -1,13 +1,4 @@
-import {
-  Container,
-  createStyles,
-  CssBaseline,
-  Divider,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography
-} from '@material-ui/core'
+import { Container, createStyles, makeStyles, Theme, Typography } from '@material-ui/core'
 import qs from 'qs'
 import * as React from 'react'
 import { connect } from 'react-redux'
@@ -15,15 +6,13 @@ import * as Router from 'react-router-dom'
 import { Elements, StripeProvider } from 'react-stripe-elements'
 import ClientInit from '../components/ClientInit'
 import AddCreditsForm from '../components/forms/AddCreditsForm'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 import Loading from '../components/widgets/Loading'
-import { Logotype } from '../components/widgets/Logotype'
-import { Profile } from '../components/widgets/profile/Profile'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
-import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 

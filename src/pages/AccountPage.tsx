@@ -1,34 +1,18 @@
-import {
-  AppBar,
-  Box,
-  Container,
-  createStyles,
-  makeStyles,
-  Paper,
-  Tab,
-  Tabs,
-  Theme,
-  Typography,
-  CssBaseline,
-  Grid,
-  Divider
-} from '@material-ui/core'
+import { AppBar, Box, Container, Paper, Tab, Tabs, Typography } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Link, Route, Switch, Router } from 'react-router-dom'
+import { Link, Route, Switch } from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
+import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
-import { Logotype } from '../components/widgets/Logotype'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
-import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
-import { Profile } from '../components/widgets/profile/Profile'
-import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -37,27 +21,6 @@ interface PropsFromState {
 }
 
 type AccountPageProps = PropsFromState
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    composeButton: {
-      bottom: theme.spacing(2),
-      margin: '0 auto',
-      position: 'fixed',
-      right: theme.spacing(2),
-      zIndex: 1
-    },
-    draftContainer: {
-      padding: theme.spacing(1)
-    },
-    headerContainer: {
-      padding: theme.spacing(1)
-    },
-    messageListContainer: {
-      padding: theme.spacing(1)
-    }
-  })
-)
 
 function a11yProps(name: string) {
   return {
@@ -84,8 +47,6 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, name, ...other }) => (
 )
 
 const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentials }) => {
-  const classes = useStyles({})
-
   if (balance && profile && credentials) {
     return (
       <ClientInit>
