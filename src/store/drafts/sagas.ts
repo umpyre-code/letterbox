@@ -19,9 +19,10 @@ import {
   sendDraftRequest,
   updateDraftError,
   updateDraftRequest,
-  updateDraftSuccess
+  updateDraftSuccess,
+  addDraftRequest
 } from './actions'
-import { Draft, DraftsActionTypes } from './types'
+import { Draft, DraftsActionTypes, NewDraft } from './types'
 
 async function initializeDrafts(): Promise<Draft[]> {
   return db.drafts
@@ -41,21 +42,22 @@ function* handleInitializeDrafts() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(initializeDraftsError(error.stack!))
+      yield put(initializeDraftsError(error.stack))
     } else {
       yield put(initializeDraftsError('An unknown error occured.'))
     }
   }
 }
 
-async function addDraft(): Promise<Draft[]> {
+async function addDraft(newDraft: NewDraft): Promise<Draft[]> {
   db.drafts.add({
     created_at: new Date(),
     editorContent: undefined,
     pda: '',
     recipients: [],
     sending: false,
-    value_cents: 0
+    value_cents: 0,
+    ...newDraft
   })
   return db.drafts
     .orderBy('created_at')
@@ -63,9 +65,11 @@ async function addDraft(): Promise<Draft[]> {
     .toArray()
 }
 
-function* handleAddDraft() {
+function* handleAddDraft(values: ReturnType<typeof addDraftRequest>) {
+  const { payload } = values
+  const newDraft = payload as NewDraft
   try {
-    const res = yield call(addDraft)
+    const res = yield call(addDraft, newDraft)
 
     if (res.error) {
       yield put(addDraftError(res.error))
@@ -74,7 +78,7 @@ function* handleAddDraft() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(addDraftError(error.stack!))
+      yield put(addDraftError(error.stack))
     } else {
       yield put(addDraftError('An unknown error occured.'))
     }
@@ -101,7 +105,7 @@ function* handleRemoveDraft(values: ReturnType<typeof removeDraftRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(removeDraftError(error.stack!))
+      yield put(removeDraftError(error.stack))
     } else {
       yield put(removeDraftError('An unknown error occured.'))
     }
@@ -128,7 +132,7 @@ function* handleUpdateDraft(values: ReturnType<typeof updateDraftRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(updateDraftError(error.stack!))
+      yield put(updateDraftError(error.stack))
     } else {
       yield put(updateDraftError('An unknown error occured.'))
     }
@@ -183,12 +187,12 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
   const { message } = draft
   try {
     const state: ApplicationState = yield select()
-    const credentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(
       prepareMessage,
       credentials,
-      state.keysState.current_key!,
-      message!,
+      state.keysState.current_key,
+      message,
       draft.recipients
     )
 
@@ -203,9 +207,8 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
       yield put(sendMessagesRequest(draftToSend))
     }
   } catch (error) {
-    console.log(error)
     if (error instanceof Error) {
-      yield put(sendDraftError(error.stack!))
+      yield put(sendDraftError(error.stack))
     } else {
       yield put(sendDraftError('An unknown error occured.'))
     }

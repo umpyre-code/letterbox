@@ -28,6 +28,7 @@ import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { Profile } from '../components/widgets/profile/Profile'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -88,93 +89,79 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
   if (balance && profile && credentials) {
     return (
       <ClientInit>
-        <CssBaseline />
-        <Container className={classes.headerContainer}>
-          <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-            <Grid item>
-              <Link to="/">
-                <Logotype />
-              </Link>
-            </Grid>
-            <Grid item>
-              <Profile profile={profile} balance={balance} menu />
-            </Grid>
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-          </Grid>
-        </Container>
-        <Container>
-          <BackToIndexButton />
-          <Paper>
-            <Route
-              path="/account"
-              render={({ location }) => (
-                <React.Fragment>
-                  <AppBar position="static">
-                    <Tabs value={location.pathname} aria-label="my account">
-                      <Tab
-                        label="Account"
-                        {...a11yProps('account')}
-                        component={Link}
-                        to="/account"
-                        value="/account"
-                      />
-                      <Tab
-                        label="Balance"
-                        {...a11yProps('balance')}
-                        component={Link}
-                        to="/account/balance"
-                        value="/account/balance"
-                      />
-                      <Tab
-                        label="Payouts"
-                        {...a11yProps('payouts')}
-                        component={Link}
-                        to="/account/payouts"
-                        value="/account/payouts"
-                      />
-                    </Tabs>
-                  </AppBar>
+        <DefaultLayout balance={balance} profile={profile}>
+          <Container>
+            <BackToIndexButton />
+            <Paper>
+              <Route
+                path="/account"
+                render={({ location }) => (
                   <React.Fragment>
-                    <Switch>
-                      <Route
-                        exact
-                        path="/account"
-                        render={() => (
-                          <TabPanel name="account">
-                            <Typography variant="h5">Account info</Typography>
-                            <Typography>
-                              Looking good <Emoji ariaLabel="cool">😎</Emoji>
-                            </Typography>
-                          </TabPanel>
-                        )}
-                      />
-                      <Route
-                        path="/account/balance"
-                        render={() => (
-                          <TabPanel name="balance">
-                            <Typography variant="h5">Account balance</Typography>
+                    <AppBar position="static">
+                      <Tabs value={location.pathname} aria-label="my account">
+                        <Tab
+                          label="Account"
+                          {...a11yProps('account')}
+                          component={Link}
+                          to="/account"
+                          value="/account"
+                        />
+                        <Tab
+                          label="Balance"
+                          {...a11yProps('balance')}
+                          component={Link}
+                          to="/account/balance"
+                          value="/account/balance"
+                        />
+                        <Tab
+                          label="Payouts"
+                          {...a11yProps('payouts')}
+                          component={Link}
+                          to="/account/payouts"
+                          value="/account/payouts"
+                        />
+                      </Tabs>
+                    </AppBar>
+                    <React.Fragment>
+                      <Switch>
+                        <Route
+                          exact
+                          path="/account"
+                          render={() => (
+                            <TabPanel name="account">
+                              <Typography variant="h5">Account info</Typography>
+                              <Typography>
+                                Looking good <Emoji ariaLabel="cool">😎</Emoji>
+                              </Typography>
+                            </TabPanel>
+                          )}
+                        />
+                        <Route
+                          path="/account/balance"
+                          render={() => (
+                            <TabPanel name="balance">
+                              <Typography variant="h5">Account balance</Typography>
 
-                            {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
-                          </TabPanel>
-                        )}
-                      />
-                      <Route
-                        path="/account/payouts"
-                        render={params => (
-                          <TabPanel name="payouts">
-                            <PayoutsPage searchString={params.location.search} />
-                          </TabPanel>
-                        )}
-                      />
-                    </Switch>
+                              {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
+                            </TabPanel>
+                          )}
+                        />
+                        <Route
+                          path="/account/payouts"
+                          render={params => (
+                            <TabPanel name="payouts">
+                              <PayoutsPage searchString={params.location.search} />
+                            </TabPanel>
+                          )}
+                        />
+                      </Switch>
+                    </React.Fragment>
                   </React.Fragment>
-                </React.Fragment>
-              )}
-            />
-          </Paper>
-        </Container>
+                )}
+              />
+            </Paper>
+          </Container>
+        </DefaultLayout>
       </ClientInit>
     )
   }

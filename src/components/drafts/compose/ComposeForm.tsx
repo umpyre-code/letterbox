@@ -36,8 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     discardButton: {
       backgroundColor: '#ccc'
-      // position: 'absolute',
-      // right: theme.spacing(0)
     },
     progress: {
       margin: theme.spacing(1, 0, 0, 0)
@@ -87,6 +85,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(draft.editorContent)))
       : EditorState.createEmpty()
   )
+  const [sending, setSending] = React.useState(draft.sending)
   const [recipients, setRecipients] = React.useState<ClientID[]>(draft.recipients)
   const [pda, setPda] = React.useState(draft.pda)
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
@@ -94,9 +93,15 @@ const ComposeFormFC: React.FC<AllProps> = ({
   )
   const classes = useStyles({})
 
+  React.useEffect(() => {
+    setSending(draft.sending)
+  }, [draft.sending])
+
   function handleSend() {
+    setSending(true)
     const messageBody: MessageBody = {
-      markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
+      markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
+      parent: draft.inReplyTo
     }
     const messageDraft = {
       ...draft,
@@ -137,7 +142,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
       pda !== '' &&
       balanceIsSufficient()
     ) {
-      return !draft.sending
+      return !sending
     }
     return false
   }
@@ -208,6 +213,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Grid item container xs spacing={1} justify="flex-start" alignItems="flex-end">
             <Grid item>
               <PaymentInput
+                disabled={sending}
                 style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
                 placeholder="Message value"
                 label="Payment"
@@ -222,15 +228,11 @@ const ComposeFormFC: React.FC<AllProps> = ({
             <Grid item>{showAddCreditsButton()}</Grid>
           </Grid>
           <Grid item>
-            <DiscardButton
-              classes={classes}
-              enabled={!draft.sending}
-              handleDiscard={handleDiscard}
-            />
+            <DiscardButton classes={classes} enabled={!sending} handleDiscard={handleDiscard} />
           </Grid>
         </Grid>
       </Grid>
-      {draft.sending && (
+      {sending && (
         <Grid item xs={12}>
           <LinearProgress className={classes.progress} />
         </Grid>

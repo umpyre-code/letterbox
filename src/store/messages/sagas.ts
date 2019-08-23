@@ -63,6 +63,12 @@ function cmp(first: MessageBase, second: MessageBase): number {
   if (second.value_cents > first.value_cents) {
     return 1
   }
+  if (first.received_at > second.received_at) {
+    return -1
+  }
+  if (second.received_at > first.received_at) {
+    return 1
+  }
   return 0
 }
 

@@ -30,7 +30,7 @@ const DraftListFC: React.FunctionComponent<AllProps> = ({ draftsState }) => {
     return (
       <List className={classes.list}>
         {drafts.map(draft => (
-          <DraftListItem draft={draft} key={draft.id!} />
+          <DraftListItem draft={draft} key={draft.id} />
         ))}
       </List>
     )

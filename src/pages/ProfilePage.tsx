@@ -19,6 +19,7 @@ import { loadCredentialsRequest } from '../store/client/actions'
 import { emptyClientProfile } from '../store/client/types'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   readonly balance?: Balance
@@ -93,28 +94,12 @@ const ProfilePageFC: React.FC<AllProps> = ({
 
   return (
     <React.Fragment>
-      <CssBaseline />
-      <Container className={classes.headerContainer}>
-        <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-          <Grid item>
-            <Router.Link to="/">
-              <Logotype />
-            </Router.Link>
-          </Grid>
-          {myProfile && balance && (
-            <Grid item>
-              <Profile profile={myProfile} balance={balance} menu />
-            </Grid>
-          )}
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
-        </Grid>
-      </Container>
-      <Container className={classes.profileContainer}>
-        <BackToIndexButton />
-        <Profile profile={profile} editable={isEditable()} fullProfile />
-      </Container>
+      <DefaultLayout profile={myProfile} balance={balance}>
+        <Container className={classes.profileContainer}>
+          <BackToIndexButton />
+          <Profile profile={profile} editable={isEditable()} fullProfile />
+        </Container>
+      </DefaultLayout>
     </React.Fragment>
   )
 }

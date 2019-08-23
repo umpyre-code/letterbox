@@ -1,5 +1,5 @@
 import { ClientID } from '../models/client'
-import { APIMessage, MessageBase } from '../models/messages'
+import { APIMessage, MessageBase, MessageHash } from '../models/messages'
 
 export interface Draft {
   id?: number
@@ -15,6 +15,12 @@ export interface Draft {
   sending: boolean
   message?: MessageBase
   apiMessages?: APIMessage[]
+  inReplyTo?: MessageHash
+}
+
+export interface NewDraft {
+  recipients?: ClientID[]
+  inReplyTo?: MessageHash
 }
 
 export interface FetchDraftsResponse {

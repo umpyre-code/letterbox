@@ -27,6 +27,7 @@ import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { Logotype } from '../components/widgets/Logotype'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 interface PropsFromState {
   balance?: Balance
@@ -134,7 +135,7 @@ const IndexPageFC: React.FC<AllProps> = ({
             className={classes.composeButton}
             color="primary"
             aria-label="Compose"
-            onClick={addDraft}
+            onClick={() => addDraft()}
           >
             <Edit />
           </Fab>
@@ -145,40 +146,9 @@ const IndexPageFC: React.FC<AllProps> = ({
 
   return (
     <ClientInit>
-      <CssBaseline />
-      <Container className={classes.headerContainer}>
-        <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-          <Grid item>
-            <Router.Link to="/">
-              <Logotype />
-            </Router.Link>
-          </Grid>
-          <Grid item>
-            <Profile profile={profile} balance={balance} menu />
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
-        </Grid>
-      </Container>
-      {getBody()}
-      <Container className={classes.footerContainer}>
-        <Grid container justify="center" alignItems="center" spacing={2}>
-          <Grid item>
-            <Router.Link to="/about">
-              <Typography variant="subtitle1">About</Typography>
-            </Router.Link>
-          </Grid>
-          <Grid item>
-            <Divider orientation="vertical" style={{ height: 15 }} />
-          </Grid>
-          <Grid item>
-            <Link href="https://blog.umpyre.com" variant="subtitle2" underline="none">
-              <Typography variant="subtitle1">Blog</Typography>
-            </Link>
-          </Grid>
-        </Grid>
-      </Container>
+      <DefaultLayout balance={balance} profile={profile}>
+        {getBody()}
+      </DefaultLayout>
     </ClientInit>
   )
 }

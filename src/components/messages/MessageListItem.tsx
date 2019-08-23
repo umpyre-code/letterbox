@@ -222,7 +222,8 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                   className={classes.inline}
                   color="inherit"
                 >
-                  {getSecondryComponent()} <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent</span>
+                  {getSecondryComponent()}{' '}
+                  <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent </span>
                   {getMessageDate()}
                 </Typography>
               </ProfileTooltip>

@@ -23,6 +23,7 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
+import { DefaultLayout } from '../components/layout/DefaultLayout'
 
 const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
 
@@ -87,36 +88,22 @@ const AddCreditsPageFC: React.FC<AllProps> = ({ balance, location, profile }) =>
   if (balance) {
     return (
       <ClientInit>
-        <CssBaseline />
-        <Container className={classes.headerContainer}>
-          <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-            <Grid item>
-              <Router.Link to="/">
-                <Logotype />
-              </Router.Link>
-            </Grid>
-            <Grid item>
-              <Profile profile={profile} balance={balance} menu />
-            </Grid>
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-          </Grid>
-        </Container>
-        <Container className={classes.bodyContainer}>
-          <Container className={classes.bodyContentContainer}>
-            <Typography variant="h4">Add credits</Typography>
+        <DefaultLayout profile={profile} balance={balance}>
+          <Container className={classes.bodyContainer}>
+            <Container className={classes.bodyContentContainer}>
+              <Typography variant="h4">Add credits</Typography>
+            </Container>
+            <Container className={classes.bodyContentContainer}>
+              {stripe !== null && (
+                <StripeProvider stripe={stripe}>
+                  <Elements>
+                    <AddCreditsForm balance={balance} amountCents={amountCents} />
+                  </Elements>
+                </StripeProvider>
+              )}
+            </Container>
           </Container>
-          <Container className={classes.bodyContentContainer}>
-            {stripe !== null && (
-              <StripeProvider stripe={stripe}>
-                <Elements>
-                  <AddCreditsForm balance={balance} amountCents={amountCents} />
-                </Elements>
-              </StripeProvider>
-            )}
-          </Container>
-        </Container>
+        </DefaultLayout>
       </ClientInit>
     )
   }

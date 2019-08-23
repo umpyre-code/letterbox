@@ -54,13 +54,13 @@ export async function encryptMessageBody(
 
 export async function hashMessage(message: APIMessage): Promise<APIMessage> {
   await sodium.ready
-  const hashableMessage: any = {
+  const hashableMessage = {
     ...message,
     hash: undefined,
     signature: undefined
   }
 
-  const orderedKeysObj: any = {}
+  const orderedKeysObj = {}
   Object.keys(hashableMessage)
     .sort()
     .forEach(key => {
@@ -85,12 +85,12 @@ export async function hashMessage(message: APIMessage): Promise<APIMessage> {
 
 export async function signMessage(message: APIMessage, keyPair: KeyPair): Promise<APIMessage> {
   await sodium.ready
-  const signableMessage: any = {
+  const signableMessage = {
     ...message,
     signature: undefined
   }
 
-  const orderedKeysObj: any = {}
+  const orderedKeysObj = {}
   Object.keys(signableMessage)
     .sort()
     .forEach(key => {
