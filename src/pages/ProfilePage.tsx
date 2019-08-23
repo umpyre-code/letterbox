@@ -58,8 +58,8 @@ const ProfilePageFC: React.FC<AllProps> = ({
     async function fetchData() {
       const api = new API(credentials)
       if (
-        (myProfile && match.params.handle !== myProfile.handle) ||
-        (myProfile && match.params.clientId !== myProfile.handle)
+        (myProfile && match.params.handle === myProfile.handle) ||
+        (myProfile && match.params.clientId === myProfile.handle)
       ) {
         setProfile(myProfile)
       } else if (match.params.handle) {

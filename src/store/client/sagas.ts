@@ -1,20 +1,15 @@
 import { push } from 'connected-react-router'
 import * as jwt from 'jsonwebtoken'
 import sodium from 'libsodium-wrappers'
-import { all, call, fork, put, select, takeEvery, takeLatest, take } from 'redux-saga/effects'
+import _ from 'lodash'
+import { all, call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import * as srp from 'secure-remote-password/client'
 import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
 import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
-import { initializeDraftsRequest } from '../drafts/actions'
-import {
-  loadKeysRequest,
-  initializeKeysRequest,
-  initializeKeysError,
-  initializeKeysSuccess
-} from '../keys/actions'
-import { handleInitializeKeys } from '../keys/sagas'
+import { addDraftRequest, initializeDraftsRequest } from '../drafts/actions'
+import { initializeKeysRequest, loadKeysRequest } from '../keys/actions'
 import { KeyPair, KeysActionTypes } from '../keys/types'
 import { initializeMessagesRequest } from '../messages/actions'
 import { ClientCredentials, ClientProfile, Jwt, JwtClaims, NewClient } from '../models/client'
@@ -31,15 +26,15 @@ import {
   submitNewClientError,
   submitNewClientRequest,
   submitNewClientSuccess,
+  updateAndLoadCredentialsError,
+  updateAndLoadCredentialsRequest,
+  updateAndLoadCredentialsSuccess,
   updateClientProfileError,
   updateClientProfileRequest,
   updateClientProfileSuccess,
   verifyPhoneError,
   verifyPhoneRequest,
-  verifyPhoneSuccess,
-  updateAndLoadCredentialsRequest,
-  updateAndLoadCredentialsError,
-  updateAndLoadCredentialsSuccess
+  verifyPhoneSuccess
 } from './actions'
 import { AuthCreds, ClientActionTypes } from './types'
 
@@ -233,6 +228,11 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
   const { payload, meta } = values
   const { actions } = meta
   try {
+    // Save a copy of any drafts. We do this so that someone who clicks on the
+    // "message" and needs to go through the login/signup flow can see the draft
+    // after.
+    const prevState: ApplicationState = yield select()
+    const { drafts } = prevState.draftsState
     // First, clear out any old state
     yield call(signout)
 
@@ -253,6 +253,9 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(submitNewClientSuccess(credentials))
       yield put(fetchBalanceRequest())
       yield put(fetchClientRequest())
+      if (drafts.length > 0) {
+        yield put(addDraftRequest(_.last(drafts)))
+      }
       yield put(push('/flashseed'))
     }
   } catch (error) {
@@ -260,6 +263,8 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       if (error.response.data.code && error.response.data.code === 3) {
         if (error.response.data.message.startsWith('invalid email')) {
           yield put(submitNewClientError('The email address provided is not valid'))
+        } else if (error.response.data.message.startsWith('invalid phone number')) {
+          yield put(submitNewClientError('The phone number provided is not valid'))
         } else if (error.response.data.message.includes('unique violation')) {
           yield put(
             submitNewClientError(

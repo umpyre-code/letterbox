@@ -18,11 +18,14 @@ import {
 } from '@material-ui/core'
 import EditButton from '@material-ui/icons/Edit'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import SendIcon from '@material-ui/icons/Send'
 import moment from 'moment'
 import momentDurationFormatSetup from 'moment-duration-format'
 import * as React from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import { connect } from 'react-redux'
+import * as Router from 'react-router-dom'
 import { ClientProfileHelper } from '../../../store/client/types'
+import { addDraftRequest } from '../../../store/drafts/actions'
 import { Balance } from '../../../store/models/account'
 import { ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
@@ -33,6 +36,9 @@ momentDurationFormatSetup(moment)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    actionContainer: {
+      padding: theme.spacing(1)
+    },
     addCreditsButton: {
       '& .plusButton': { display: 'none', fontSize: '1rem', color: theme.palette.primary.main },
       // '&:hover': {
@@ -72,6 +78,9 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"'
       ].join(',')
+    },
+    sendIcon: {
+      marginLeft: theme.spacing(1)
     }
   })
 )
@@ -103,15 +112,18 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   profile,
   setMenuAnchorElementNull
 }) => {
-  const ProfileLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-    (props, ref) => <Link innerRef={ref} to={getProfileUrl(profile)} {...props} />
-  )
-  const AccountLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-    (props, ref) => <Link innerRef={ref} to="/account" {...props} />
-  )
-  const SignoutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-    (props, ref) => <Link innerRef={ref} to="/signout" {...props} />
-  )
+  const ProfileLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<Router.LinkProps, 'innerRef' | 'to'>
+  >((props, ref) => <Router.Link innerRef={ref} to={getProfileUrl(profile)} {...props} />)
+  const AccountLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<Router.LinkProps, 'innerRef' | 'to'>
+  >((props, ref) => <Router.Link innerRef={ref} to="/account" {...props} />)
+  const SignoutLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<Router.LinkProps, 'innerRef' | 'to'>
+  >((props, ref) => <Router.Link innerRef={ref} to="/signout" {...props} />)
 
   function handleMenuClose() {
     setMenuAnchorElementNull()
@@ -161,7 +173,8 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
   if (profile && profile.handle && profile.handle.length > 0) {
     return (
       <Typography className={classes.handleText} variant="subtitle2">
-        <Link to={getProfileUrl(profile)}>{profile.handle}</Link>&nbsp;{getDateJoined()}
+        <Router.Link to={getProfileUrl(profile)}>{profile.handle}</Router.Link>&nbsp;
+        {getDateJoined()}
       </Typography>
     )
   }
@@ -172,19 +185,31 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
   )
 }
 
-interface ActionProps {
+interface ActionPropsFromDispatch {
+  addDraft: typeof addDraftRequest
+}
+
+interface ActionValueProps {
+  profile: ClientProfile
   editable?: boolean
   menu?: boolean
   setIsEditing: (arg0: boolean) => void
   setMenuAnchorElement: (arg0: any) => void
 }
 
-export const Action: React.FC<ActionProps> = ({
+type ActionProps = ActionValueProps & ActionPropsFromDispatch & Router.RouteComponentProps<{}>
+
+const ActionFC: React.FC<ActionProps> = ({
+  addDraft,
   editable,
+  history,
   menu,
+  profile,
   setIsEditing,
   setMenuAnchorElement
 }) => {
+  const classes = useStyles({})
+
   if (editable) {
     return (
       <IconButton aria-label="Edit" onClick={() => setIsEditing(true)}>
@@ -202,12 +227,36 @@ export const Action: React.FC<ActionProps> = ({
       </IconButton>
     )
   }
-  return null
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      aria-label="Send message"
+      onClick={() => {
+        addDraft({ recipients: [profile.client_id] })
+        history.push('/')
+      }}
+    >
+      Message Me <SendIcon className={classes.sendIcon} />
+    </Button>
+  )
 }
 
-const AddCreditsLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-  (props, ref) => <Link innerRef={ref} to="/addcredits" {...props} />
+const mapDispatchToProps = {
+  addDraft: addDraftRequest
+}
+
+const Action = Router.withRouter(
+  connect(
+    undefined,
+    mapDispatchToProps
+  )(ActionFC)
 )
+
+const AddCreditsLink = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<Router.LinkProps, 'innerRef' | 'to'>
+>((props, ref) => <Router.Link innerRef={ref} to="/addcredits" {...props} />)
 
 interface BalanceProps {
   balance?: Balance
@@ -255,19 +304,22 @@ export const ProfileView: React.FC<Props> = ({
         <CardHeader
           className={classes.cardHeader}
           avatar={
-            <Link to={getProfileUrl(profile)}>
+            <Router.Link to={getProfileUrl(profile)}>
               <Avatar alt={clientProfileHelper.full_name}>
                 {clientProfileHelper.getInitials()}
               </Avatar>
-            </Link>
+            </Router.Link>
           }
           action={
-            <Action
-              editable={editable}
-              menu={menu}
-              setIsEditing={setIsEditing}
-              setMenuAnchorElement={setMenuAnchorElement}
-            />
+            <Container className={classes.actionContainer}>
+              <Action
+                profile={profile}
+                editable={editable}
+                menu={menu}
+                setIsEditing={setIsEditing}
+                setMenuAnchorElement={setMenuAnchorElement}
+              />
+            </Container>
           }
           title={
             <Grid
@@ -279,7 +331,7 @@ export const ProfileView: React.FC<Props> = ({
             >
               <Grid item zeroMinWidth>
                 <Typography>
-                  <Link to={getProfileUrl(profile)}>{profile.full_name}</Link>
+                  <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
                 </Typography>
               </Grid>
               <Grid item zeroMinWidth>
