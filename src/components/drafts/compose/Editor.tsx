@@ -2,20 +2,11 @@ import { Box } from '@material-ui/core'
 import { EditorState } from 'draft-js'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import PluginEditor from 'draft-js-plugins-editor'
-import createPrismPlugin from 'draft-js-prism-plugin'
-import Prism from 'prismjs'
-import 'prismjs/themes/prism.css'
 import * as React from 'react'
 import './Draft.css'
 import { DraftToolbar, staticToolbarPlugin } from './DraftToolbar'
 
-const editorPlugins = [
-  staticToolbarPlugin,
-  createPrismPlugin({
-    prism: Prism
-  }),
-  createLinkifyPlugin()
-]
+const editorPlugins = [staticToolbarPlugin, createLinkifyPlugin()]
 
 interface Props {
   placeholder: string
