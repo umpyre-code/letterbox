@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/styles'
 import * as React from 'react'
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     emoji: {
       fontSize: '1.5rem'
