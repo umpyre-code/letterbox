@@ -57,6 +57,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
 
   return (
     <React.Fragment>
+      <CssBaseline />
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
           <Box className={classes.box}>

@@ -1,15 +1,10 @@
 import { push } from 'connected-react-router'
 import sodium from 'libsodium-wrappers'
-import { all, call, fork, put, select, takeEvery, take, putResolve } from 'redux-saga/effects'
+import { all, call, fork, put, putResolve, select, take, takeEvery } from 'redux-saga/effects'
 import { db } from '../../db/db'
 import { ApplicationState } from '../ApplicationState'
-import {
-  updateClientProfileRequest,
-  updateAndLoadCredentialsRequest,
-  updateAndLoadCredentialsSuccess,
-  updateClientProfileSuccess,
-  fetchClientSuccess
-} from '../client/actions'
+import { updateAndLoadCredentialsRequest, updateClientProfileRequest } from '../client/actions'
+import { ClientActionTypes } from '../client/types'
 import {
   generateSeedSuccess,
   initializeKeysError,
@@ -24,7 +19,6 @@ import {
 } from './actions'
 import { KeyMap, KeyPair, KeysActionTypes } from './types'
 import { wordLists } from './wordLists'
-import { ClientActionTypes } from '../client/types'
 
 async function deriveKeys(masterKey: Uint8Array, index: number) {
   await sodium.ready
