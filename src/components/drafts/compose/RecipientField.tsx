@@ -287,7 +287,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
                 onBlur,
                 onChange: event => {
                   handleInputChange(event, isOpen)
-                  onChange!(event as React.ChangeEvent<HTMLInputElement>)
+                  onChange(event as React.ChangeEvent<HTMLInputElement>)
                 },
                 onFocus,
                 startAdornment: selectedItem.map(profile => (
