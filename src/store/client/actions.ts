@@ -58,3 +58,10 @@ export const authRequest = (creds: AuthCreds, meta: AuthMeta) =>
 export const authSuccess = (clientCreds: ClientCredentials) =>
   action(ClientActionTypes.AUTH_SUCCESS, clientCreds)
 export const authError = (message: string) => action(ClientActionTypes.AUTH_ERROR, message)
+
+export const updateClientRalRequest = (ral: number) =>
+  action(ClientActionTypes.UPDATE_CLIENT_RAL_REQUEST, ral)
+export const updateClientRalSuccess = (data: ClientProfile) =>
+  action(ClientActionTypes.UPDATE_CLIENT_RAL_SUCCESS, data)
+export const updateClientRalError = (message: string) =>
+  action(ClientActionTypes.UPDATE_CLIENT_RAL_ERROR, message)

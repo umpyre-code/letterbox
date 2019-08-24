@@ -86,12 +86,15 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     case ClientActionTypes.SUBMIT_NEW_CLIENT_ERROR: {
       return { ...state, clientLoading: false, signUpFormErrors: action.payload }
     }
+    case ClientActionTypes.UPDATE_CLIENT_RAL_REQUEST:
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_REQUEST: {
       return { ...state, updateClientProfileFormErrors: undefined }
     }
+    case ClientActionTypes.UPDATE_CLIENT_RAL_SUCCESS:
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_SUCCESS: {
       return { ...state, profile: action.payload }
     }
+    case ClientActionTypes.UPDATE_CLIENT_RAL_ERROR:
     case ClientActionTypes.UPDATE_CLIENT_PROFILE_ERROR: {
       return { ...state, updateClientProfileFormErrors: action.payload }
     }

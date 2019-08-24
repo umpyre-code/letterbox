@@ -7,7 +7,8 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  CssBaseline
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/Help'
 import * as React from 'react'
@@ -40,32 +41,35 @@ const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef'
 const SignUpPage = () => {
   const classes = useStyles({})
   return (
-    <Container maxWidth="sm" className={classes.container}>
-      <Paper className={classes.paper}>
-        <Box className={classes.box}>
-          <Typography variant="h3">Join Umpyre</Typography>
-        </Box>
-        <Box className={classes.box}>
-          <Typography>Umpyre is a better way to communicate online.</Typography>
-        </Box>
+    <React.Fragment>
+      <CssBaseline />
+      <Container maxWidth="sm" className={classes.container}>
+        <Paper className={classes.paper}>
+          <Box className={classes.box}>
+            <Typography variant="h3">Join Umpyre</Typography>
+          </Box>
+          <Box className={classes.box}>
+            <Typography>Umpyre is a better way to communicate online.</Typography>
+          </Box>
 
-        <Divider />
-        <SignUpForm />
-        <Box className={classes.box}>
-          <Typography variant="body2">
-            Don&apos;t use Umpyre on a device you don&apos;t own such as a shared, public, or
-            employer&apos;s computer. Your data is stored locally for your privacy, so make sure
-            it&apos;s a device you control and trust.
-          </Typography>
-        </Box>
-        <Box className={classes.infoBox}>
-          <Button component={AboutLink}>
-            <HelpIcon style={{ padding: 5 }}>tell me more</HelpIcon>
-            Tell me more about Umpyre
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+          <Divider />
+          <SignUpForm />
+          <Box className={classes.box}>
+            <Typography variant="body2">
+              Don&apos;t use Umpyre on a device you don&apos;t own such as a shared, public, or
+              employer&apos;s computer. Your data is stored locally for your privacy, so make sure
+              it&apos;s a device you control and trust.
+            </Typography>
+          </Box>
+          <Box className={classes.infoBox}>
+            <Button component={AboutLink}>
+              <HelpIcon style={{ padding: 5 }}>tell me more</HelpIcon>
+              Tell me more about Umpyre
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    </React.Fragment>
   )
 }
 

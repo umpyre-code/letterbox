@@ -291,12 +291,12 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
                 },
                 onFocus,
                 startAdornment: selectedItem.map(profile => (
-                  <ProfileTooltip profile={profile}>
+                  <ProfileTooltip profile={profile} key={profile.client_id}>
                     <Chip
                       avatar={<Avatar>{ClientProfileHelper.FROM(profile).getInitials()}</Avatar>}
                       key={profile.client_id}
                       tabIndex={-1}
-                      label={profile.full_name}
+                      label={`${profile.full_name} $${profile.ral.toFixed(0)}`}
                       className={classes.chip}
                       onDelete={handleDelete(profile)}
                     />

@@ -40,6 +40,7 @@ const SignOutPageFC: React.FC<AllProps> = ({ history, signout }) => {
 
   return (
     <ClientInit>
+      <CssBaseline />
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
           <Box className={classes.box}>

@@ -45,6 +45,7 @@ export interface ClientProfile {
   profile?: string
   joined: number
   phone_sms_verified: boolean
+  ral: number
 }
 
 export interface ClientSearchResult {

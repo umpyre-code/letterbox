@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import axiosRetry from 'axios-retry'
 import * as jwt from 'jsonwebtoken'
+import qs from 'qs'
 import {
   Balance,
   ChargeRequest,
@@ -124,6 +125,12 @@ export class API {
   public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {
     return this.client
       .put(`/client/${clientProfile.client_id}`, clientProfile)
+      .then(response => response.data)
+  }
+
+  public async updateClientRal(clientId: ClientID, ral: number): Promise<ClientProfile> {
+    return this.client
+      .put(`/client/${clientId}/ral`, qs.stringify({ ral }))
       .then(response => response.data)
   }
 

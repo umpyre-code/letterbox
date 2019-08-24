@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardContent,
@@ -17,6 +18,7 @@ import {
   Typography
 } from '@material-ui/core'
 import EditButton from '@material-ui/icons/Edit'
+import HelpIcon from '@material-ui/icons/Help'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import SendIcon from '@material-ui/icons/Send'
 import moment from 'moment'
@@ -79,6 +81,10 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Segoe UI Symbol"'
       ].join(',')
     },
+    ralBox: {
+      display: 'inline-block',
+      verticalAlign: 'middle'
+    },
     sendIcon: {
       marginLeft: theme.spacing(1)
     }
@@ -92,6 +98,7 @@ interface Props {
   menu?: boolean
   profile?: ClientProfile
   setIsEditing: (arg0: boolean) => void
+  tooltip?: boolean
 }
 
 interface ProfileMenuProps {
@@ -195,6 +202,7 @@ interface ActionValueProps {
   menu?: boolean
   setIsEditing: (arg0: boolean) => void
   setMenuAnchorElement: (arg0: any) => void
+  tooltip: boolean
 }
 
 type ActionProps = ActionValueProps & ActionPropsFromDispatch & Router.RouteComponentProps<{}>
@@ -206,7 +214,8 @@ const ActionFC: React.FC<ActionProps> = ({
   menu,
   profile,
   setIsEditing,
-  setMenuAnchorElement
+  setMenuAnchorElement,
+  tooltip
 }) => {
   const classes = useStyles({})
 
@@ -227,19 +236,22 @@ const ActionFC: React.FC<ActionProps> = ({
       </IconButton>
     )
   }
-  return (
-    <Button
-      variant="contained"
-      color="primary"
-      aria-label="Send message"
-      onClick={() => {
-        addDraft({ recipients: [profile.client_id] })
-        history.push('/')
-      }}
-    >
-      Message Me <SendIcon className={classes.sendIcon} />
-    </Button>
-  )
+  if (!tooltip) {
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        aria-label="Send message"
+        onClick={() => {
+          addDraft({ recipients: [profile.client_id] })
+          history.push('/')
+        }}
+      >
+        Message Me <SendIcon className={classes.sendIcon} />
+      </Button>
+    )
+  }
+  return null
 }
 
 const mapDispatchToProps = {
@@ -278,13 +290,44 @@ export const BalanceButton: React.FC<BalanceProps> = ({ balance }) => {
   return null
 }
 
+interface RalProps {
+  profile?: ClientProfile
+}
+
+export const Ral: React.FC<RalProps> = ({ profile }) => {
+  const classes = useStyles({})
+  return (
+    <Box className={classes.ralBox}>
+      <Typography>
+        RAL: ${profile.ral.toFixed(0)}
+        <Tooltip
+          title={
+            <React.Fragment>
+              <Typography>
+                <em>Reading at level</em>, or RAL, is the estimated reading level for this person.
+              </Typography>
+              <br />
+              <Typography>
+                To reach someone, we recommend pricing your message at or above this level.
+              </Typography>
+            </React.Fragment>
+          }
+        >
+          <HelpIcon style={{ padding: 4, verticalAlign: 'top' }}>what&apos;s RAL</HelpIcon>
+        </Tooltip>
+      </Typography>
+    </Box>
+  )
+}
+
 export const ProfileView: React.FC<Props> = ({
   balance,
   editable,
   fullProfile,
   menu,
   profile,
-  setIsEditing
+  setIsEditing,
+  tooltip
 }) => {
   const classes = useStyles({})
   const [menuAnchorElement, setMenuAnchorElement] = React.useState<null | HTMLElement>(null)
@@ -318,6 +361,7 @@ export const ProfileView: React.FC<Props> = ({
                 menu={menu}
                 setIsEditing={setIsEditing}
                 setMenuAnchorElement={setMenuAnchorElement}
+                tooltip={tooltip}
               />
             </Container>
           }
@@ -325,7 +369,7 @@ export const ProfileView: React.FC<Props> = ({
             <Grid
               container
               style={{ padding: 0 }}
-              spacing={0}
+              spacing={1}
               justify="space-between"
               alignItems="center"
             >
@@ -334,9 +378,16 @@ export const ProfileView: React.FC<Props> = ({
                   <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
                 </Typography>
               </Grid>
-              <Grid item zeroMinWidth>
-                <BalanceButton balance={balance} />
-              </Grid>
+              {fullProfile && (
+                <Grid item zeroMinWidth>
+                  <Ral profile={profile} />
+                </Grid>
+              )}
+              {balance && (
+                <Grid item zeroMinWidth>
+                  <BalanceButton balance={balance} />
+                </Grid>
+              )}
             </Grid>
           }
           subheader={<Handle profile={profile} />}
@@ -377,4 +428,8 @@ export const ProfileView: React.FC<Props> = ({
       {menu && profileMenu}
     </Card>
   )
+}
+
+ProfileView.defaultProps = {
+  tooltip: false
 }

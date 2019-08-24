@@ -1,4 +1,5 @@
 import sodium from 'libsodium-wrappers'
+import _ from 'lodash'
 import {
   all,
   call,
@@ -49,6 +50,7 @@ import {
   getMessagesWithoutBody,
   storeAndRetrieveMessages
 } from './utils'
+import { updateClientRalRequest } from '../client/actions'
 
 function* delayThenFetchMessages() {
   const fetchIntervalMillis = 2000
@@ -85,6 +87,14 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
   }
 }
 
+function calculateRal(rankedMessages: RankedMessages): number {
+  const valueSum = _.sumBy(rankedMessages.unreadMessages, m => m.value_cents / 100.0)
+  if (valueSum > 0) {
+    return Math.round(valueSum / rankedMessages.unreadMessages.length)
+  }
+  return 0
+}
+
 function* handleInitializeMessages() {
   try {
     // Update message sketch first
@@ -97,7 +107,9 @@ function* handleInitializeMessages() {
       const state: ApplicationState = yield select()
       const clientId = state.clientState.credentials.client_id
 
-      yield put(initializeMessagesSuccess(rankMessages(clientId, res)))
+      const rankedMessages = rankMessages(clientId, res)
+      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
+      yield put(initializeMessagesSuccess(rankedMessages))
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -129,7 +141,9 @@ function* handleFetchMessages() {
       const clientId = state.clientState.credentials.client_id
 
       const res = yield call(storeAndRetrieveMessages, messages)
-      yield put(fetchMessagesSuccess(rankMessages(clientId, res)))
+      const rankedMessages = rankMessages(clientId, res)
+      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
+      yield put(fetchMessagesSuccess(rankedMessages))
       yield put(updateSketchRequest())
     }
   } catch (error) {
@@ -246,7 +260,9 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     const messages = yield call(getMessagesWithoutBody, 30, false)
     const clientId = state.clientState.credentials.client_id
 
-    yield put(messageReadSuccess(rankMessages(clientId, messages)))
+    const rankedMessages = rankMessages(clientId, messages)
+    yield put(updateClientRalRequest(calculateRal(rankedMessages)))
+    yield put(messageReadSuccess(rankedMessages))
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
       yield put(messageReadError(error.response.data.message))
@@ -278,7 +294,9 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
     } else {
       const state: ApplicationState = yield select()
       const clientId = state.clientState.credentials.client_id
-      yield put(deleteMessageSuccess(rankMessages(clientId, res)))
+      const rankedMessages = rankMessages(clientId, res)
+      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
+      yield put(deleteMessageSuccess(rankedMessages))
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {

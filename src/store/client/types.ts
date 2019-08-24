@@ -22,6 +22,9 @@ export enum ClientActionTypes {
   UPDATE_CLIENT_PROFILE_ERROR = '@@client/UPDATE_CLIENT_PROFILE_ERROR',
   UPDATE_CLIENT_PROFILE_REQUEST = '@@client/UPDATE_CLIENT_PROFILE_REQUEST',
   UPDATE_CLIENT_PROFILE_SUCCESS = '@@client/UPDATE_CLIENT_PROFILE_SUCCESS',
+  UPDATE_CLIENT_RAL_ERROR = '@@client/UPDATE_CLIENT_RAL_ERROR',
+  UPDATE_CLIENT_RAL_REQUEST = '@@client/UPDATE_CLIENT_RAL_REQUEST',
+  UPDATE_CLIENT_RAL_SUCCESS = '@@client/UPDATE_CLIENT_RAL_SUCCESS',
   VERIFY_PHONE_ERROR = '@@client/VERIFY_PHONE_ERROR',
   VERIFY_PHONE_REQUEST = '@@client/VERIFY_PHONE_REQUEST',
   VERIFY_PHONE_SUCCESS = '@@client/VERIFY_PHONE_SUCCESS'
@@ -73,6 +76,7 @@ export const emptyClientProfile: ClientProfile = {
   joined: 0,
   phone_sms_verified: false,
   profile: undefined,
+  ral: 0,
   signing_public_key: ''
 }
 
@@ -84,6 +88,7 @@ export const loadingClientProfile: ClientProfile = {
   joined: 0,
   phone_sms_verified: false,
   profile: undefined,
+  ral: 0,
   signing_public_key: ''
 }
 
@@ -107,6 +112,8 @@ export class ClientProfileHelper implements ClientProfile {
   public joined = 0
 
   public phone_sms_verified = false
+
+  public ral = 0
 
   constructor(clientProfile: ClientProfile) {
     Object.assign(this, clientProfile)

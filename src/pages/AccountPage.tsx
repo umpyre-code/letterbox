@@ -91,8 +91,12 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           render={() => (
                             <TabPanel name="account">
                               <Typography variant="h5">Account info</Typography>
-                              <Typography>
+                              <Typography variant="subtitle1">
                                 Looking good <Emoji ariaLabel="cool">😎</Emoji>
+                              </Typography>
+                              <br />
+                              <Typography>
+                                Your current reading at level is ${profile.ral.toFixed(0)}
                               </Typography>
                             </TabPanel>
                           )}

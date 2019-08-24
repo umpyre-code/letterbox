@@ -2,7 +2,17 @@ import { push } from 'connected-react-router'
 import * as jwt from 'jsonwebtoken'
 import sodium from 'libsodium-wrappers'
 import _ from 'lodash'
-import { all, call, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
+import {
+  all,
+  call,
+  fork,
+  put,
+  select,
+  take,
+  takeEvery,
+  takeLatest,
+  throttle
+} from 'redux-saga/effects'
 import * as srp from 'secure-remote-password/client'
 import { db } from '../../db/db'
 import { fetchBalanceRequest } from '../account/actions'
@@ -34,7 +44,10 @@ import {
   updateClientProfileSuccess,
   verifyPhoneError,
   verifyPhoneRequest,
-  verifyPhoneSuccess
+  verifyPhoneSuccess,
+  updateClientRalRequest,
+  updateClientRalError,
+  updateClientRalSuccess
 } from './actions'
 import { AuthCreds, ClientActionTypes } from './types'
 
@@ -460,6 +473,38 @@ function* watchUpdateAndLoadCredentialsRequest() {
   )
 }
 
+async function updateRal(credentials: ClientCredentials, ral: number): Promise<ClientProfile> {
+  const api = new API(credentials)
+  return api.updateClientRal(credentials.client_id, ral)
+}
+
+function* handleUpdateClientRalRequest(values: ReturnType<typeof updateClientRalRequest>) {
+  const { payload } = values
+  try {
+    const state: ApplicationState = yield select()
+    const { credentials } = state.clientState
+    const res = yield call(updateRal, credentials, payload)
+
+    if (res && res.error) {
+      yield put(updateClientRalError(res.error))
+    } else {
+      yield put(updateClientRalSuccess(res))
+    }
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(updateClientRalError(error.response.data.message))
+    } else if (error.message) {
+      yield put(updateClientRalError(error.message))
+    } else {
+      yield put(updateClientRalError(error))
+    }
+  }
+}
+
+function* watchUpdateClientRalRequest() {
+  yield throttle(1000, ClientActionTypes.UPDATE_CLIENT_RAL_REQUEST, handleUpdateClientRalRequest)
+}
+
 export function* sagas() {
   yield all([
     fork(watchAuthRequest),
@@ -469,6 +514,7 @@ export function* sagas() {
     fork(watchSubmitNewClientRequest),
     fork(watchUpdateAndLoadCredentialsRequest),
     fork(watchUpdateClientProfileRequest),
+    fork(watchUpdateClientRalRequest),
     fork(watchVerifyPhoneRequest)
   ])
 }
