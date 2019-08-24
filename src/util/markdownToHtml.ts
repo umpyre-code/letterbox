@@ -1,6 +1,6 @@
 import marked from 'marked'
 import DOMPurify from 'dompurify'
-import highlight from 'highlight.js'
+// import highlight from 'highlight.js'
 
 export function markdownToHtml(body: string): string {
   const dompurify = DOMPurify
@@ -26,9 +26,9 @@ export function markdownToHtml(body: string): string {
   })
 
   const html = marked.parse(body, {
-    highlight: code => {
-      return highlight.highlightAuto(code).value
-    }
+    // highlight: code => {
+    //   return highlight.highlightAuto(code).value
+    // }
   })
 
   // Find all consecutive emojis, replace with jumbo emojis 😎
