@@ -17,13 +17,23 @@ const store = configureStore(history)
 
 ReactDOM.render(<Main store={store} history={history} />, document.getElementById('root'))
 
+const Application = {
+  isUpdating: false
+}
+
 serviceWorker.register({
+  onSuccess: () => {
+    if (Application.isUpdating) {
+      window.location.reload()
+    }
+    Application.isUpdating = false
+  },
   onUpdate: registration => {
+    Application.isUpdating = true
     const updateAvailable = document.getElementById('updateAvailable')
     const button = updateAvailable.querySelector('button')
     button.onclick = () => {
       registration.waiting.postMessage('skipWaiting')
-      window.location.reload()
     }
     updateAvailable.style.display = ''
   }
