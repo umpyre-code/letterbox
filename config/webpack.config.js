@@ -584,6 +584,7 @@ module.exports = function(webpackEnv) {
       isEnvProduction &&
         new WorkboxWebpackPlugin.GenerateSW({
           clientsClaim: true,
+          skipWaiting: true,
           exclude: [/\.map$/, /asset-manifest\.json$/],
           importWorkboxFrom: 'local',
           navigateFallback: publicUrl + '/index.html',
