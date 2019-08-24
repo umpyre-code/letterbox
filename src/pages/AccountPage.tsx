@@ -95,9 +95,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                                 Looking good <Emoji ariaLabel="cool">😎</Emoji>
                               </Typography>
                               <br />
-                              <Typography>
-                                Your current reading at level is ${profile.ral.toFixed(0)}
-                              </Typography>
+                              <Typography>Your current reading level is ${profile.ral}</Typography>
                             </TabPanel>
                           )}
                         />

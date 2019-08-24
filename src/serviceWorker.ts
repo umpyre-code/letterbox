@@ -82,13 +82,6 @@ function registerValidSW(swUrl: string, config?: Config) {
                   'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
               )
 
-              navigator.serviceWorker.addEventListener('controllerchange', () => {
-                // Execute callback
-                if (config && config.onControllerChange) {
-                  config.onControllerChange(registration)
-                }
-              })
-
               // Execute callback
               if (config && config.onUpdate) {
                 config.onUpdate(registration)
@@ -104,6 +97,13 @@ function registerValidSW(swUrl: string, config?: Config) {
                 config.onSuccess(registration)
               }
             }
+
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              // Execute callback
+              if (config && config.onControllerChange) {
+                config.onControllerChange(registration)
+              }
+            })
           }
         }
       }
