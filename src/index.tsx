@@ -23,16 +23,19 @@ const Application = {
 
 serviceWorker.register({
   onSuccess: () => {
+    console.log('onSuccess', Application)
     if (Application.isUpdating) {
       window.location.reload()
     }
     Application.isUpdating = false
   },
   onUpdate: registration => {
+    console.log('onUpdate', Application)
     Application.isUpdating = true
     const updateAvailable = document.getElementById('updateAvailable')
     const button = updateAvailable.querySelector('button')
     button.onclick = () => {
+      console.log('button clicked')
       registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     }
     updateAvailable.style.display = ''
