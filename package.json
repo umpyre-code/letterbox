@@ -1,4 +1,9 @@
 {
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
   "browserslist": {
     "development": [
       "last 1 chrome versions",
@@ -13,6 +18,13 @@
       "not op_mini all",
       "not dead"
     ]
+  },
+  "build": {
+    "files": [
+      "./build/**/*",
+      "./src/start.js"
+    ],
+    "productName": "Umpyre"
   },
   "dependencies": {
     "@material-ui/core": "^4.3.3",
@@ -43,7 +55,6 @@
     "lodash": "^4.17.15",
     "marked": "^0.7.0",
     "mini-css-extract-plugin": "^0.8.0",
-    "modernizr": "^3.7.1",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
     "prop-types": "^15.6.2",
@@ -69,7 +80,6 @@
     "typeface-aleo": "^0.0.69",
     "typeface-lato": "^0.0.75",
     "typesafe-actions": "^4.4.2",
-    "url-loader": "^2.1.0",
     "yup": "^0.27.0",
     "zxcvbn": "^4.4.2"
   },
@@ -83,7 +93,6 @@
     "@types/libsodium-wrappers": "^0.7.5",
     "@types/lodash": "^4.14.137",
     "@types/marked": "^0.6.5",
-    "@types/modernizr": "^3.5.3",
     "@types/node": "^12.7.2",
     "@types/qs": "^6.5.3",
     "@types/querystringify": "^2.0.0",
@@ -150,42 +159,23 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-microsoft-contrib": "^6.2.0",
     "typescript": "^3.5.3",
+    "url-loader": "^2.1.0",
     "webpack": "^4.39.2",
     "webpack-dev-server": "^3.8.0",
     "webpack-manifest-plugin": "^2.0.4",
     "workbox-webpack-plugin": "^4.3.1"
   },
+  "homepage": "https://umpyre.com",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
     ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
-    "setupFilesAfterEnv": [],
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
-    ],
-    "testEnvironment": "jest-environment-jsdom-fourteen",
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
-      "^.+\\.module\\.(css|sass|scss)$"
-    ],
-    "modulePaths": [],
-    "moduleNameMapper": {
-      "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-    },
     "moduleFileExtensions": [
       "web.js",
       "js",
@@ -198,43 +188,52 @@
       "jsx",
       "node"
     ],
+    "moduleNameMapper": {
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
+      "^react-native$": "react-native-web"
+    },
+    "modulePaths": [],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [],
+    "testEnvironment": "jest-environment-jsdom-fourteen",
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "transform": {
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js",
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
     "watchPlugins": [
       "jest-watch-typeahead/filename",
       "jest-watch-typeahead/testname"
     ]
   },
+  "license": "Apache-2.0",
+  "main": "src/start.js",
   "name": "letterbox",
   "private": true,
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
-    "electron_start": "electron .",
     "electron_dist": "electron-builder",
-    "postinstall": "patch-package"
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
-  "version": "0.1.0",
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "electron_start": "electron .",
+    "postinstall": "patch-package",
+    "start": "node scripts/start.js",
+    "test": "node scripts/test.js"
   },
   "sideEffects": [
     "*.css"
   ],
-  "homepage": "./",
-  "main": "src/start.js",
-  "build": {
-    "productName": "Umpyre",
-    "files": [
-      "./build/**/*",
-      "./src/start.js"
-    ]
-  }
+  "version": "0.1.0"
 }
