@@ -17,4 +17,8 @@ const store = configureStore(history)
 
 ReactDOM.render(<Main store={store} history={history} />, document.getElementById('root'))
 
-serviceWorker.register({})
+serviceWorker.register({
+  onUpdate: () => {
+    document.getElementById('updateAvailable').style.display = 'visible'
+  }
+})

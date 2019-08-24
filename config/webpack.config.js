@@ -48,6 +48,9 @@ const cssModuleRegex = /\.module\.css$/
 const sassRegex = /\.(scss|sass)$/
 const sassModuleRegex = /\.module\.(scss|sass)$/
 
+// API url regex
+const apiRegex = new RegExp(/^https:\/\/(api\.staging\.umpyre\.io|api\.umpyre\.com)\//)
+
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function(webpackEnv) {
@@ -595,8 +598,7 @@ module.exports = function(webpackEnv) {
           ],
           runtimeCaching: [
             {
-              // Match any same-origin request that contains 'api'.
-              urlPattern: new RegExp(/^https:\/\/(api\.staging\.umpyre\.io|api\.umpyre\.com)\//),
+              urlPattern: apiRegex,
               // Apply a network-first strategy.
               handler: 'NetworkFirst',
               options: {
@@ -611,7 +613,7 @@ module.exports = function(webpackEnv) {
                 },
                 // Configure background sync.
                 backgroundSync: {
-                  name: 'bg-queue',
+                  name: 'background-queue',
                   options: {
                     maxRetentionTime: 60 * 60
                   }
@@ -626,6 +628,51 @@ module.exports = function(webpackEnv) {
                 },
                 matchOptions: {
                   ignoreSearch: true
+                }
+              }
+            },
+            {
+              urlPattern: apiRegex,
+              // Apply a network-first strategy.
+              handler: 'NetworkFirst',
+              method: 'POST',
+              options: {
+                // Configure background sync.
+                backgroundSync: {
+                  name: 'background-queue',
+                  options: {
+                    maxRetentionTime: 60 * 60
+                  }
+                }
+              }
+            },
+            {
+              urlPattern: apiRegex,
+              // Apply a network-first strategy.
+              handler: 'NetworkFirst',
+              method: 'PUT',
+              options: {
+                // Configure background sync.
+                backgroundSync: {
+                  name: 'background-queue',
+                  options: {
+                    maxRetentionTime: 60 * 60
+                  }
+                }
+              }
+            },
+            {
+              urlPattern: apiRegex,
+              // Apply a network-first strategy.
+              handler: 'NetworkFirst',
+              method: 'DELETE',
+              options: {
+                // Configure background sync.
+                backgroundSync: {
+                  name: 'background-queue',
+                  options: {
+                    maxRetentionTime: 60 * 60
+                  }
                 }
               }
             }
