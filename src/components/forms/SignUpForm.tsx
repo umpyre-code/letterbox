@@ -93,7 +93,7 @@ class SignUp extends React.Component<AllProps> {
     this.props.loadCredentials()
   }
 
-  private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
+  private handleFormRender = ({ submitForm, isSubmitting, isValid }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
         <Grid item>

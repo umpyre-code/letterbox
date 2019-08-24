@@ -73,11 +73,11 @@ export class API {
 
   constructor(credentials?: ClientCredentials) {
     if (credentials) {
-      const claims = credentials.jwt.claims!
+      const { claims } = credentials.jwt
       delete claims.iat
       delete claims.exp
       delete claims.nbf
-      const token = jwt.sign(credentials.jwt.claims!, Buffer.from(credentials.jwt.secret!), {
+      const token = jwt.sign(credentials.jwt.claims, Buffer.from(credentials.jwt.secret), {
         expiresIn: '5m',
         notBefore: 0
       })
@@ -166,7 +166,7 @@ export class API {
     return this.client.post(`/client/verify_phone/${code}`).then(response => response.data)
   }
 
-  public async sendVerificationCode(): Promise<any> {
+  public async sendVerificationCode(): Promise<{}> {
     return this.client.post(`/client/verify_phone`).then(response => response.data)
   }
 }
