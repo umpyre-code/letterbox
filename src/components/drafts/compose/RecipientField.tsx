@@ -245,7 +245,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
           setSuggestions(result)
           return true
         })
-        .catch(error => {})
+        .catch(() => {})
     } else {
       setSuggestions([])
     }
