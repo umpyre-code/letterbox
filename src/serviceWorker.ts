@@ -21,6 +21,7 @@ const isLocalhost = Boolean(
 type Config = {
   onSuccess?: (registration: ServiceWorkerRegistration) => void
   onUpdate?: (registration: ServiceWorkerRegistration) => void
+  onControllerChange?: (registration: ServiceWorkerRegistration) => void
 }
 
 export function register(config?: Config) {
@@ -80,6 +81,13 @@ function registerValidSW(swUrl: string, config?: Config) {
                 'New content is available and will be used when all ' +
                   'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
               )
+
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                // Execute callback
+                if (config && config.onControllerChange) {
+                  config.onControllerChange(registration)
+                }
+              })
 
               // Execute callback
               if (config && config.onUpdate) {

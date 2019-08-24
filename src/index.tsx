@@ -22,12 +22,19 @@ const Application = {
 }
 
 serviceWorker.register({
-  onSuccess: () => {
-    console.log('onSuccess', Application)
+  onControllerChange: () => {
+    console.log('onControllerChange', Application)
     if (Application.isUpdating) {
+      Application.isUpdating = false
       window.location.reload()
     }
-    Application.isUpdating = false
+  },
+  onSuccess: () => {
+    console.log('onSuccess', Application)
+    // if (Application.isUpdating) {
+    // Application.isUpdating = false
+    //   window.location.reload()
+    // }
   },
   onUpdate: registration => {
     console.log('onUpdate', Application)
