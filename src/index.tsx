@@ -23,6 +23,6 @@ serviceWorker.register({
   },
   onUpdate: () => {
     console.log('onUpdate called')
-    document.getElementById('updateAvailable').style.display = 'visible'
+    document.getElementById('updateAvailable').style.display = ''
   }
 })
