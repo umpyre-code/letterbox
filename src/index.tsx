@@ -22,9 +22,8 @@ serviceWorker.register({
     const updateAvailable = document.getElementById('updateAvailable')
     const button = updateAvailable.querySelector('button')
     button.onclick = () => {
-      console.log('button clicked')
       registration.waiting.postMessage('skipWaiting')
-      window.location.reload(true)
+      window.location.reload()
     }
     updateAvailable.style.display = ''
   }
