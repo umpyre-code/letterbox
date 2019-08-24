@@ -11,7 +11,9 @@ import {
   take,
   takeEvery,
   takeLatest,
-  throttle
+  throttle,
+  delay,
+  spawn
 } from 'redux-saga/effects'
 import * as srp from 'secure-remote-password/client'
 import { db } from '../../db/db'
@@ -47,7 +49,8 @@ import {
   verifyPhoneSuccess,
   updateClientRalRequest,
   updateClientRalError,
-  updateClientRalSuccess
+  updateClientRalSuccess,
+  unathourizedClient
 } from './actions'
 import { AuthCreds, ClientActionTypes } from './types'
 
@@ -101,6 +104,14 @@ function* handleLoadCredentialsRequest() {
   }
 }
 
+// We need to check the client periodically, to make sure our credentials are
+// valid.
+function* delayThenFetchClient() {
+  const fetchIntervalMillis = 60000
+  yield delay(fetchIntervalMillis)
+  yield put(fetchClientRequest())
+}
+
 function* handleFetchClientRequest() {
   try {
     const state: ApplicationState = yield select()
@@ -113,6 +124,9 @@ function* handleFetchClientRequest() {
       yield put(fetchClientSuccess(res))
     }
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      yield put(unathourizedClient())
+    }
     if (error.response && error.response.data && error.response.data.message) {
       yield put(fetchClientError(error.response.data.message))
     } else if (error.message) {
@@ -121,6 +135,9 @@ function* handleFetchClientRequest() {
       yield put(fetchClientError(error))
     }
   }
+
+  // Start client fetch loop
+  yield spawn(delayThenFetchClient)
 }
 
 async function authenticate(creds: AuthCreds): Promise<ClientCredentials> {

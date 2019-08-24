@@ -104,7 +104,6 @@
       }
 
       #updateAvailable {
-        display: none;
         z-index: 100;
         background-color: #fff;
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
@@ -117,10 +116,6 @@
         border-radius: 4px;
         padding: 6px;
       }
-
-      #updateAvailable button {
-        background: none !important;
-      }
     </style>
     <title>Umpyre</title>
   </head>
@@ -132,7 +127,7 @@
         style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(45deg);"
       ></div>
     </div>
-    <div id="updateAvailable">
+    <div id="updateAvailable" style="display: none;">
       An update is available <button onclick="window.location.reload(true)">Reload</button>
     </div>
   </body>

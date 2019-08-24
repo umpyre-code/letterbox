@@ -65,3 +65,5 @@ export const updateClientRalSuccess = (data: ClientProfile) =>
   action(ClientActionTypes.UPDATE_CLIENT_RAL_SUCCESS, data)
 export const updateClientRalError = (message: string) =>
   action(ClientActionTypes.UPDATE_CLIENT_RAL_ERROR, message)
+
+export const unathourizedClient = () => action(ClientActionTypes.UNAUTHORIZED_CLIENT)

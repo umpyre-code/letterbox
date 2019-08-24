@@ -67,6 +67,9 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
     case ClientActionTypes.FETCH_CLIENT_ERROR: {
       return { ...state, clientLoading: false, errors: action.payload, clientReady: true }
     }
+    case ClientActionTypes.UNAUTHORIZED_CLIENT: {
+      return { ...state, profile: undefined, credentials: undefined }
+    }
     case ClientActionTypes.SUBMIT_NEW_CLIENT_REQUEST: {
       return {
         ...state,

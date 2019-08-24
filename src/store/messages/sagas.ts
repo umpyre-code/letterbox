@@ -53,7 +53,7 @@ import {
 import { updateClientRalRequest } from '../client/actions'
 
 function* delayThenFetchMessages() {
-  const fetchIntervalMillis = 2000
+  const fetchIntervalMillis = 5000
   yield delay(fetchIntervalMillis)
   yield put(fetchMessagesRequest())
 }
