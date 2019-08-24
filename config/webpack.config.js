@@ -650,21 +650,6 @@ module.exports = function(webpackEnv) {
               urlPattern: apiRegex,
               // Apply a network-first strategy.
               handler: 'NetworkFirst',
-              method: 'PUT',
-              options: {
-                // Configure background sync.
-                backgroundSync: {
-                  name: 'background-queue-put',
-                  options: {
-                    maxRetentionTime: 60 * 60
-                  }
-                }
-              }
-            },
-            {
-              urlPattern: apiRegex,
-              // Apply a network-first strategy.
-              handler: 'NetworkFirst',
               method: 'DELETE',
               options: {
                 // Configure background sync.
