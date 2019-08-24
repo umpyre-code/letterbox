@@ -30,9 +30,24 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Segoe UI Symbol"'
       ].join(','),
       '& blockquote': {
-        background: '#fafafa',
-        borderLeft: '6px solid #eaeaea',
-        padding: theme.spacing(1)
+        background: '#f9f9f9',
+        margin: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        borderLeft: '2px solid rgb(212, 212, 212)',
+        boxShadow:
+          '0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 1px 0px rgba(0, 0, 0, 0.04), 0px 2px 1px -1px rgba(0, 0, 0, 0.02)'
+      },
+      '& pre': {
+        background: '#f9f9f9',
+        margin: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        borderLeft: '2px solid rgb(212, 212, 212)',
+        boxShadow:
+          '0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 1px 0px rgba(0, 0, 0, 0.04), 0px 2px 1px -1px rgba(0, 0, 0, 0.02)'
       }
     }
   })

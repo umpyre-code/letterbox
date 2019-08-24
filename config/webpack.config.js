@@ -613,7 +613,7 @@ module.exports = function(webpackEnv) {
                 },
                 // Configure background sync.
                 backgroundSync: {
-                  name: 'background-queue',
+                  name: 'background-queue-get',
                   options: {
                     maxRetentionTime: 60 * 60
                   }
@@ -639,7 +639,7 @@ module.exports = function(webpackEnv) {
               options: {
                 // Configure background sync.
                 backgroundSync: {
-                  name: 'background-queue',
+                  name: 'background-queue-post',
                   options: {
                     maxRetentionTime: 60 * 60
                   }
@@ -654,7 +654,7 @@ module.exports = function(webpackEnv) {
               options: {
                 // Configure background sync.
                 backgroundSync: {
-                  name: 'background-queue',
+                  name: 'background-queue-put',
                   options: {
                     maxRetentionTime: 60 * 60
                   }
@@ -669,7 +669,7 @@ module.exports = function(webpackEnv) {
               options: {
                 // Configure background sync.
                 backgroundSync: {
-                  name: 'background-queue',
+                  name: 'background-queue-delete',
                   options: {
                     maxRetentionTime: 60 * 60
                   }
