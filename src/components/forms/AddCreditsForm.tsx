@@ -70,7 +70,7 @@ const RadioButtons: React.FC<RadioButtonsProps> = ({ initialAmount, setCreditAmo
     customAmountRef.current.focus()
   }
 
-  function customAmountInputClicked(event: React.MouseEvent<HTMLDivElement>) {
+  function customAmountInputClicked() {
     setRadioValue('custom')
     setCreditAmount(customAmountValue)
   }
