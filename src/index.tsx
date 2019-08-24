@@ -17,8 +17,4 @@ const store = configureStore(history)
 
 ReactDOM.render(<Main store={store} history={history} />, document.getElementById('root'))
 
-serviceWorker.register({
-  onUpdate: () => {
-    window.location.reload(true)
-  }
-})
+serviceWorker.register({})

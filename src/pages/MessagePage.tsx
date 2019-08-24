@@ -95,7 +95,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   React.useEffect(() => {
     loadMessages(messageHash)
     messageRead(messageHash)
-  }, [messageHash, credentials, profile])
+  }, [messageHash, credentials])
 
   function messageBodies() {
     return loadedMessages.map(message => (
