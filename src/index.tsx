@@ -33,7 +33,7 @@ serviceWorker.register({
     const updateAvailable = document.getElementById('updateAvailable')
     const button = updateAvailable.querySelector('button')
     button.onclick = () => {
-      registration.waiting.postMessage('skipWaiting')
+      registration.waiting.postMessage({ type: 'skipWaiting' })
     }
     updateAvailable.style.display = ''
   }
