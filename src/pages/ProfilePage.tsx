@@ -11,6 +11,7 @@ import { loadCredentialsRequest } from '../store/client/actions'
 import { emptyClientProfile } from '../store/client/types'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
+import Loading from '../components/widgets/Loading'
 
 interface PropsFromState {
   readonly balance?: Balance
@@ -47,6 +48,8 @@ const ProfilePageFC: React.FC<AllProps> = ({
   match,
   myProfile
 }) => {
+  const [loaded, setLoaded] = React.useState<boolean>(false)
+  const [isEditable, setIsEditable] = React.useState<boolean>(false)
   const [profile, setProfile] = React.useState<ClientProfile>(emptyClientProfile)
   const classes = useStyles({})
 
@@ -61,6 +64,7 @@ const ProfilePageFC: React.FC<AllProps> = ({
         (myProfile && match.params.handle === myProfile.handle) ||
         (myProfile && match.params.clientId === myProfile.handle)
       ) {
+        setIsEditable(true)
         setProfile(myProfile)
       } else if (match.params.handle) {
         const res = await api.fetchClientByHandle(match.params.handle)
@@ -69,26 +73,18 @@ const ProfilePageFC: React.FC<AllProps> = ({
         const res = await api.fetchClient(match.params.clientId)
         setProfile(res)
       }
+      setLoaded(true)
     }
     fetchData()
   }, [match.params, myProfile])
-
-  function isEditable(): boolean {
-    return (
-      profile !== undefined &&
-      profile.client_id !== undefined &&
-      credentials !== undefined &&
-      credentials.client_id !== undefined &&
-      profile.client_id === credentials.client_id
-    )
-  }
 
   return (
     <React.Fragment>
       <DefaultLayout profile={myProfile} balance={balance}>
         <Container className={classes.profileContainer}>
           <BackToIndexButton />
-          <Profile profile={profile} editable={isEditable()} fullProfile />
+          {loaded && <Profile profile={profile} editable={isEditable} fullProfile />}
+          {!loaded && <Loading />}
         </Container>
       </DefaultLayout>
     </React.Fragment>
