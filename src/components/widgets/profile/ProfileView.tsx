@@ -301,6 +301,8 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
       <Typography>
         RAL: ${profile.ral.toFixed(0)}
         <Tooltip
+          enterDelay={500}
+          leaveDelay={250}
           title={
             <React.Fragment>
               <Typography>
