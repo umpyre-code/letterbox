@@ -30,7 +30,7 @@ async function fetchBalance(credentials: ClientCredentials) {
 function* handleFetchBalance() {
   try {
     const state: ApplicationState = yield select()
-    const credentials: ClientCredentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(fetchBalance, credentials)
 
     if (res.error) {
@@ -40,7 +40,7 @@ function* handleFetchBalance() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(fetchBalanceError(error.stack!))
+      yield put(fetchBalanceError(error.stack))
     } else {
       yield put(fetchBalanceError('An unknown error occured.'))
     }
@@ -59,7 +59,7 @@ async function fetchConnectAccount(credentials: ClientCredentials) {
 function* handleFetchConnectAccount() {
   try {
     const state: ApplicationState = yield select()
-    const credentials: ClientCredentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(fetchConnectAccount, credentials)
 
     if (res.error) {
@@ -69,7 +69,7 @@ function* handleFetchConnectAccount() {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(fetchConnectAccountError(error.stack!))
+      yield put(fetchConnectAccountError(error.stack))
     } else {
       yield put(fetchConnectAccountError('An unknown error occured.'))
     }
@@ -89,7 +89,7 @@ function* handleCharge(values: ReturnType<typeof chargeRequest>) {
   try {
     const { payload } = values
     const state: ApplicationState = yield select()
-    const credentials: ClientCredentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(charge, credentials, payload)
 
     if (res.error) {
@@ -103,7 +103,7 @@ function* handleCharge(values: ReturnType<typeof chargeRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(chargeError(error.stack!))
+      yield put(chargeError(error.stack))
     } else {
       yield put(chargeError('An unknown error occured.'))
     }
@@ -123,7 +123,7 @@ function* handlePostOauth(values: ReturnType<typeof postConnectOauthRequest>) {
   try {
     const { payload } = values
     const state: ApplicationState = yield select()
-    const credentials: ClientCredentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(postOauth, credentials, payload)
 
     if (res.error) {
@@ -133,7 +133,7 @@ function* handlePostOauth(values: ReturnType<typeof postConnectOauthRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(postConnectOauthError(error.stack!))
+      yield put(postConnectOauthError(error.stack))
     } else {
       yield put(postConnectOauthError('An unknown error occured.'))
     }
@@ -153,7 +153,7 @@ function* handlePostPrefs(values: ReturnType<typeof postConnectPrefsRequest>) {
   try {
     const { payload } = values
     const state: ApplicationState = yield select()
-    const credentials: ClientCredentials = state.clientState.credentials!
+    const { credentials } = state.clientState
     const res = yield call(postPrefs, credentials, payload)
 
     if (res.error) {
@@ -163,7 +163,7 @@ function* handlePostPrefs(values: ReturnType<typeof postConnectPrefsRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(postConnectPrefsError(error.stack!))
+      yield put(postConnectPrefsError(error.stack))
     } else {
       yield put(postConnectPrefsError('An unknown error occured.'))
     }
