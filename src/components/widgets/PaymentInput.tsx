@@ -1,6 +1,6 @@
 import { TextField } from '@material-ui/core'
 import { OutlinedTextFieldProps, StandardTextFieldProps } from '@material-ui/core/TextField'
-import React from 'react'
+import * as React from 'react'
 import NumberFormat from 'react-number-format'
 
 interface NumberFormatCustomProps {
@@ -8,7 +8,7 @@ interface NumberFormatCustomProps {
   onChange: (event: { target: { value: string } }) => void
 }
 
-function numberFormatCustom(props: NumberFormatCustomProps) {
+const NumberFormatCustom: React.FC<NumberFormatCustomProps> = props => {
   const { inputRef, onChange, ...other } = props
 
   return (
@@ -44,7 +44,7 @@ export const PaymentInput: React.FC<AllProps> = props => (
     margin="dense"
     defaultValue={props.defaultValue}
     InputProps={{
-      inputComponent: numberFormatCustom as any,
+      inputComponent: NumberFormatCustom as any,
       onClick: props.inputClicked
     }}
   />
