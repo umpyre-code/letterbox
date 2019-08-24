@@ -21,6 +21,7 @@ const Application = {
   isUpdating: false
 }
 
+console.log('hi')
 serviceWorker.register({
   onControllerChange: () => {
     console.log('onControllerChange', Application)

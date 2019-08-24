@@ -5,8 +5,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableRow,
-  Theme
+  TableRow
 } from '@material-ui/core'
 import React from 'react'
 import NumberFormat from 'react-number-format'
@@ -20,7 +19,7 @@ interface Row {
 interface BalanceTableProps {
   rows: Row[]
 }
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     lastTableCell: {
       borderTop: '1px solid rgba(224, 224, 224, 1)'

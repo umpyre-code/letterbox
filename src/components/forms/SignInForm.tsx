@@ -31,7 +31,7 @@ const SigninFormSchema = Yup.object().shape({
 })
 
 class SignIn extends React.Component<AllProps> {
-  private handleFormRender = ({ submitForm, isSubmitting, isValid, values, setFieldValue }) => (
+  private handleFormRender = ({ submitForm, isSubmitting, isValid }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
         <Grid item>
