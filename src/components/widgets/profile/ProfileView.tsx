@@ -42,12 +42,17 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1)
     },
     addCreditsButton: {
-      '& .plusButton': { display: 'none', fontSize: '1rem', color: theme.palette.primary.main },
+      '& .plusButton': {
+        display: 'inline',
+        visibility: 'hidden',
+        fontSize: '1rem',
+        color: theme.palette.primary.main
+      },
       // '&:hover': {
       // color: '#f00'
       // },
       '&:hover .plusButton': {
-        display: 'inline'
+        visibility: 'visible'
       },
       fontSize: '1.2rem',
       lineHeight: 1,

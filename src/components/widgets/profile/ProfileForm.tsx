@@ -95,6 +95,7 @@ function getSchema(credentials: ClientCredentials, profile: ClientProfile) {
       .required('How shall we address you?'),
     handle: Yup.string()
       .nullable()
+      .min(3, 'This should be at least 3 characters')
       .max(100, 'Keep it under 100 characters')
       .trim()
       .matches(
