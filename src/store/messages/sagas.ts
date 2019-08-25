@@ -50,7 +50,6 @@ import {
   getMessagesWithoutBody,
   storeAndRetrieveMessages
 } from './utils'
-import { updateClientRalRequest } from '../client/actions'
 
 function* delayThenFetchMessages() {
   const fetchIntervalMillis = 5000
@@ -108,7 +107,6 @@ function* handleInitializeMessages() {
       const clientId = state.clientState.credentials.client_id
 
       const rankedMessages = rankMessages(clientId, res)
-      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
       yield put(initializeMessagesSuccess(rankedMessages))
     }
   } catch (error) {
@@ -142,7 +140,6 @@ function* handleFetchMessages() {
 
       const res = yield call(storeAndRetrieveMessages, messages)
       const rankedMessages = rankMessages(clientId, res)
-      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
       yield put(fetchMessagesSuccess(rankedMessages))
       yield put(updateSketchRequest())
     }
@@ -261,7 +258,6 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     const clientId = state.clientState.credentials.client_id
 
     const rankedMessages = rankMessages(clientId, messages)
-    yield put(updateClientRalRequest(calculateRal(rankedMessages)))
     yield put(messageReadSuccess(rankedMessages))
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
@@ -295,7 +291,6 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
       const state: ApplicationState = yield select()
       const clientId = state.clientState.credentials.client_id
       const rankedMessages = rankMessages(clientId, res)
-      yield put(updateClientRalRequest(calculateRal(rankedMessages)))
       yield put(deleteMessageSuccess(rankedMessages))
     }
   } catch (error) {
