@@ -3,6 +3,7 @@ import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Downshift, { GetLabelPropsOptions } from 'downshift'
+import _ from 'lodash'
 import deburr from 'lodash/deburr'
 import PropTypes from 'prop-types'
 import * as React from 'react'
@@ -124,16 +125,47 @@ interface SeedWordInputProps {
   selectedItem: string
 }
 
-export const SeedWordInput: React.FC<SeedWordInputProps> = ({
-  label,
-  placeholder,
-  selectedItem,
-  onChange
-}) => {
+export const SeedWordInput: React.FC<SeedWordInputProps> = props => {
+  const { label, placeholder, selectedItem } = props
   const classes = useStyles({})
+  const inputRef = React.createRef<HTMLInputElement>()
+
+  function focusNextInput(element?: Element): boolean {
+    if (!element.isSameNode(inputRef.current) && element.tagName.toLowerCase() === 'input') {
+      const input = element as HTMLInputElement
+      input.focus()
+      return true
+    }
+    if (element.children) {
+      if (_.find(element.children, c => focusNextInput(c))) {
+        return true
+      }
+    }
+    if (element.nextElementSibling) {
+      if (focusNextInput(element.nextElementSibling)) {
+        return true
+      }
+    }
+
+    return findNextSibling(element.parentElement)
+  }
+
+  function findNextSibling(element?: Element): boolean {
+    if (element.nextElementSibling) {
+      return focusNextInput(element.nextElementSibling)
+    }
+    return findNextSibling(element.parentElement)
+  }
+
+  function handleChange(item: string) {
+    props.onChange(item)
+    if (item.length > 0) {
+      findNextSibling(inputRef.current.parentElement)
+    }
+  }
 
   return (
-    <Downshift selectedItem={selectedItem} onChange={onChange}>
+    <Downshift selectedItem={selectedItem} onChange={handleChange}>
       {({
         getInputProps,
         getItemProps,
@@ -142,9 +174,26 @@ export const SeedWordInput: React.FC<SeedWordInputProps> = ({
         highlightedIndex,
         inputValue,
         isOpen,
-        selectedItem: selectedItem2
+        selectedItem: selectedItem2,
+        setHighlightedIndex
       }) => {
-        const { onBlur, onFocus, ...inputProps } = getInputProps({ placeholder })
+        const { onBlur, onFocus, onChange, ...inputProps } = getInputProps({
+          onKeyDown: (event: React.KeyboardEvent) => {
+            if (isOpen) {
+              if (event.key === 'Tab') {
+                if (highlightedIndex === null) {
+                  setHighlightedIndex(0)
+                } else if (suggestions.length > highlightedIndex + 1) {
+                  setHighlightedIndex(highlightedIndex + 1)
+                } else {
+                  setHighlightedIndex(0)
+                }
+                event.preventDefault()
+              }
+            }
+          },
+          placeholder
+        })
 
         return (
           <div className={classes.container}>
@@ -153,7 +202,12 @@ export const SeedWordInput: React.FC<SeedWordInputProps> = ({
               classes,
               label,
               InputLabelProps: getLabelProps({ shrink: true } as GetLabelPropsOptions),
-              InputProps: { onBlur, onFocus },
+              InputProps: {
+                inputRef,
+                onBlur,
+                onFocus,
+                onChange
+              },
               inputProps
             })}
 

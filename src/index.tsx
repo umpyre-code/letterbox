@@ -21,29 +21,19 @@ const Application = {
   isUpdating: false
 }
 
-console.log('hi')
 serviceWorker.register({
   onControllerChange: () => {
-    console.log('onControllerChange', Application)
     if (Application.isUpdating) {
       Application.isUpdating = false
       window.location.reload()
     }
   },
-  onSuccess: () => {
-    console.log('onSuccess', Application)
-    // if (Application.isUpdating) {
-    // Application.isUpdating = false
-    //   window.location.reload()
-    // }
-  },
+  onSuccess: () => {},
   onUpdate: registration => {
-    console.log('onUpdate', Application)
     Application.isUpdating = true
     const updateAvailable = document.getElementById('updateAvailable')
     const button = updateAvailable.querySelector('button')
     button.onclick = () => {
-      console.log('button clicked')
       registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     }
     updateAvailable.style.display = ''

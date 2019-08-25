@@ -230,9 +230,25 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
     setRecipients(selectedItem.map(si => si.client_id))
   }, [selectedItem])
 
-  function handleKeyDown(event: React.KeyboardEvent) {
+  function handleKeyDown(
+    event: React.KeyboardEvent,
+    isOpen: boolean,
+    highlightedIndex: number,
+    setHighlightedIndex: (index: number) => void
+  ) {
     if (selectedItem.length !== 0 && inputValue.length === 0 && event.key === 'Backspace') {
       setSelectedItem(selectedItem.slice(0, selectedItem.length - 1))
+    } else if (event.key === 'Tab') {
+      if (isOpen) {
+        if (highlightedIndex === null) {
+          setHighlightedIndex(0)
+        } else if (suggestions.length > highlightedIndex + 1) {
+          setHighlightedIndex(highlightedIndex + 1)
+        } else {
+          setHighlightedIndex(0)
+        }
+        event.preventDefault()
+      }
     }
   }
 
@@ -273,10 +289,13 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
         isOpen,
         inputValue: inputValue2,
         selectedItem: selectedItem2,
-        highlightedIndex
+        highlightedIndex,
+        setHighlightedIndex
       }) => {
         const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
-          onKeyDown: handleKeyDown,
+          onKeyDown: (event: React.KeyboardEvent) => {
+            handleKeyDown(event, isOpen, highlightedIndex, setHighlightedIndex)
+          },
           placeholder: 'Recipients'
         })
         return (
@@ -296,7 +315,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
                       avatar={<Avatar>{ClientProfileHelper.FROM(profile).getInitials()}</Avatar>}
                       key={profile.client_id}
                       tabIndex={-1}
-                      label={`${profile.full_name} $${profile.ral.toFixed(0)}`}
+                      label={`${profile.full_name} $${profile.ral}`}
                       className={classes.chip}
                       onDelete={handleDelete(profile)}
                     />
