@@ -74,7 +74,9 @@ function getClientEnvironment(publicUrl) {
         // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
         // This should only be used as an escape hatch. Normally you would put
         // images into the `src` and `import` them in code to get their paths.
-        PUBLIC_URL: publicUrl
+        PUBLIC_URL: publicUrl,
+        API_ENDPOINT: process.env.API_ENDPOINT || 'https://api.staging.umpyre.io',
+        STRIPE_API_PK: process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
       }
     )
   // Stringify all values so we can feed into Webpack DefinePlugin

@@ -1,4 +1,5 @@
 import { FormikActions } from 'formik'
+import _ from 'lodash'
 import { AuthVerifyResponse, ClientCredentials, ClientProfile } from '../models/client'
 
 export enum ClientActionTypes {
@@ -121,7 +122,8 @@ export class ClientProfileHelper implements ClientProfile {
     const splat = this.full_name
       .split(/[ ,.]+/)
       .map(s => s.trim())
-      .filter(s => s != null && s !== '')
+      .filter(s => s != null && s !== '' && s.match(/[a-zA-Z]+/))
+      .map(s => _.deburr(s))
     if (splat.length >= 2) {
       return splat[0][0] + splat[splat.length - 1][0]
     }
