@@ -256,7 +256,7 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
 
     yield handleMessageReadSuccess(payload, state)
   } catch (error) {
-    if (error.response && error.response.status === 404) {
+    if (error.response && error.response.status === 400) {
       // Not really an error, this just means it was already read.
       yield handleMessageReadSuccess(payload, state)
     } else if (error.response && error.response.data && error.response.data.message) {
