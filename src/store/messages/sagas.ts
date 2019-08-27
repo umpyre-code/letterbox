@@ -228,11 +228,23 @@ async function markMessageAsRead(hash: MessageHash) {
   return db.messageInfos.update(hash, { read: true })
 }
 
+function* handleMessageReadSuccess(payload: string, state: ApplicationState) {
+  // No result from settlePayment() just means the message was $0, so there's no need to hit the
+  // API.
+  yield call(markMessageAsRead, payload)
+  // Reload messages from DB
+  const messages = yield call(getMessagesWithoutBody, 30, false)
+  const clientId = state.clientState.credentials.client_id
+
+  const rankedMessages = rankMessages(clientId, messages)
+  yield put(messageReadSuccess(rankedMessages))
+}
+
 // Message fetch main loop: this saga runs forever and ever
 function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
   const { payload } = values
+  const state: ApplicationState = yield select()
   try {
-    const state: ApplicationState = yield select()
     const { credentials } = state.clientState
     const res = yield call(settlePayment, credentials, payload)
 
@@ -242,17 +254,12 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
       yield put(fetchBalanceSuccess(res.balance))
     }
 
-    // No result from settlePayment() just means the message was $0, so there's no need to hit the
-    // API.
-    yield call(markMessageAsRead, payload)
-    // Reload messages from DB
-    const messages = yield call(getMessagesWithoutBody, 30, false)
-    const clientId = state.clientState.credentials.client_id
-
-    const rankedMessages = rankMessages(clientId, messages)
-    yield put(messageReadSuccess(rankedMessages))
+    yield handleMessageReadSuccess(payload, state)
   } catch (error) {
-    if (error.response && error.response.data && error.response.data.message) {
+    if (error.response && error.response.status === 404) {
+      // Not really an error, this just means it was already read.
+      yield handleMessageReadSuccess(payload, state)
+    } else if (error.response && error.response.data && error.response.data.message) {
       yield put(messageReadError(error.response.data.message))
     } else if (error.message) {
       yield put(messageReadError(error.message))
