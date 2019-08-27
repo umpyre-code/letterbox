@@ -125,6 +125,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({
                   label={(index + 1).toString()}
                   placeholder={undefined}
                   selectedItem={word}
+                  focusNextOnChange
                   onChange={(updatedWord: string) => {
                     const updatedWords = Array.from(seedWords)
                     updatedWords[index] = updatedWord
@@ -138,6 +139,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({
             label="16"
             placeholder="Check word"
             selectedItem={seedWords[15]}
+            focusNextOnChange={false}
             onChange={(updatedWord: string) => {
               const updatedWords = Array.from(seedWords)
               updatedWords[15] = updatedWord

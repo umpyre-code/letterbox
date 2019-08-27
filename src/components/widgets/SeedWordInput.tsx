@@ -123,6 +123,7 @@ interface SeedWordInputProps {
   placeholder?: string
   onChange: (value: string) => void
   selectedItem: string
+  focusNextOnChange: boolean
 }
 
 export const SeedWordInput: React.FC<SeedWordInputProps> = props => {
@@ -159,7 +160,7 @@ export const SeedWordInput: React.FC<SeedWordInputProps> = props => {
 
   function handleChange(item: string) {
     props.onChange(item)
-    if (item.length > 0) {
+    if (props.focusNextOnChange && item.length > 0) {
       findNextSibling(inputRef.current.parentElement)
     }
   }

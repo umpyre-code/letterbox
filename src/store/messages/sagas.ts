@@ -86,14 +86,6 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
   }
 }
 
-function calculateRal(rankedMessages: RankedMessages): number {
-  if (rankedMessages.unreadMessages.length > 0) {
-    const valueSum = _.sumBy(rankedMessages.unreadMessages, m => m.value_cents / 100.0)
-    return Math.round(valueSum / rankedMessages.unreadMessages.length)
-  }
-  return 0
-}
-
 function* handleInitializeMessages() {
   try {
     // Update message sketch first

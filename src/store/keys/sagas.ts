@@ -26,13 +26,13 @@ async function deriveKeys(masterKey: Uint8Array, index: number) {
   const boxKeySeed = sodium.crypto_kdf_derive_from_key(
     sodium.crypto_box_SEEDBYTES,
     index,
-    'box',
+    'cryptoboxkey',
     masterKey
   )
   const signingKeySeed = sodium.crypto_kdf_derive_from_key(
     sodium.crypto_sign_SEEDBYTES,
     index,
-    'signing',
+    'cryptosigningkey',
     masterKey
   )
 
@@ -85,9 +85,12 @@ function generateSeedWords() {
 async function initializeKeys(seedWords: string[]) {
   await sodium.ready
 
+  // only use the first 15 words, 16th word is check
+  const words = seedWords.slice(0, 15)
+
   const masterKey = sodium.randombytes_buf_deterministic(
     sodium.crypto_kdf_KEYBYTES,
-    sodium.crypto_generichash(sodium.crypto_kdf_KEYBYTES, seedWords.join())
+    sodium.crypto_generichash(sodium.crypto_kdf_KEYBYTES, words.join())
   )
 
   await db.keyPairs.add(await deriveKeys(masterKey, 0))
