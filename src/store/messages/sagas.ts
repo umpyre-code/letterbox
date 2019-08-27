@@ -1,5 +1,4 @@
 import sodium from 'libsodium-wrappers'
-import _ from 'lodash'
 import {
   all,
   call,
