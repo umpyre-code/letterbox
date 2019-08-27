@@ -217,7 +217,9 @@ const ComposeFormFC: React.FC<AllProps> = ({
                 style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
                 placeholder="Message value"
                 label="Payment"
-                defaultValue={Math.round(draft.value_cents / 100)}
+                defaultValue={
+                  draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : undefined
+                }
                 onChange={event => {
                   const value = Number(event.target.value)
                   setMessageValue(value)
