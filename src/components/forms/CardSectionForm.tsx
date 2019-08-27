@@ -80,6 +80,8 @@ interface CardSectionState {
 // Stripe should do the right thing and make it easy to remove their
 // telemetry/tracking stuff. Better yet, they should not _ever_ be injecting
 // their own telemetry/tracking/metrics into their customer's pages.
+//
+// See https://github.com/stripe/react-stripe-elements/issues/99 for more.
 
 class CardSection extends Component<CardSectionProps, CardSectionState> {
   constructor(props: CardSectionProps) {

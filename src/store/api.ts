@@ -26,7 +26,7 @@ import {
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
-const API_ENDPOINT = process.env.API_ENDPOINT || 'https://api.staging.umpyre.io'
+const API_ENDPOINT = process.env.API_ENDPOINT || 'invalid API endpoint'
 
 export class API {
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {

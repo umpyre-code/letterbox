@@ -14,7 +14,7 @@ import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
 import { loadScript } from '../util/loadScript'
 
-const STRIPE_API_PK = process.env.STRIPE_API_PK || 'pk_test_bbhXx2DXVnIK9APra7aYZ5b300f6g4dxXR'
+const STRIPE_API_PK = process.env.STRIPE_API_PK || 'invalid key'
 
 interface PropsFromState {
   balance?: Balance
