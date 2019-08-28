@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1)
     },
     footerContainer: {
-      padding: theme.spacing(5, 0, 0, 0)
+      padding: theme.spacing(5, 0, 5, 0)
     },
     headerContainer: {
       padding: theme.spacing(1)
