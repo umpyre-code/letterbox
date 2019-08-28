@@ -88,7 +88,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     ralBox: {
       display: 'inline-block',
-      verticalAlign: 'middle'
+      verticalAlign: 'middle',
+      backgroundColor: '#ffcccc',
+      borderRadius: '5px',
+      padding: theme.spacing(1)
     },
     sendIcon: {
       marginLeft: theme.spacing(1)
@@ -304,7 +307,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
   return (
     <Box className={classes.ralBox}>
       <Typography>
-        RAL: ${profile.ral.toFixed(0)}
+        RAL: ${profile.ral}
         <Tooltip
           enterDelay={500}
           leaveDelay={100}

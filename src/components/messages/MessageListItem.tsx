@@ -11,6 +11,7 @@ import {
   Typography
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
+import ReplyIcon from '@material-ui/icons/ReplyOutlined'
 import moment from 'moment'
 import * as React from 'react'
 import NumberFormat from 'react-number-format'
@@ -26,6 +27,7 @@ import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
 
 interface Props {
   message: MessageBase
+  isReply?: boolean
   shaded: boolean
   button: boolean
 }
@@ -116,6 +118,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   deleteMessage,
   message,
   history,
+  isReply,
   shaded
 }) => {
   const received = message.to === credentials.client_id
@@ -231,10 +234,15 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           }
         />
         {showDelete && <MessageDelete message={message} deleteMessage={deleteMessage} />}
+        {isReply && <ReplyIcon />}
         <MessageValue message={message} />
       </ListItem>
     </Box>
   )
+}
+
+MessageListItemFC.defaultProps = {
+  isReply: false
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({

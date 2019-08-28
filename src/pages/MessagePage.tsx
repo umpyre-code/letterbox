@@ -6,7 +6,8 @@ import {
   Grid,
   makeStyles,
   Paper,
-  Theme
+  Theme,
+  Typography
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/Reply'
@@ -98,16 +99,22 @@ const MessagePageFC: React.FC<AllProps> = ({
   }, [messageHash, credentials])
 
   function messageBodies() {
-    return loadedMessages.map(message => (
+    return loadedMessages.map((message, index) => (
       <React.Fragment>
         {message.hash in draftsMap && (
           <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
             <DraftListItem draft={draftsMap[message.hash]} />
           </Container>
         )}
+        {index === 1 && <Typography>Previous messages</Typography>}
         <Container className={classes.bodyContainer} key={message.hash}>
           <Paper>
-            <MessageListItem message={message} shaded={false} button={false} />
+            <MessageListItem
+              message={message}
+              shaded={false}
+              button={false}
+              isReply={message.body.parent && message.body.parent.length > 0}
+            />
             <Divider />
             <MessageBodyFc body={message.body} />
             <Divider />

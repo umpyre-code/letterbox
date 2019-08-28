@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Theme, Tooltip, Typography, withStyles } from '@material-ui/core'
+import { Box, Button, TextField, Tooltip, Typography } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import HelpIcon from '@material-ui/icons/Help'
 import SendIcon from '@material-ui/icons/Send'

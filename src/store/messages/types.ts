@@ -1,5 +1,4 @@
 import { MessageBase, DecryptedMessage } from '../models/messages'
-import { ClientID } from '../models/client'
 
 export interface FetchMessagesResponse {
   messages: MessageBase[]

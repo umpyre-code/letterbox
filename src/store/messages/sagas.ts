@@ -76,8 +76,12 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
   return {
     readMessages: messages
       .filter(message => message.read === true && message.to === clientId)
-      .sort(cmp),
-    sentMessages: messages.filter(message => message.from === clientId).sort(cmp),
+      .sort(cmp)
+      .slice(0, 5),
+    sentMessages: messages
+      .filter(message => message.from === clientId)
+      .sort(cmp)
+      .slice(0, 5),
     unreadMessages: messages
       .filter(message => message.read === false && message.to === clientId)
       .sort(cmp)
