@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Theme, Tooltip, Typography, withStyles } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
-import HelpIcon from '@material-ui/icons/HelpOutline'
+import HelpIcon from '@material-ui/icons/Help'
 import SendIcon from '@material-ui/icons/Send'
 import * as React from 'react'
 import { Link, LinkProps } from 'react-router-dom'
@@ -95,12 +95,13 @@ const HtmlTooltip = withStyles(() => ({
 }))(Tooltip)
 
 export const PDAToolTip = () => (
-  <HtmlTooltip
+  <Tooltip
     title={
       <React.Fragment>
-        <Typography color="inherit">
+        <Typography>
           <strong>Public Display of Affection</strong>
         </Typography>
+        <br />
         <Typography>
           The PDA is a short message, like a subject line. The PDA is not protected by end-to-end
           encryption, and the recipient can view the PDA before the message is read.
@@ -109,5 +110,5 @@ export const PDAToolTip = () => (
     }
   >
     <HelpIcon />
-  </HtmlTooltip>
+  </Tooltip>
 )

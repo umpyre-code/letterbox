@@ -22,6 +22,7 @@ export interface Draft {
 export interface NewDraft {
   recipients?: ClientID[]
   inReplyTo?: MessageHash
+  pda?: string
 }
 
 export interface FetchDraftsResponse {

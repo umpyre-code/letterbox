@@ -119,7 +119,11 @@ const MessagePageFC: React.FC<AllProps> = ({
                     variant="contained"
                     color="primary"
                     onClick={() => {
-                      addDraft({ recipients: [message.from], inReplyTo: message.hash })
+                      addDraft({
+                        recipients: [message.from],
+                        pda: message.pda,
+                        inReplyTo: message.hash
+                      })
                     }}
                   >
                     <ReplyIcon />
