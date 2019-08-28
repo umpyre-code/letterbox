@@ -85,15 +85,6 @@ export const PDAField: React.FC<PDAFieldProps> = ({ disabled, setPda, initialVal
   />
 )
 
-const HtmlTooltip = withStyles(() => ({
-  tooltip: {
-    backgroundColor: '#fdfdfd',
-    border: '1px solid #dadde9',
-    color: 'rgba(0, 0, 0, 0.7)',
-    maxWidth: 250
-  }
-}))(Tooltip)
-
 export const PDAToolTip = () => (
   <Tooltip
     title={
