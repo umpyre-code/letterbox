@@ -85,7 +85,7 @@ export const PDAField: React.FC<PDAFieldProps> = ({ disabled, setPda, initialVal
   />
 )
 
-const HtmlTooltip = withStyles((theme: Theme) => ({
+const HtmlTooltip = withStyles(() => ({
   tooltip: {
     backgroundColor: '#fdfdfd',
     border: '1px solid #dadde9',
