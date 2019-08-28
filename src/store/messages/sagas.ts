@@ -56,7 +56,7 @@ function* delayThenFetchMessages() {
   yield put(fetchMessagesRequest())
 }
 
-function cmp(first: MessageBase, second: MessageBase): number {
+function cmpByValue(first: MessageBase, second: MessageBase): number {
   if (first.value_cents > second.value_cents) {
     return -1
   }
@@ -72,19 +72,29 @@ function cmp(first: MessageBase, second: MessageBase): number {
   return 0
 }
 
+function cmpByDate(first: MessageBase, second: MessageBase): number {
+  if (first.received_at > second.received_at) {
+    return -1
+  }
+  if (second.received_at > first.received_at) {
+    return 1
+  }
+  return 0
+}
+
 function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessages {
   return {
     readMessages: messages
       .filter(message => message.read === true && message.to === clientId)
-      .sort(cmp)
+      .sort(cmpByValue)
       .slice(0, 5),
     sentMessages: messages
       .filter(message => message.from === clientId)
-      .sort(cmp)
+      .sort(cmpByDate)
       .slice(0, 5),
     unreadMessages: messages
       .filter(message => message.read === false && message.to === clientId)
-      .sort(cmp)
+      .sort(cmpByValue)
       .slice(0, 5)
   }
 }
