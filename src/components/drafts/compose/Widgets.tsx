@@ -69,13 +69,15 @@ export const DiscardButton: React.FC<DiscardButtonProps> = ({
 )
 
 interface PDAFieldProps {
+  disabled: boolean
   setPda: (value: string) => void
   initialValue: string
 }
 
-export const PDAField: React.FC<PDAFieldProps> = ({ setPda, initialValue }) => (
+export const PDAField: React.FC<PDAFieldProps> = ({ disabled, setPda, initialValue }) => (
   <TextField
     id="pda"
+    disabled={disabled}
     defaultValue={initialValue}
     placeholder="Public display of affection"
     fullWidth

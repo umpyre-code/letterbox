@@ -22,6 +22,7 @@ interface RecipientFieldProps {
   credentials: ClientCredentials
   setRecipients: (value: ClientID[]) => void
   initialValues: ClientID[]
+  disabled: boolean
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -59,37 +60,26 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const RecipientField: React.FC<RecipientFieldProps> = ({
   credentials,
+  disabled,
   setRecipients,
   initialValues
 }) => {
   const classes = useStyles({})
   return (
     <React.Fragment>
-      {/* <TextField
-        defaultValue={initialValue}
-        fullWidth
-        id="recipient"
-        label="Recipient"
-        onChange={event => {
-          async function search(prefix: string) {
-            const api = new API(credentials)
-            const result = await api.searchClient(prefix)
-          }
-          const value = event.target.value
-          if (value && value !== '') {
-            search(value)
-          }
-          setRecipient(event.target.value)
-        }}
-      /> */}
       <DownshiftMultiple
         classes={classes}
+        disabled={disabled}
         credentials={credentials}
         setRecipients={setRecipients}
         initialValues={initialValues}
       />
     </React.Fragment>
   )
+}
+
+RecipientField.defaultProps = {
+  disabled: false
 }
 
 interface Suggestion {
@@ -191,6 +181,7 @@ async function getSuggestions(
 interface DownshiftMultipleProps {
   classes: ReturnType<typeof useStyles>
   credentials: ClientCredentials
+  disabled: boolean
   setRecipients: (value: ClientID[]) => void
   initialValues: ClientID[]
 }
@@ -303,6 +294,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
             {renderInput({
               InputLabelProps: getLabelProps(),
               InputProps: {
+                disabled: props.disabled,
                 onBlur,
                 onChange: event => {
                   handleInputChange(event, isOpen)

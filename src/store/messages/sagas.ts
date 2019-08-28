@@ -16,7 +16,7 @@ import { BloomFilter } from '../../util/BloomFilter'
 import { fetchBalanceRequest, fetchBalanceSuccess } from '../account/actions'
 import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
-import { removeDraftRequest } from '../drafts/actions'
+import { removeDraftRequest, updateDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
 import { SettlePaymentResponse } from '../models/account'
 import { ClientCredentials, ClientID } from '../models/client'
@@ -169,7 +169,7 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
 
     if (res.error) {
       yield put(sendMessagesError(res.error))
-      yield put(removeDraftRequest({ ...draft, sending: false }))
+      yield put(updateDraftRequest({ ...draft, sending: false, sendError: res.error }))
     } else {
       yield put(sendMessagesSuccess())
       yield put(removeDraftRequest(draft))
@@ -177,11 +177,16 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
+      yield put(
+        updateDraftRequest({ ...draft, sending: false, sendError: error.response.data.message })
+      )
       yield put(sendMessagesError(error.response.data.message))
     } else if (error.message) {
       yield put(sendMessagesError(error.message))
+      yield put(updateDraftRequest({ ...draft, sending: false, sendError: error.message }))
     } else {
       yield put(sendMessagesError(error))
+      yield put(updateDraftRequest({ ...draft, sending: false, sendError: error }))
     }
   }
 }

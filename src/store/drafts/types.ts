@@ -13,6 +13,7 @@ export interface Draft {
   created_at: Date
   value_cents: number
   sending: boolean
+  sendError?: string
   message?: MessageBase
   apiMessages?: APIMessage[]
   inReplyTo?: MessageHash

@@ -5,7 +5,8 @@ import {
   LinearProgress,
   makeStyles,
   Paper,
-  Theme
+  Theme,
+  Typography
 } from '@material-ui/core'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
@@ -85,7 +86,6 @@ const ComposeFormFC: React.FC<AllProps> = ({
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(draft.editorContent)))
       : EditorState.createEmpty()
   )
-  const [sending, setSending] = React.useState(draft.sending)
   const [recipients, setRecipients] = React.useState<ClientID[]>(draft.recipients)
   const [pda, setPda] = React.useState(draft.pda)
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
@@ -93,12 +93,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   )
   const classes = useStyles({})
 
-  React.useEffect(() => {
-    setSending(draft.sending)
-  }, [draft.sending])
-
   function handleSend() {
-    setSending(true)
     const messageBody: MessageBody = {
       markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
       parent: draft.inReplyTo
@@ -142,7 +137,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
       pda !== '' &&
       balanceIsSufficient()
     ) {
-      return !sending
+      return !draft.sending
     }
     return false
   }
@@ -170,20 +165,22 @@ const ComposeFormFC: React.FC<AllProps> = ({
       <Grid container spacing={1} alignItems="flex-end">
         <Grid item xs={12}>
           <RecipientField
+            disabled={draft.sending}
             credentials={credentials}
             initialValues={draft.recipients}
             setRecipients={(value: ClientID[]) => {
               setRecipients(value)
-              updateDraft({ ...draft, recipients: value })
+              updateDraft({ ...draft, recipients: value, sendError: undefined })
             }}
           />
         </Grid>
         <Grid item xs>
           <PDAField
+            disabled={draft.sending}
             initialValue={draft.pda}
             setPda={(value: string) => {
               setPda(value)
-              updateDraft({ ...draft, pda: value })
+              updateDraft({ ...draft, pda: value, sendError: undefined })
             }}
           />
         </Grid>
@@ -200,7 +197,8 @@ const ComposeFormFC: React.FC<AllProps> = ({
               setEditorState(updatedEditorState)
               updateDraft({
                 ...draft,
-                editorContent: JSON.stringify(convertToRaw(updatedEditorState.getCurrentContent()))
+                editorContent: JSON.stringify(convertToRaw(updatedEditorState.getCurrentContent())),
+                sendError: undefined
               })
             }}
             placeholder="🔐 private message body"
@@ -213,7 +211,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Grid item container xs spacing={1} justify="flex-start" alignItems="flex-end">
             <Grid item>
               <PaymentInput
-                disabled={sending}
+                disabled={draft.sending}
                 style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
                 placeholder="Message value"
                 label="Payment"
@@ -223,20 +221,29 @@ const ComposeFormFC: React.FC<AllProps> = ({
                 onChange={event => {
                   const value = Number(event.target.value)
                   setMessageValue(value)
-                  updateDraft({ ...draft, value_cents: value * 100 })
+                  updateDraft({ ...draft, value_cents: value * 100, sendError: undefined })
                 }}
               />
             </Grid>
             <Grid item>{showAddCreditsButton()}</Grid>
           </Grid>
           <Grid item>
-            <DiscardButton classes={classes} enabled={!sending} handleDiscard={handleDiscard} />
+            <DiscardButton
+              classes={classes}
+              enabled={!draft.sending}
+              handleDiscard={handleDiscard}
+            />
           </Grid>
         </Grid>
       </Grid>
-      {sending && (
+      {draft.sending && (
         <Grid item xs={12}>
           <LinearProgress className={classes.progress} />
+        </Grid>
+      )}
+      {draft.sendError && (
+        <Grid item xs={12}>
+          <Typography>There was an error sending. Please try again.</Typography>
         </Grid>
       )}
     </Paper>
