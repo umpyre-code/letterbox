@@ -51,7 +51,7 @@ import {
 } from './utils'
 
 function* delayThenFetchMessages() {
-  const fetchIntervalMillis = 5000
+  const fetchIntervalMillis = 3000
   yield delay(fetchIntervalMillis)
   yield put(fetchMessagesRequest())
 }
