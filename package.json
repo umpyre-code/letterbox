@@ -158,7 +158,7 @@
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-microsoft-contrib": "^6.2.0",
-    "typescript": "^3.5.3",
+    "typescript": "^3.6.2",
     "url-loader": "^2.1.0",
     "webpack": "^4.39.3",
     "webpack-dev-server": "^3.8.0",
