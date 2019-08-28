@@ -50,7 +50,7 @@
     "history": "^4.9.0",
     "immutable": "^4.0.0-rc.12",
     "jsonwebtoken": "^8.5.1",
-    "libphonenumber-js": "^1.7.22",
+    "libphonenumber-js": "^1.7.23",
     "libsodium-wrappers": "^0.7.5",
     "lodash": "^4.17.15",
     "marked": "^0.7.0",
