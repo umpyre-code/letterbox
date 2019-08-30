@@ -80,12 +80,14 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
       .filter(
         message => message.from === clientId || (message.read === true && message.to === clientId)
       )
+      .groupBy(message => [message.to, message.from].sort().join())
+      .map(messageDict =>
+        _.chain(messageDict)
+          .minBy('received_at')
+          .value()
+      )
       .sortBy(['received_at'])
       .reverse()
-      .groupBy(message => [message.to, message.from].sort().join())
-      .sortBy(messageDict => _.first(messageDict).received_at)
-      .reverse()
-      .map(messageDict => _.first(messageDict))
       .take(5)
       .value(),
     unreadMessages: messages
