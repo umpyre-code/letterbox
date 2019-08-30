@@ -6,8 +6,7 @@ import {
   Grid,
   makeStyles,
   Paper,
-  Theme,
-  Typography
+  Theme
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/Reply'
@@ -99,7 +98,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   }, [messageHash, credentials])
 
   function messageBodies() {
-    return loadedMessages.map(message => (
+    return loadedMessages.map((message, index) => (
       <React.Fragment>
         <Container className={classes.bodyContainer} key={message.hash}>
           <Paper>
@@ -115,21 +114,25 @@ const MessagePageFC: React.FC<AllProps> = ({
             <Container className={classes.buttonContainer}>
               <Grid container justify="space-between">
                 <Grid item>
-                  <Button
-                    disabled={message.hash in draftsMap}
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      addDraft({
-                        recipients: [message.from],
-                        pda: message.pda,
-                        inReplyTo: message.hash
-                      })
-                    }}
-                  >
-                    <ReplyIcon />
-                    Reply
-                  </Button>
+                  {index === loadedMessages.length - 1 && (
+                    <Button
+                      disabled={message.hash in draftsMap}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        addDraft({
+                          recipients: [
+                            message.from === profile.client_id ? message.to : message.from
+                          ],
+                          pda: message.pda,
+                          inReplyTo: message.hash
+                        })
+                      }}
+                    >
+                      <ReplyIcon />
+                      Reply
+                    </Button>
+                  )}
                 </Grid>
                 <Grid item>
                   <Button

@@ -84,6 +84,7 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
       .reverse()
       .groupBy(message => [message.to, message.from].sort().join())
       .sortBy(messageDict => _.first(messageDict).received_at)
+      .reverse()
       .map(messageDict => _.first(messageDict))
       .take(5)
       .value(),
