@@ -44,10 +44,10 @@ type AllProps = PropsFromState & PropsFromDispatch
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     composeButton: {
-      bottom: theme.spacing(3),
+      bottom: theme.spacing(4),
       margin: '0 auto',
       position: 'fixed',
-      right: theme.spacing(3),
+      right: theme.spacing(4),
       zIndex: 1
     },
     draftContainer: {
@@ -118,12 +118,6 @@ const IndexPageFC: React.FC<AllProps> = ({
               <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
             </Container>
           </React.Fragment>
-        )}
-        {messagesState.sentMessages.length > 0 && (
-          <Container className={classes.messageListContainer}>
-            <Typography>Sent</Typography>
-            <MessageList messages={messagesState.sentMessages} messageType="sent" shaded button />
-          </Container>
         )}
         <Tooltip title="Compose a new message">
           <Fab

@@ -30,7 +30,6 @@ export enum MessagesActionTypes {
 
 export interface RankedMessages {
   readMessages: MessageBase[]
-  sentMessages: MessageBase[]
   unreadMessages: MessageBase[]
 }
 

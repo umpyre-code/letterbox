@@ -4,9 +4,8 @@ import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import PluginEditor from 'draft-js-plugins-editor'
 import * as React from 'react'
 import './Draft.css'
-import { DraftToolbar, staticToolbarPlugin } from './DraftToolbar'
 
-const editorPlugins = [staticToolbarPlugin, createLinkifyPlugin()]
+const editorPlugins = [createLinkifyPlugin()]
 
 interface Props {
   placeholder: string
@@ -44,7 +43,6 @@ export const Editor: React.FC<Props> = ({ placeholder, editorState, onChange, re
         spellCheck
         readOnly={readOnly}
       />
-      <DraftToolbar />
     </Box>
   )
 }

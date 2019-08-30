@@ -1,4 +1,6 @@
+import * as Immutable from 'immutable'
 import sodium from 'libsodium-wrappers'
+import _ from 'lodash'
 import {
   all,
   call,
@@ -72,26 +74,19 @@ function cmpByValue(first: MessageBase, second: MessageBase): number {
   return 0
 }
 
-function cmpByDate(first: MessageBase, second: MessageBase): number {
-  if (first.received_at > second.received_at) {
-    return -1
-  }
-  if (second.received_at > first.received_at) {
-    return 1
-  }
-  return 0
-}
-
 function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessages {
   return {
-    readMessages: messages
-      .filter(message => message.read === true && message.to === clientId)
-      .sort(cmpByValue)
-      .slice(0, 5),
-    sentMessages: messages
-      .filter(message => message.from === clientId)
-      .sort(cmpByDate)
-      .slice(0, 5),
+    readMessages: _.chain(messages)
+      .filter(
+        message => message.from === clientId || (message.read === true && message.to === clientId)
+      )
+      .sortBy(['received_at'])
+      .reverse()
+      .groupBy(message => [message.to, message.from].sort().join())
+      .sortBy(messageDict => _.first(messageDict).received_at)
+      .map(messageDict => _.first(messageDict))
+      .take(5)
+      .value(),
     unreadMessages: messages
       .filter(message => message.read === false && message.to === clientId)
       .sort(cmpByValue)
@@ -325,11 +320,26 @@ function* watchDeleteMessageRequest() {
   yield takeEvery(MessagesActionTypes.DELETE_MESSAGE_REQUEST, handleDeleteMessage)
 }
 
+async function addChildMessage(parent: MessageBase, child: MessageHash): Promise<number> {
+  return db.messageInfos.update(parent.hash, {
+    ...parent,
+    children: _.uniq([...(parent.children || []), child])
+  })
+}
+
 async function loadMessages(
   clientId: ClientID,
   hash: MessageHash,
-  messages: DecryptedMessage[]
-): Promise<DecryptedMessage[]> {
+  messages: Immutable.Map<MessageHash, DecryptedMessage>,
+  child?: MessageBase
+): Promise<Immutable.Map<MessageHash, DecryptedMessage>> {
+  if (messages.has(hash)) {
+    const messageInfo = await db.messageInfos.get({ hash })
+    if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+      await addChildMessage(messageInfo, child.hash)
+    }
+    return Promise.resolve(messages)
+  }
   const messageInfo = await db.messageInfos.get({ hash })
   const messageBody = await db.messageBodies.get({ hash })
   const decryptedMessage = await decryptMessage(clientId, {
@@ -337,12 +347,28 @@ async function loadMessages(
     ...messageBody
   })
 
-  const result = [...messages, decryptedMessage]
+  // Using asMutable() is less preferable, but the alternative is some very
+  // messy code.
+  let map = messages.asMutable()
+  map.set(decryptedMessage.hash, decryptedMessage)
+
+  if (decryptedMessage.children) {
+    await Promise.all(
+      decryptedMessage.children.map(async childHash => {
+        map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
+        Promise.resolve(true)
+      })
+    )
+  }
+
+  if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+    await addChildMessage(messageInfo, child.hash)
+  }
 
   if (decryptedMessage.body.parent) {
-    return loadMessages(clientId, decryptedMessage.body.parent, result)
+    return loadMessages(clientId, decryptedMessage.body.parent, map.asImmutable(), decryptedMessage)
   }
-  return Promise.resolve(result)
+  return Promise.resolve(map.asImmutable())
 }
 
 function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
@@ -350,12 +376,20 @@ function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
   try {
     const state: ApplicationState = yield select()
     const clientId = state.clientState.credentials.client_id
-    const res = yield call(loadMessages, clientId, payload, [])
+    const res = yield call(
+      loadMessages,
+      clientId,
+      payload,
+      Immutable.Map<MessageHash, DecryptedMessage>()
+    )
 
     if (res.error) {
       yield put(loadMessagesError(res.error))
     } else {
-      yield put(loadMessagesSuccess(res))
+      const messageArray = _.chain(res.valueSeq().toArray())
+        .sortBy(['received_at'])
+        .value()
+      yield put(loadMessagesSuccess(messageArray))
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {

@@ -35,6 +35,7 @@ export interface MessageBase {
   signature?: string
   to: ClientID
   value_cents: number
+  children?: MessageHash[]
 }
 
 export interface DecryptedMessage extends MessageBase {

@@ -99,14 +99,8 @@ const MessagePageFC: React.FC<AllProps> = ({
   }, [messageHash, credentials])
 
   function messageBodies() {
-    return loadedMessages.map((message, index) => (
+    return loadedMessages.map(message => (
       <React.Fragment>
-        {message.hash in draftsMap && (
-          <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
-            <DraftListItem draft={draftsMap[message.hash]} />
-          </Container>
-        )}
-        {index === 1 && <Typography>Previous messages</Typography>}
         <Container className={classes.bodyContainer} key={message.hash}>
           <Paper>
             <MessageListItem
@@ -153,6 +147,11 @@ const MessagePageFC: React.FC<AllProps> = ({
               </Grid>
             </Container>
           </Paper>
+          {message.hash in draftsMap && (
+            <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
+              <DraftListItem draft={draftsMap[message.hash]} />
+            </Container>
+          )}
         </Container>
       </React.Fragment>
     ))

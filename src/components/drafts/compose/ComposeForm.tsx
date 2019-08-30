@@ -134,7 +134,6 @@ const ComposeFormFC: React.FC<AllProps> = ({
     if (
       editorState.getCurrentContent().hasText() &&
       recipients.length > 0 &&
-      pda !== '' &&
       balanceIsSufficient()
     ) {
       return !draft.sending

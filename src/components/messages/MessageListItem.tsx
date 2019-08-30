@@ -24,6 +24,7 @@ import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
 import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
+import { Emoji } from '../widgets/Emoji'
 
 interface Props {
   message: MessageBase
@@ -212,7 +213,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           primary={
             <React.Fragment>
               <Typography component="span" variant="h5" className={classes.inline} color="inherit">
-                {message.pda}
+                {message.pda || <Emoji ariaLabel="letter">💌</Emoji>}
               </Typography>
             </React.Fragment>
           }
