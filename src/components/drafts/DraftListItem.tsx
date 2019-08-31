@@ -1,4 +1,4 @@
-import { createStyles, ListItem, makeStyles, Theme } from '@material-ui/core'
+import { createStyles, ListItem, makeStyles, Theme, Paper } from '@material-ui/core'
 import * as React from 'react'
 import { Draft } from '../../store/drafts/types'
 import Loading from '../widgets/Loading'
@@ -11,6 +11,10 @@ type AllProps = Props
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    paper: {
+      padding: theme.spacing(1),
+      width: '100%'
+    },
     inline: {
       display: 'inline'
     },
@@ -28,7 +32,9 @@ export const DraftListItem: React.FunctionComponent<AllProps> = ({ draft }) => {
   return (
     <ListItem className={classes.listItem}>
       <React.Suspense fallback={<Loading />}>
-        <LazyComposeForm draft={draft} />
+        <Paper className={classes.paper}>
+          <LazyComposeForm draft={draft} />
+        </Paper>
       </React.Suspense>
     </ListItem>
   )

@@ -41,10 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
     progress: {
       margin: theme.spacing(1, 0, 0, 0)
     },
-    root: {
-      padding: theme.spacing(1, 1),
-      width: '100%'
-    },
     sendIcon: {
       marginLeft: theme.spacing(1)
     }
@@ -160,7 +156,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   }
 
   return (
-    <Paper className={classes.root}>
+    <React.Fragment>
       <Grid container spacing={1} alignItems="flex-end">
         <Grid item xs={12}>
           <RecipientField
@@ -245,7 +241,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Typography>There was an error sending. Please try again.</Typography>
         </Grid>
       )}
-    </Paper>
+    </React.Fragment>
   )
 }
 

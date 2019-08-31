@@ -21,9 +21,9 @@ const useStyles = makeStyles((theme: Theme) =>
     layoutContainer: {
       padding: theme.spacing(1)
     },
-    footerContainer: {
-      padding: theme.spacing(5, 0, 5, 0)
-    },
+    // footerContainer: {
+    //   padding: theme.spacing(5, 0, 5, 0)
+    // },
     headerContainer: {
       padding: theme.spacing(1)
     }
@@ -41,26 +41,31 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container className={classes.layoutContainer}>
-        <Container className={classes.headerContainer}>
-          <Grid container spacing={1} justify="space-between" alignItems="flex-start">
-            <Grid item>
-              <Router.Link to="/">
-                <Logotype />
-              </Router.Link>
-            </Grid>
-            {profile && balance && (
+      <Grid container direction="column" style={{ height: '100vh' }}>
+        <Grid item>
+          <Container className={classes.headerContainer}>
+            <Grid container spacing={1} justify="space-between" alignItems="flex-start">
               <Grid item>
-                <Profile profile={profile} balance={balance} menu />
+                <Router.Link to="/">
+                  <Logotype />
+                </Router.Link>
               </Grid>
-            )}
-            <Grid item xs={12}>
-              <Divider />
+              {profile && balance && (
+                <Grid item>
+                  <Profile profile={profile} balance={balance} menu />
+                </Grid>
+              )}
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-        {children}
-        <Container className={classes.footerContainer}>
+          </Container>
+        </Grid>
+        <Grid item xs style={{ overflow: 'auto' }}>
+          {children}
+        </Grid>
+      </Grid>
+      {/* <Container className={classes.footerContainer}>
           <Grid container justify="center" alignItems="center" spacing={2}>
             <Grid item>
               <Router.Link to="/about">
@@ -76,8 +81,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
               </Link>
             </Grid>
           </Grid>
-        </Container>
-      </Container>
+        </Container> */}
     </React.Fragment>
   )
 }

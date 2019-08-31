@@ -1,6 +1,6 @@
 import marked from 'marked'
 import DOMPurify from 'dompurify'
-import toJumboEmoji from './toJumboEmoji'
+import { toJumboEmoji } from './toJumboEmoji'
 
 export function markdownToHtml(body: string): string {
   const dompurify = DOMPurify

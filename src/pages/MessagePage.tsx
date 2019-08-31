@@ -19,7 +19,6 @@ import { DraftListItem } from '../components/drafts/DraftListItem'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import MessageBodyFc from '../components/messages/MessageBodyFc'
 import { MessageListItem } from '../components/messages/MessageListItem'
-import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Draft } from '../store/drafts/types'
@@ -53,6 +52,8 @@ interface MatchParams {
 
 type AllProps = PropsFromState & PropsFromDispatch & Router.RouteComponentProps<MatchParams>
 
+const LazyComposeForm = React.lazy(() => import('../components/drafts/compose/ComposeForm'))
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     bodyContainer: {
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     headerContainer: {
       padding: theme.spacing(1)
+    },
+    messagesPaper: {
+      overflow: 'auto'
     }
   })
 )
@@ -83,6 +87,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   const classes = useStyles({})
   const { messageHash } = match.params
   const [draftsMap, setDraftsMap] = React.useState<{}>({})
+  const messageRef = React.createRef<HTMLDivElement>()
   React.useEffect(() => {
     setDraftsMap(
       _.chain(drafts)
@@ -97,27 +102,34 @@ const MessagePageFC: React.FC<AllProps> = ({
     messageRead(messageHash)
   }, [messageHash, credentials])
 
+  React.useLayoutEffect(() => {
+    // scroll to message
+    if (messageRef.current) {
+      messageRef.current.scrollIntoView()
+    }
+  })
+
   function messageBodies() {
     return loadedMessages.map((message, index) => (
       <React.Fragment>
-        <Container className={classes.bodyContainer} key={message.hash}>
-          <Paper>
-            <MessageListItem
-              message={message}
-              shaded={false}
-              button={false}
-              isReply={message.body.parent && message.body.parent.length > 0}
-            />
-            <Divider />
-            <MessageBodyFc body={message.body} />
-            <Divider />
-            <Container className={classes.buttonContainer}>
-              <Grid container justify="space-between">
-                <Grid item>
-                  {index === loadedMessages.length - 1 && (
+        <Container className={classes.bodyContainer} key={message.hash} ref={messageRef}>
+          <MessageListItem
+            message={message}
+            shaded={false}
+            button={false}
+            isReply={message.body.parent && message.body.parent.length > 0}
+          />
+          <Divider />
+          <MessageBodyFc body={message.body} />
+          {index === loadedMessages.length - 1 && (
+            <React.Fragment>
+              <Divider />
+              <Container className={classes.buttonContainer}>
+                <Grid container justify="space-between">
+                  <Grid item>
                     <Button
                       disabled={message.hash in draftsMap}
-                      variant="contained"
+                      variant="outlined"
                       color="primary"
                       onClick={() => {
                         addDraft({
@@ -132,28 +144,31 @@ const MessagePageFC: React.FC<AllProps> = ({
                       <ReplyIcon />
                       Reply
                     </Button>
-                  )}
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => {
+                        deleteMessage(message.hash)
+                        history.push('/')
+                      }}
+                    >
+                      <DeleteIcon />
+                      Delete
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      deleteMessage(message.hash)
-                      history.push('/')
-                    }}
-                  >
-                    <DeleteIcon />
-                    Delete
-                  </Button>
-                </Grid>
-              </Grid>
-            </Container>
-          </Paper>
+              </Container>
+            </React.Fragment>
+          )}
           {message.hash in draftsMap && (
-            <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
-              <DraftListItem draft={draftsMap[message.hash]} />
-            </Container>
+            <React.Fragment>
+              <Divider />
+              <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
+                <LazyComposeForm draft={draftsMap[message.hash]} />
+              </Container>
+            </React.Fragment>
           )}
         </Container>
       </React.Fragment>
@@ -164,8 +179,7 @@ const MessagePageFC: React.FC<AllProps> = ({
     <ClientInit>
       <DefaultLayout balance={balance} profile={profile}>
         <Container className={classes.bodyContainer}>
-          <BackToIndexButton />
-          {messageBodies()}
+          <Paper className={classes.messagesPaper}>{messageBodies()}</Paper>
         </Container>
       </DefaultLayout>
     </ClientInit>
