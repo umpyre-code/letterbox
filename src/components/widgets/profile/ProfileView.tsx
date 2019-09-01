@@ -84,7 +84,8 @@ const useStyles = makeStyles((theme: Theme) =>
       verticalAlign: 'middle',
       backgroundColor: '#ffcccc',
       borderRadius: '5px',
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
+      minWidth: '90px'
     },
     badgeBox: {
       display: 'inline-block',
@@ -379,11 +380,11 @@ export const ProfileView: React.FC<Props> = ({
           )}
           {fullProfile && (
             <Grid item container direction="column" alignItems="flex-end" xs>
-              <Grid item>
+              <Grid item xs>
                 <Ral profile={profile} />
               </Grid>
               {editable && (
-                <Grid item>
+                <Grid item xs>
                   <Badge profile={profile} />
                 </Grid>
               )}

@@ -34,16 +34,20 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inline-block',
       padding: theme.spacing(1),
       verticalAlign: 'middle',
-      textTransform: 'none'
+      textTransform: 'none',
+      textAlign: 'left',
+      minWidth: '90px'
     },
     copyBox: {},
     badgeBox: {
+      '& pre': {
+        whiteSpace: 'pre-wrap'
+      },
       backgroundColor: '#eeeeee',
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(1),
+      padding: theme.spacing(0, 1, 0, 1),
       borderRadius: '5px',
+      overflow: 'scroll',
       maxWidth: '500px',
-      overflow: 'auto',
       margin: theme.spacing(1)
     },
     root: {
@@ -51,7 +55,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     popperPaper: {
       padding: theme.spacing(1),
-      boxShadow: theme.shadows[3]
+      boxShadow: theme.shadows[3],
+      maxWidth: '95vw'
     },
     formControl: {},
     group: {}
@@ -138,17 +143,34 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item container justify="space-between" alignItems="flex-end">
-        <Grid item>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">Display name</FormLabel>
-            <TextField
-              value={nameValue}
-              onChange={event => {
-                setNameValue(event.target.value)
-              }}
-            />
-          </FormControl>
+      <Grid item>
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormLabel component="legend">Display name</FormLabel>
+          <TextField
+            value={nameValue}
+            onChange={event => {
+              setNameValue(event.target.value)
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
+      <Grid item xs>
+        <Box className={classes.badgeBox}>
+          <pre>{badge}</pre>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
+      <Grid item container justify="space-between" alignItems="flex-start">
+        <Grid item xs>
+          <Typography variant="subtitle1" color="textSecondary">
+            Preview
+          </Typography>
+          <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue)} />
         </Grid>
         <Grid item>
           <Box className={classes.copyBox}>
@@ -166,23 +188,6 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
             </Button>
           </Box>
         </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Divider />
-      </Grid>
-      <Grid item xs>
-        <Box className={classes.badgeBox}>
-          <pre>{badge}</pre>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Divider />
-      </Grid>
-      <Grid item xs>
-        <Typography variant="subtitle1" color="textSecondary">
-          Preview
-        </Typography>
-        <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue)} />
       </Grid>
       <Grid item xs={12}>
         <Divider />
