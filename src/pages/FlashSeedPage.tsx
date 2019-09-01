@@ -105,12 +105,8 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
                   }}
                 >
                   <CopyIcon>copy</CopyIcon>
-                  Copy to clipboard
-                  {copied && (
-                    <React.Fragment>
-                      &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
-                    </React.Fragment>
-                  )}
+                  Copy to clipboard{' '}
+                  <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
                 </Button>
               </Box>
             </Grid>

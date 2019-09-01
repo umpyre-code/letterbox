@@ -14,7 +14,8 @@ import {
   RadioGroup,
   Theme,
   Typography,
-  TextField
+  TextField,
+  Divider
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
@@ -23,7 +24,6 @@ import * as React from 'react'
 import { API_ENDPOINT, PUBLIC_URL } from '../../../store/api'
 import { ClientProfile } from '../../../store/models/client'
 import { CopyIcon } from '../CopyIcon'
-import { Emoji } from '../Emoji'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,13 +43,15 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingRight: theme.spacing(1),
       borderRadius: '5px',
       maxWidth: '500px',
-      overflow: 'auto'
+      overflow: 'auto',
+      margin: theme.spacing(1)
     },
     root: {
       position: 'relative'
     },
     popperPaper: {
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
+      boxShadow: theme.shadows[3]
     },
     formControl: {},
     group: {}
@@ -119,8 +121,6 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
             <FormControlLabel value="large" control={<Radio />} label="Large" />
           </RadioGroup>
         </FormControl>
-      </Grid>
-      <Grid item container>
         <FormControl component="fieldset" className={classes.formControl}>
           <FormLabel component="legend">Format</FormLabel>
           <RadioGroup
@@ -138,46 +138,54 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
           </RadioGroup>
         </FormControl>
       </Grid>
-      <Grid item container>
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Display name</FormLabel>
-          <TextField
-            value={nameValue}
-            onChange={event => {
-              setNameValue(event.target.value)
-            }}
-          />
-        </FormControl>
+      <Grid item container justify="space-between" alignItems="flex-end">
+        <Grid item>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">Display name</FormLabel>
+            <TextField
+              value={nameValue}
+              onChange={event => {
+                setNameValue(event.target.value)
+              }}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <Box className={classes.copyBox}>
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(badge)
+                setCopied(true)
+                setTimeout(() => {
+                  setCopied(false)
+                }, 1000)
+              }}
+            >
+              <CopyIcon>copy</CopyIcon>
+              Copy <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
+            </Button>
+          </Box>
+        </Grid>
       </Grid>
-      <Grid item>
-        <Box className={classes.copyBox}>
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(badge)
-              setCopied(true)
-              setTimeout(() => {
-                setCopied(false)
-              }, 1000)
-            }}
-          >
-            <CopyIcon>copy</CopyIcon>
-            Copy to clipboard
-            {copied && (
-              <React.Fragment>
-                &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
-              </React.Fragment>
-            )}
-          </Button>
-        </Box>
+      <Grid item xs={12}>
+        <Divider />
       </Grid>
-      <Grid item>
+      <Grid item xs>
         <Box className={classes.badgeBox}>
           <pre>{badge}</pre>
         </Box>
       </Grid>
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
       <Grid item xs>
-        <Typography variant="subtitle1">Preview</Typography>
+        <Typography variant="subtitle1" color="textSecondary">
+          Preview
+        </Typography>
         <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue)} />
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
       </Grid>
     </React.Fragment>
   )
@@ -201,7 +209,7 @@ export const Badge: React.FC<BadgeProps> = props => {
           <ContactMailIcon style={{ padding: 4, verticalAlign: 'top' }}>Get badge</ContactMailIcon>
         </Typography>
       </Button>
-      <Popper id="badge-popper" open={isOpen} anchorEl={anchorEl} transition>
+      <Popper id="badge-popper" open={isOpen} anchorEl={anchorEl} transition placement="right">
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={100}>
             <Paper className={classes.popperPaper}>
