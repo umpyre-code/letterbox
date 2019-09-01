@@ -2,9 +2,6 @@ import {
   Avatar,
   Box,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
   Container,
   createStyles,
   Divider,
@@ -13,10 +10,12 @@ import {
   makeStyles,
   Menu,
   MenuItem,
+  Paper,
   Theme,
   Tooltip,
   Typography
 } from '@material-ui/core'
+import ContactMailIcon from '@material-ui/icons/ContactMail'
 import EditButton from '@material-ui/icons/Edit'
 import HelpIcon from '@material-ui/icons/Help'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -38,9 +37,6 @@ momentDurationFormatSetup(moment)
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    actionContainer: {
-      padding: theme.spacing(1)
-    },
     addCreditsButton: {
       '& .plusButton': {
         display: 'inline',
@@ -48,9 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
         fontSize: '1rem',
         color: theme.palette.primary.main
       },
-      // '&:hover': {
-      // color: '#f00'
-      // },
       '&:hover .plusButton': {
         visibility: 'visible'
       },
@@ -60,8 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 0,
       padding: theme.spacing(1)
     },
-    card: { padding: theme.spacing(1) },
-    cardHeader: { padding: theme.spacing(1) },
+    rootGrid: { padding: theme.spacing(1) },
     handleText: {
       color: 'rgba(0, 0, 0, 0.54)'
     },
@@ -90,6 +82,13 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inline-block',
       verticalAlign: 'middle',
       backgroundColor: '#ffcccc',
+      borderRadius: '5px',
+      padding: theme.spacing(1)
+    },
+    badgeBox: {
+      display: 'inline-block',
+      verticalAlign: 'middle',
+      backgroundColor: '#ccccff',
       borderRadius: '5px',
       padding: theme.spacing(1)
     },
@@ -187,7 +186,7 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
 
   if (profile && profile.handle && profile.handle.length > 0) {
     return (
-      <Typography className={classes.handleText} variant="subtitle2">
+      <Typography noWrap className={classes.handleText} variant="subtitle2">
         <Router.Link to={getProfileUrl(profile)}>{profile.handle}</Router.Link>&nbsp;
         {getDateJoined()}
       </Typography>
@@ -330,6 +329,22 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
   )
 }
 
+interface BadgeProps {
+  profile?: ClientProfile
+}
+
+export const Badge: React.FC<BadgeProps> = ({ profile }) => {
+  const classes = useStyles({})
+  return (
+    <Box className={classes.badgeBox}>
+      <Typography>
+        Get Badge
+        <ContactMailIcon style={{ padding: 4, verticalAlign: 'top' }}>Get badge</ContactMailIcon>
+      </Typography>
+    </Box>
+  )
+}
+
 export const ProfileView: React.FC<Props> = ({
   balance,
   editable,
@@ -354,54 +369,52 @@ export const ProfileView: React.FC<Props> = ({
     if (profile) {
       const clientProfileHelper = ClientProfileHelper.FROM(profile)
       return (
-        <CardHeader
-          className={classes.cardHeader}
-          avatar={
+        <React.Fragment>
+          <Grid item>
             <Router.Link to={getProfileUrl(profile)}>
               <Avatar alt={clientProfileHelper.full_name}>
                 {clientProfileHelper.getInitials()}
               </Avatar>
             </Router.Link>
-          }
-          action={
-            <Container className={classes.actionContainer}>
-              <Action
-                profile={profile}
-                editable={editable}
-                menu={menu}
-                setIsEditing={setIsEditing}
-                setMenuAnchorElement={setMenuAnchorElement}
-                tooltip={tooltip}
-              />
-            </Container>
-          }
-          title={
-            <Grid
-              container
-              style={{ padding: 0 }}
-              spacing={1}
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item zeroMinWidth>
-                <Typography>
-                  <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
-                </Typography>
+          </Grid>
+          <Grid item container direction="column" xs zeroMinWidth>
+            <Grid item>
+              <Typography noWrap>
+                <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
+              </Typography>
+            </Grid>
+            <Grid item zeroMinWidth>
+              <Handle profile={profile} />
+            </Grid>
+          </Grid>
+          {balance && (
+            <Grid item>
+              <BalanceButton balance={balance} />
+            </Grid>
+          )}
+          {fullProfile && (
+            <Grid item container direction="column" alignItems="flex-end" xs>
+              <Grid item>
+                <Ral profile={profile} />
               </Grid>
-              {fullProfile && (
-                <Grid item zeroMinWidth>
-                  <Ral profile={profile} />
-                </Grid>
-              )}
-              {balance && (
-                <Grid item zeroMinWidth>
-                  <BalanceButton balance={balance} />
+              {editable && (
+                <Grid item>
+                  <Badge profile={profile} />
                 </Grid>
               )}
             </Grid>
-          }
-          subheader={<Handle profile={profile} />}
-        />
+          )}
+          <Grid item>
+            <Action
+              profile={profile}
+              editable={editable}
+              menu={menu}
+              setIsEditing={setIsEditing}
+              setMenuAnchorElement={setMenuAnchorElement}
+              tooltip={tooltip}
+            />
+          </Grid>
+        </React.Fragment>
       )
     }
     return <Loading />
@@ -410,7 +423,7 @@ export const ProfileView: React.FC<Props> = ({
   function getProfileContent() {
     if (fullProfile && profile && profile.profile && profile.profile.length > 0) {
       return (
-        <CardContent>
+        <Grid item>
           <Typography component="sub" variant="subtitle1">
             About me
           </Typography>
@@ -421,7 +434,7 @@ export const ProfileView: React.FC<Props> = ({
               dangerouslySetInnerHTML={{ __html: markdownToHtml(profile.profile) }}
             />
           </Container>
-        </CardContent>
+        </Grid>
       )
     }
     return null
@@ -432,11 +445,17 @@ export const ProfileView: React.FC<Props> = ({
   }
 
   return (
-    <Card className={classes.card}>
-      {getCardHeader()}
-      {getCardBody()}
-      {menu && profileMenu}
-    </Card>
+    <Paper>
+      <Grid container className={classes.rootGrid}>
+        <Grid item xs container spacing={1}>
+          {getCardHeader()}
+          {menu && profileMenu}
+        </Grid>
+        <Grid item xs={12}>
+          {getCardBody()}
+        </Grid>
+      </Grid>
+    </Paper>
   )
 }
 

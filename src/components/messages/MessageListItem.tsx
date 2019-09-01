@@ -122,29 +122,36 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   isReply,
   shaded
 }) => {
-  const received = message.to === credentials.client_id
-  const [profile, setProfile] = React.useState(ClientProfileHelper.FROM(loadingClientProfile))
+  const [fromProfile, setFromProfile] = React.useState(
+    ClientProfileHelper.FROM(loadingClientProfile)
+  )
+  const [toProfile, setToProfile] = React.useState(ClientProfileHelper.FROM(loadingClientProfile))
   const [showDelete, setShowDelete] = React.useState<boolean>(false)
   const classes = useStyles({ shaded })
 
   React.useEffect(() => {
     async function fetchData() {
       const api = new API(credentials)
-      const clientId = received ? message.from : message.to
-      const res = await api.fetchClient(clientId)
-      if (res) {
-        setProfile(ClientProfileHelper.FROM(res))
-      }
+      api.fetchClient(message.from).then(res => {
+        if (res) {
+          setFromProfile(ClientProfileHelper.FROM(res))
+        }
+      })
+      api.fetchClient(message.to).then(res => {
+        if (res) {
+          setToProfile(ClientProfileHelper.FROM(res))
+        }
+      })
     }
     fetchData()
   }, [])
 
   function renderAvatar() {
-    if (profile.full_name.length > 0) {
+    if (fromProfile.full_name.length > 0) {
       return (
         <ListItemAvatar>
-          <ProfileTooltip profile={profile}>
-            <Avatar alt={profile.full_name}>{profile.getInitials()}</Avatar>
+          <ProfileTooltip profile={fromProfile}>
+            <Avatar alt={fromProfile.full_name}>{fromProfile.getInitials()}</Avatar>
           </ProfileTooltip>
         </ListItemAvatar>
       )
@@ -180,13 +187,13 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     if (message.to === credentials.client_id) {
       return (
         <React.Fragment>
-          <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {profile.full_name}
+          <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}
         </React.Fragment>
       )
     }
     return (
       <React.Fragment>
-        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>to</span> {profile.full_name}
+        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>to</span> {toProfile.full_name}
       </React.Fragment>
     )
   }
@@ -219,18 +226,15 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           }
           secondary={
             <React.Fragment>
-              <ProfileTooltip profile={profile}>
-                <Typography
-                  component="span"
-                  variant="body2"
-                  className={classes.inline}
-                  color="inherit"
-                >
-                  {getSecondryComponent()}{' '}
-                  <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent </span>
-                  {getMessageDate()}
-                </Typography>
-              </ProfileTooltip>
+              <Typography
+                component="span"
+                variant="body2"
+                className={classes.inline}
+                color="inherit"
+              >
+                {getSecondryComponent()} <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent </span>
+                {getMessageDate()}
+              </Typography>
             </React.Fragment>
           }
         />

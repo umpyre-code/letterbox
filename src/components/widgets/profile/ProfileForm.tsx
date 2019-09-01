@@ -1,11 +1,13 @@
 import {
   Avatar,
-  Card,
-  CardContent,
-  CardHeader,
+  createStyles,
   Divider,
+  Grid,
   IconButton,
   LinearProgress,
+  makeStyles,
+  Paper,
+  Theme,
   Typography
 } from '@material-ui/core'
 import DoneIcon from '@material-ui/icons/Done'
@@ -108,12 +110,19 @@ function getSchema(credentials: ClientCredentials, profile: ClientProfile) {
   })
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    rootGrid: { padding: theme.spacing(1) }
+  })
+)
+
 export const ProfileFormFC: React.FC<AllProps> = ({
   credentials,
   profile,
   setIsEditing,
   updateClientProfile
 }) => {
+  const classes = useStyles({})
   const [editorState, setEditorState] = React.useState(getInitialState(profile))
 
   const clientProfileHelper = ClientProfileHelper.FROM(profile)
@@ -127,44 +136,52 @@ export const ProfileFormFC: React.FC<AllProps> = ({
 
     return (
       <Form>
-        <CardHeader
-          avatar={
+        <Grid container spacing={1} className={classes.rootGrid}>
+          <Grid item>
             <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
-          }
-          title={<Field type="text" label="Your Name" name="full_name" component={TextField} />}
-          subheader={<Field type="text" label="your_handle" name="handle" component={TextField} />}
-          action={
+          </Grid>
+          <Grid item container direction="column" xs zeroMinWidth>
+            <Grid item>
+              <Field type="text" label="Your Name" name="full_name" component={TextField} />
+            </Grid>
+            <Grid item>
+              <Field type="text" label="your_handle" name="handle" component={TextField} />
+            </Grid>
+          </Grid>
+          <Grid item>
             <IconButton aria-label="Done" disabled={doneButtonDisabled()} onClick={submitForm}>
               <DoneIcon color="primary" />
             </IconButton>
-          }
-        />
-        <CardContent>
-          <Typography component="sub" variant="subtitle1">
-            About me
-          </Typography>
-          <Divider light />
-          <Editor
-            editorState={editorState}
-            onChange={(newEditorState: EditorState) => {
-              const updatedEditorState = getStateWithMaxLengthEnsured(
-                editorState,
-                newEditorState,
-                950
-              )
-              setEditorState(updatedEditorState)
-            }}
-            placeholder="Tell us about you"
-            readOnly={doneButtonDisabled()}
-          />
-        </CardContent>
-        {isSubmitting && <LinearProgress />}
+          </Grid>
+          <Grid item xs={12}>
+            <Typography component="sub" variant="subtitle1">
+              About me
+            </Typography>
+            <Divider light />
+            <Editor
+              editorState={editorState}
+              onChange={(newEditorState: EditorState) => {
+                const updatedEditorState = getStateWithMaxLengthEnsured(
+                  editorState,
+                  newEditorState,
+                  950
+                )
+                setEditorState(updatedEditorState)
+              }}
+              placeholder="Tell us about you"
+              readOnly={doneButtonDisabled()}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            {isSubmitting && <LinearProgress />}
+          </Grid>
+        </Grid>
       </Form>
     )
   }
 
   return (
-    <Card>
+    <Paper>
       <Formik
         initialValues={{
           full_name: profile.full_name,
@@ -184,7 +201,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
         }}
         render={handleFormRender}
       />
-    </Card>
+    </Paper>
   )
 }
 
