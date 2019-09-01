@@ -15,7 +15,6 @@ import {
   Tooltip,
   Typography
 } from '@material-ui/core'
-import ContactMailIcon from '@material-ui/icons/ContactMail'
 import EditButton from '@material-ui/icons/Edit'
 import HelpIcon from '@material-ui/icons/Help'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -83,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'inline-block',
       verticalAlign: 'middle',
       backgroundColor: '#ffcccc',
-      borderRadius: '5px',
+      borderRadius: '12px',
       padding: theme.spacing(1),
       minWidth: '90px'
     },
@@ -256,7 +255,7 @@ const ActionFC: React.FC<ActionProps> = ({
           history.push('/')
         }}
       >
-        Message Me <SendIcon className={classes.sendIcon} />
+        Message <SendIcon className={classes.sendIcon} />
       </Button>
     )
   }
@@ -379,7 +378,7 @@ export const ProfileView: React.FC<Props> = ({
             </Grid>
           )}
           {fullProfile && (
-            <Grid item container direction="column" alignItems="flex-end" xs>
+            <Grid item container direction="column" alignItems="flex-end" xs spacing={1}>
               <Grid item xs>
                 <Ral profile={profile} />
               </Grid>

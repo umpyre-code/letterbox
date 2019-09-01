@@ -28,8 +28,8 @@ import { CopyIcon } from '../CopyIcon'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     badgeButton: {
-      backgroundColor: '#ccccff',
-      borderRadius: '5px',
+      backgroundColor: '#ffcccc',
+      borderRadius: '12px',
       cursor: 'pointer',
       display: 'inline-block',
       padding: theme.spacing(1),
