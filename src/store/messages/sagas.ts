@@ -49,7 +49,8 @@ import {
   decryptMessage,
   fetchMessages,
   getMessagesWithoutBody,
-  storeAndRetrieveMessages
+  storeAndRetrieveMessages,
+  addChildMessage
 } from './utils'
 
 function* delayThenFetchMessages() {
@@ -101,7 +102,7 @@ function* handleInitializeMessages() {
   try {
     // Update message sketch first
     yield putResolve(updateSketchRequest())
-    const res = yield call(getMessagesWithoutBody, 30, false)
+    const res = yield call(getMessagesWithoutBody, 30, false, false)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -141,7 +142,7 @@ function* handleFetchMessages() {
     } else if (messages.length > 0) {
       const clientId = state.clientState.credentials.client_id
 
-      const res = yield call(storeAndRetrieveMessages, messages)
+      const res = yield call(storeAndRetrieveMessages, credentials.client_id, messages)
       const rankedMessages = rankMessages(clientId, res)
       yield put(fetchMessagesSuccess(rankedMessages))
       yield put(updateSketchRequest())
@@ -183,9 +184,15 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       yield put(sendMessagesError(res.error))
       yield put(updateDraftRequest({ ...draft, sending: false, sendError: res.error }))
     } else {
-      yield put(sendMessagesSuccess())
+      const storedMessages = yield call(storeAndRetrieveMessages, credentials.client_id, res)
+      const rankedMessages = rankMessages(credentials.client_id, storedMessages)
+      yield put(sendMessagesSuccess(rankedMessages))
       yield put(removeDraftRequest(draft))
       yield put(fetchBalanceRequest())
+      // reload messages if this was sent in reply to another
+      if (draft.inReplyTo) {
+        yield put(loadMessagesRequest(draft.inReplyTo))
+      }
     }
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
@@ -208,7 +215,7 @@ function* watchSendMessagesRequest() {
 }
 
 async function calculateMessageSketch(): Promise<string> {
-  const messagesFromLast31days = await getMessagesWithoutBody(31, true)
+  const messagesFromLast31days = await getMessagesWithoutBody(31, true, true)
 
   // Construct bloom filter
   const bf = new BloomFilter()
@@ -249,7 +256,7 @@ function* handleMessageReadSuccess(payload: string, state: ApplicationState) {
   // API.
   yield call(markMessageAsRead, payload)
   // Reload messages from DB
-  const messages = yield call(getMessagesWithoutBody, 30, false)
+  const messages = yield call(getMessagesWithoutBody, 30, false, false)
   const clientId = state.clientState.credentials.client_id
 
   const rankedMessages = rankMessages(clientId, messages)
@@ -292,7 +299,7 @@ function* watchMessageReadRequest() {
 async function markMessageDeleted(hash: MessageHash) {
   await db.messageBodies.delete(hash)
   await db.messageInfos.update(hash, { deleted: true })
-  return getMessagesWithoutBody(30, false)
+  return getMessagesWithoutBody(30, false, false)
 }
 
 function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
@@ -323,13 +330,6 @@ function* watchDeleteMessageRequest() {
   yield takeEvery(MessagesActionTypes.DELETE_MESSAGE_REQUEST, handleDeleteMessage)
 }
 
-async function addChildMessage(parent: MessageBase, child: MessageHash): Promise<number> {
-  return db.messageInfos.update(parent.hash, {
-    ...parent,
-    children: _.uniq([...(parent.children || []), child])
-  })
-}
-
 async function loadMessages(
   clientId: ClientID,
   hash: MessageHash,
@@ -339,7 +339,7 @@ async function loadMessages(
   if (messages.has(hash)) {
     const messageInfo = await db.messageInfos.get({ hash })
     if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-      await addChildMessage(messageInfo, child.hash)
+      await addChildMessage(messageInfo.hash, child.hash)
     }
     return Promise.resolve(messages)
   }
@@ -350,28 +350,37 @@ async function loadMessages(
     ...messageBody
   })
 
-  // Using asMutable() is less preferable, but the alternative is some very
-  // messy code.
-  let map = messages.asMutable()
-  map.set(decryptedMessage.hash, decryptedMessage)
+  // Check if we're actually able to decrypt this message
+  if (decryptedMessage) {
+    // Using asMutable() is less preferable, but the alternative is some very
+    // messy code.
+    let map = messages.asMutable()
+    map.set(decryptedMessage.hash, decryptedMessage)
 
-  if (decryptedMessage.children) {
-    await Promise.all(
-      decryptedMessage.children.map(async childHash => {
-        map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
-        Promise.resolve(true)
-      })
-    )
-  }
+    if (decryptedMessage.children) {
+      await Promise.all(
+        decryptedMessage.children.map(async childHash => {
+          map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
+          Promise.resolve(true)
+        })
+      )
+    }
 
-  if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-    await addChildMessage(messageInfo, child.hash)
-  }
+    if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+      await addChildMessage(messageInfo.hash, child.hash)
+    }
 
-  if (decryptedMessage.body.parent) {
-    return loadMessages(clientId, decryptedMessage.body.parent, map.asImmutable(), decryptedMessage)
+    if (decryptedMessage.body.parent) {
+      return loadMessages(
+        clientId,
+        decryptedMessage.body.parent,
+        map.asImmutable(),
+        decryptedMessage
+      )
+    }
+    return Promise.resolve(map.asImmutable())
   }
-  return Promise.resolve(map.asImmutable())
+  return Promise.resolve(messages)
 }
 
 function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {

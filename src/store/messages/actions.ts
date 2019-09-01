@@ -25,7 +25,8 @@ export const deleteMessageError = (errorMessage: string) =>
 
 export const sendMessagesRequest = (draft: Draft) =>
   action(MessagesActionTypes.SEND_MESSAGES_REQUEST, draft)
-export const sendMessagesSuccess = () => action(MessagesActionTypes.SEND_MESSAGES_SUCCESS)
+export const sendMessagesSuccess = (messages: RankedMessages) =>
+  action(MessagesActionTypes.SEND_MESSAGES_SUCCESS, messages)
 export const sendMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.SEND_MESSAGES_ERROR, errorMessage)
 

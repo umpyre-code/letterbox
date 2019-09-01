@@ -31,6 +31,7 @@ import { Balance } from '../../../store/models/account'
 import { ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
+import { Badge } from './Badge'
 
 // Set up moment duration format
 momentDurationFormatSetup(moment)
@@ -193,7 +194,7 @@ export const Handle: React.FC<HandleProps> = ({ profile }) => {
     )
   }
   return (
-    <Typography className={classes.handleText} variant="subtitle2">
+    <Typography className={classes.handleText} variant="subtitle2" noWrap>
       {getDateJoined()}
     </Typography>
   )
@@ -329,22 +330,6 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
   )
 }
 
-interface BadgeProps {
-  profile?: ClientProfile
-}
-
-export const Badge: React.FC<BadgeProps> = ({ profile }) => {
-  const classes = useStyles({})
-  return (
-    <Box className={classes.badgeBox}>
-      <Typography>
-        Get Badge
-        <ContactMailIcon style={{ padding: 4, verticalAlign: 'top' }}>Get badge</ContactMailIcon>
-      </Typography>
-    </Box>
-  )
-}
-
 export const ProfileView: React.FC<Props> = ({
   balance,
   editable,
@@ -378,7 +363,7 @@ export const ProfileView: React.FC<Props> = ({
             </Router.Link>
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
-            <Grid item>
+            <Grid item zeroMinWidth>
               <Typography noWrap>
                 <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
               </Typography>

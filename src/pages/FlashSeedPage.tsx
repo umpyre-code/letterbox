@@ -8,21 +8,15 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography,
-  SvgIcon
+  Typography
 } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import stringHash from 'string-hash'
-import { ApplicationState } from '../store/ApplicationState'
+import { CopyIcon } from '../components/widgets/CopyIcon'
 import { Emoji } from '../components/widgets/Emoji'
-
-const CopyIcon: React.FC = () => (
-  <SvgIcon>
-    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
-  </SvgIcon>
-)
+import { ApplicationState } from '../store/ApplicationState'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

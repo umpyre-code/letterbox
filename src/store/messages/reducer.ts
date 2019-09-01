@@ -80,6 +80,18 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
     case MessagesActionTypes.UNLOAD_MESSAGES_REQUEST: {
       return { ...state, loadedMessages: [] }
     }
+    case MessagesActionTypes.SEND_MESSAGES_REQUEST: {
+      return { ...state }
+    }
+    case MessagesActionTypes.SEND_MESSAGES_SUCCESS: {
+      return {
+        ...state,
+        ...action.payload
+      }
+    }
+    case MessagesActionTypes.SEND_MESSAGES_ERROR: {
+      return { ...state }
+    }
     default: {
       return state
     }

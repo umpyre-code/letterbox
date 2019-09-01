@@ -26,7 +26,8 @@ import {
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
-const API_ENDPOINT = process.env.API_ENDPOINT || 'invalid API endpoint'
+export const API_ENDPOINT = process.env.API_ENDPOINT || 'invalid API endpoint'
+export const PUBLIC_URL = process.env.PUBLIC_URL || 'invalid public URL'
 
 export class API {
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {

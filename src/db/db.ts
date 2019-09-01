@@ -9,20 +9,12 @@ interface Token extends ClientCredentials {
   created_at: Date
 }
 
-// A simple key/value pair
-interface KeyValue {
-  key: string
-  value: string
-}
-
 class UmpyreDb extends Dexie {
   public apiTokens: Dexie.Table<Token, number>
 
   public drafts: Dexie.Table<Draft, number>
 
   public keyPairs: Dexie.Table<KeyPair, number>
-
-  public keyValues: Dexie.Table<KeyValue, string>
 
   // The message info (i.e., everything except the body) and the message body
   // are stored separately. This is done as a performance optimization, since
@@ -60,7 +52,6 @@ class UmpyreDb extends Dexie {
     this.apiTokens = this.table('api_tokens')
     this.drafts = this.table('drafts')
     this.keyPairs = this.table('keyPairs')
-    this.keyValues = this.table('keyValues')
     this.messageInfos = this.table('messageInfos')
     this.messageBodies = this.table('messageBodies')
   }

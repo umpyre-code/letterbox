@@ -1,16 +1,29 @@
 import sodium from 'libsodium-wrappers'
-import { KeyPair } from '../keys/types'
-import { ClientID, ClientCredentials } from '../models/client'
-import {
-  APIMessage,
-  MessageBase,
-  fromApiMessage,
-  MessageBody,
-  EncryptedMessage,
-  DecryptedMessage
-} from '../models/messages'
+import _ from 'lodash'
 import { db } from '../../db/db'
 import { API } from '../api'
+import { KeyPair } from '../keys/types'
+import { ClientCredentials, ClientID } from '../models/client'
+import {
+  APIMessage,
+  DecryptedMessage,
+  EncryptedMessage,
+  fromApiMessage,
+  MessageBase,
+  MessageBody,
+  MessageHash
+} from '../models/messages'
+
+export async function addChildMessage(
+  parentHash: MessageHash,
+  childHash: MessageHash
+): Promise<number> {
+  const parent = await db.messageInfos.get(parentHash)
+  return db.messageInfos.update(parent.hash, {
+    ...parent,
+    children: _.uniq([...(parent.children || []), childHash])
+  })
+}
 
 export function toApiMessage(message: EncryptedMessage, from: ClientID): APIMessage {
   return {
@@ -113,10 +126,15 @@ export async function signMessage(message: APIMessage, keyPair: KeyPair): Promis
 
 export async function getMessagesWithoutBody(
   withinDays: number,
-  includeDeleted: boolean
+  includeDeleted: boolean,
+  includeMissingKey: boolean
 ): Promise<MessageBase[]> {
   const fromDate = new Date()
   fromDate.setDate(fromDate.getDate() - withinDays)
+  const boxPublicKeys = new Set()
+  if (!includeMissingKey) {
+    await db.keyPairs.each(keyPair => boxPublicKeys.add(keyPair.box_public_key))
+  }
 
   return db.messageInfos
     .orderBy('received_at')
@@ -124,7 +142,10 @@ export async function getMessagesWithoutBody(
       return (
         (!message.deleted || includeDeleted) &&
         message.received_at !== undefined &&
-        message.received_at > fromDate
+        message.received_at > fromDate &&
+        (includeMissingKey ||
+          boxPublicKeys.has(message.recipient_public_key) ||
+          boxPublicKeys.has(message.sender_public_key))
       )
     })
     .toArray()
@@ -164,7 +185,7 @@ function getTheirPublicKey(clientId: ClientID, message: EncryptedMessage): strin
 export async function decryptMessage(
   clientId: ClientID,
   message: EncryptedMessage
-): Promise<DecryptedMessage> {
+): Promise<DecryptedMessage | undefined> {
   // Need to gracefully handle the case where this DB doesn't contain this public
   // key
   const myPublicKey = getMyPublicKey(clientId, message)
@@ -186,7 +207,10 @@ export async function decryptMessage(
   return undefined
 }
 
-export async function storeAndRetrieveMessages(messages: APIMessage[]): Promise<MessageBase[]> {
+export async function storeAndRetrieveMessages(
+  clientId: ClientID,
+  messages: APIMessage[]
+): Promise<MessageBase[]> {
   // Look for messages that already exist in the DB, but were returned by the API
   const existingMessages = await Promise.all(
     messages.filter(message => message).map(message => db.messageInfos.get(message.hash))
@@ -211,7 +235,18 @@ export async function storeAndRetrieveMessages(messages: APIMessage[]): Promise<
     await db.messageInfos.bulkAdd(messageInfos)
     await db.messageBodies.bulkAdd(messageBodies)
   })
-  return getMessagesWithoutBody(30, false)
+
+  // check if these messages have parents, and if so, update them accordingly
+  await Promise.all(
+    _.zipWith(messageInfos, messageBodies, (m1, m2) => ({ ...m1, ...m2 })).map(async message => {
+      const decryptedMessage = await decryptMessage(clientId, message)
+      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
+        addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
+      }
+    })
+  )
+
+  return getMessagesWithoutBody(30, false, false)
 }
 
 export async function fetchMessages(
