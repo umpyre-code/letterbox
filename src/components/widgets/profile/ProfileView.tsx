@@ -355,7 +355,7 @@ export const ProfileView: React.FC<Props> = ({
       const clientProfileHelper = ClientProfileHelper.FROM(profile)
       return (
         <React.Fragment>
-          <Grid item>
+          <Grid item style={{ padding: '5px' }}>
             <Router.Link to={getProfileUrl(profile)}>
               <Avatar alt={clientProfileHelper.full_name}>
                 {clientProfileHelper.getInitials()}
