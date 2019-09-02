@@ -72,14 +72,21 @@ interface BadgeProps {
 
 type BadgeSize = 'small' | 'medium' | 'large'
 type BadgeFormat = 'svg' | 'png'
+type BadgeCodeFormat = 'html' | 'markdown'
+interface BadgeDimensions {
+  width: number
+  height: number
+}
 
-function getBadgeImageUrl(
-  profile: ClientProfile,
-  name: string,
-  size: BadgeSize,
-  fontSize: number,
-  format: BadgeFormat
-) {
+interface BadgeOptions {
+  name: string
+  size: BadgeSize
+  imageFormat: BadgeFormat
+  codeFormat: BadgeCodeFormat
+  fontSize: number
+}
+
+function getBadgeDimensions(size: BadgeSize): BadgeDimensions {
   let width = 181
   let height = 60
   if (size === 'small') {
@@ -89,20 +96,41 @@ function getBadgeImageUrl(
     width = Math.round(width * 1.25)
     height = Math.round(height * 1.25)
   }
+  return {
+    width,
+    height
+  }
+}
+
+function getBadgeImageUrl(profile: ClientProfile, options: BadgeOptions) {
+  const dimensions = getBadgeDimensions(options.size)
+
+  if (options.imageFormat === 'png' && options.codeFormat === 'html') {
+    // if we're generating HTML, and this is a PNG, double the number of pixels
+    const querystring = qs.stringify({
+      width: dimensions.width * 2,
+      height: dimensions.height * 2,
+      name: options.name,
+      font_size: options.fontSize
+    })
+
+    return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${options.imageFormat}?${querystring}`
+  }
 
   const querystring = qs.stringify({
-    width,
-    height,
-    name,
-    font_size: fontSize
+    ...dimensions,
+    name: options.name,
+    font_size: options.fontSize
   })
 
-  return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${format}?${querystring}`
+  return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${options.imageFormat}?${querystring}`
 }
 
 interface ImageRadioProps {
   imageSrc: string
   alt: string
+  width: number
+  height: number
 }
 
 const radioStyles = makeStyles(() =>
@@ -124,32 +152,32 @@ const radioStyles = makeStyles(() =>
   })
 )
 
-export const ImageRadio: React.FC<ImageRadioProps> = ({ alt, imageSrc, ...outerProps }) => {
+export const ImageRadio: React.FC<ImageRadioProps> = ({
+  width,
+  height,
+  alt,
+  imageSrc,
+  ...outerProps
+}) => {
   const classes = radioStyles({})
   // see https://stackoverflow.com/a/17541916
   return (
     <React.Fragment>
       <Radio {...outerProps} classes={classes} />
-      <img alt={alt} src={imageSrc} />
+      <img alt={alt} src={imageSrc} width={width} height={height} />
     </React.Fragment>
   )
 }
 
-function renderBadge(
-  profile: ClientProfile,
-  name: string,
-  size: BadgeSize,
-  format: string,
-  fontSize: number,
-  imageFormat: BadgeFormat
-): string {
-  const badgeUrl = getBadgeImageUrl(profile, name, size, fontSize, imageFormat)
+function renderBadge(profile: ClientProfile, options: BadgeOptions): string {
+  const badgeUrl = getBadgeImageUrl(profile, options)
   const profileUrl = `${PUBLIC_URL}/u/${profile.client_id}`
-  if (format === 'markdown') {
-    return `[![Contact ${name}](${badgeUrl})](${profileUrl})`
+  if (options.codeFormat === 'markdown') {
+    return `[![Contact ${options.name}](${badgeUrl})](${profileUrl})`
   }
-  if (format === 'html') {
-    return `<a href="${profileUrl}"><img src="${badgeUrl}" alt="Contact ${name}" /></a>`
+  if (options.codeFormat === 'html') {
+    const dimensions = getBadgeDimensions(options.size)
+    return `<a href="${profileUrl}"><img width="${dimensions.width}" height="${dimensions.height}" src="${badgeUrl}" alt="Contact ${options.name}" /></a>`
   }
   return 'something went wrong! D:'
 }
@@ -157,12 +185,19 @@ function renderBadge(
 export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   const classes = useStyles({})
   const [sizeValue, setSizeValue] = React.useState<BadgeSize>('medium')
-  const [formatValue, setFormatValue] = React.useState<string>('markdown')
+  const [formatValue, setFormatValue] = React.useState<BadgeCodeFormat>('markdown')
   const [nameValue, setNameValue] = React.useState<string>(profile.full_name)
   const [copied, setCopied] = React.useState<boolean>(false)
   const [fontSizeValue, setFontSizeValue] = React.useState<number>(14)
   const [imageFormat, setImageFormat] = React.useState<BadgeFormat>('svg')
-  const badge = renderBadge(profile, nameValue, sizeValue, formatValue, fontSizeValue, imageFormat)
+  const badgeOptions = {
+    name: nameValue,
+    size: sizeValue,
+    codeFormat: formatValue,
+    fontSize: fontSizeValue,
+    imageFormat
+  }
+  const badge = renderBadge(profile, badgeOptions)
   return (
     <React.Fragment>
       <Grid item container spacing={1}>
@@ -194,7 +229,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
               className={classes.group}
               value={formatValue}
               onChange={event => {
-                setFormatValue(event.target.value)
+                setFormatValue(event.target.value as BadgeCodeFormat)
               }}
               row
             >
@@ -282,8 +317,9 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
               labelPlacement="bottom"
               control={
                 <ImageRadio
+                  {...getBadgeDimensions(badgeOptions.size)}
                   alt="SVG Badge"
-                  imageSrc={getBadgeImageUrl(profile, nameValue, sizeValue, fontSizeValue, 'svg')}
+                  imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'svg' })}
                 />
               }
               label="SVG"
@@ -293,8 +329,9 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
               labelPlacement="bottom"
               control={
                 <ImageRadio
+                  {...getBadgeDimensions(badgeOptions.size)}
                   alt="PNG Badge"
-                  imageSrc={getBadgeImageUrl(profile, nameValue, sizeValue, fontSizeValue, 'png')}
+                  imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'png' })}
                 />
               }
               label="PNG"
