@@ -60,7 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: '95vw'
     },
     formControl: {},
-    group: {}
+    group: {
+      padding: theme.spacing(1)
+    }
   })
 )
 
@@ -68,7 +70,16 @@ interface BadgeProps {
   profile?: ClientProfile
 }
 
-function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string, fontSize: number) {
+type BadgeSize = 'small' | 'medium' | 'large'
+type BadgeFormat = 'svg' | 'png'
+
+function getBadgeImageUrl(
+  profile: ClientProfile,
+  name: string,
+  size: BadgeSize,
+  fontSize: number,
+  format: BadgeFormat
+) {
   let width = 181
   let height = 60
   if (size === 'small') {
@@ -86,35 +97,72 @@ function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string, font
     font_size: fontSize
   })
 
-  return `${API_ENDPOINT}/badge/${profile.client_id}/badge.svg?${querystring}`
+  return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${format}?${querystring}`
+}
+
+interface ImageRadioProps {
+  imageSrc: string
+  alt: string
+}
+
+const radioStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      position: 'absolute',
+      opacity: 0,
+      width: 0,
+      height: 0
+    },
+    checked: {
+      '& + img': {
+        backgroundColor: '#e6ee9c',
+        borderColor: '#e6ee9c',
+        boxShadow: '0 0 10px #e6ee9c',
+        borderRadius: '10px'
+      }
+    }
+  })
+)
+
+export const ImageRadio: React.FC<ImageRadioProps> = ({ alt, imageSrc, ...outerProps }) => {
+  const classes = radioStyles({})
+  // see https://stackoverflow.com/a/17541916
+  return (
+    <React.Fragment>
+      <Radio {...outerProps} classes={classes} />
+      <img alt={alt} src={imageSrc} />
+    </React.Fragment>
+  )
 }
 
 function renderBadge(
   profile: ClientProfile,
   name: string,
-  size: string,
+  size: BadgeSize,
   format: string,
-  fontSize: number
+  fontSize: number,
+  imageFormat: BadgeFormat
 ): string {
-  const svgUrl = getBadgeSvgUrl(profile, name, size, fontSize)
+  const badgeUrl = getBadgeImageUrl(profile, name, size, fontSize, imageFormat)
   const profileUrl = `${PUBLIC_URL}/u/${profile.client_id}`
   if (format === 'markdown') {
-    return `[![Contact ${name}](${svgUrl})](${profileUrl})`
+    return `[![Contact ${name}](${badgeUrl})](${profileUrl})`
   }
   if (format === 'html') {
-    return `<a href="${profileUrl}"><img src="${svgUrl}" alt="Contact ${name}" /></a>`
+    return `<a href="${profileUrl}"><img src="${badgeUrl}" alt="Contact ${name}" /></a>`
   }
   return 'something went wrong! D:'
 }
 
 export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   const classes = useStyles({})
-  const [sizeValue, setSizeValue] = React.useState<string>('medium')
+  const [sizeValue, setSizeValue] = React.useState<BadgeSize>('medium')
   const [formatValue, setFormatValue] = React.useState<string>('markdown')
   const [nameValue, setNameValue] = React.useState<string>(profile.full_name)
   const [copied, setCopied] = React.useState<boolean>(false)
   const [fontSizeValue, setFontSizeValue] = React.useState<number>(14)
-  const badge = renderBadge(profile, nameValue, sizeValue, formatValue, fontSizeValue)
+  const [imageFormat, setImageFormat] = React.useState<BadgeFormat>('svg')
+  const badge = renderBadge(profile, nameValue, sizeValue, formatValue, fontSizeValue, imageFormat)
   return (
     <React.Fragment>
       <Grid item container spacing={1}>
@@ -127,7 +175,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
               className={classes.group}
               value={sizeValue}
               onChange={event => {
-                setSizeValue(event.target.value)
+                setSizeValue(event.target.value as BadgeSize)
               }}
               row
             >
@@ -216,13 +264,43 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
       <Grid item xs={12}>
         <Divider />
       </Grid>
-      <Grid item container justify="space-between" alignItems="flex-start">
-        <Grid item xs>
-          <Typography variant="subtitle1" color="textSecondary">
-            Preview
-          </Typography>
-          <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue, fontSizeValue)} />
-        </Grid>
+      <Grid item container justify="space-between" alignItems="flex-start" spacing={1}>
+        <FormControl component="fieldset" className={classes.formControl}>
+          <FormLabel component="legend">Image preview</FormLabel>
+          <RadioGroup
+            aria-label="badge image format"
+            name="imageFormat1"
+            className={classes.group}
+            value={imageFormat}
+            onChange={event => {
+              setImageFormat(event.target.value as BadgeFormat)
+            }}
+            row
+          >
+            <FormControlLabel
+              value="svg"
+              labelPlacement="bottom"
+              control={
+                <ImageRadio
+                  alt="SVG Badge"
+                  imageSrc={getBadgeImageUrl(profile, nameValue, sizeValue, fontSizeValue, 'svg')}
+                />
+              }
+              label="SVG"
+            />
+            <FormControlLabel
+              value="png"
+              labelPlacement="bottom"
+              control={
+                <ImageRadio
+                  alt="PNG Badge"
+                  imageSrc={getBadgeImageUrl(profile, nameValue, sizeValue, fontSizeValue, 'png')}
+                />
+              }
+              label="PNG"
+            />
+          </RadioGroup>
+        </FormControl>
       </Grid>
       <Grid item xs={12}>
         <Divider />
