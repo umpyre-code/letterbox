@@ -68,14 +68,14 @@ interface BadgeProps {
 }
 
 function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string) {
-  let width = 151
-  let height = 50
+  let width = 181
+  let height = 60
   if (size === 'small') {
-    width = Math.round(width * 0.8)
-    height = Math.round(height * 0.8)
+    width = Math.round(width * 0.75)
+    height = Math.round(height * 0.75)
   } else if (size === 'large') {
-    width = Math.round(width * 1.2)
-    height = Math.round(height * 1.2)
+    width = Math.round(width * 1.25)
+    height = Math.round(height * 1.25)
   }
 
   const querystring = qs.stringify({
