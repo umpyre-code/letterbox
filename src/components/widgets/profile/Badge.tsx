@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   createStyles,
+  Divider,
   Fade,
   FormControl,
   FormControlLabel,
@@ -12,10 +13,10 @@ import {
   Popper,
   Radio,
   RadioGroup,
-  Theme,
-  Typography,
+  Slider,
   TextField,
-  Divider
+  Theme,
+  Typography
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
@@ -67,7 +68,7 @@ interface BadgeProps {
   profile?: ClientProfile
 }
 
-function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string) {
+function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string, fontSize: number) {
   let width = 181
   let height = 60
   if (size === 'small') {
@@ -81,14 +82,21 @@ function getBadgeSvgUrl(profile: ClientProfile, name: string, size: string) {
   const querystring = qs.stringify({
     width,
     height,
-    name
+    name,
+    font_size: fontSize
   })
 
   return `${API_ENDPOINT}/badge/${profile.client_id}/badge.svg?${querystring}`
 }
 
-function renderBadge(profile: ClientProfile, name: string, size: string, format: string): string {
-  const svgUrl = getBadgeSvgUrl(profile, name, size)
+function renderBadge(
+  profile: ClientProfile,
+  name: string,
+  size: string,
+  format: string,
+  fontSize: number
+): string {
+  const svgUrl = getBadgeSvgUrl(profile, name, size, fontSize)
   const profileUrl = `${PUBLIC_URL}/u/${profile.client_id}`
   if (format === 'markdown') {
     return `[![Contact ${name}](${svgUrl})](${profileUrl})`
@@ -105,54 +113,81 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   const [formatValue, setFormatValue] = React.useState<string>('markdown')
   const [nameValue, setNameValue] = React.useState<string>(profile.full_name)
   const [copied, setCopied] = React.useState<boolean>(false)
-  const badge = renderBadge(profile, nameValue, sizeValue, formatValue)
+  const [fontSizeValue, setFontSizeValue] = React.useState<number>(14)
+  const badge = renderBadge(profile, nameValue, sizeValue, formatValue, fontSizeValue)
   return (
     <React.Fragment>
-      <Grid item container>
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Size</FormLabel>
-          <RadioGroup
-            aria-label="badge size"
-            name="size1"
-            className={classes.group}
-            value={sizeValue}
-            onChange={event => {
-              setSizeValue(event.target.value)
-            }}
-            row
-          >
-            <FormControlLabel value="small" control={<Radio />} label="Small" />
-            <FormControlLabel value="medium" control={<Radio />} label="Medium" />
-            <FormControlLabel value="large" control={<Radio />} label="Large" />
-          </RadioGroup>
-        </FormControl>
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Format</FormLabel>
-          <RadioGroup
-            aria-label="badge format"
-            name="format1"
-            className={classes.group}
-            value={formatValue}
-            onChange={event => {
-              setFormatValue(event.target.value)
-            }}
-            row
-          >
-            <FormControlLabel value="markdown" control={<Radio />} label="Markdown" />
-            <FormControlLabel value="html" control={<Radio />} label="HTML" />
-          </RadioGroup>
-        </FormControl>
+      <Grid item container spacing={1}>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">Size</FormLabel>
+            <RadioGroup
+              aria-label="badge size"
+              name="size1"
+              className={classes.group}
+              value={sizeValue}
+              onChange={event => {
+                setSizeValue(event.target.value)
+              }}
+              row
+            >
+              <FormControlLabel value="small" control={<Radio />} label="S" />
+              <FormControlLabel value="medium" control={<Radio />} label="M" />
+              <FormControlLabel value="large" control={<Radio />} label="L" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">Format</FormLabel>
+            <RadioGroup
+              aria-label="badge format"
+              name="format1"
+              className={classes.group}
+              value={formatValue}
+              onChange={event => {
+                setFormatValue(event.target.value)
+              }}
+              row
+            >
+              <FormControlLabel value="markdown" control={<Radio />} label="Markdown" />
+              <FormControlLabel value="html" control={<Radio />} label="HTML" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
       </Grid>
-      <Grid item>
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Display name</FormLabel>
-          <TextField
-            value={nameValue}
-            onChange={event => {
-              setNameValue(event.target.value)
-            }}
-          />
-        </FormControl>
+      <Grid item container spacing={1}>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl} fullWidth>
+            <FormLabel component="legend">Display name</FormLabel>
+            <TextField
+              value={nameValue}
+              onChange={event => {
+                setNameValue(event.target.value)
+              }}
+              margin="dense"
+              variant="outlined"
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl} fullWidth>
+            <FormLabel component="legend">Font size</FormLabel>
+            <Slider
+              style={{ padding: '27px 0 0 0' }}
+              value={fontSizeValue}
+              aria-labelledby="font-size-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={10}
+              max={24}
+              onChange={(event, value) => {
+                setFontSizeValue(Number(value))
+              }}
+            />
+          </FormControl>
+        </Grid>
       </Grid>
       <Grid item xs={12}>
         <Divider />
@@ -160,6 +195,22 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
       <Grid item xs>
         <Box className={classes.badgeBox}>
           <pre>{badge}</pre>
+        </Box>
+      </Grid>
+      <Grid item>
+        <Box className={classes.copyBox}>
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(badge)
+              setCopied(true)
+              setTimeout(() => {
+                setCopied(false)
+              }, 1000)
+            }}
+          >
+            <CopyIcon>copy</CopyIcon>
+            Copy to clipboard <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
+          </Button>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -170,23 +221,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
           <Typography variant="subtitle1" color="textSecondary">
             Preview
           </Typography>
-          <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue)} />
-        </Grid>
-        <Grid item>
-          <Box className={classes.copyBox}>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(badge)
-                setCopied(true)
-                setTimeout(() => {
-                  setCopied(false)
-                }, 1000)
-              }}
-            >
-              <CopyIcon>copy</CopyIcon>
-              Copy <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
-            </Button>
-          </Box>
+          <img alt="Badge" src={getBadgeSvgUrl(profile, nameValue, sizeValue, fontSizeValue)} />
         </Grid>
       </Grid>
       <Grid item xs={12}>
