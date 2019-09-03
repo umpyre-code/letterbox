@@ -83,7 +83,14 @@ const ProfilePageFC: React.FC<AllProps> = ({
       <DefaultLayout profile={myProfile} balance={balance}>
         <Container className={classes.profileContainer}>
           <BackToIndexButton />
-          {loaded && <Profile profile={profile} editable={isEditable} fullProfile />}
+          {loaded && (
+            <Profile
+              profile={profile}
+              editable={isEditable}
+              fullProfile
+              credentials={credentials}
+            />
+          )}
           {!loaded && <Loading />}
         </Container>
       </DefaultLayout>

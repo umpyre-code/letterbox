@@ -278,7 +278,6 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
         getItemProps,
         getLabelProps,
         isOpen,
-        inputValue: inputValue2,
         selectedItem: selectedItem2,
         highlightedIndex,
         setHighlightedIndex

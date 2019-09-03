@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { Balance } from '../../../store/models/account'
-import { ClientProfile } from '../../../store/models/client'
+import { ClientProfile, ClientCredentials } from '../../../store/models/client'
 import Loading from '../Loading'
 import { ProfileForm } from './ProfileForm'
 import { ProfileView } from './ProfileView'
 
 interface Props {
   balance?: Balance
+  credentials?: ClientCredentials
   editable?: boolean
   fullProfile?: boolean
   menu?: boolean
@@ -28,6 +29,7 @@ export const Profile: React.FC<Props> = props => {
 
 Profile.defaultProps = {
   balance: undefined,
+  credentials: undefined,
   editable: false,
   fullProfile: false,
   menu: false,

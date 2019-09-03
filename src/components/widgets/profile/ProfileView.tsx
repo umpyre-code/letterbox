@@ -27,7 +27,7 @@ import * as Router from 'react-router-dom'
 import { ClientProfileHelper } from '../../../store/client/types'
 import { addDraftRequest } from '../../../store/drafts/actions'
 import { Balance } from '../../../store/models/account'
-import { ClientProfile } from '../../../store/models/client'
+import { ClientProfile, ClientCredentials } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 import { Badge } from './Badge'
@@ -102,6 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   balance?: Balance
+  credentials?: ClientCredentials
   editable?: boolean
   fullProfile?: boolean
   menu?: boolean
@@ -333,6 +334,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
 
 export const ProfileView: React.FC<Props> = ({
   balance,
+  credentials,
   editable,
   fullProfile,
   menu,
@@ -362,7 +364,7 @@ export const ProfileView: React.FC<Props> = ({
                 {clientProfileHelper.getInitials()}
               </Avatar>
             </Router.Link>
-            {editable && <ImageUpload />}
+            {editable && <ImageUpload profile={profile} credentials={credentials} />}
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
             <Grid item zeroMinWidth>

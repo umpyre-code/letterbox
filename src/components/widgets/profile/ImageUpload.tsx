@@ -1,5 +1,6 @@
 import {
   Button,
+  Fade,
   FormControl,
   FormControlLabel,
   Grid,
@@ -7,14 +8,18 @@ import {
   makeStyles,
   Modal,
   Paper,
-  Typography
+  Typography,
+  LinearProgress
 } from '@material-ui/core'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import DeleteIcon from '@material-ui/icons/Delete'
+import axios from 'axios'
 import * as React from 'react'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
+import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { Emoji } from '../Emoji'
+import { API } from '../../../store/api'
 
 interface Crop {
   aspect: number
@@ -24,6 +29,8 @@ interface Crop {
   x: number
   y: number
 }
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,34 +64,85 @@ const formControlStyles = makeStyles(theme => ({
   }
 }))
 
-// interface ImageProps {}
+interface ErrorProps {
+  error?: string
+}
 
-export const ImageUpload: React.FC<{}> = props => {
+const ErrorMessage: React.FC<ErrorProps> = ({ error }) => (
+  <Fade in={error !== undefined} timeout={250}>
+    <div
+      style={{
+        backgroundColor: 'rgba(245, 68, 68, 1)',
+        textAlign: 'center',
+        borderRadius: '5px',
+        padding: '5px'
+      }}
+    >
+      <Typography>{error}</Typography>
+    </div>
+  </Fade>
+)
+
+interface ImageProps {
+  profile?: ClientProfile
+  credentials?: ClientCredentials
+}
+
+export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
   const classes = useStyles({})
   const formControlClasses = formControlStyles({})
 
-  const [src, setSrc] = React.useState<string | ArrayBuffer>(null)
+  const [errorMessage, setErrorMessage] = React.useState<string | undefined>(undefined)
+  const [src, setSrc] = React.useState<string | ArrayBuffer | undefined>(undefined)
   const [crop, setCrop] = React.useState<Crop>({
     aspect: 1,
     height: 0,
     unit: '%',
-    width: 30,
+    width: 20,
     x: 0,
     y: 0
   })
-  const [croppedImageUrl, setCroppedImageUrl] = React.useState<string>(null)
-  const [fileUrl, setFileUrl] = React.useState<string>(null)
-  const [imageRef, setImageRef] = React.useState<HTMLImageElement>(null)
+  const [imageRef, setImageRef] = React.useState<HTMLImageElement | undefined>(undefined)
+  const [blob, setBlob] = React.useState<Blob | undefined>(undefined)
+  const [uploadErrorMessage, setUploadErrorMessage] = React.useState<string | undefined>(undefined)
+  const [uploading, setUploading] = React.useState<boolean>(false)
 
-  function onSelectFile(e) {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader()
-      reader.addEventListener('load', () => setSrc(reader.result))
-      reader.readAsDataURL(e.target.files[0])
+  async function uploadBlob() {
+    setUploading(true)
+    const api = new API(credentials)
+    api
+      .uploadPhoto(profile.client_id, blob)
+      .then(res => {
+        console.log(res)
+        handleClose()
+        setUploading(false)
+      })
+      .catch(error => {
+        console.log(error)
+        setUploadErrorMessage(error.message)
+        setTimeout(() => setUploadErrorMessage(undefined), 5000)
+        setUploading(false)
+      })
+  }
+
+  function flashError(message: string) {
+    setErrorMessage(message)
+    setTimeout(() => setErrorMessage(undefined), 5000)
+  }
+
+  function onSelectFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const target = event.target as HTMLInputElement
+    if (target.files && target.files.length === 1) {
+      if (target.files[0].size < MAX_FILE_SIZE) {
+        const reader = new FileReader()
+        reader.addEventListener('load', () => setSrc(reader.result))
+        reader.readAsDataURL(target.files[0])
+      } else {
+        flashError('File is too large! (10MiB max)')
+      }
     }
   }
 
-  // If you setState the crop in here you should return false.
   function onImageLoaded(image) {
     setImageRef(image)
   }
@@ -93,9 +151,7 @@ export const ImageUpload: React.FC<{}> = props => {
     makeClientCrop(completedCrop)
   }
 
-  function onCropChange(changedCrop: Crop, percentCrop) {
-    // You could also use percentCrop:
-    // this.setState({ crop: percentCrop });
+  function onCropChange(changedCrop: Crop) {
     setCrop(changedCrop)
   }
 
@@ -105,11 +161,11 @@ export const ImageUpload: React.FC<{}> = props => {
 
   async function makeClientCrop(makeCrop: Crop) {
     if (imageRef && crop.width && crop.height) {
-      setCroppedImageUrl(await getCroppedImg(imageRef, makeCrop, 'newFile.jpeg'))
+      getCroppedImg(imageRef, makeCrop)
     }
   }
 
-  async function getCroppedImg(image, makeCrop: Crop, fileName: string): Promise<string> {
+  async function getCroppedImg(image, makeCrop: Crop): Promise<string> {
     const canvas = document.createElement('canvas')
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
@@ -129,46 +185,48 @@ export const ImageUpload: React.FC<{}> = props => {
       makeCrop.height
     )
 
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(blob => {
-        if (!blob) {
-          console.error('Canvas is empty')
+    return new Promise(() => {
+      canvas.toBlob(updatedBlob => {
+        if (!updatedBlob) {
           return
         }
-        window.URL.revokeObjectURL(fileUrl)
-        setFileUrl(window.URL.createObjectURL(blob))
-        resolve(fileUrl)
+        setBlob(updatedBlob)
       }, 'image/jpeg')
     })
   }
 
   return (
     <div className={classes.root}>
-      <FormControl className={classes.formControl}>
-        <FormControlLabel
-          classes={formControlClasses}
-          label={
-            <Typography>
-              Change <Emoji ariaLabel="selfie">🤳</Emoji>
-            </Typography>
-          }
-          control={
-            <React.Fragment>
-              {/* <Button variant="contained">fart</Button> */}
-              <Input
-                style={{ display: 'none' }}
-                inputProps={{
-                  accept: 'image/jpeg'
-                }}
-                aria-describedby="upload-image"
-                // className={classes.input}
-                type="file"
-                onChange={onSelectFile}
-              />
-            </React.Fragment>
-          }
-        />
-      </FormControl>
+      <Grid container direction="column">
+        <Grid item>
+          <FormControl className={classes.formControl}>
+            <FormControlLabel
+              classes={formControlClasses}
+              label={
+                <Typography>
+                  Upload <Emoji ariaLabel="selfie">️🤳</Emoji>
+                </Typography>
+              }
+              control={
+                <React.Fragment>
+                  <Input
+                    style={{ display: 'none' }}
+                    inputProps={{
+                      accept: 'image/jpeg'
+                    }}
+                    aria-describedby="upload-image"
+                    type="file"
+                    onChange={onSelectFile}
+                  />
+                </React.Fragment>
+              }
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <ErrorMessage error={errorMessage} />
+        </Grid>
+      </Grid>
       <Modal
         aria-label="Image crop dialogue"
         open={src !== null && src !== undefined}
@@ -177,7 +235,12 @@ export const ImageUpload: React.FC<{}> = props => {
         <Paper className={classes.modalPaper}>
           <Grid container justify="center" alignItems="center" spacing={1}>
             <Grid item>
-              <Button color="primary" variant="contained">
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={uploadBlob}
+                disabled={uploading || blob === undefined || uploadErrorMessage !== undefined}
+              >
                 <CloudUploadIcon />
                 &nbsp;Save
               </Button>
@@ -200,12 +263,14 @@ export const ImageUpload: React.FC<{}> = props => {
                 onImageLoaded={onImageLoaded}
                 onComplete={onCropComplete}
                 onChange={onCropChange}
+                disabled={uploading}
               />
             </Grid>
             <Grid item>
-              {croppedImageUrl && (
-                <img alt="Crop" style={{ maxWidth: '100%' }} src={croppedImageUrl} />
-              )}
+              <ErrorMessage error={uploadErrorMessage} />
+            </Grid>
+            <Grid item xs={12}>
+              {uploading && <LinearProgress />}
             </Grid>
           </Grid>
         </Paper>
