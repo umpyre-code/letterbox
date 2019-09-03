@@ -31,6 +31,7 @@ import { ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 import { Badge } from './Badge'
+import { ImageUpload } from './ImageUpload'
 
 // Set up moment duration format
 momentDurationFormatSetup(moment)
@@ -361,6 +362,7 @@ export const ProfileView: React.FC<Props> = ({
                 {clientProfileHelper.getInitials()}
               </Avatar>
             </Router.Link>
+            {editable && <ImageUpload />}
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
             <Grid item zeroMinWidth>

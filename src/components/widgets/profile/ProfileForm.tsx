@@ -26,6 +26,7 @@ import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import { Editor } from '../../drafts/compose/Editor'
+import { ImageUpload } from './ImageUpload'
 
 interface Props {
   profile?: ClientProfile
