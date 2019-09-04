@@ -61,4 +61,5 @@ export const authError = (message: string) => action(ClientActionTypes.AUTH_ERRO
 
 export const unathourizedClient = () => action(ClientActionTypes.UNAUTHORIZED_CLIENT)
 
-export const incrementAvatarVersion = () => action(ClientActionTypes.INCREMENT_AVATAR_VERSION)
+export const incrementAvatarVersionRequest = () =>
+  action(ClientActionTypes.INCREMENT_AVATAR_VERSION_REQUEST)

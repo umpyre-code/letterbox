@@ -6,6 +6,7 @@ import { ProfileForm } from './ProfileForm'
 import { ProfileView } from './ProfileView'
 
 interface Props {
+  avatarChanged?: () => void
   balance?: Balance
   credentials?: ClientCredentials
   editable?: boolean
@@ -15,14 +16,14 @@ interface Props {
 }
 
 export const Profile: React.FC<Props> = props => {
-  const { profile } = props
+  const { avatarChanged, profile } = props
   const [isEditing, setIsEditing] = React.useState<boolean>(false)
 
   if (profile) {
     if (isEditing) {
       return <ProfileForm {...props} setIsEditing={setIsEditing} />
     }
-    return <ProfileView {...props} setIsEditing={setIsEditing} />
+    return <ProfileView {...props} setIsEditing={setIsEditing} avatarChanged={avatarChanged} />
   }
   return <Loading />
 }

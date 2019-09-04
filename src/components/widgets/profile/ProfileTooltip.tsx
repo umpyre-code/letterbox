@@ -5,6 +5,7 @@ import { ProfileView } from './ProfileView'
 
 const ProfileTooltipStyled = withStyles(theme => ({
   tooltip: {
+    maxWidth: '90vw',
     margin: 0,
     padding: 0,
     boxShadow: theme.shadows[3],
@@ -26,7 +27,7 @@ export const ProfileTooltip: React.FunctionComponent<ProfileTooltipProps> = ({
     interactive
     title={<ProfileView setIsEditing={() => {}} fullProfile={true} profile={profile} tooltip />}
     enterDelay={750}
-    leaveDelay={200}
+    leaveDelay={209990}
   >
     {children}
   </ProfileTooltipStyled>

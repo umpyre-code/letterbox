@@ -107,6 +107,7 @@ interface Props {
   menu?: boolean
   profile?: ClientProfile
   setIsEditing: (arg0: boolean) => void
+  avatarChanged?: () => void
   tooltip?: boolean
 }
 
@@ -332,6 +333,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
 }
 
 export const ProfileView: React.FC<Props> = ({
+  avatarChanged,
   balance,
   credentials,
   editable,
@@ -362,7 +364,17 @@ export const ProfileView: React.FC<Props> = ({
                 <ProfileAvatar profile={profile} size={fullProfile ? 'medium' : 'small'} />
               </Router.Link>
             )}
-            {editable && <ImageUpload profile={profile} credentials={credentials} />}
+            {editable && (
+              <ImageUpload
+                profile={profile}
+                credentials={credentials}
+                uploadSuccess={() => {
+                  if (avatarChanged) {
+                    avatarChanged()
+                  }
+                }}
+              />
+            )}
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
             <Grid item zeroMinWidth>

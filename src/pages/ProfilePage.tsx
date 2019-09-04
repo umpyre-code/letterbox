@@ -4,14 +4,14 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import Loading from '../components/widgets/Loading'
 import { Profile } from '../components/widgets/profile/Profile'
 import { API } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
-import { loadCredentialsRequest } from '../store/client/actions'
+import { loadCredentialsRequest, incrementAvatarVersionRequest } from '../store/client/actions'
 import { emptyClientProfile } from '../store/client/types'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
-import Loading from '../components/widgets/Loading'
 
 interface PropsFromState {
   readonly balance?: Balance
@@ -21,6 +21,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   loadCredentials: typeof loadCredentialsRequest
+  incrementAvatarVersion: typeof incrementAvatarVersionRequest
 }
 
 interface MatchParams {
@@ -44,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const ProfilePageFC: React.FC<AllProps> = ({
   balance,
   credentials,
+  incrementAvatarVersion,
   loadCredentials,
   match,
   myProfile
@@ -89,6 +91,7 @@ const ProfilePageFC: React.FC<AllProps> = ({
               editable={isEditable}
               fullProfile
               credentials={credentials}
+              avatarChanged={() => incrementAvatarVersion()}
             />
           )}
           {!loaded && <Loading />}
@@ -105,6 +108,7 @@ const mapStateToProps = ({ accountState, clientState }: ApplicationState) => ({
 })
 
 const mapDispatchToProps = {
+  incrementAvatarVersion: incrementAvatarVersionRequest,
   loadCredentials: loadCredentialsRequest
 }
 

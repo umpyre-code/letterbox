@@ -41,12 +41,13 @@ const useStyles = makeStyles(theme => ({
   },
   modalPaper: {
     left: '50%',
+    top: '50%',
     position: 'absolute',
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    transform: 'translate(-50%, 0)'
+    transform: 'translate(-50%, -50%)'
   }
 }))
 
@@ -97,9 +98,10 @@ const ErrorMessage: React.FC<ErrorProps> = ({ error }) => (
 interface ImageProps {
   profile?: ClientProfile
   credentials?: ClientCredentials
+  uploadSuccess: () => void
 }
 
-export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
+export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, uploadSuccess }) => {
   const classes = useStyles({})
   const formControlClasses = formControlStyles({})
 
@@ -123,9 +125,10 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
     const api = new API(credentials)
     api
       .uploadAvatar(profile.client_id, blob)
-      .then(res => {
+      .then(() => {
         handleClose()
         setUploading(false)
+        uploadSuccess()
       })
       .catch(error => {
         setUploadErrorMessage(error.message)
@@ -195,12 +198,16 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
     )
 
     return new Promise(() => {
-      canvas.toBlob(updatedBlob => {
-        if (!updatedBlob) {
-          return
-        }
-        setBlob(updatedBlob)
-      }, 'image/jpeg')
+      canvas.toBlob(
+        updatedBlob => {
+          if (!updatedBlob) {
+            return
+          }
+          setBlob(updatedBlob)
+        },
+        'image/jpeg',
+        0.96
+      )
     })
   }
 
@@ -223,7 +230,7 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
                 <Input
                   style={{ display: 'none' }}
                   inputProps={{
-                    accept: 'image/jpeg'
+                    accept: 'image/png, image/jpeg'
                   }}
                   aria-describedby="upload-image"
                   type="file"

@@ -121,7 +121,7 @@ export const reducer: Reducer<ClientState> = (state = initialState, action) => {
         reload: true
       }
     }
-    case ClientActionTypes.INCREMENT_AVATAR_VERSION: {
+    case ClientActionTypes.INCREMENT_AVATAR_VERSION_REQUEST: {
       return {
         ...state,
         profile: {

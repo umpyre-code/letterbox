@@ -4,7 +4,6 @@ import {
   Grid,
   LinearProgress,
   makeStyles,
-  Paper,
   Theme,
   Typography
 } from '@material-ui/core'
@@ -28,7 +27,7 @@ import { Editor } from './Editor'
 import { RecipientField } from './RecipientField'
 import { AddCreditsButton, DiscardButton, PDAField, PDAToolTip, SendButton } from './Widgets'
 
-const UMPYRE_MESSAGE_SEND_FEE = 0.15
+const UMPYRE_MESSAGE_SEND_FEE = 0.03
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
