@@ -376,13 +376,13 @@ export const ProfileView: React.FC<Props> = ({
               />
             )}
           </Grid>
-          <Grid item container direction="column" xs zeroMinWidth>
-            <Grid item zeroMinWidth>
+          <Grid item container direction="column" zeroMinWidth xs>
+            <Grid item zeroMinWidth xs>
               <Typography noWrap variant={fullProfile ? 'h4' : 'subtitle1'}>
                 <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
               </Typography>
             </Grid>
-            <Grid item zeroMinWidth>
+            <Grid item zeroMinWidth xs>
               <Handle profile={profile} />
             </Grid>
           </Grid>
@@ -398,8 +398,8 @@ export const ProfileView: React.FC<Props> = ({
               direction="column"
               justify="flex-start"
               alignItems="flex-end"
-              xs
               spacing={1}
+              xs
             >
               <Grid item>
                 <Ral profile={profile} />
@@ -454,7 +454,7 @@ export const ProfileView: React.FC<Props> = ({
   return (
     <Paper>
       <Grid container className={classes.rootGrid}>
-        <Grid item xs container spacing={1}>
+        <Grid item xs={12} container spacing={1}>
           {getCardHeader()}
           {menu && profileMenu}
         </Grid>

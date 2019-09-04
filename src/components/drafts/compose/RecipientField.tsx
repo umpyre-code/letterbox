@@ -1,4 +1,4 @@
-import { TextField, Typography, Avatar } from '@material-ui/core'
+import { TextField, Typography } from '@material-ui/core'
 import Chip from '@material-ui/core/Chip'
 import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
@@ -12,12 +12,11 @@ import { API } from '../../../store/api'
 import {
   ClientCredentials,
   ClientID,
-  ClientSearchResult,
-  ClientProfile
+  ClientProfile,
+  ClientSearchResult
 } from '../../../store/models/client'
-import { ProfileTooltip } from '../../widgets/profile/ProfileTooltip'
-import { ClientProfileHelper } from '../../../store/client/types'
 import { ProfileAvatar } from '../../widgets/profile/ProfileAvatar'
+import { ProfileTooltip } from '../../widgets/profile/ProfileTooltip'
 
 interface RecipientFieldProps {
   credentials: ClientCredentials

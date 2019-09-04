@@ -222,7 +222,7 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
                 <div className="container">
                   <ProfileAvatar size="medium" profile={profile} />
                   <Typography className="labelText">
-                    Change <Emoji ariaLabel="selfie">🤳</Emoji>
+                    <Emoji ariaLabel="selfie">✨🤳</Emoji>
                   </Typography>
                 </div>
               }

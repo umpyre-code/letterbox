@@ -1,4 +1,5 @@
-import { Box, createStyles, makeStyles, Theme } from '@material-ui/core'
+import { Box, makeStyles, Theme } from '@material-ui/core'
+import { createStyles } from '@material-ui/styles'
 import * as React from 'react'
 import { API_ENDPOINT } from '../../../store/api'
 import { ClientProfileHelper } from '../../../store/client/types'
@@ -14,95 +15,117 @@ interface AvatarProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     imgAvatarBox: {
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexShrink: 0,
-      fontFamily: theme.typography.fontFamily,
-      fontSize: theme.typography.pxToRem(20),
-      borderRadius: '50%',
-      overflow: 'hidden',
-      userSelect: 'none',
       '& img, picture': {
         objectFit: 'cover',
         width: '100%',
         height: '100%',
         textAlign: 'center'
-      }
-    },
-    textAvatarBox: {
-      position: 'relative',
-      display: 'flex',
+      },
       alignItems: 'center',
-      justifyContent: 'center',
+      borderRadius: '50%',
+      display: 'flex',
       flexShrink: 0,
       fontFamily: theme.typography.fontFamily,
       fontSize: theme.typography.pxToRem(20),
-      borderRadius: '50%',
+      justifyContent: 'center',
       overflow: 'hidden',
+      position: 'relative',
       userSelect: 'none',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 150,
+        maxHeight: 150
+      },
+      [theme.breakpoints.down('xs')]: {
+        maxWidth: 80,
+        maxHeight: 80
+      }
+    },
+    textAvatarBox: {
+      alignItems: 'center',
+      backgroundColor: theme.palette.grey[400],
+      borderRadius: '50%',
       color: theme.palette.background.default,
-      backgroundColor: theme.palette.grey[400]
+      display: 'flex',
+      flexShrink: 0,
+      fontFamily: theme.typography.fontFamily,
+      fontSize: theme.typography.pxToRem(20),
+      justifyContent: 'center',
+      overflow: 'hidden',
+      position: 'relative',
+      userSelect: 'none',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 120,
+        maxHeight: 120
+      },
+      [theme.breakpoints.down('xs')]: {
+        maxWidth: 50,
+        maxHeight: 50
+      }
     }
   })
 )
 
-export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
-  const classes = useStyles({})
+function getStyles(size: AvatarSize) {
+  if (size === 'tiny') {
+    return { width: 32, height: 32 }
+  }
+  if (size === 'medium') {
+    return { width: 200, height: 200 }
+  }
+  if (size === 'large') {
+    return { width: 1000, height: 1000 }
+  }
+  return { width: 45, height: 45 }
+}
 
+interface BoxProps {
+  size: AvatarSize
+}
+
+const ImageAvatarBox: React.FC<BoxProps> = ({ children, size }) => {
+  const classes = useStyles({})
+  return (
+    <Box className={classes.imgAvatarBox} style={getStyles(size)}>
+      {children}
+    </Box>
+  )
+}
+
+const TextAvatarBox: React.FC<BoxProps> = ({ children, size }) => {
+  const classes = useStyles({})
+  return (
+    <Box className={classes.textAvatarBox} style={getStyles(size)}>
+      {children}
+    </Box>
+  )
+}
+
+export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
   function getAvatarImgSrc(format: string) {
     return `${API_ENDPOINT}/img/avatar/${profile.client_id}/${size}.${format}?v=${profile.avatar_version}`
   }
 
-  function getWidth() {
-    if (size === 'tiny') {
-      return 32
-    }
-    if (size === 'small') {
-      return 45
-    }
-    if (size === 'medium') {
-      return 200
-    }
-    if (size === 'large') {
-      return 1000
-    }
-    return 45
-  }
-
-  function getHeight() {
-    return getWidth()
-  }
-
   function getInner() {
     if (profile.avatar_version === 0) {
-      const width = Math.min(getWidth(), 50)
       return (
-        <Box className={classes.textAvatarBox} style={{ width, height: width }}>
-          {ClientProfileHelper.FROM(profile).getInitials()}
-        </Box>
+        <TextAvatarBox size={size}>{ClientProfileHelper.FROM(profile).getInitials()}</TextAvatarBox>
       )
     }
     return (
-      <Box className={classes.imgAvatarBox} style={{ width: getWidth(), height: getHeight() }}>
+      <ImageAvatarBox size={size}>
         <picture>
           <source srcSet={getAvatarImgSrc('webp')} type="image/webp" />
           <source srcSet={getAvatarImgSrc('jpg')} type="image/jpeg" />
           <img alt={profile.full_name} src={getAvatarImgSrc('jpg')} />
         </picture>
-      </Box>
+      </ImageAvatarBox>
     )
   }
 
   if (profile) {
     return getInner()
   }
-  return (
-    <Box className={classes.textAvatarBox} style={{ width: getWidth(), height: getHeight() }}>
-      ??
-    </Box>
-  )
+  return <TextAvatarBox size={size}>??</TextAvatarBox>
 }
 
 ProfileAvatar.defaultProps = {

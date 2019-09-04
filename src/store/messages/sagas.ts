@@ -81,7 +81,7 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
       .filter(
         message => message.from === clientId || (message.read === true && message.to === clientId)
       )
-      .groupBy(message => [message.to, message.from].sort().join())
+      .groupBy(message => [message.to, message.from].sort().join() + message.pda)
       .map(messageDict =>
         _.chain(messageDict)
           .maxBy('received_at')
