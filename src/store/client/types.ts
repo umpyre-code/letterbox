@@ -26,7 +26,8 @@ export enum ClientActionTypes {
   UPDATE_CLIENT_PROFILE_SUCCESS = '@@client/UPDATE_CLIENT_PROFILE_SUCCESS',
   VERIFY_PHONE_ERROR = '@@client/VERIFY_PHONE_ERROR',
   VERIFY_PHONE_REQUEST = '@@client/VERIFY_PHONE_REQUEST',
-  VERIFY_PHONE_SUCCESS = '@@client/VERIFY_PHONE_SUCCESS'
+  VERIFY_PHONE_SUCCESS = '@@client/VERIFY_PHONE_SUCCESS',
+  INCREMENT_AVATAR_VERSION = '@@client/INCREMENT_AVATAR_VERSION'
 }
 
 export interface ClientState {
@@ -76,7 +77,8 @@ export const emptyClientProfile: ClientProfile = {
   phone_sms_verified: false,
   profile: undefined,
   ral: 0,
-  signing_public_key: ''
+  signing_public_key: '',
+  avatar_version: 0
 }
 
 export const loadingClientProfile: ClientProfile = {
@@ -88,7 +90,8 @@ export const loadingClientProfile: ClientProfile = {
   phone_sms_verified: false,
   profile: undefined,
   ral: 0,
-  signing_public_key: ''
+  signing_public_key: '',
+  avatar_version: 0
 }
 
 export class ClientProfileHelper implements ClientProfile {
@@ -113,6 +116,8 @@ export class ClientProfileHelper implements ClientProfile {
   public phone_sms_verified = false
 
   public ral = 0
+
+  public avatar_version = 0
 
   constructor(clientProfile: ClientProfile) {
     Object.assign(this, clientProfile)

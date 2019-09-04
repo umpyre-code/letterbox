@@ -1,5 +1,4 @@
 import {
-  Avatar,
   createStyles,
   Divider,
   Grid,
@@ -26,7 +25,7 @@ import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import { Editor } from '../../drafts/compose/Editor'
-import { ImageUpload } from './ImageUpload'
+import { ProfileAvatar } from './ProfileAvatar'
 
 interface Props {
   profile?: ClientProfile
@@ -139,7 +138,7 @@ export const ProfileFormFC: React.FC<AllProps> = ({
       <Form>
         <Grid container spacing={1} className={classes.rootGrid}>
           <Grid item>
-            <Avatar alt={clientProfileHelper.full_name}>{clientProfileHelper.getInitials()}</Avatar>
+            <ProfileAvatar profile={profile} />
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
             <Grid item>

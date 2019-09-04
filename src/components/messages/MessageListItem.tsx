@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   createStyles,
   IconButton,
@@ -23,8 +22,9 @@ import { ClientProfileHelper, loadingClientProfile } from '../../store/client/ty
 import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
-import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
 import { Emoji } from '../widgets/Emoji'
+import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
+import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
 
 interface Props {
   message: MessageBase
@@ -151,14 +151,14 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       return (
         <ListItemAvatar>
           <ProfileTooltip profile={fromProfile}>
-            <Avatar alt={fromProfile.full_name}>{fromProfile.getInitials()}</Avatar>
+            <ProfileAvatar profile={fromProfile} />
           </ProfileTooltip>
         </ListItemAvatar>
       )
     }
     return (
       <ListItemAvatar>
-        <Avatar alt="Loading">??</Avatar>
+        <ProfileAvatar profile={undefined} />
       </ListItemAvatar>
     )
   }

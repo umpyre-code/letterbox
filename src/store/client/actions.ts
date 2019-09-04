@@ -60,3 +60,5 @@ export const authSuccess = (clientCreds: ClientCredentials) =>
 export const authError = (message: string) => action(ClientActionTypes.AUTH_ERROR, message)
 
 export const unathourizedClient = () => action(ClientActionTypes.UNAUTHORIZED_CLIENT)
+
+export const incrementAvatarVersion = () => action(ClientActionTypes.INCREMENT_AVATAR_VERSION)

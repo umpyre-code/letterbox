@@ -19,6 +19,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { Emoji } from '../Emoji'
 import { API } from '../../../store/api'
+import { ProfileAvatar } from './ProfileAvatar'
 
 interface Crop {
   aspect: number
@@ -51,14 +52,26 @@ const useStyles = makeStyles(theme => ({
 
 const formControlStyles = makeStyles(theme => ({
   root: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: 0,
-    '& :hover': {
+    '& :hover .container': {
       backgroundColor: theme.palette.primary.light,
-      borderRadius: theme.spacing(1)
+      borderRadius: theme.spacing(4)
+    },
+    '& .labelText': {
+      visibility: 'hidden',
+      position: 'relative',
+      textAlign: 'center'
+    },
+    '& :hover .labelText': {
+      visibility: 'visible'
     }
   },
   label: {
-    padding: theme.spacing(1)
+    padding: 0
   }
 }))
 
@@ -199,22 +212,23 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
             <FormControlLabel
               classes={formControlClasses}
               label={
-                <Typography>
-                  Upload <Emoji ariaLabel="selfie">️🤳</Emoji>
-                </Typography>
+                <div className="container">
+                  <ProfileAvatar size="medium" profile={profile} />
+                  <Typography className="labelText">
+                    Change <Emoji ariaLabel="selfie">🤳</Emoji>
+                  </Typography>
+                </div>
               }
               control={
-                <React.Fragment>
-                  <Input
-                    style={{ display: 'none' }}
-                    inputProps={{
-                      accept: 'image/jpeg'
-                    }}
-                    aria-describedby="upload-image"
-                    type="file"
-                    onChange={onSelectFile}
-                  />
-                </React.Fragment>
+                <Input
+                  style={{ display: 'none' }}
+                  inputProps={{
+                    accept: 'image/jpeg'
+                  }}
+                  aria-describedby="upload-image"
+                  type="file"
+                  onChange={onSelectFile}
+                />
               }
             />
           </FormControl>

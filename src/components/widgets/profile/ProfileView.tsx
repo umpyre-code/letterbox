@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Container,
@@ -24,15 +23,14 @@ import momentDurationFormatSetup from 'moment-duration-format'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
-import { ClientProfileHelper } from '../../../store/client/types'
 import { addDraftRequest } from '../../../store/drafts/actions'
 import { Balance } from '../../../store/models/account'
-import { ClientProfile, ClientCredentials } from '../../../store/models/client'
+import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 import { Badge } from './Badge'
 import { ImageUpload } from './ImageUpload'
-import { API_ENDPOINT } from '../../../store/api'
+import { ProfileAvatar } from './ProfileAvatar'
 
 // Set up moment duration format
 momentDurationFormatSetup(moment)
@@ -354,26 +352,21 @@ export const ProfileView: React.FC<Props> = ({
     />
   )
 
-  function getAvatarImgSrc() {
-    return `${API_ENDPOINT}/img/avatar/${profile.client_id}/small.webp`
-  }
-
   function getCardHeader() {
     if (profile) {
-      const clientProfileHelper = ClientProfileHelper.FROM(profile)
       return (
         <React.Fragment>
           <Grid item style={{ padding: '5px' }}>
-            <Router.Link to={getProfileUrl(profile)}>
-              <Avatar alt={clientProfileHelper.full_name} src={getAvatarImgSrc()}>
-                {clientProfileHelper.getInitials()}
-              </Avatar>
-            </Router.Link>
+            {!editable && (
+              <Router.Link to={getProfileUrl(profile)}>
+                <ProfileAvatar profile={profile} size={fullProfile ? 'medium' : 'small'} />
+              </Router.Link>
+            )}
             {editable && <ImageUpload profile={profile} credentials={credentials} />}
           </Grid>
           <Grid item container direction="column" xs zeroMinWidth>
             <Grid item zeroMinWidth>
-              <Typography noWrap>
+              <Typography noWrap variant={fullProfile ? 'h4' : 'subtitle1'}>
                 <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
               </Typography>
             </Grid>
@@ -387,12 +380,20 @@ export const ProfileView: React.FC<Props> = ({
             </Grid>
           )}
           {fullProfile && (
-            <Grid item container direction="column" alignItems="flex-end" xs spacing={1}>
-              <Grid item xs>
+            <Grid
+              item
+              container
+              direction="column"
+              justify="flex-start"
+              alignItems="flex-end"
+              xs
+              spacing={1}
+            >
+              <Grid item>
                 <Ral profile={profile} />
               </Grid>
               {editable && (
-                <Grid item xs>
+                <Grid item>
                   <Badge profile={profile} />
                 </Grid>
               )}

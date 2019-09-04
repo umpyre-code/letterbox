@@ -17,6 +17,7 @@ import {
 } from '../../../store/models/client'
 import { ProfileTooltip } from '../../widgets/profile/ProfileTooltip'
 import { ClientProfileHelper } from '../../../store/client/types'
+import { ProfileAvatar } from '../../widgets/profile/ProfileAvatar'
 
 interface RecipientFieldProps {
   credentials: ClientCredentials
@@ -303,7 +304,7 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
                 startAdornment: selectedItem.map(profile => (
                   <ProfileTooltip profile={profile} key={profile.client_id}>
                     <Chip
-                      avatar={<Avatar>{ClientProfileHelper.FROM(profile).getInitials()}</Avatar>}
+                      avatar={<ProfileAvatar profile={profile} size="tiny" />}
                       key={profile.client_id}
                       tabIndex={-1}
                       label={`${profile.full_name} $${profile.ral}`}
