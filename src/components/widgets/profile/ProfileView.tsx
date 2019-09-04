@@ -376,13 +376,21 @@ export const ProfileView: React.FC<Props> = ({
               />
             )}
           </Grid>
-          <Grid item container direction="column" zeroMinWidth xs>
+
+          <Grid
+            item
+            container
+            direction="column"
+            alignItems="flex-start"
+            justify="flex-start"
+            style={{ maxWidth: '100%' }}
+            xs
+            zeroMinWidth
+          >
             <Grid item zeroMinWidth xs>
               <Typography noWrap variant={fullProfile ? 'h4' : 'subtitle1'}>
                 <Router.Link to={getProfileUrl(profile)}>{profile.full_name}</Router.Link>
               </Typography>
-            </Grid>
-            <Grid item zeroMinWidth xs>
               <Handle profile={profile} />
             </Grid>
           </Grid>
@@ -399,13 +407,14 @@ export const ProfileView: React.FC<Props> = ({
               justify="flex-start"
               alignItems="flex-end"
               spacing={1}
-              xs
+              zeroMinWidth
+              style={{ maxWidth: '100px' }}
             >
-              <Grid item>
+              <Grid item zeroMinWidth>
                 <Ral profile={profile} />
               </Grid>
               {editable && (
-                <Grid item>
+                <Grid item zeroMinWidth>
                   <Badge profile={profile} />
                 </Grid>
               )}
