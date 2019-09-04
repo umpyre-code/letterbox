@@ -160,7 +160,6 @@ export const ImageRadio: React.FC<ImageRadioProps> = ({
   ...outerProps
 }) => {
   const classes = radioStyles({})
-  // see https://stackoverflow.com/a/17541916
   return (
     <React.Fragment>
       <Radio {...outerProps} classes={classes} />

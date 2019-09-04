@@ -32,6 +32,7 @@ import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
 import { Badge } from './Badge'
 import { ImageUpload } from './ImageUpload'
+import { API_ENDPOINT } from '../../../store/api'
 
 // Set up moment duration format
 momentDurationFormatSetup(moment)
@@ -353,6 +354,10 @@ export const ProfileView: React.FC<Props> = ({
     />
   )
 
+  function getAvatarImgSrc() {
+    return `${API_ENDPOINT}/img/avatar/${profile.client_id}/small.webp`
+  }
+
   function getCardHeader() {
     if (profile) {
       const clientProfileHelper = ClientProfileHelper.FROM(profile)
@@ -360,7 +365,7 @@ export const ProfileView: React.FC<Props> = ({
         <React.Fragment>
           <Grid item style={{ padding: '5px' }}>
             <Router.Link to={getProfileUrl(profile)}>
-              <Avatar alt={clientProfileHelper.full_name}>
+              <Avatar alt={clientProfileHelper.full_name} src={getAvatarImgSrc()}>
                 {clientProfileHelper.getInitials()}
               </Avatar>
             </Router.Link>

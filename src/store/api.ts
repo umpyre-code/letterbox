@@ -171,8 +171,8 @@ export class API {
     return this.client.post(`/client/verify_phone`).then(response => response.data)
   }
 
-  public async uploadPhoto(clientId: ClientID, data: Blob): Promise<{}> {
-    return this.client.post(`/img/${clientId}`, data, {
+  public async uploadAvatar(clientId: ClientID, data: Blob): Promise<{}> {
+    return this.client.post(`/img/avatar/${clientId}`, data, {
       headers: { 'Content-Type': 'image/jpeg' }
     })
   }

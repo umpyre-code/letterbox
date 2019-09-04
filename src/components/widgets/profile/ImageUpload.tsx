@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import DeleteIcon from '@material-ui/icons/Delete'
-import axios from 'axios'
 import * as React from 'react'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
   modalPaper: {
     left: '50%',
     position: 'absolute',
-    width: '80vw',
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
@@ -111,14 +109,12 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials }) => {
     setUploading(true)
     const api = new API(credentials)
     api
-      .uploadPhoto(profile.client_id, blob)
+      .uploadAvatar(profile.client_id, blob)
       .then(res => {
-        console.log(res)
         handleClose()
         setUploading(false)
       })
       .catch(error => {
-        console.log(error)
         setUploadErrorMessage(error.message)
         setTimeout(() => setUploadErrorMessage(undefined), 5000)
         setUploading(false)
