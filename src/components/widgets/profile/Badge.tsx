@@ -97,11 +97,11 @@ function getBadgeDimensions(size: BadgeSize): BadgeDimensions {
   let width = 156.5 * 1.35
   let height = 50.4 * 1.35
   if (size === 'small') {
-    width = Math.round(width * 0.75)
-    height = Math.round(height * 0.75)
+    width *= 0.75
+    height *= 0.75
   } else if (size === 'large') {
-    width = Math.round(width * 1.25)
-    height = Math.round(height * 1.25)
+    width *= 1.25
+    height *= 1.25
   }
   return {
     width,
