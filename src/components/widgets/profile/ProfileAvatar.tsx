@@ -1,4 +1,5 @@
 import { Box, makeStyles, Theme } from '@material-ui/core'
+import PersonIcon from '@material-ui/icons/Person'
 import { createStyles } from '@material-ui/styles'
 import * as React from 'react'
 import { API_ENDPOINT } from '../../../store/api'
@@ -26,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexShrink: 0,
       fontFamily: theme.typography.fontFamily,
-      fontSize: theme.typography.pxToRem(20),
       justifyContent: 'center',
       overflow: 'hidden',
       position: 'relative',
@@ -48,11 +48,16 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexShrink: 0,
       fontFamily: theme.typography.fontFamily,
-      fontSize: theme.typography.pxToRem(20),
       justifyContent: 'center',
       overflow: 'hidden',
       position: 'relative',
       userSelect: 'none',
+      '& svg': {
+        position: 'absolute',
+        width: '150%',
+        height: '150%',
+        color: theme.palette.grey[500]
+      },
       [theme.breakpoints.down('sm')]: {
         maxWidth: 120,
         maxHeight: 120
@@ -67,15 +72,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function getStyles(size: AvatarSize) {
   if (size === 'tiny') {
-    return { width: 32, height: 32 }
+    return { width: 32, height: 32, fontSize: '1rem' }
   }
   if (size === 'medium') {
-    return { width: 200, height: 200 }
+    return { width: 200, height: 200, fontSize: '4rem' }
   }
   if (size === 'large') {
-    return { width: 1000, height: 1000 }
+    return { width: 1000, height: 1000, fontSize: '6rem' }
   }
-  return { width: 45, height: 45 }
+  return { width: 45, height: 45, fontSize: '1.2rem' }
 }
 
 interface BoxProps {
@@ -108,7 +113,10 @@ export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
   function getInner() {
     if (profile.avatar_version === 0) {
       return (
-        <TextAvatarBox size={size}>{ClientProfileHelper.FROM(profile).getInitials()}</TextAvatarBox>
+        <TextAvatarBox size={size}>
+          <PersonIcon />
+          <div style={{ zIndex: 1 }}>{ClientProfileHelper.FROM(profile).getInitials()}</div>
+        </TextAvatarBox>
       )
     }
     return (

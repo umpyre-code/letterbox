@@ -399,16 +399,26 @@ export const ProfileView: React.FC<Props> = ({
               <BalanceButton balance={balance} />
             </Grid>
           )}
+          <Grid item>
+            <Action
+              profile={profile}
+              editable={editable}
+              menu={menu}
+              setIsEditing={setIsEditing}
+              setMenuAnchorElement={setMenuAnchorElement}
+              tooltip={tooltip}
+            />
+          </Grid>
           {fullProfile && (
             <Grid
               item
               container
-              direction="column"
-              justify="flex-start"
+              justify="flex-end"
               alignItems="flex-end"
               spacing={1}
               zeroMinWidth
-              style={{ maxWidth: '100px' }}
+              xs={12}
+              style={{ marginTop: '-50px' }}
             >
               <Grid item zeroMinWidth>
                 <Ral profile={profile} />
@@ -420,16 +430,6 @@ export const ProfileView: React.FC<Props> = ({
               )}
             </Grid>
           )}
-          <Grid item>
-            <Action
-              profile={profile}
-              editable={editable}
-              menu={menu}
-              setIsEditing={setIsEditing}
-              setMenuAnchorElement={setMenuAnchorElement}
-              tooltip={tooltip}
-            />
-          </Grid>
         </React.Fragment>
       )
     }

@@ -47,7 +47,9 @@ const useStyles = makeStyles(theme => ({
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    overflowY: 'auto',
+    maxHeight: 'calc(100vh - 70px)'
   }
 }))
 
@@ -251,6 +253,21 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
       >
         <Paper className={classes.modalPaper}>
           <Grid container justify="center" alignItems="center" spacing={1}>
+            <Grid item xs={12}>
+              <ReactCrop
+                style={{
+                  left: '50%',
+                  transform: 'translate(-50%, 0)'
+                }}
+                circularCrop
+                src={src}
+                crop={crop}
+                onImageLoaded={onImageLoaded}
+                onComplete={onCropComplete}
+                onChange={onCropChange}
+                disabled={uploading}
+              />
+            </Grid>
             <Grid item>
               <Button
                 color="primary"
@@ -267,21 +284,6 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
                 <DeleteIcon />
                 &nbsp;Discard
               </Button>
-            </Grid>
-            <Grid item xs={12}>
-              <ReactCrop
-                style={{
-                  left: '50%',
-                  transform: 'translate(-50%, 0)'
-                }}
-                circularCrop
-                src={src}
-                crop={crop}
-                onImageLoaded={onImageLoaded}
-                onComplete={onCropComplete}
-                onChange={onCropChange}
-                disabled={uploading}
-              />
             </Grid>
             <Grid item>
               <ErrorMessage error={uploadErrorMessage} />

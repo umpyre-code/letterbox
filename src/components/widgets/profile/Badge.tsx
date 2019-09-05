@@ -3,14 +3,13 @@ import {
   Button,
   createStyles,
   Divider,
-  Fade,
   FormControl,
   FormControlLabel,
   FormLabel,
   Grid,
   makeStyles,
+  Modal,
   Paper,
-  Popper,
   Radio,
   RadioGroup,
   Slider,
@@ -48,16 +47,22 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 1, 0, 1),
       borderRadius: '5px',
       overflow: 'scroll',
+      height: '150px',
       maxWidth: '500px',
       margin: theme.spacing(1)
     },
     root: {
       position: 'relative'
     },
-    popperPaper: {
+    modalPaper: {
       padding: theme.spacing(1),
       boxShadow: theme.shadows[3],
-      maxWidth: '95vw'
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      overflowY: 'auto',
+      maxHeight: 'calc(100vh - 70px)',
+      position: 'absolute'
     },
     formControl: {},
     group: {
@@ -176,7 +181,7 @@ function renderBadge(profile: ClientProfile, options: BadgeOptions): string {
   }
   if (options.codeFormat === 'html') {
     const dimensions = getBadgeDimensions(options.size)
-    return `<a href="${profileUrl}"><img width="${dimensions.width}" height="${dimensions.height}" src="${badgeUrl}" alt="Contact ${options.name}" /></a>`
+    return `<a href="${profileUrl}" target="_blank"><img width="${dimensions.width}" height="${dimensions.height}" src="${badgeUrl}" alt="Contact ${options.name}" /></a>`
   }
   return 'something went wrong! D:'
 }
@@ -298,46 +303,52 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
       <Grid item xs={12}>
         <Divider />
       </Grid>
-      <Grid item container justify="space-between" alignItems="flex-start" spacing={1}>
-        <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Image preview</FormLabel>
-          <RadioGroup
-            aria-label="badge image format"
-            name="imageFormat1"
-            className={classes.group}
-            value={imageFormat}
-            onChange={event => {
-              setImageFormat(event.target.value as BadgeFormat)
-            }}
-            row
-          >
-            <FormControlLabel
-              value="svg"
-              labelPlacement="bottom"
-              control={
-                <ImageRadio
-                  {...getBadgeDimensions(badgeOptions.size)}
-                  alt="SVG Badge"
-                  imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'svg' })}
-                />
-              }
-              label="SVG"
-            />
-            <FormControlLabel
-              value="png"
-              labelPlacement="bottom"
-              control={
-                <ImageRadio
-                  {...getBadgeDimensions(badgeOptions.size)}
-                  alt="PNG Badge"
-                  imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'png' })}
-                />
-              }
-              label="PNG"
-            />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
+      <FormControl component="fieldset" className={classes.formControl}>
+        <FormLabel component="legend">Image preview</FormLabel>
+        <RadioGroup
+          aria-label="badge image format"
+          name="imageFormat1"
+          className={classes.group}
+          value={imageFormat}
+          onChange={event => {
+            setImageFormat(event.target.value as BadgeFormat)
+          }}
+          row
+        >
+          <Grid container justify="center" alignItems="center" xs={12}>
+            <Grid item xs={12} sm={6} style={{ height: '100px' }}>
+              <FormControlLabel
+                value="svg"
+                labelPlacement="bottom"
+                style={{ margin: 0, display: 'flex' }}
+                control={
+                  <ImageRadio
+                    {...getBadgeDimensions(badgeOptions.size)}
+                    alt="SVG Badge"
+                    imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'svg' })}
+                  />
+                }
+                label="SVG"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} style={{ height: '100px' }}>
+              <FormControlLabel
+                value="png"
+                labelPlacement="bottom"
+                style={{ margin: 0, display: 'flex' }}
+                control={
+                  <ImageRadio
+                    {...getBadgeDimensions(badgeOptions.size)}
+                    alt="PNG Badge"
+                    imageSrc={getBadgeImageUrl(profile, { ...badgeOptions, imageFormat: 'png' })}
+                  />
+                }
+                label="PNG"
+              />
+            </Grid>
+          </Grid>
+        </RadioGroup>
+      </FormControl>
       <Grid item xs={12}>
         <Divider />
       </Grid>
@@ -348,13 +359,11 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
 export const Badge: React.FC<BadgeProps> = props => {
   const classes = useStyles({})
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement>(null)
   return (
     <React.Fragment>
       <Button
         className={classes.badgeButton}
-        onClick={event => {
-          setAnchorEl(event.currentTarget)
+        onClick={() => {
           setIsOpen(!isOpen)
         }}
       >
@@ -363,26 +372,18 @@ export const Badge: React.FC<BadgeProps> = props => {
           <ContactMailIcon style={{ padding: 4, verticalAlign: 'top' }}>Get badge</ContactMailIcon>
         </Typography>
       </Button>
-      <Popper id="badge-popper" open={isOpen} anchorEl={anchorEl} transition placement="right">
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={100}>
-            <Paper className={classes.popperPaper}>
-              <Grid container direction="column" spacing={1}>
-                <BadgeDisplay {...props} />
-                <Grid item xs={12}>
-                  <Button
-                    onClick={() => {
-                      setIsOpen(false)
-                    }}
-                  >
-                    <CloseIcon /> Close
-                  </Button>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
+      <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+        <Paper className={classes.modalPaper}>
+          <Grid container direction="column" spacing={1}>
+            <BadgeDisplay {...props} />
+            <Grid container item xs={12} justify="center">
+              <Button style={{ display: 'flex' }} onClick={() => setIsOpen(false)}>
+                <CloseIcon /> Close
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Modal>
     </React.Fragment>
   )
 }
