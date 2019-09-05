@@ -1,6 +1,11 @@
 import { FormikActions } from 'formik'
 import _ from 'lodash'
-import { AuthVerifyResponse, ClientCredentials, ClientProfile } from '../models/client'
+import {
+  AuthVerifyResponse,
+  ClientCredentials,
+  ClientProfile,
+  MicroClientProfile
+} from '../models/client'
 
 export enum ClientActionTypes {
   AUTH_ERROR = '@@client/AUTH_ERROR',
@@ -94,12 +99,10 @@ export const loadingClientProfile: ClientProfile = {
   avatar_version: 0
 }
 
-export class ClientProfileHelper implements ClientProfile {
-  public static FROM(clientProfile: ClientProfile): ClientProfileHelper {
+export class ClientProfileHelper implements MicroClientProfile {
+  public static FROM(clientProfile: MicroClientProfile): ClientProfileHelper {
     return new ClientProfileHelper(clientProfile)
   }
-
-  public box_public_key = ''
 
   public client_id = ''
 
@@ -107,19 +110,7 @@ export class ClientProfileHelper implements ClientProfile {
 
   public handle?: string
 
-  public profile?: string
-
-  public signing_public_key = ''
-
-  public joined = 0
-
-  public phone_sms_verified = false
-
-  public ral = 0
-
-  public avatar_version = 0
-
-  constructor(clientProfile: ClientProfile) {
+  constructor(clientProfile: MicroClientProfile) {
     Object.assign(this, clientProfile)
   }
 

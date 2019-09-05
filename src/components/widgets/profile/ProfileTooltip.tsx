@@ -27,7 +27,7 @@ export const ProfileTooltip: React.FunctionComponent<ProfileTooltipProps> = ({
     interactive
     title={<ProfileView setIsEditing={() => {}} fullProfile={true} profile={profile} tooltip />}
     enterDelay={750}
-    leaveDelay={209990}
+    leaveDelay={200}
   >
     {children}
   </ProfileTooltipStyled>

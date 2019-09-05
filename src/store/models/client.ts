@@ -36,23 +36,23 @@ export interface NewClient {
   signing_public_key?: string
 }
 
-export interface ClientProfile {
+export interface MicroClientProfile {
   client_id: ClientID
   full_name: string
+  handle?: string
+  avatar_version?: number
+}
+
+export interface ClientProfile extends MicroClientProfile {
   box_public_key: string
   signing_public_key: string
-  handle?: string
   profile?: string
   joined: number
   phone_sms_verified: boolean
   ral: number
-  avatar_version: number
 }
 
-export interface ClientSearchResult {
-  client_id: ClientID
-  full_name: string
-  handle: string
+export interface ClientSearchResult extends MicroClientProfile {
   suggest: string[]
 }
 

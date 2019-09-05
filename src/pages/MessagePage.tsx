@@ -98,8 +98,14 @@ const MessagePageFC: React.FC<AllProps> = ({
 
   React.useEffect(() => {
     loadMessages(messageHash)
-    messageRead(messageHash)
   }, [messageHash, credentials])
+
+  React.useEffect(() => {
+    // mark any unread messages as read
+    _.filter(loadedMessages, message => !message.read).forEach(message => {
+      messageRead(message.hash)
+    })
+  }, [loadedMessages.length])
 
   React.useLayoutEffect(() => {
     // scroll to message
@@ -110,8 +116,8 @@ const MessagePageFC: React.FC<AllProps> = ({
 
   function messageBodies() {
     return loadedMessages.map((message, index) => (
-      <React.Fragment>
-        <Container className={classes.bodyContainer} key={message.hash} ref={messageRef}>
+      <React.Fragment key={message.hash}>
+        <Container className={classes.bodyContainer} ref={messageRef}>
           <MessageListItem
             message={message}
             shaded={false}
@@ -128,7 +134,7 @@ const MessagePageFC: React.FC<AllProps> = ({
                   <Grid item>
                     <Button
                       disabled={message.hash in draftsMap}
-                      variant="outlined"
+                      variant="contained"
                       color="primary"
                       onClick={() => {
                         addDraft({
@@ -146,7 +152,7 @@ const MessagePageFC: React.FC<AllProps> = ({
                   </Grid>
                   <Grid item>
                     <Button
-                      variant="outlined"
+                      variant="contained"
                       color="secondary"
                       onClick={() => {
                         deleteMessage(message.hash)

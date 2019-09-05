@@ -48,14 +48,14 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '5px',
       overflow: 'scroll',
       height: '150px',
-      maxWidth: '500px',
+      maxWidth: '550px',
       margin: theme.spacing(1)
     },
     root: {
       position: 'relative'
     },
     modalPaper: {
-      padding: theme.spacing(1),
+      padding: theme.spacing(3),
       boxShadow: theme.shadows[3],
       left: '50%',
       top: '50%',
@@ -78,6 +78,7 @@ interface BadgeProps {
 type BadgeSize = 'small' | 'medium' | 'large'
 type BadgeFormat = 'svg' | 'png'
 type BadgeCodeFormat = 'html' | 'markdown'
+type BadgeStyle = 'light' | 'dark'
 interface BadgeDimensions {
   width: number
   height: number
@@ -89,11 +90,12 @@ interface BadgeOptions {
   imageFormat: BadgeFormat
   codeFormat: BadgeCodeFormat
   fontSize: number
+  style: BadgeStyle
 }
 
 function getBadgeDimensions(size: BadgeSize): BadgeDimensions {
-  let width = 181
-  let height = 60
+  let width = 156.5 * 1.35
+  let height = 50.4 * 1.35
   if (size === 'small') {
     width = Math.round(width * 0.75)
     height = Math.round(height * 0.75)
@@ -116,7 +118,8 @@ function getBadgeImageUrl(profile: ClientProfile, options: BadgeOptions) {
       width: dimensions.width * 2,
       height: dimensions.height * 2,
       name: options.name,
-      font_size: options.fontSize
+      font_size: options.fontSize,
+      style: options.style
     })
 
     return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${options.imageFormat}?${querystring}`
@@ -125,7 +128,8 @@ function getBadgeImageUrl(profile: ClientProfile, options: BadgeOptions) {
   const querystring = qs.stringify({
     ...dimensions,
     name: options.name,
-    font_size: options.fontSize
+    font_size: options.fontSize,
+    style: options.style
   })
 
   return `${API_ENDPOINT}/badge/${profile.client_id}/badge.${options.imageFormat}?${querystring}`
@@ -177,11 +181,11 @@ function renderBadge(profile: ClientProfile, options: BadgeOptions): string {
   const badgeUrl = getBadgeImageUrl(profile, options)
   const profileUrl = `${PUBLIC_URL}/u/${profile.client_id}`
   if (options.codeFormat === 'markdown') {
-    return `[![Contact ${options.name}](${badgeUrl})](${profileUrl})`
+    return `[![Contact ${options.name} on Umpyre](${badgeUrl})](${profileUrl})`
   }
   if (options.codeFormat === 'html') {
     const dimensions = getBadgeDimensions(options.size)
-    return `<a href="${profileUrl}" target="_blank"><img width="${dimensions.width}" height="${dimensions.height}" src="${badgeUrl}" alt="Contact ${options.name}" /></a>`
+    return `<a href="${profileUrl}" target="_blank"><img width="${dimensions.width}" height="${dimensions.height}" src="${badgeUrl}" alt="Contact ${options.name} on Umpyre" /></a>`
   }
   return 'something went wrong! D:'
 }
@@ -191,6 +195,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   const [sizeValue, setSizeValue] = React.useState<BadgeSize>('medium')
   const [formatValue, setFormatValue] = React.useState<BadgeCodeFormat>('markdown')
   const [nameValue, setNameValue] = React.useState<string>(profile.full_name)
+  const [badgeStyleValue, setBadgeStyle] = React.useState<BadgeStyle>('light')
   const [copied, setCopied] = React.useState<boolean>(false)
   const [fontSizeValue, setFontSizeValue] = React.useState<number>(14)
   const [imageFormat, setImageFormat] = React.useState<BadgeFormat>('svg')
@@ -199,7 +204,8 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
     size: sizeValue,
     codeFormat: formatValue,
     fontSize: fontSizeValue,
-    imageFormat
+    imageFormat,
+    style: badgeStyleValue
   }
   const badge = renderBadge(profile, badgeOptions)
   return (
@@ -245,6 +251,42 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
       </Grid>
       <Grid item container spacing={1}>
         <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">Style</FormLabel>
+            <RadioGroup
+              aria-label="badge style"
+              name="format1"
+              className={classes.group}
+              value={badgeStyleValue}
+              onChange={event => {
+                setBadgeStyle(event.target.value as BadgeStyle)
+              }}
+              row
+            >
+              <FormControlLabel value="light" control={<Radio />} label="Light" />
+              <FormControlLabel value="dark" control={<Radio />} label="Dark" />
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" className={classes.formControl} fullWidth>
+            <FormLabel component="legend">Font size</FormLabel>
+            <Slider
+              style={{ padding: '27px 0 0 0' }}
+              value={(fontSizeValue - 10) / 2}
+              aria-labelledby="font-size-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={1}
+              max={8}
+              onChange={(event, value) => {
+                setFontSizeValue(Number(value) * 2 + 10)
+              }}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
           <FormControl component="fieldset" className={classes.formControl} fullWidth>
             <FormLabel component="legend">Display name</FormLabel>
             <TextField
@@ -254,24 +296,6 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
               }}
               margin="dense"
               variant="outlined"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={6}>
-          <FormControl component="fieldset" className={classes.formControl} fullWidth>
-            <FormLabel component="legend">Font size</FormLabel>
-            <Slider
-              style={{ padding: '27px 0 0 0' }}
-              value={fontSizeValue}
-              aria-labelledby="font-size-slider"
-              valueLabelDisplay="auto"
-              step={1}
-              marks
-              min={10}
-              max={24}
-              onChange={(event, value) => {
-                setFontSizeValue(Number(value))
-              }}
             />
           </FormControl>
         </Grid>
@@ -315,8 +339,8 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
           }}
           row
         >
-          <Grid container justify="center" alignItems="center" xs={12}>
-            <Grid item xs={12} sm={6} style={{ height: '100px' }}>
+          <Grid container justify="center" alignItems="center">
+            <Grid item xs={12} sm={6} style={{ height: '115px', minWidth: '268px' }}>
               <FormControlLabel
                 value="svg"
                 labelPlacement="bottom"
@@ -331,7 +355,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
                 label="SVG"
               />
             </Grid>
-            <Grid item xs={12} sm={6} style={{ height: '100px' }}>
+            <Grid item xs={12} sm={6} style={{ height: '115px', minWidth: '268px' }}>
               <FormControlLabel
                 value="png"
                 labelPlacement="bottom"

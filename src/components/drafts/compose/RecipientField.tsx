@@ -85,7 +85,7 @@ RecipientField.defaultProps = {
 interface Suggestion {
   client_id: string
   full_name: string
-  handle: string
+  handle?: string
 }
 
 type RenderInputProps = TextFieldProps & {
@@ -131,13 +131,18 @@ function renderSuggestion(suggestionProps: RenderSuggestionProps) {
       selected={isHighlighted}
       component="div"
       style={{
-        fontWeight: isSelected ? 500 : 400
+        fontWeight: isSelected ? 500 : 400,
+        padding: '4px',
+        margin: 0
       }}
     >
-      {suggestion.full_name}
+      <ProfileAvatar profile={suggestion} size="tiny" />
+      <Typography style={{ paddingLeft: '4px', paddingRight: '4px' }}>
+        {suggestion.full_name}
+      </Typography>
       {suggestion.handle && suggestion.handle.length > 0 && (
         <Typography color="textSecondary" variant="body2">
-          &nbsp;/c/{suggestion.handle}
+          {suggestion.handle}
         </Typography>
       )}
     </MenuItem>

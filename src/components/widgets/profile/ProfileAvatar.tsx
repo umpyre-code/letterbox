@@ -4,12 +4,12 @@ import { createStyles } from '@material-ui/styles'
 import * as React from 'react'
 import { API_ENDPOINT } from '../../../store/api'
 import { ClientProfileHelper } from '../../../store/client/types'
-import { ClientProfile } from '../../../store/models/client'
+import { MicroClientProfile } from '../../../store/models/client'
 
 type AvatarSize = 'tiny' | 'small' | 'medium' | 'large'
 
 interface AvatarProps {
-  profile?: ClientProfile
+  profile?: MicroClientProfile
   size?: AvatarSize
 }
 
@@ -75,12 +75,12 @@ function getStyles(size: AvatarSize) {
     return { width: 32, height: 32, fontSize: '1rem' }
   }
   if (size === 'medium') {
-    return { width: 200, height: 200, fontSize: '4rem' }
+    return { width: 200, height: 200, fontSize: '5rem' }
   }
   if (size === 'large') {
     return { width: 1000, height: 1000, fontSize: '6rem' }
   }
-  return { width: 45, height: 45, fontSize: '1.2rem' }
+  return { width: 45, height: 45, fontSize: '1.5rem' }
 }
 
 interface BoxProps {

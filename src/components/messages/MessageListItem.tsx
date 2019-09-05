@@ -20,7 +20,7 @@ import { API } from '../../store/api'
 import { ApplicationState } from '../../store/ApplicationState'
 import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
-import { ClientCredentials } from '../../store/models/client'
+import { ClientCredentials, ClientProfile } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
 import { Emoji } from '../widgets/Emoji'
 import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
@@ -122,10 +122,8 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   isReply,
   shaded
 }) => {
-  const [fromProfile, setFromProfile] = React.useState(
-    ClientProfileHelper.FROM(loadingClientProfile)
-  )
-  const [toProfile, setToProfile] = React.useState(ClientProfileHelper.FROM(loadingClientProfile))
+  const [fromProfile, setFromProfile] = React.useState(loadingClientProfile)
+  const [toProfile, setToProfile] = React.useState(loadingClientProfile)
   const [showDelete, setShowDelete] = React.useState<boolean>(false)
   const classes = useStyles({ shaded })
 
@@ -134,12 +132,12 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       const api = new API(credentials)
       api.fetchClient(message.from).then(res => {
         if (res) {
-          setFromProfile(ClientProfileHelper.FROM(res))
+          setFromProfile(res)
         }
       })
       api.fetchClient(message.to).then(res => {
         if (res) {
-          setToProfile(ClientProfileHelper.FROM(res))
+          setToProfile(res)
         }
       })
     }
@@ -151,7 +149,9 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       return (
         <ListItemAvatar>
           <ProfileTooltip profile={fromProfile}>
-            <ProfileAvatar profile={fromProfile} />
+            <Box>
+              <ProfileAvatar profile={fromProfile} />
+            </Box>
           </ProfileTooltip>
         </ListItemAvatar>
       )
