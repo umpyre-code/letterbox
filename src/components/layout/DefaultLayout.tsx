@@ -16,11 +16,11 @@ const useStyles = makeStyles((theme: Theme) =>
     // },
     headerContainer: {
       padding: theme.spacing(1),
-      backgroundColor: theme.palette.grey[200]
+      backgroundColor: theme.palette.primary.light
     },
     bodyGrid: {
       overflow: 'auto',
-      backgroundColor: theme.palette.grey[100]
+      backgroundColor: theme.palette.grey[200]
     }
   })
 )
