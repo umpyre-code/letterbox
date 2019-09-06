@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 0,
       padding: theme.spacing(1)
     },
-    rootGrid: { padding: theme.spacing(1) },
+    rootGrid: { padding: theme.spacing(1), backgroundColor: theme.palette.secondary.light },
     handleText: {
       color: 'rgba(0, 0, 0, 0.54)'
     },
