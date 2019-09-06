@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     modalPaper: {
       padding: theme.spacing(3),
-      boxShadow: theme.shadows[3],
+      boxShadow: theme.shadows[4],
       left: '50%',
       top: '50%',
       transform: 'translate(-50%, -50%)',
@@ -157,7 +157,7 @@ interface ImageRadioProps {
   height: number
 }
 
-const radioStyles = makeStyles(() =>
+const radioStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       position: 'absolute',
@@ -167,9 +167,9 @@ const radioStyles = makeStyles(() =>
     },
     checked: {
       '& + img': {
-        backgroundColor: '#e6ee9c',
-        borderColor: '#e6ee9c',
-        boxShadow: '0 0 10px #e6ee9c',
+        backgroundColor: theme.palette.secondary.dark,
+        borderColor: theme.palette.secondary.dark,
+        boxShadow: `0 0 10px ${theme.palette.secondary.dark}`,
         borderRadius: '10px'
       }
     }
