@@ -5,6 +5,7 @@ import {
   Divider,
   Grid,
   IconButton,
+  Link,
   makeStyles,
   Menu,
   MenuItem,
@@ -13,6 +14,7 @@ import {
   Tooltip,
   Typography
 } from '@material-ui/core'
+import { LinkBaseProps } from '@material-ui/core/Link'
 import EditButton from '@material-ui/icons/Edit'
 import HelpIcon from '@material-ui/icons/Help'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -125,6 +127,14 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     HTMLAnchorElement,
     Omit<Router.LinkProps, 'innerRef' | 'to'>
   >((props, ref) => <Router.Link innerRef={ref} to="/signout" {...props} />)
+  const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<Router.LinkProps, 'innerRef' | 'to'>>(
+    (props, ref) => <Router.Link innerRef={ref} to="/about" {...props} />
+  )
+  const BlogLink = React.forwardRef<HTMLAnchorElement, Omit<LinkBaseProps, 'innerRef' | 'to'>>(
+    (props, ref) => (
+      <Link innerRef={ref} href="https://blog.umpyre.com" target="_blank" {...props} />
+    )
+  )
 
   function handleMenuClose() {
     setMenuAnchorElementNull()
@@ -143,6 +153,12 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       </MenuItem>
       <MenuItem button component={AccountLink}>
         My Account
+      </MenuItem>
+      <MenuItem button component={AboutLink}>
+        About Umpyre
+      </MenuItem>
+      <MenuItem button component={BlogLink}>
+        Umpyre Blog
       </MenuItem>
       <MenuItem button component={SignoutLink}>
         Sign out

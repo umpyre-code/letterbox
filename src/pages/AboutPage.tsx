@@ -17,7 +17,10 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
       padding: theme.spacing(1)
     },
-    container: { padding: theme.spacing(5) },
+    container: {
+      padding: theme.spacing(5),
+      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
+    },
     paper: { padding: theme.spacing(2) }
   })
 )

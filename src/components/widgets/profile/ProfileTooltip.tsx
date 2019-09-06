@@ -8,7 +8,7 @@ const ProfileTooltipStyled = withStyles(theme => ({
     maxWidth: '90vw',
     margin: 0,
     padding: 0,
-    boxShadow: theme.shadows[3],
+    boxShadow: theme.shadows[4],
     color: 'rgba(0, 0, 0, 0.87)',
     border: '0px'
   }

@@ -1,4 +1,12 @@
-import { Container, createStyles, CssBaseline, Grid, makeStyles, Theme } from '@material-ui/core'
+import {
+  Container,
+  createStyles,
+  CssBaseline,
+  Grid,
+  makeStyles,
+  Theme,
+  Divider
+} from '@material-ui/core'
 import * as React from 'react'
 import * as Router from 'react-router-dom'
 import { Balance } from '../../store/models/account'
@@ -16,12 +24,13 @@ const useStyles = makeStyles((theme: Theme) =>
     // },
     headerContainer: {
       padding: theme.spacing(1),
-      backgroundImage: `linear-gradient(${theme.palette.primary.dark}, ${theme.palette.grey[200]})`,
-      backgroundColor: theme.palette.primary.light
+      // backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.grey[100]})`,
+      // backgroundColor: theme.palette.primary.light
+      backgroundColor: theme.palette.grey[100]
     },
     bodyGrid: {
       overflow: 'auto',
-      backgroundColor: theme.palette.grey[200]
+      backgroundColor: theme.palette.grey[100]
     }
   })
 )
@@ -53,6 +62,9 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
               )}
             </Grid>
           </Container>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
         </Grid>
         <Grid item xs className={classes.bodyGrid}>
           {children}
