@@ -23,6 +23,7 @@ import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
+import { PUBLIC_URL } from '../store/api'
 
 interface PropsFromState {
   balance?: Balance
@@ -76,6 +77,21 @@ const IndexPageFC: React.FC<AllProps> = ({
   reload
 }) => {
   const classes = useStyles({})
+
+  React.useEffect(() => {
+    // Update favicon
+    const favicon = document.getElementById('favicon') as HTMLLinkElement
+    if (favicon) {
+      const unreadCount = messagesState.unreadMessages.length
+      if (unreadCount === 0) {
+        favicon.href = `${PUBLIC_URL}/favicon.png`
+      } else if (unreadCount > 5) {
+        favicon.href = `${PUBLIC_URL}/favicon-5p.png`
+      } else {
+        favicon.href = `${PUBLIC_URL}/favicon-${unreadCount}.png`
+      }
+    }
+  }, [messagesState.unreadMessages.length])
 
   if (reload) {
     // force a page reload
