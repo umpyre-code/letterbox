@@ -2,6 +2,7 @@ import {
   Box,
   Container,
   createStyles,
+  CssBaseline,
   Divider,
   makeStyles,
   Paper,
@@ -26,9 +27,10 @@ const SignInPage = () => {
   const classes = useStyles({})
   return (
     <Container maxWidth="sm" className={classes.container}>
+      <CssBaseline />
       <Paper className={classes.paper}>
         <Box className={classes.box}>
-          <Typography variant="h3">Sign In to Umpyre</Typography>
+          <Typography variant="h2">Sign In to Umpyre</Typography>
         </Box>
         <Box className={classes.box}>
           <Typography>Umpyre is a better way to communicate online.</Typography>
