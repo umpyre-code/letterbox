@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Container,
   createStyles,
@@ -28,7 +27,7 @@ import { Balance } from '../../../store/models/account'
 import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { markdownToHtml } from '../../../util/markdownToHtml'
 import Loading from '../Loading'
-import { Badge } from './Badge'
+import { Badge, MiniBadge } from './Badge'
 import { ImageUpload } from './ImageUpload'
 import { ProfileAvatar } from './ProfileAvatar'
 
@@ -77,21 +76,6 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"'
       ].join(',')
-    },
-    ralBox: {
-      display: 'inline-block',
-      verticalAlign: 'middle',
-      backgroundColor: '#ffcccc',
-      borderRadius: '12px',
-      padding: theme.spacing(1),
-      minWidth: '90px'
-    },
-    badgeBox: {
-      display: 'inline-block',
-      verticalAlign: 'middle',
-      backgroundColor: '#ccccff',
-      borderRadius: '5px',
-      padding: theme.spacing(1)
     },
     sendIcon: {
       marginLeft: theme.spacing(1)
@@ -305,9 +289,8 @@ interface RalProps {
 }
 
 export const Ral: React.FC<RalProps> = ({ profile }) => {
-  const classes = useStyles({})
   return (
-    <Box className={classes.ralBox}>
+    <MiniBadge>
       <Typography>
         RAL: ${profile.ral}
         <Tooltip
@@ -328,7 +311,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
           <HelpIcon style={{ padding: 4, verticalAlign: 'top' }}>what&apos;s RAL</HelpIcon>
         </Tooltip>
       </Typography>
-    </Box>
+    </MiniBadge>
   )
 }
 

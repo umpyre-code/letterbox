@@ -15,29 +15,44 @@ import {
   Slider,
   TextField,
   Theme,
-  Typography
+  Typography,
+  WithStyles
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
+import { withStyles } from '@material-ui/styles'
 import qs from 'qs'
 import * as React from 'react'
 import { API_ENDPOINT, PUBLIC_URL } from '../../../store/api'
 import { ClientProfile } from '../../../store/models/client'
 import { CopyIcon } from '../CopyIcon'
 
+const badgeStyles = (theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'inline-block',
+      verticalAlign: 'middle',
+      backgroundColor: theme.palette.secondary.light,
+      borderRadius: '12px',
+      padding: theme.spacing(1),
+      minWidth: '90px',
+      boxShadow: 'inset 0 0 4px rgba(0,0,0,0.2)'
+    }
+  })
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    badgeButton: {
-      backgroundColor: '#ffcccc',
-      borderRadius: '12px',
-      cursor: 'pointer',
-      display: 'inline-block',
-      padding: theme.spacing(1),
-      verticalAlign: 'middle',
-      textTransform: 'none',
-      textAlign: 'left',
-      minWidth: '90px'
-    },
+    // badgeButton: {
+    //   backgroundColor: '#ffcccc',
+    //   borderRadius: '12px',
+    //   cursor: 'pointer',
+    //   display: 'inline-block',
+    //   padding: theme.spacing(1),
+    //   verticalAlign: 'middle',
+    //   textTransform: 'none',
+    //   textAlign: 'left',
+    //   minWidth: '90px'
+    // },
     copyBox: {},
     badgeBox: {
       '& pre': {
@@ -380,13 +395,31 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   )
 }
 
+interface MiniBadgeProps extends WithStyles<typeof badgeStyles> {
+  onClick?: () => void
+  children: React.ReactNode
+}
+
+export const MiniBadgeButton = withStyles(badgeStyles)(
+  ({ children, classes, onClick }: MiniBadgeProps) => (
+    <Button className={classes.root} onClick={onClick}>
+      {children}
+    </Button>
+  )
+)
+
+export const MiniBadge = withStyles(badgeStyles)(({ children, classes }: MiniBadgeProps) => (
+  <Box className={classes.root}>{children}</Box>
+))
+
+MiniBadge.defaultProps = { onClick: undefined }
+
 export const Badge: React.FC<BadgeProps> = props => {
   const classes = useStyles({})
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
   return (
     <React.Fragment>
-      <Button
-        className={classes.badgeButton}
+      <MiniBadgeButton
         onClick={() => {
           setIsOpen(!isOpen)
         }}
@@ -395,7 +428,7 @@ export const Badge: React.FC<BadgeProps> = props => {
           Badge
           <ContactMailIcon style={{ padding: 4, verticalAlign: 'top' }}>Get badge</ContactMailIcon>
         </Typography>
-      </Button>
+      </MiniBadgeButton>
       <Modal open={isOpen} onClose={() => setIsOpen(false)}>
         <Paper className={classes.modalPaper}>
           <Grid container direction="column" spacing={1}>
