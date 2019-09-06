@@ -85,7 +85,7 @@ const IndexPageFC: React.FC<AllProps> = ({
       const unreadCount = messagesState.unreadMessages.length
       if (unreadCount === 0) {
         favicon.href = `${PUBLIC_URL}/favicon.png`
-      } else if (unreadCount > 5) {
+      } else if (unreadCount >= 5) {
         favicon.href = `${PUBLIC_URL}/favicon-5p.png`
       } else {
         favicon.href = `${PUBLIC_URL}/favicon-${unreadCount}.png`
