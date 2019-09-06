@@ -225,6 +225,10 @@
   "main": "src/start.js",
   "name": "letterbox",
   "private": true,
+  "puppeteerArgs": [
+    "--no-sandbox",
+    "--disable-setuid-sandbox"
+  ],
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "build": "node scripts/build.js",

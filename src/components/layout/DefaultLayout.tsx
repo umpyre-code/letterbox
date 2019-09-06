@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     // },
     headerContainer: {
       padding: theme.spacing(1),
+      backgroundImage: `linear-gradient(${theme.palette.primary.dark}, ${theme.palette.grey[200]})`,
       backgroundColor: theme.palette.primary.light
     },
     bodyGrid: {
