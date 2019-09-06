@@ -8,8 +8,12 @@ steps:
     env:
       - 'CI=true'
   - name: 'gcr.io/cloud-builders/npm'
-    entrypoint: 'yarn'
-    args: ['run', 'build']
+    entrypoint: 'sh'
+    args:
+      [
+        '-c',
+        'apt-get update -qq ; DEBIAN_FRONTEND=noninteractive apt-get install -yf libx11 && yarn build',
+      ]
     env:
       - 'PUBLIC_URL=https://staging.umpyre.io'
       - 'API_URL=https://api.staging.umpyre.io'
