@@ -13,7 +13,7 @@ steps:
     args:
       [
         '-c',
-        'apt-get update -qq ; DEBIAN_FRONTEND=noninteractive apt-get install -yqf libx11 && yarn build',
+        'apt-get update -qq ; DEBIAN_FRONTEND=noninteractive apt-get install -yqf libx11-6 && yarn build',
       ]
     env:
       - 'PUBLIC_URL=https://staging.umpyre.io'
