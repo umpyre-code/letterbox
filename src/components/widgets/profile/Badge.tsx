@@ -167,6 +167,7 @@ const radioStyles = makeStyles((theme: Theme) =>
     },
     checked: {
       '& + img': {
+        marginTop: '4px',
         backgroundColor: theme.palette.secondary.dark,
         borderColor: theme.palette.secondary.dark,
         boxShadow: `0 0 12px 3px ${theme.palette.secondary.dark}`,
