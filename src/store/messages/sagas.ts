@@ -89,7 +89,7 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
       )
       .sortBy(['received_at'])
       .reverse()
-      .take(5)
+      .take(10)
       .value(),
     unreadMessages: messages
       .filter(message => message.read === false && message.to === clientId)
