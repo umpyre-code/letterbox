@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme: Theme) =>
         objectFit: 'cover',
         width: '100%',
         height: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        display: 'block'
       },
       alignItems: 'center',
       borderRadius: '50%',

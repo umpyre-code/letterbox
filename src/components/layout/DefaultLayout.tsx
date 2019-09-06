@@ -4,15 +4,13 @@ import {
   CssBaseline,
   Divider,
   Grid,
-  Link,
   makeStyles,
-  Theme,
-  Typography
+  Theme
 } from '@material-ui/core'
 import * as React from 'react'
 import * as Router from 'react-router-dom'
-import { ClientProfile } from '../../store/models/client'
 import { Balance } from '../../store/models/account'
+import { ClientProfile } from '../../store/models/client'
 import { Logotype } from '../widgets/Logotype'
 import { Profile } from '../widgets/profile/Profile'
 
