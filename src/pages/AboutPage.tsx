@@ -40,9 +40,6 @@ const AboutPage = () => {
             <Typography variant="h3">About Umpyre</Typography>
           </Box>
           <Box className={classes.box}>
-            <Typography>Umpyre is a better way to reach people.</Typography>
-          </Box>
-          <Box className={classes.box}>
             <Typography variant="h5">What’s Umpyre?</Typography>
           </Box>
           <Box className={classes.box}>
