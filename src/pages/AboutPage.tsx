@@ -6,7 +6,8 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  Link
 } from '@material-ui/core'
 import * as React from 'react'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
@@ -99,6 +100,27 @@ const AboutPage = () => {
           <Box className={classes.box}>
             <Typography variant="body1">
               We will never share your data with third parties or advertisers.
+            </Typography>
+          </Box>
+          <Box className={classes.box}>
+            <Typography variant="h5">What are the fees?</Typography>
+          </Box>
+          <Box className={classes.box}>
+            <Typography variant="body1">
+              The fee to send a message is 3% paid by the sender, which is nonrefundable. The fee to
+              read a message is 7%, paid by the recipient when the message is read. These fees only
+              apply to messages which have payments. If you send a message with no payment attached,
+              there is no fee. For unread messages, the message payment minus the sender fee is
+              refunded if the message is not read within 30 days.
+            </Typography>
+            <Typography variant="body1">
+              Additionally, our payment processor may incur additional fees for adding or removing
+              funds. We currently use Stripe which charges fees for adding credits and receiving
+              payouts. For details,{' '}
+              <Link href="https://stripe.com/pricing" target="_blank">
+                please see Stripe&apos;s fee documentation
+              </Link>
+              .
             </Typography>
           </Box>
           <Box className={classes.box}>
