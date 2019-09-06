@@ -40,7 +40,7 @@ const AboutPage = () => {
             <Typography variant="h3">About Umpyre</Typography>
           </Box>
           <Box className={classes.box}>
-            <Typography>Umpyre is a better way to communicate online.</Typography>
+            <Typography>Umpyre is a better way to reach people.</Typography>
           </Box>
           <Box className={classes.box}>
             <Typography variant="h5">What’s Umpyre?</Typography>
@@ -48,9 +48,9 @@ const AboutPage = () => {
           <Box className={classes.box}>
             <Typography variant="body1">
               Umpyre is a messaging platform with payments. You can send a message to anyone and
-              attach a payment to that message. Anyone can receive messages from anyone, and those
-              messages are ranked according to their value. Messages which aren’t read within 30
-              days are deleted, and the payment is refunded minus any fees.
+              attach a payment. Anyone can receive messages, and messages are ranked by their value.
+              Messages which aren’t read within 30 days are deleted, and the payment is refunded
+              minus fees.
             </Typography>
           </Box>
           <Box className={classes.box}>
@@ -68,7 +68,16 @@ const AboutPage = () => {
           <Box className={classes.box}>
             <Typography variant="body1">
               We don’t dictate how you use our platform, we don’t police content, and your messages
-              are always private. In fact, we couldn’t read your messages if we wanted to.
+              are always private. In fact, we can&apos;t read your messages.
+            </Typography>
+          </Box>
+          <Box className={classes.box}>
+            <Typography variant="body1">
+              We&apos;re an open company, and{' '}
+              <Link href="https://github.com/umpyre-code" target="_blank" rel="noopener noreferrer">
+                we invite you to visit GitHub
+              </Link>{' '}
+              where you can see the nuts and bolts, or even contribute.
             </Typography>
           </Box>
           <Box className={classes.box}>
@@ -107,11 +116,11 @@ const AboutPage = () => {
           </Box>
           <Box className={classes.box}>
             <Typography variant="body1">
-              The fee to send a message is 3% paid by the sender, which is nonrefundable. The fee to
-              read a message is 7%, paid by the recipient when the message is read. These fees only
-              apply to messages which have payments. If you send a message with no payment attached,
-              there is no fee. For unread messages, the message payment minus the sender fee is
-              refunded if the message is not read within 30 days.
+              The fee to send a message is 3%, paid by the sender. The fee to read a message is 7%,
+              paid by the recipient when the message is read. These fees only apply to messages
+              which have payments. If you send a message with no payment, there is no fee. For
+              unread messages, the payment minus the sender fee is refunded if the message is not
+              read within 30 days.
             </Typography>
             <Typography variant="body1">
               Additionally, our payment processor may incur additional fees for adding or removing

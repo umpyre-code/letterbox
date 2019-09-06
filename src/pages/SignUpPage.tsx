@@ -46,10 +46,10 @@ const SignUpPage = () => {
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
           <Box className={classes.box}>
-            <Typography variant="h3">Join Umpyre</Typography>
+            <Typography variant="h2">Join Umpyre</Typography>
           </Box>
           <Box className={classes.box}>
-            <Typography>Umpyre is a better way to communicate online.</Typography>
+            <Typography>Umpyre is a better way to reach people.</Typography>
           </Box>
 
           <Divider />
