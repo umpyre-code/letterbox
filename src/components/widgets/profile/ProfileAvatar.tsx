@@ -59,6 +59,10 @@ const useStyles = makeStyles((theme: Theme) =>
         height: '150%',
         color: theme.palette.grey[500]
       },
+      '& svg text': {
+        fill: theme.palette.background.default,
+        fontFamily: theme.typography.fontFamily
+      },
       [theme.breakpoints.down('sm')]: {
         maxWidth: 120,
         maxHeight: 120
@@ -73,15 +77,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function getStyles(size: AvatarSize) {
   if (size === 'tiny') {
-    return { width: 32, height: 32, fontSize: '1rem' }
+    return { width: 32, height: 32 }
   }
   if (size === 'medium') {
-    return { width: 200, height: 200, fontSize: '5rem' }
+    return { width: 200, height: 200 }
   }
   if (size === 'large') {
-    return { width: 1000, height: 1000, fontSize: '6rem' }
+    return { width: 1000, height: 1000 }
   }
-  return { width: 45, height: 45, fontSize: '1.5rem' }
+  return { width: 45, height: 45 }
 }
 
 interface BoxProps {
@@ -116,7 +120,17 @@ export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
       return (
         <TextAvatarBox size={size}>
           <PersonIcon />
-          <div style={{ zIndex: 1 }}>{ClientProfileHelper.FROM(profile).getInitials()}</div>
+          <svg viewBox="0 0 30 30" style={{ zIndex: 1, width: '100%' }}>
+            <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              alignmentBaseline="middle"
+            >
+              {ClientProfileHelper.FROM(profile).getInitials()}
+            </text>
+          </svg>
         </TextAvatarBox>
       )
     }

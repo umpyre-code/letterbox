@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '5px',
       overflow: 'scroll',
       height: '150px',
-      maxWidth: '550px',
+      maxWidth: '800px',
       margin: theme.spacing(1)
     },
     root: {
@@ -75,9 +75,10 @@ const useStyles = makeStyles((theme: Theme) =>
       left: '50%',
       top: '50%',
       transform: 'translate(-50%, -50%)',
-      overflowY: 'auto',
+      overflow: 'auto',
       maxHeight: 'calc(100vh - 70px)',
-      position: 'absolute'
+      position: 'absolute',
+      width: '600px'
     },
     formControl: {},
     group: {

@@ -112,7 +112,7 @@ const MessagePageFC: React.FC<AllProps> = ({
     if (messageRef.current) {
       messageRef.current.scrollIntoView()
     }
-  })
+  }, [messageHash])
 
   function messageBodies() {
     return loadedMessages.map((message, index) => (
