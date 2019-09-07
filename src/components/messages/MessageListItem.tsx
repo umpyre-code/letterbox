@@ -18,9 +18,9 @@ import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import { API } from '../../store/api'
 import { ApplicationState } from '../../store/ApplicationState'
-import { ClientProfileHelper, loadingClientProfile } from '../../store/client/types'
+import { loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
-import { ClientCredentials, ClientProfile } from '../../store/models/client'
+import { ClientCredentials } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
 import { Emoji } from '../widgets/Emoji'
 import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
@@ -187,13 +187,13 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     if (message.to === credentials.client_id) {
       return (
         <React.Fragment>
-          <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>from</span> {fromProfile.full_name}
+          <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>↓ from</span> {fromProfile.full_name}
         </React.Fragment>
       )
     }
     return (
       <React.Fragment>
-        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>to</span> {toProfile.full_name}
+        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>↑ to</span> {toProfile.full_name}
       </React.Fragment>
     )
   }

@@ -79,22 +79,25 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
   phoneVerificationError
 }) => {
   const classes = useStyles({})
-  const [flashError, setFlashError] = React.useState<boolean>(false)
+  const [verifying, setVerifying] = React.useState<boolean>(false)
   const [showResend, setShowResend] = React.useState<boolean>(true)
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     const code = Number(event.target.value)
     if (code.toString().length === 6) {
-      setFlashError(true)
+      setVerifying(true)
       verifyPhone(code)
     } else {
-      setFlashError(false)
+      setVerifying(false)
     }
   }
 
   function getHelperText() {
-    if (phoneVerificationError && flashError) {
-      return 'Invalid code'
+    if (verifying) {
+      if (phoneVerificationError) {
+        return 'Invalid code'
+      }
+      return 'Checking code...'
     }
     return null
   }
