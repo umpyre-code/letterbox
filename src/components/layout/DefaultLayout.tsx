@@ -56,8 +56,10 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
                 </Router.Link>
               </Grid>
               {profile && balance && (
-                <Grid item>
-                  <Profile profile={profile} balance={balance} menu />
+                <Grid item container xs alignItems="flex-start" justify="flex-end">
+                  <Grid item>
+                    <Profile profile={profile} balance={balance} menu />
+                  </Grid>
                 </Grid>
               )}
             </Grid>
