@@ -114,7 +114,10 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
     })
     .sortBy(['received_at'])
     .reverse()
-    .filter(m => !unreadHashes.has(m.hash))
+    .filter(
+      // Filter out threads which have unread children from above
+      m => !m.children || m.children.find(childHash => unreadHashes.has(childHash)) === undefined
+    )
     .take(10)
     .value()
   return { unreadMessages, readMessages }
