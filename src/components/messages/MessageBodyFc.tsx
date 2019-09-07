@@ -13,6 +13,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1, 3, 1, 3)
     },
     messageBody: {
+      '& p': {
+        wordWrap: 'break-word',
+        hyphens: 'auto'
+      },
       '& a:link': {
         textDecoration: 'underline'
       },

@@ -76,45 +76,48 @@ function cmpByValue(first: MessageBase, second: MessageBase): number {
 }
 
 function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessages {
-  return {
-    readMessages: _.chain(messages)
-      .filter(
-        message => message.from === clientId || (message.read === true && message.to === clientId)
-      )
-      .groupBy(message => [message.to, message.from].sort().join() + message.pda)
-      .map(messageDict => {
-        // compute the sum of message values, where the recipient is this client
-        const valueCents = _.chain(messageDict)
-          .filter(message => message.to === clientId)
-          .sumBy('value_cents')
-          .value()
-        const topMessage = _.chain(messageDict)
-          .maxBy('received_at') // show only most recent in thread
-          .value()
-        return { ...topMessage, value_cents: valueCents }
-      })
-      .sortBy(['received_at'])
-      .reverse()
-      .take(10)
-      .value(),
-    unreadMessages: _.chain(messages)
-      .filter(message => message.read === false && message.to === clientId)
-      .groupBy(message => [message.to, message.from].sort().join() + message.pda)
-      .map(messageDict => {
-        // compute the sum of message values, where the recipient is this client
-        const valueCents = _.chain(messageDict)
-          .filter(message => message.to === clientId)
-          .sumBy('value_cents')
-          .value()
-        const topMessage = _.chain(messageDict)
-          .maxBy('received_at') // show only most recent in thread
-          .value()
-        return { ...topMessage, value_cents: valueCents }
-      })
-      .sort(cmpByValue)
-      .take(5)
-      .value()
-  }
+  const unreadMessages = _.chain(messages)
+    .filter(message => message.read === false && message.to === clientId)
+    .groupBy(message => [message.to, message.from].sort().join() + message.pda)
+    .map(messageDict => {
+      // compute the sum of message values, where the recipient is this client
+      const valueCents = _.chain(messageDict)
+        .filter(message => message.to === clientId)
+        .sumBy('value_cents')
+        .value()
+      const topMessage = _.chain(messageDict)
+        .maxBy('received_at') // show only most recent in thread
+        .value()
+      return { ...topMessage, value_cents: valueCents }
+    })
+    .sort(cmpByValue)
+    .take(5)
+    .value()
+
+  const unreadHashes = new Set(_.map(unreadMessages, 'hash'))
+
+  const readMessages = _.chain(messages)
+    .filter(
+      message => message.from === clientId || (message.read === true && message.to === clientId)
+    )
+    .groupBy(message => [message.to, message.from].sort().join() + message.pda)
+    .map(messageDict => {
+      // compute the sum of message values, where the recipient is this client
+      const valueCents = _.chain(messageDict)
+        .filter(message => message.to === clientId)
+        .sumBy('value_cents')
+        .value()
+      const topMessage = _.chain(messageDict)
+        .maxBy('received_at') // show only most recent in thread
+        .value()
+      return { ...topMessage, value_cents: valueCents }
+    })
+    .sortBy(['received_at'])
+    .reverse()
+    .filter(m => !unreadHashes.has(m.hash))
+    .take(10)
+    .value()
+  return { unreadMessages, readMessages }
 }
 
 function* handleInitializeMessages() {

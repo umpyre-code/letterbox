@@ -107,12 +107,12 @@ const MessagePageFC: React.FC<AllProps> = ({
     })
   }, [loadedMessages.length])
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     // scroll to message
     if (messageRef.current) {
       messageRef.current.scrollIntoView()
     }
-  }, [messageHash])
+  }, [messageRef, messageHash])
 
   function messageBodies() {
     return loadedMessages.map((message, index) => (

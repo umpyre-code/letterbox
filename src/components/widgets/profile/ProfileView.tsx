@@ -62,6 +62,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(0, 1, 0, 1)
     },
     profileTypography: {
+      '& p': {
+        wordWrap: 'break-word',
+        hyphens: 'auto'
+      },
       '& a:link': {
         textDecoration: 'underline'
       },
@@ -77,7 +81,27 @@ const useStyles = makeStyles((theme: Theme) =>
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"'
-      ].join(',')
+      ].join(','),
+      '& blockquote': {
+        background: '#f9f9f9',
+        margin: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        borderLeft: '2px solid rgb(212, 212, 212)',
+        boxShadow:
+          '0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 1px 0px rgba(0, 0, 0, 0.04), 0px 2px 1px -1px rgba(0, 0, 0, 0.02)'
+      },
+      '& pre': {
+        background: '#f9f9f9',
+        margin: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        borderLeft: '2px solid rgb(212, 212, 212)',
+        boxShadow:
+          '0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 1px 0px rgba(0, 0, 0, 0.04), 0px 2px 1px -1px rgba(0, 0, 0, 0.02)'
+      }
     },
     sendIcon: {
       marginLeft: theme.spacing(1)
