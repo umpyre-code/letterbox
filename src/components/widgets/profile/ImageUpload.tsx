@@ -181,11 +181,13 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
 
   async function getCroppedImg(image, makeCrop: Crop): Promise<string> {
     const canvas = document.createElement('canvas')
+    const dpr = 3
+    canvas.width = makeCrop.width * dpr
+    canvas.height = makeCrop.height * dpr
+    const ctx = canvas.getContext('2d')
+    ctx.scale(dpr, dpr)
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
-    canvas.width = makeCrop.width
-    canvas.height = makeCrop.height
-    const ctx = canvas.getContext('2d')
 
     ctx.drawImage(
       image,
