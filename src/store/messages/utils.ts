@@ -227,7 +227,6 @@ async function processSystemMessages(clientId: ClientID, messages: MessageBase[]
       .value()
   )
   systemMessages.forEach(message => {
-    console.log(message)
     switch (message.body.type) {
       case MessageType.SYSTEM_READ:
         // message was read, update the corresponding message
