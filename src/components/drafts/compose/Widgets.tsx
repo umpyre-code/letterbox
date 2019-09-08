@@ -94,8 +94,8 @@ export const PDAToolTip = () => (
         </Typography>
         <br />
         <Typography>
-          The PDA is a short message, like a subject line. The PDA is not protected by end-to-end
-          encryption, and the recipient can view the PDA before the message is read.
+          The PDA is a short message, like a subject line. The recipient can view the PDA before the
+          message is read.
         </Typography>
       </React.Fragment>
     }
