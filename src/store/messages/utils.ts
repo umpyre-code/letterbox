@@ -31,7 +31,6 @@ export function toApiMessage(message: EncryptedMessage, from: ClientID): APIMess
     body: message.body as string,
     from,
     nonce: message.nonce,
-    pda: '',
     received_at: undefined,
     recipient_public_key: message.recipient_public_key,
     sender_public_key: message.sender_public_key,

@@ -66,7 +66,6 @@ export interface APIMessage {
   from: ClientID
   hash?: string
   nonce: string
-  pda?: string
   received_at?: Timestamp
   recipient_public_key: string
   sender_public_key: string
