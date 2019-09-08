@@ -7,7 +7,8 @@ import {
   ListItemText,
   makeStyles,
   Theme,
-  Typography
+  Typography,
+  Tooltip
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/ReplyOutlined'
@@ -79,7 +80,7 @@ interface MessageValueProps {
 }
 
 const MessageValue: React.FC<MessageValueProps> = ({ message }) => (
-  <Typography variant="h5" color="inherit">
+  <Typography variant="h5" color="inherit" style={{ paddingLeft: '3px' }}>
     <NumberFormat
       allowNegative={false}
       decimalScale={0}
@@ -240,6 +241,20 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
         />
         {showDelete && <MessageDelete message={message} deleteMessage={deleteMessage} />}
         {isReply && <ReplyIcon />}
+        {message.read && (
+          <Tooltip title="Message was read" enterDelay={500}>
+            <div>
+              <Emoji ariaLabel="message was read">👀</Emoji>
+            </div>
+          </Tooltip>
+        )}
+        {!message.read && (
+          <Tooltip title="Fresh message" enterDelay={500}>
+            <div>
+              <Emoji ariaLabel="fresh message">✨</Emoji>
+            </div>
+          </Tooltip>
+        )}
         <MessageValue message={message} />
       </ListItem>
     </Box>

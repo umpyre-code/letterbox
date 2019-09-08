@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { db } from '../../db/db'
 import { API } from '../api'
 import { KeyPair } from '../keys/types'
-import { ClientCredentials, ClientID } from '../models/client'
+import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
 import {
   APIMessage,
   DecryptedMessage,
@@ -11,7 +11,8 @@ import {
   fromApiMessage,
   MessageBase,
   MessageBody,
-  MessageHash
+  MessageHash,
+  MessageType
 } from '../models/messages'
 
 export async function addChildMessage(
@@ -30,7 +31,7 @@ export function toApiMessage(message: EncryptedMessage, from: ClientID): APIMess
     body: message.body as string,
     from,
     nonce: message.nonce,
-    pda: message.pda,
+    pda: '',
     received_at: undefined,
     recipient_public_key: message.recipient_public_key,
     sender_public_key: message.sender_public_key,
@@ -127,7 +128,8 @@ export async function signMessage(message: APIMessage, keyPair: KeyPair): Promis
 export async function getMessagesWithoutBody(
   withinDays: number,
   includeDeleted: boolean,
-  includeMissingKey: boolean
+  includeMissingKey: boolean,
+  includeSystemMessages: boolean
 ): Promise<MessageBase[]> {
   const fromDate = new Date()
   fromDate.setDate(fromDate.getDate() - withinDays)
@@ -145,7 +147,9 @@ export async function getMessagesWithoutBody(
         message.received_at > fromDate &&
         (includeMissingKey ||
           boxPublicKeys.has(message.recipient_public_key) ||
-          boxPublicKeys.has(message.sender_public_key))
+          boxPublicKeys.has(message.sender_public_key)) &&
+        (includeSystemMessages ||
+          (message.type === undefined || message.type === MessageType.MESSAGE))
       )
     })
     .toArray()
@@ -207,6 +211,38 @@ export async function decryptMessage(
   return undefined
 }
 
+async function processSystemMessages(clientId: ClientID, messages: MessageBase[]) {
+  const systemMessages = await Promise.all(
+    _.chain(messages)
+      .filter(message => message.type.startsWith('@@system/'))
+      .map(async message => {
+        // decrypt
+        const messageBody = await db.messageBodies.get({ hash: message.hash })
+        const decryptedMessage = await decryptMessage(clientId, {
+          ...message,
+          ...messageBody
+        })
+        return decryptedMessage
+      })
+      .value()
+  )
+  systemMessages.forEach(message => {
+    console.log(message)
+    switch (message.body.type) {
+      case MessageType.SYSTEM_READ:
+        // message was read, update the corresponding message
+        try {
+          db.messageInfos.update(message.body.messageSeen, { read: true })
+        } catch (error) {
+          console.error(error)
+        }
+        break
+      default:
+        break
+    }
+  })
+}
+
 export async function storeAndRetrieveMessages(
   clientId: ClientID,
   messages: APIMessage[]
@@ -220,14 +256,31 @@ export async function storeAndRetrieveMessages(
     message => message && !existingMessages.find(m => m && m.hash === message.hash)
   )
 
+  // decrypt newly received messages and perform any processing needed
+  const processedMessages = await Promise.all(
+    _.map(newMessages, async message => {
+      const encryptedMessage = fromApiMessage(message)
+      const decryptedMessage = await decryptMessage(clientId, encryptedMessage)
+      // check if these messages have parents, and if so, update them accordingly
+      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
+        addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
+      }
+      return {
+        ...encryptedMessage,
+        pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
+        type: decryptedMessage.body.type
+      }
+    })
+  )
+
   // Split messages into info and body parts
-  const messageBodies = newMessages.map(message => ({
+  const messageBodies = processedMessages.map(message => ({
     body: message.body,
     hash: message.hash
   }))
 
-  const messageInfos = newMessages.map(message => ({
-    ...fromApiMessage(message),
+  const messageInfos = processedMessages.map(message => ({
+    ...message,
     body: undefined
   }))
 
@@ -236,17 +289,9 @@ export async function storeAndRetrieveMessages(
     await db.messageBodies.bulkAdd(messageBodies)
   })
 
-  // check if these messages have parents, and if so, update them accordingly
-  await Promise.all(
-    _.zipWith(messageInfos, messageBodies, (m1, m2) => ({ ...m1, ...m2 })).map(async message => {
-      const decryptedMessage = await decryptMessage(clientId, message)
-      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
-        addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
-      }
-    })
-  )
+  await processSystemMessages(clientId, messageInfos)
 
-  return getMessagesWithoutBody(30, false, false)
+  return getMessagesWithoutBody(30, false, false, false)
 }
 
 export async function fetchMessages(
@@ -255,4 +300,60 @@ export async function fetchMessages(
 ): Promise<APIMessage[]> {
   const api = new API(credentials)
   return api.fetchMessages(sketch)
+}
+
+export async function prepareMessage(
+  credentials: ClientCredentials,
+  keyPair: KeyPair,
+  message: MessageBase,
+  recipients: ClientID[]
+): Promise<APIMessage[]> {
+  const api = new API(credentials)
+  const res = recipients.map(recipient => {
+    async function inner(): Promise<APIMessage> {
+      const recipientProfile: ClientProfile = await api.fetchClient(recipient)
+      const apiMessage = toApiMessage({ ...message, to: recipient }, credentials.client_id)
+      const encryptedMessage = await encryptMessageBody(
+        apiMessage,
+        keyPair,
+        recipientProfile.box_public_key
+      )
+      const hashedMessage = await hashMessage(encryptedMessage)
+      return signMessage(hashedMessage, keyPair)
+    }
+    return inner()
+  })
+
+  return Promise.all(res)
+}
+
+export async function systemMessageReadFor(
+  credentials: ClientCredentials,
+  keyPair: KeyPair,
+  hash: MessageHash
+): Promise<APIMessage[]> {
+  const messageBody: MessageBody = {
+    type: MessageType.SYSTEM_READ,
+    messageSeen: hash
+  }
+  const readMessage = await db.messageInfos.get({ hash })
+  // only send read receipts if we're the recipient of the message
+  if (readMessage.to === credentials.client_id) {
+    const message = {
+      body: JSON.stringify(messageBody),
+      deleted: false,
+      from: credentials.client_id,
+      nonce: '',
+      read: false,
+      recipient_public_key: '',
+      sender_public_key: '',
+      sent_at: new Date(),
+      to: readMessage.from,
+      value_cents: 0
+    }
+
+    return prepareMessage(credentials, keyPair, message, [readMessage.from])
+  }
+
+  return Promise.resolve([])
 }

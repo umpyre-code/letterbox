@@ -50,7 +50,8 @@ import {
   fetchMessages,
   getMessagesWithoutBody,
   storeAndRetrieveMessages,
-  addChildMessage
+  addChildMessage,
+  systemMessageReadFor
 } from './utils'
 
 function* delayThenFetchMessages() {
@@ -127,7 +128,7 @@ function* handleInitializeMessages() {
   try {
     // Update message sketch first
     yield putResolve(updateSketchRequest())
-    const res = yield call(getMessagesWithoutBody, 30, false, false)
+    const res = yield call(getMessagesWithoutBody, 30, false, false, false)
 
     if (res.error) {
       yield put(initializeMessagesError(res.error))
@@ -240,7 +241,7 @@ function* watchSendMessagesRequest() {
 }
 
 async function calculateMessageSketch(): Promise<string> {
-  const messagesFromLast31days = await getMessagesWithoutBody(31, true, true)
+  const messagesFromLast31days = await getMessagesWithoutBody(31, true, true, true)
 
   // Construct bloom filter
   const bf = new BloomFilter()
@@ -265,7 +266,7 @@ async function settlePayment(
 ): Promise<SettlePaymentResponse | undefined> {
   // fetch the message first, check if the value is >0
   const message = await db.messageInfos.get(hash)
-  if (message && message.value_cents > 0) {
+  if (message && message.to === credentials.client_id && message.value_cents > 0) {
     const api = new API(credentials)
     return api.settlePayment(hash)
   }
@@ -281,14 +282,13 @@ function* handleMessageReadSuccess(payload: string, state: ApplicationState) {
   // API.
   yield call(markMessageAsRead, payload)
   // Reload messages from DB
-  const messages = yield call(getMessagesWithoutBody, 30, false, false)
+  const messages = yield call(getMessagesWithoutBody, 30, false, false, false)
   const clientId = state.clientState.credentials.client_id
 
   const rankedMessages = rankMessages(clientId, messages)
   yield put(messageReadSuccess(rankedMessages))
 }
 
-// Message fetch main loop: this saga runs forever and ever
 function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
   const { payload } = values
   const state: ApplicationState = yield select()
@@ -301,6 +301,15 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     } else if (res) {
       yield put(fetchBalanceSuccess(res.balance))
     }
+
+    // send system message to mark this message as read
+    const messages = yield call(
+      systemMessageReadFor,
+      credentials,
+      state.keysState.current_key,
+      payload
+    )
+    yield call(sendMessages, credentials, messages)
 
     yield handleMessageReadSuccess(payload, state)
   } catch (error) {
@@ -324,7 +333,7 @@ function* watchMessageReadRequest() {
 async function markMessageDeleted(hash: MessageHash) {
   await db.messageBodies.delete(hash)
   await db.messageInfos.update(hash, { deleted: true })
-  return getMessagesWithoutBody(30, false, false)
+  return getMessagesWithoutBody(30, false, false, false)
 }
 
 function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {

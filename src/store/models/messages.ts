@@ -7,11 +7,24 @@ export interface Timestamp {
 
 export type MessageHash = string
 
+export enum MessageType {
+  // a plain old message
+  MESSAGE = '@@message/message',
+  // message was seen by the recipient (aka read)
+  SYSTEM_READ = '@@system/read'
+}
+
 export interface MessageBody {
+  // The message type
+  type: MessageType
   // The markdown message body
-  markdown: string
+  markdown?: string
   // Parent message hash, used for message replies
   parent?: MessageHash
+  // Message PDA
+  pda?: string
+  // the message that was seen, if this is a SYSTEM_READ message
+  messageSeen?: MessageHash
 }
 
 // The message body when it's stored in the DB
@@ -26,7 +39,7 @@ export interface MessageBase {
   from: ClientID
   hash?: MessageHash
   nonce: string
-  pda: string
+  pda?: string
   read: boolean
   received_at?: Date
   recipient_public_key: string
@@ -36,6 +49,7 @@ export interface MessageBase {
   to: ClientID
   value_cents: number
   children?: MessageHash[]
+  type?: MessageType
 }
 
 export interface DecryptedMessage extends MessageBase {
@@ -52,7 +66,7 @@ export interface APIMessage {
   from: ClientID
   hash?: string
   nonce: string
-  pda: string
+  pda?: string
   received_at?: Timestamp
   recipient_public_key: string
   sender_public_key: string

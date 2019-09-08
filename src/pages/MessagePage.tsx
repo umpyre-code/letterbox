@@ -102,7 +102,10 @@ const MessagePageFC: React.FC<AllProps> = ({
 
   React.useEffect(() => {
     // mark any unread messages as read
-    _.filter(loadedMessages, message => !message.read).forEach(message => {
+    _.filter(
+      loadedMessages,
+      message => !message.read && message.to === credentials.client_id
+    ).forEach(message => {
       messageRead(message.hash)
     })
   }, [loadedMessages.length])

@@ -1,14 +1,12 @@
 import { all, call, fork, put, select, takeEvery, throttle } from 'redux-saga/effects'
 import { db } from '../../db/db'
-import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
-import { KeyPair } from '../keys/types'
 import { sendMessagesRequest } from '../messages/actions'
-import { encryptMessageBody, hashMessage, signMessage, toApiMessage } from '../messages/utils'
-import { ClientCredentials, ClientID, ClientProfile } from '../models/client'
-import { APIMessage, MessageBase } from '../models/messages'
+import { prepareMessage } from '../messages/utils'
+import { APIMessage } from '../models/messages'
 import {
   addDraftError,
+  addDraftRequest,
   addDraftSuccess,
   initializeDraftsError,
   initializeDraftsSuccess,
@@ -19,8 +17,7 @@ import {
   sendDraftRequest,
   updateDraftError,
   updateDraftRequest,
-  updateDraftSuccess,
-  addDraftRequest
+  updateDraftSuccess
 } from './actions'
 import { Draft, DraftsActionTypes, NewDraft } from './types'
 
@@ -154,31 +151,6 @@ function* watchRemoveDraftRequest() {
 function* watchUpdateDraftRequest() {
   // Throttle this so we don't update too often
   yield throttle(500, DraftsActionTypes.UPDATE_DRAFT_REQUEST, handleUpdateDraft)
-}
-
-async function prepareMessage(
-  credentials: ClientCredentials,
-  keyPair: KeyPair,
-  message: MessageBase,
-  recipients: ClientID[]
-): Promise<APIMessage[]> {
-  const api = new API(credentials)
-  const res = recipients.map(recipient => {
-    async function inner(): Promise<APIMessage> {
-      const recipientProfile: ClientProfile = await api.fetchClient(recipient)
-      const apiMessage = toApiMessage({ ...message, to: recipient }, credentials.client_id)
-      const encryptedMessage = await encryptMessageBody(
-        apiMessage,
-        keyPair,
-        recipientProfile.box_public_key
-      )
-      const hashedMessage = await hashMessage(encryptedMessage)
-      return signMessage(hashedMessage, keyPair)
-    }
-    return inner()
-  })
-
-  return Promise.all(res)
 }
 
 function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {

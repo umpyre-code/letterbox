@@ -20,7 +20,7 @@ import {
 import { Draft } from '../../../store/drafts/types'
 import { Balance } from '../../../store/models/account'
 import { ClientCredentials, ClientID } from '../../../store/models/client'
-import { MessageBody } from '../../../store/models/messages'
+import { MessageBody, MessageType } from '../../../store/models/messages'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { PaymentInput } from '../../widgets/PaymentInput'
 import { Editor } from './Editor'
@@ -90,8 +90,10 @@ const ComposeFormFC: React.FC<AllProps> = ({
 
   function handleSend() {
     const messageBody: MessageBody = {
+      type: MessageType.MESSAGE,
       markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
-      parent: draft.inReplyTo
+      parent: draft.inReplyTo,
+      pda
     }
     const messageDraft = {
       ...draft,
@@ -100,7 +102,6 @@ const ComposeFormFC: React.FC<AllProps> = ({
         deleted: false,
         from: '',
         nonce: '',
-        pda,
         read: false,
         recipient_public_key: '',
         sender_public_key: '',
