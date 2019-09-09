@@ -59,12 +59,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const MessageBodyFc: React.FunctionComponent<MessageBodyProps> = ({ body }) => {
   const classes = useStyles({})
+  if (body.markdown) {
+    const html = markdownToHtml(body.markdown)
+    return (
+      <Box className={classes.bodyBox}>
+        <Typography className={classes.messageBody} dangerouslySetInnerHTML={{ __html: html }} />
+      </Box>
+    )
+  }
   return (
     <Box className={classes.bodyBox}>
-      <Typography
-        className={classes.messageBody}
-        dangerouslySetInnerHTML={{ __html: markdownToHtml(body.markdown) }}
-      />
+      <Typography variant="body2">
+        <em>can&apos;t load message body</em>
+      </Typography>
     </Box>
   )
 }
