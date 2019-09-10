@@ -169,7 +169,7 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
     )
 
     if (res.error) {
-      yield put(sendDraftError(res.error))
+      yield put(sendDraftError(res.error, draft))
     } else {
       // Save the message to the DB
       const apiMessages: APIMessage[] = res
@@ -180,9 +180,9 @@ function* handleSendDraft(values: ReturnType<typeof sendDraftRequest>) {
     }
   } catch (error) {
     if (error instanceof Error) {
-      yield put(sendDraftError(error.stack))
+      yield put(sendDraftError(error.stack, draft))
     } else {
-      yield put(sendDraftError('An unknown error occured.'))
+      yield put(sendDraftError('An unknown error occured.', draft))
     }
   }
 }

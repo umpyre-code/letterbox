@@ -31,5 +31,5 @@ export const updateDraftError = (errorMessage: string) =>
 export const sendDraftRequest = (draft: Draft) =>
   action(DraftsActionTypes.SEND_DRAFT_REQUEST, draft)
 export const sendDraftSuccess = () => action(DraftsActionTypes.SEND_DRAFT_SUCCESS)
-export const sendDraftError = (errorMessage: string) =>
-  action(DraftsActionTypes.SEND_DRAFT_ERROR, errorMessage)
+export const sendDraftError = (errorMessage: string, draft: Draft) =>
+  action(DraftsActionTypes.SEND_DRAFT_ERROR, errorMessage, draft)

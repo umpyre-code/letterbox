@@ -1,5 +1,6 @@
+import _ from 'lodash'
 import { Reducer } from 'redux'
-import { DraftsActionTypes, DraftsState } from './types'
+import { Draft, DraftsActionTypes, DraftsState } from './types'
 
 export const initialState: DraftsState = {
   drafts: Array.from([]),
@@ -9,10 +10,39 @@ export const initialState: DraftsState = {
 
 export const reducer: Reducer<DraftsState> = (state = initialState, action) => {
   switch (action.type) {
+    case DraftsActionTypes.SEND_DRAFT_REQUEST: {
+      const payloadDraft = action.payload as Draft
+      return {
+        ...state,
+        drafts: _.map(state.drafts, draft => {
+          if (draft.id === payloadDraft.id) {
+            return {
+              ...draft,
+              sending: true
+            }
+          }
+          return draft
+        })
+      }
+    }
+    case DraftsActionTypes.SEND_DRAFT_ERROR: {
+      const payloadDraft = action.meta as Draft
+      return {
+        ...state,
+        drafts: _.map(state.drafts, draft => {
+          if (draft.id === payloadDraft.id) {
+            return {
+              ...draft,
+              sending: false
+            }
+          }
+          return draft
+        })
+      }
+    }
     case DraftsActionTypes.ADD_DRAFT_REQUEST:
     case DraftsActionTypes.INITIALIZE_DRAFTS_REQUEST:
     case DraftsActionTypes.REMOVE_DRAFT_REQUEST:
-    case DraftsActionTypes.SEND_DRAFT_REQUEST:
     case DraftsActionTypes.UPDATE_DRAFT_REQUEST: {
       return state
     }
@@ -29,7 +59,6 @@ export const reducer: Reducer<DraftsState> = (state = initialState, action) => {
     case DraftsActionTypes.ADD_DRAFT_ERROR:
     case DraftsActionTypes.INITIALIZE_DRAFTS_ERROR:
     case DraftsActionTypes.REMOVE_DRAFT_ERROR:
-    case DraftsActionTypes.SEND_DRAFT_ERROR:
     case DraftsActionTypes.UPDATE_DRAFT_ERROR: {
       return { ...state, errors: action.payload }
     }
