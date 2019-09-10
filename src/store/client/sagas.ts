@@ -282,6 +282,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       if (drafts.length > 0) {
         yield put(addDraftRequest(_.last(drafts)))
       }
+      yield put(initializeMessagesRequest())
       yield put(push('/flashseed'))
     }
   } catch (error) {

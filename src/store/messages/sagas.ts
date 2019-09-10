@@ -186,7 +186,7 @@ function* handleFetchMessages() {
 }
 
 function* watchFetchMessagesRequest() {
-  yield takeEvery(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
+  yield takeLatest(MessagesActionTypes.FETCH_MESSAGES_REQUEST, handleFetchMessages)
 }
 
 async function sendMessages(
