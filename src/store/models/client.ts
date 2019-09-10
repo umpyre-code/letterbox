@@ -80,3 +80,13 @@ export interface AuthVerifyRequest {
 export interface AuthVerifyResponse extends ClientCredentials {
   server_proof: string
 }
+
+export enum EmailNotificationPrefs {
+  NEVER = 'never',
+  RAL = 'ral',
+  ALWAYS = 'always'
+}
+
+export interface ClientPrefs {
+  email_notifications: EmailNotificationPrefs
+}

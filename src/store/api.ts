@@ -22,7 +22,8 @@ import {
   ClientProfile,
   ClientSearchResult,
   NewClient,
-  VerifyPhoneResult
+  VerifyPhoneResult,
+  ClientPrefs
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 
@@ -175,5 +176,13 @@ export class API {
     return this.client.post(`/img/avatar/${clientId}`, data, {
       headers: { 'Content-Type': 'image/jpeg' }
     })
+  }
+
+  public async getClientPrefs(): Promise<ClientPrefs> {
+    return this.client.get(`/client/self/prefs`).then(response => response.data)
+  }
+
+  public async putClientPrefs(prefs: ClientPrefs): Promise<ClientPrefs> {
+    return this.client.put(`/client/self/prefs`, prefs).then(response => response.data)
   }
 }

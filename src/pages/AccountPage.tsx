@@ -13,6 +13,7 @@ import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
+import { AccountPrefs } from '../components/widgets/AccountPrefs'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -90,12 +91,10 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           path="/account"
                           render={() => (
                             <TabPanel name="account">
-                              <Typography variant="h5">Account info</Typography>
-                              <Typography variant="subtitle1">
-                                Looking good <Emoji ariaLabel="cool">😎</Emoji>
-                              </Typography>
-                              <br />
+                              <Typography variant="h5">Account Info</Typography>
                               <Typography>Your current reading level is ${profile.ral}</Typography>
+                              <br />
+                              <AccountPrefs profile={profile} credentials={credentials} />
                             </TabPanel>
                           )}
                         />
