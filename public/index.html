@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link id="favicon" rel="shortcut icon" type="image/png" href="%PUBLIC_URL%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#82b1ff" />
+    <meta name="description" content="Umpyre" />
+    <link rel="apple-touch-icon" href="logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <style type="text/css">
+      body {
+        background-color: #82b1ff;
+      }
+
+      .jumbo-emoji {
+        font-size: 1.5rem;
+      }
+
+      a:link {
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      a:visited {
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      a:hover {
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      a:active {
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .lds-heart {
+        display: inline-block;
+        position: relative;
+        margin: auto;
+        width: 64px;
+        height: 64px;
+        transform: rotate(45deg);
+        transform-origin: 32px 32px;
+      }
+
+      .lds-heart div {
+        top: 23px;
+        left: 19px;
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        background: #ffc0cb;
+        animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+
+      .lds-heart div:after,
+      .lds-heart div:before {
+        content: ' ';
+        position: absolute;
+        display: block;
+        width: 26px;
+        height: 26px;
+        background: #ffc0cb;
+      }
+
+      .lds-heart div:before {
+        left: -17px;
+        border-radius: 50% 0 0 50%;
+      }
+
+      .lds-heart div:after {
+        top: -17px;
+        border-radius: 50% 50% 0 0;
+      }
+
+      @keyframes lds-heart {
+        0% {
+          transform: scale(0.95);
+        }
+
+        5% {
+          transform: scale(1.1);
+        }
+
+        39% {
+          transform: scale(0.85);
+        }
+
+        45% {
+          transform: scale(1);
+        }
+
+        60% {
+          transform: scale(0.95);
+        }
+
+        100% {
+          transform: scale(0.9);
+        }
+      }
+
+      #updateAvailable {
+        background-color: #fff;
+        border-radius: 4px;
+        top: 10px;
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+          0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+        padding: 6px;
+        position: fixed;
+        text-align: left;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 100;
+      }
+      #updateAvailable button {
+        background-color: #fafafa;
+        border-radius: 4px;
+        border: none;
+        display: inline-block;
+        font-size: 15px;
+        font-weight: 500;
+        margin-left: 3px;
+        padding: 8px;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      #updateAvailable button:hover {
+        background-color: #f5f5f5;
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+          0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+      }
+    </style>
+    <title>Umpyre - Messaging for Humans</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run Umpyre.</noscript>
+    <div id="root">
+      <div
+        class="lds-heart"
+        style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(45deg);"
+      ></div>
+    </div>
+    <div id="updateAvailable" style="display: none;">Update available!<button>Reload</button></div>
+  </body>
+</html>

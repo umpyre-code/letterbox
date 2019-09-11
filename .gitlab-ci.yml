@@ -1,0 +1,45 @@
+---
+stages:
+  - dependencies
+  - build
+  - test
+  - checks
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+image: node:lts
+
+cache:
+  paths:
+    - node_modules/
+
+install dependencies:
+  stage: dependencies
+  script:
+    - yarn install
+  tags:
+    - docker
+
+build dist:
+  stage: build
+  script:
+    - yarn build
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 week
+  tags:
+    - docker
+
+run tests:
+  stage: test
+  # allow test failures for now since there aren't any tests
+  allow_failure: true
+  script:
+    - yarn run test
+
+check style:
+  stage: checks
+  script:
+    - yarn run prettier -c src/**
