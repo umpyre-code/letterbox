@@ -33,7 +33,7 @@
     "@svgr/webpack": "^4.3.2",
     "axios": "^0.19.0",
     "axios-retry": "^3.1.2",
-    "buffer": "^5.4.2",
+    "buffer": "^5.4.3",
     "connected-react-router": "^6.5.2",
     "dexie": "^2.0.4",
     "dompurify": "^1.0.11",
