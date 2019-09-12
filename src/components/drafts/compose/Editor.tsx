@@ -2,8 +2,8 @@ import { Box } from '@material-ui/core'
 import { EditorState } from 'draft-js'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import createMarkdownPlugin from 'draft-js-markdown-plugin-es6'
+import createPrismPlugin from 'draft-js-prism-plugin-ng'
 import PluginEditor from 'draft-js-plugins-editor'
-import createPrismPlugin from 'draft-js-prism-plugin'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-bash'
 import 'prismjs/components/prism-c'
@@ -82,8 +82,8 @@ const languages = {
 }
 
 const editorPlugins = [
-  createLinkifyPlugin(),
   createPrismPlugin({ prism: Prism }),
+  createLinkifyPlugin(),
   createMarkdownPlugin({ renderLanguageSelect, languages })
 ]
 
