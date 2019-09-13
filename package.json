@@ -48,7 +48,7 @@
     "electron-debug": "^3.0.1",
     "formik": "^1.5.8",
     "formik-material-ui": "^0.0.22",
-    "history": "^4.10.0",
+    "history": "^4.10.1",
     "immutable": "^4.0.0-rc.12",
     "jsonwebtoken": "^8.5.1",
     "libphonenumber-js": "^1.7.24",
