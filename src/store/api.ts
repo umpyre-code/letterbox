@@ -93,9 +93,9 @@ export class API {
       })
     }
     axiosRetry(this.client, {
-      retries: 10,
+      retries: 5,
       retryDelay: retryCount => {
-        return (retryCount + 1) ** 1.5 * 1000
+        return (retryCount + 1) ** 3 * 1000
       }
     })
   }
