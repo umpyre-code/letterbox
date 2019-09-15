@@ -159,7 +159,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     }
     fetchData()
     if (!message.read) {
-      setTimeout(() => setAnimationVisible(false), 500)
+      setTimeout(() => setAnimationVisible(false), 150)
     }
   }, [])
 
@@ -277,7 +277,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           <Animated
             animationIn={null}
             animationOut="bounceOutUp"
-            animationOutDuration={1000}
+            animationOutDuration={1200}
             isVisible={animationVisible}
           >
             <Box className={classes.animatedBox}>
