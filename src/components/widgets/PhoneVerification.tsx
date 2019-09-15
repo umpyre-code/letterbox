@@ -137,7 +137,7 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
         <Box className={classes.box}>
           <Typography variant="body2">
             You cannot send messages until your phone number is verified. If your phone number is
-            not verified within 24 hours, this account will be deleted. You may try signing up again
+            not verified within 1 hour, this account will be deleted. You may try signing up again
             with the same number afterward.
           </Typography>
         </Box>
