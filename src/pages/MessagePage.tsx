@@ -125,6 +125,7 @@ const MessagePageFC: React.FC<AllProps> = ({
             message={message}
             shaded={false}
             button={false}
+            animateValue={true}
             isReply={message.body.parent && message.body.parent.length > 0}
           />
           <Divider />

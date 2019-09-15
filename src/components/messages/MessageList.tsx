@@ -59,7 +59,12 @@ export const MessageList: React.FunctionComponent<AllProps> = ({
           {messages.map((message, index) => (
             <React.Fragment key={message.hash}>
               {index > 0 && <Divider />}
-              <MessageListItem message={message} shaded={shaded} button={button} />
+              <MessageListItem
+                message={message}
+                shaded={shaded}
+                button={button}
+                animateValue={false}
+              />
             </React.Fragment>
           ))}
         </List>

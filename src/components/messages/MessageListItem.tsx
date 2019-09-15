@@ -7,13 +7,15 @@ import {
   ListItemText,
   makeStyles,
   Theme,
+  Tooltip,
   Typography,
-  Tooltip
+  Grid
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/ReplyOutlined'
 import moment from 'moment'
 import * as React from 'react'
+import { Animated } from 'react-animated-css'
 import NumberFormat from 'react-number-format'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
@@ -23,11 +25,13 @@ import { loadingClientProfile } from '../../store/client/types'
 import { deleteMessageRequest } from '../../store/messages/actions'
 import { ClientCredentials } from '../../store/models/client'
 import { MessageBase } from '../../store/models/messages'
+import '../../util/animate.css'
 import { Emoji } from '../widgets/Emoji'
 import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
 import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
 
 interface Props {
+  animateValue: boolean
   message: MessageBase
   isReply?: boolean
   shaded: boolean
@@ -46,6 +50,15 @@ type AllProps = Props & PropsFromState & PropsFromDispatch & Router.RouteCompone
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    animatedBox: {
+      display: 'block',
+      position: 'absolute',
+      zIndex: 1,
+      transform: 'translate(-20%, -50%)',
+      borderRadius: '50%',
+      backgroundColor: 'rgba(255, 0, 0, 0.4)',
+      boxShadow: `0 0 1em 1em rgba(255, 0, 0, 0.4)`
+    },
     deleteButton: {
       height: 48,
       margin: theme.spacing(1),
@@ -115,6 +128,7 @@ const MessageDelete: React.FC<MessageDeleteProps> = ({ deleteMessage, message })
 }
 
 const MessageListItemFC: React.FunctionComponent<AllProps> = ({
+  animateValue,
   button,
   credentials,
   deleteMessage,
@@ -126,6 +140,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   const [fromProfile, setFromProfile] = React.useState(loadingClientProfile)
   const [toProfile, setToProfile] = React.useState(loadingClientProfile)
   const [showDelete, setShowDelete] = React.useState<boolean>(false)
+  const [animationVisible, setAnimationVisible] = React.useState<boolean>(true)
   const classes = useStyles({ shaded })
 
   React.useEffect(() => {
@@ -143,6 +158,9 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
       })
     }
     fetchData()
+    if (!message.read) {
+      setTimeout(() => setAnimationVisible(false), 500)
+    }
   }, [])
 
   function renderAvatar() {
@@ -254,6 +272,27 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
               <Emoji ariaLabel="fresh message">✨</Emoji>
             </div>
           </Tooltip>
+        )}
+        {!message.read && message.value_cents > 0 && animateValue && (
+          <Animated
+            animationIn={null}
+            animationOut="bounceOutUp"
+            animationOutDuration={1000}
+            isVisible={animationVisible}
+          >
+            <Box className={classes.animatedBox}>
+              <Grid container wrap="nowrap">
+                <Grid item>
+                  <Typography color="primary">+</Typography>
+                </Grid>
+                <Grid item>
+                  <Typography color="primary">
+                    <MessageValue message={message} />
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Animated>
         )}
         <MessageValue message={message} />
       </ListItem>
