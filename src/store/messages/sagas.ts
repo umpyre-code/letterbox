@@ -79,7 +79,7 @@ function cmpByValue(first: MessageBase, second: MessageBase): number {
 function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessages {
   const unreadMessages = _.chain(messages)
     .filter(message => message.read === false && message.to === clientId)
-    .groupBy(message => [message.to, message.from].sort().join() + message.pda)
+    .groupBy(message => message.thread || [message.to, message.from].sort().join() + message.pda)
     .map(messageDict => {
       // compute the sum of message values, where the recipient is this client
       const valueCents = _.chain(messageDict)
@@ -101,7 +101,7 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
     .filter(
       message => message.from === clientId || (message.read === true && message.to === clientId)
     )
-    .groupBy(message => [message.to, message.from].sort().join() + message.pda)
+    .groupBy(message => message.thread || [message.to, message.from].sort().join() + message.pda)
     .map(messageDict => {
       // compute the sum of message values, where the recipient is this client
       const valueCents = _.chain(messageDict)

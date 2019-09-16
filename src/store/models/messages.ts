@@ -50,6 +50,7 @@ export interface MessageBase {
   value_cents: number
   children?: MessageHash[]
   type?: MessageType
+  thread?: MessageHash
 }
 
 export interface DecryptedMessage extends MessageBase {

@@ -18,12 +18,13 @@ import {
 export async function addChildMessage(
   parentHash: MessageHash,
   childHash: MessageHash
-): Promise<number> {
+): Promise<MessageHash> {
   const parent = await db.messageInfos.get(parentHash)
-  return db.messageInfos.update(parent.hash, {
+  await db.messageInfos.update(parent.hash, {
     ...parent,
     children: _.uniq([...(parent.children || []), childHash])
   })
+  return Promise.resolve(parent.thread)
 }
 
 export function toApiMessage(message: EncryptedMessage, from: ClientID): APIMessage {
@@ -259,14 +260,17 @@ export async function storeAndRetrieveMessages(
     _.map(newMessages, async message => {
       const encryptedMessage = fromApiMessage(message)
       const decryptedMessage = await decryptMessage(clientId, encryptedMessage)
+
       // check if these messages have parents, and if so, update them accordingly
+      let thread = encryptedMessage.hash
       if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
-        addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
+        thread = await addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
       }
       return {
         ...encryptedMessage,
         pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
-        type: decryptedMessage.body.type
+        type: decryptedMessage.body.type,
+        thread
       }
     })
   )

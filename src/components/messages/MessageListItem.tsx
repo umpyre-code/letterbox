@@ -29,6 +29,7 @@ import '../../util/animate.css'
 import { Emoji } from '../widgets/Emoji'
 import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
 import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
+import { Profile } from '../widgets/profile/Profile'
 
 interface Props {
   animateValue: boolean
@@ -273,27 +274,30 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
             </div>
           </Tooltip>
         )}
-        {!message.read && message.value_cents > 0 && animateValue && (
-          <Animated
-            animationIn={null}
-            animationOut="bounceOutUp"
-            animationOutDuration={1200}
-            isVisible={animationVisible}
-          >
-            <Box className={classes.animatedBox}>
-              <Grid container wrap="nowrap">
-                <Grid item>
-                  <Typography color="primary">+</Typography>
+        {!message.read &&
+          message.value_cents > 0 &&
+          message.to === credentials.client_id &&
+          animateValue && (
+            <Animated
+              animationIn={null}
+              animationOut="bounceOutUp"
+              animationOutDuration={1200}
+              isVisible={animationVisible}
+            >
+              <Box className={classes.animatedBox}>
+                <Grid container wrap="nowrap">
+                  <Grid item>
+                    <Typography color="primary">+</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography color="primary">
+                      <MessageValue message={message} />
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Typography color="primary">
-                    <MessageValue message={message} />
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          </Animated>
-        )}
+              </Box>
+            </Animated>
+          )}
         <MessageValue message={message} />
       </ListItem>
     </Box>
