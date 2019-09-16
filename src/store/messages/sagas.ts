@@ -119,7 +119,7 @@ function rankMessages(clientId: ClientID, messages: MessageBase[]): RankedMessag
       // Filter out threads which have unread children from above
       m => !m.children || m.children.find(childHash => unreadHashes.has(childHash)) === undefined
     )
-    .take(10)
+    .take(7)
     .value()
   return { unreadMessages, readMessages }
 }
