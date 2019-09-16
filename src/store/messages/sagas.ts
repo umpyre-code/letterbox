@@ -46,11 +46,11 @@ import {
 } from './actions'
 import { MessagesActionTypes, RankedMessages } from './types'
 import {
+  addChildMessage,
   decryptMessage,
   fetchMessages,
   getMessagesWithoutBody,
   storeAndRetrieveMessages,
-  addChildMessage,
   systemMessageReadFor
 } from './utils'
 
