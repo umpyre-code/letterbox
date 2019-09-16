@@ -139,6 +139,11 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
             You cannot send messages until your phone number is verified. If your phone number is
             not verified within 1 hour, this account will be deleted. You may try signing up again
             with the same number afterward.
+            <em>
+              {' '}
+              Having problems with verification? Please email{' '}
+              <a href="mailto:support@umpyre.com">support@umpyre.com</a>
+            </em>
           </Typography>
         </Box>
         <Box className={classes.box}>

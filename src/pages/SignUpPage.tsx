@@ -67,6 +67,15 @@ const SignUpPage = () => {
               Tell me more about Umpyre
             </Button>
           </Box>
+          <Box className={classes.box}>
+            <Typography variant="body2">
+              <em>
+                {' '}
+                Having problems signing up? Please email{' '}
+                <a href="mailto:support@umpyre.com">support@umpyre.com</a>
+              </em>
+            </Typography>
+          </Box>
         </Paper>
       </Container>
     </React.Fragment>
