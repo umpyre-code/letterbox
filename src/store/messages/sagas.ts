@@ -46,7 +46,7 @@ import {
 } from './actions'
 import { MessagesActionTypes, RankedMessages } from './types'
 import {
-  addChildMessage,
+  addChildMessageInDb,
   decryptMessage,
   fetchMessages,
   getMessagesWithoutBody,
@@ -221,6 +221,7 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       }
     }
   } catch (error) {
+    console.log(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(
         updateDraftRequest({ ...draft, sending: false, sendError: error.response.data.message })
@@ -373,7 +374,7 @@ async function loadMessages(
   if (messages.has(hash)) {
     const messageInfo = await db.messageInfos.get({ hash })
     if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-      await addChildMessage(messageInfo.hash, child.hash)
+      await addChildMessageInDb(messageInfo.hash, child.hash)
     }
     return Promise.resolve(messages)
   }
@@ -401,7 +402,7 @@ async function loadMessages(
     }
 
     if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-      await addChildMessage(messageInfo.hash, child.hash)
+      await addChildMessageInDb(messageInfo.hash, child.hash)
     }
 
     if (decryptedMessage.body.parent) {

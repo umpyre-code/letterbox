@@ -15,7 +15,7 @@ import {
   MessageType
 } from '../models/messages'
 
-export async function addChildMessage(
+export async function addChildMessageInDb(
   parentHash: MessageHash,
   childHash: MessageHash
 ): Promise<MessageHash | undefined> {
@@ -27,6 +27,8 @@ export async function addChildMessage(
     })
     return Promise.resolve(parent.thread)
   }
+  // If the parent wasn't found in the DB, it must be included in this batch of
+  // messages. We do another pass elsewhere to deal with that situation.
   return Promise.resolve(undefined)
 }
 
@@ -259,32 +261,58 @@ export async function storeAndRetrieveMessages(
   )
 
   // decrypt newly received messages and perform any processing needed
-  const processedMessages = await Promise.all(
+  const decryptedMessages = await Promise.all(
     _.map(newMessages, async message => {
       const encryptedMessage = fromApiMessage(message)
       const decryptedMessage = await decryptMessage(clientId, encryptedMessage)
-
-      // check if these messages have parents, and if so, update them accordingly
-      let thread = encryptedMessage.hash
-      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
-        thread = await addChildMessage(decryptedMessage.body.parent, decryptedMessage.hash)
-      }
-      return {
-        ...encryptedMessage,
-        pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
-        type: decryptedMessage.body.type,
-        thread
-      }
+      return Promise.resolve({ hash: encryptedMessage.hash, encryptedMessage, decryptedMessage })
     })
   )
 
+  const messagesMap = new Map(_.map(decryptedMessages, m => [m.hash, m]))
+
+  await Promise.all(
+    _.map(newMessages, async message => {
+      const { encryptedMessage, decryptedMessage } = messagesMap.get(message.hash)
+      // check if these messages have parents, and if so, update them accordingly
+      let thread = encryptedMessage.hash
+      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
+        thread = await addChildMessageInDb(decryptedMessage.body.parent, decryptedMessage.hash)
+        if (thread === undefined && messagesMap.has(decryptedMessage.body.parent)) {
+          // parent wasn't found in the DB, which means it must be included in
+          // this batch of messages. Search for it, and update accordingly.
+          const parent = messagesMap.get(decryptedMessage.body.parent)
+          messagesMap.set(parent.hash, {
+            ...parent,
+            encryptedMessage: {
+              ...parent.encryptedMessage,
+              children: _.uniq([...(parent.encryptedMessage.children || []), decryptedMessage.hash])
+            }
+          })
+        }
+      }
+      messagesMap.set(message.hash, {
+        ...messagesMap.get(message.hash),
+        encryptedMessage: {
+          ...encryptedMessage,
+          pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
+          type: decryptedMessage.body.type,
+          thread
+        }
+      })
+      return Promise.resolve()
+    })
+  )
+
+  const finalizedMessages = _.map(Array.from(messagesMap.values()), m => m.encryptedMessage)
+
   // Split messages into info and body parts
-  const messageBodies = processedMessages.map(message => ({
+  const messageBodies = finalizedMessages.map(message => ({
     body: message.body,
     hash: message.hash
   }))
 
-  const messageInfos = processedMessages.map(message => ({
+  const messageInfos = finalizedMessages.map(message => ({
     ...message,
     body: undefined
   }))
