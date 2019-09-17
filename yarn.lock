@@ -1200,9 +1200,9 @@
   integrity sha512-lVK/svL2HuQdp7jgvlrLkFsUx50Az9chAhxpiPwBqcS83I2pVWvXp98FOcSCCJCV++l115QmzHhFd+ycw1zLBg==
 
 "@redux-saga/core@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@redux-saga/core/-/core-1.1.0.tgz#88751cbf8bbe32d6655da300c94b006345543645"
-  integrity sha512-ZZzOIOKeDerzojcglG9I3TmuBmoaDVwZuPAf5xECgXmOTXm1goBC2pKi++wd4qmC8dLaulvYHl0RpXzeJWOj3A==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@redux-saga/core/-/core-1.1.1.tgz#72432130630cca08260086ffc564c2aa5488a0a2"
+  integrity sha512-WKXfj2cYkP0eh74dE1ueMjVDoGJIkppXiMFgx0buVRkXENeZmRxIjM4lh9LEWWFqay7I/Qkw7+cMossa7xXoAQ==
   dependencies:
     "@babel/runtime" "^7.6.0"
     "@redux-saga/deferred" "^1.1.0"

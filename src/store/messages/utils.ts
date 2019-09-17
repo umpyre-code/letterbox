@@ -18,13 +18,16 @@ import {
 export async function addChildMessage(
   parentHash: MessageHash,
   childHash: MessageHash
-): Promise<MessageHash> {
+): Promise<MessageHash | undefined> {
   const parent = await db.messageInfos.get(parentHash)
-  await db.messageInfos.update(parent.hash, {
-    ...parent,
-    children: _.uniq([...(parent.children || []), childHash])
-  })
-  return Promise.resolve(parent.thread)
+  if (parent) {
+    await db.messageInfos.update(parent.hash, {
+      ...parent,
+      children: _.uniq([...(parent.children || []), childHash])
+    })
+    return Promise.resolve(parent.thread)
+  }
+  return Promise.resolve(undefined)
 }
 
 export function toApiMessage(message: EncryptedMessage, from: ClientID): APIMessage {
