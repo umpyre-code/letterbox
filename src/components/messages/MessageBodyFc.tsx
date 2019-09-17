@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '& a:link': {
         textDecoration: 'underline'
       },
+      fontSize: '1.1rem',
       fontFamily: [
         'Aleo',
         '-apple-system',
