@@ -141,7 +141,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   const [fromProfile, setFromProfile] = React.useState(loadingClientProfile)
   const [toProfile, setToProfile] = React.useState(loadingClientProfile)
   const [showDelete, setShowDelete] = React.useState<boolean>(false)
-  const [animationVisible, setAnimationVisible] = React.useState<boolean>(true)
+  const [animationVisible, setAnimationVisible] = React.useState<boolean>(!message.read)
   const classes = useStyles({ shaded })
 
   React.useEffect(() => {
