@@ -93,7 +93,7 @@
     "@types/draft-js": "^0.10.35",
     "@types/history": "^4.7.3",
     "@types/jest": "^24.0.18",
-    "@types/jsonwebtoken": "^8.3.3",
+    "@types/jsonwebtoken": "^8.3.4",
     "@types/libsodium-wrappers": "^0.7.5",
     "@types/lodash": "^4.14.138",
     "@types/marked": "^0.6.5",
