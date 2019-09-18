@@ -1,6 +1,7 @@
 import {
   Box,
   createStyles,
+  Grid,
   IconButton,
   ListItem,
   ListItemAvatar,
@@ -8,8 +9,7 @@ import {
   makeStyles,
   Theme,
   Tooltip,
-  Typography,
-  Grid
+  Typography
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/ReplyOutlined'
@@ -29,7 +29,6 @@ import '../../util/animate.css'
 import { Emoji } from '../widgets/Emoji'
 import { ProfileAvatar } from '../widgets/profile/ProfileAvatar'
 import { ProfileTooltip } from '../widgets/profile/ProfileTooltip'
-import { Profile } from '../widgets/profile/Profile'
 
 interface Props {
   animateValue: boolean
@@ -52,13 +51,14 @@ type AllProps = Props & PropsFromState & PropsFromDispatch & Router.RouteCompone
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     animatedBox: {
+      color: 'rgba(255, 215, 0, 1)',
       display: 'block',
       position: 'absolute',
       zIndex: 1,
       transform: 'translate(-20%, -50%)',
       borderRadius: '50%',
-      backgroundColor: 'rgba(255, 0, 0, 0.4)',
-      boxShadow: `0 0 1em 1em rgba(255, 0, 0, 0.4)`
+      backgroundColor: 'rgba(255, 215, 0, 0.25)',
+      boxShadow: `0 0 0.8em 0.8em rgba(255, 215, 0, 0.25)`
     },
     deleteButton: {
       height: 48,
@@ -160,7 +160,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
     }
     fetchData()
     if (!message.read) {
-      setTimeout(() => setAnimationVisible(false), 150)
+      setTimeout(() => setAnimationVisible(false), 250)
     }
   }, [])
 
@@ -280,17 +280,17 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
           animateValue && (
             <Animated
               animationIn={null}
-              animationOut="bounceOutUp"
+              animationOut="fadeOutUpBig"
               animationOutDuration={1200}
               isVisible={animationVisible}
             >
               <Box className={classes.animatedBox}>
                 <Grid container wrap="nowrap">
                   <Grid item>
-                    <Typography color="primary">+</Typography>
+                    <Typography>+</Typography>
                   </Grid>
                   <Grid item>
-                    <Typography color="primary">
+                    <Typography>
                       <MessageValue message={message} />
                     </Typography>
                   </Grid>
