@@ -40,8 +40,8 @@ const SignInPage = () => {
         <Box className={classes.box}>
           <Typography variant="body2">
             Don&apos;t use Umpyre on a device you don&apos;t own such as a shared, public, or
-            employer&apos;s computer. Your data is stored locally for your privacy, so make sure
-            it&apos;s a device you control and trust.
+            employer&apos;s computer. Your message data is stored locally for your privacy, so make
+            sure it&apos;s a device you control and trust.
           </Typography>
         </Box>
       </Paper>
