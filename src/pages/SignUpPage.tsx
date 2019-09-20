@@ -123,7 +123,7 @@ const SignUpPage = () => {
                   <Grid item xs={6}>
                     <Typography variant="h6">
                       Your message data is stored locally and stays private. We don&apos;t collect
-                      personally identifiable behavioural data.
+                      personally identifiable behavioral data.
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>

@@ -56,7 +56,7 @@ const AboutPage = () => {
           <Box className={classes.box}>
             <Typography variant="body1">
               We believe that advertising business models are harmful for everyone because it
-              incentivizes bad behaviour. Umpyre has a simple, sustainable business model: when you
+              incentivizes bad behavior. Umpyre has a simple, sustainable business model: when you
               send a message with a payment, we earn a small fee. When you read a message, you earn
               a small fee. Thus, we benefit when our clients benefit. It’s a win-win for everyone;
               our incentives are aligned.
