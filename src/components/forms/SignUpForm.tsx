@@ -5,10 +5,15 @@ import {
   InputLabel,
   LinearProgress,
   MenuItem,
-  SnackbarContent
+  SnackbarContent,
+  Tooltip,
+  Typography,
+  withStyles,
+  Theme
 } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import MuiTextField from '@material-ui/core/TextField'
+import HelpIcon from '@material-ui/icons/Help'
 import { Field, Form, Formik } from 'formik'
 import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-material-ui'
 import { AsYouType } from 'libphonenumber-js'
@@ -42,6 +47,41 @@ interface PropsFromDispatch {
   submitNewClientRequest: typeof submitNewClientRequest
   loadCredentials: typeof loadCredentialsRequest
 }
+
+const HtmlTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    maxWidth: 400
+  }
+}))(Tooltip)
+
+export const PhoneNumberToolTip = () => (
+  <HtmlTooltip
+    enterDelay={150}
+    title={
+      <React.Fragment>
+        <Typography variant="h5">Why do you need my phone number?</Typography>
+        <br />
+        <Typography>
+          We want to build a platform with real humans only. We don&apos;t want bots, marketers, or
+          scammers filling your inbox with junk.
+        </Typography>
+        <br />
+        <Typography>
+          Phone numbers provide the best way to make sure every account is a real person, while also
+          reaching a large audience.
+        </Typography>
+        <br />
+        <Typography>
+          We&apos;ll never use your phone number for marketing purposes, and we never expose it to
+          3rd parties. We don&apos;t harvest your phone number or contact lists, and it&apos;s never
+          exposed through our API.
+        </Typography>
+      </React.Fragment>
+    }
+  >
+    <HelpIcon />
+  </HtmlTooltip>
+)
 
 const PhoneNumberTextField = (props: TextFieldProps) => (
   <MuiTextField
@@ -132,14 +172,19 @@ class SignUp extends React.Component<AllProps> {
                     })}
                   </Field>
                 </Grid>
-                <Grid item xs>
-                  <Field
-                    type="text"
-                    name="phone_number.national_number"
-                    label="Phone Number"
-                    component={PhoneNumberTextField}
-                    fullWidth
-                  />
+                <Grid item container xs>
+                  <Grid item xs>
+                    <Field
+                      type="text"
+                      name="phone_number.national_number"
+                      label="Phone Number"
+                      component={PhoneNumberTextField}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item style={{ alignSelf: 'end' }}>
+                    <PhoneNumberToolTip />
+                  </Grid>
                 </Grid>
               </Grid>
             </FormGroup>
