@@ -29,10 +29,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     rootGrid: {
       backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
-      minHeight: '100vmax'
+      minHeight: '100vh'
     },
     container: {
-      padding: theme.spacing(5),
+      padding: theme.spacing(3),
       height: '100%'
     },
     paper: {
@@ -55,7 +55,7 @@ const SignUpPage = () => {
     <React.Fragment>
       <CssBaseline />
       <Grid container className={classes.rootGrid} alignItems="flex-start">
-        <Grid item container>
+        <Grid item container direction="row-reverse">
           <Grid item sm={12} md={6}>
             <Container maxWidth="sm" className={classes.container}>
               <Paper className={classes.paper}>
@@ -101,6 +101,18 @@ const SignUpPage = () => {
             <Container maxWidth="sm" className={classes.container}>
               <Paper className={classes.paper}>
                 <Grid container alignItems="center" justify="center">
+                  {/* <Grid item xs={12}>
+                    <img
+                      style={{
+                        display: 'block',
+                        margin: 'auto',
+                        maxWidth: '300px',
+                        height: 'auto'
+                      }}
+                      src="artwork/umpyre-logo-yellow.png"
+                      alt="Inbox"
+                    />
+                  </Grid> */}
                   <Grid item xs={6}>
                     <img
                       style={{
@@ -136,7 +148,7 @@ const SignUpPage = () => {
                         height: 'auto'
                       }}
                       src="artwork/privacy.png"
-                      alt="Inbox"
+                      alt="Privacy"
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -149,14 +161,13 @@ const SignUpPage = () => {
                         height: 'auto'
                       }}
                       src="artwork/security.png"
-                      alt="Inbox"
+                      alt="Security"
                     />
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="h6">
-                      We use strong end-to-end encryption, secure remote password protocol to
-                      protect against MITM attacks, and zero knowledge secure tokens. You hold your
-                      encryption keys.
+                      We use end-to-end encryption, secure remote password protocol to mitigate MITM
+                      attacks, and zero knowledge secure tokens. You hold your encryption keys.
                     </Typography>
                   </Grid>
                 </Grid>
