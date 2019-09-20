@@ -155,7 +155,8 @@ const SignUpPage = () => {
                   <Grid item xs={6}>
                     <Typography variant="h6">
                       We use strong end-to-end encryption, secure remote password protocol to
-                      protect against MITM attacks, and zero knowledge secure tokens.
+                      protect against MITM attacks, and zero knowledge secure tokens. Only you know
+                      your encryption keys.
                     </Typography>
                   </Grid>
                 </Grid>
