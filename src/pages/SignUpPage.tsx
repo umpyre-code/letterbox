@@ -49,7 +49,11 @@ const SignUpPage = () => {
             <Typography variant="h2">Join Umpyre</Typography>
           </Box>
           <Box className={classes.box}>
-            <Typography>Umpyre is a better way to reach people.</Typography>
+            <Typography>
+              Umpyre is a messaging platform where everyone has skin in the game. Anyone can reach
+              you, but they need to make it worth your while. No spam, no junk, no time wasted. Just
+              pure value.
+            </Typography>
           </Box>
 
           <Divider />
