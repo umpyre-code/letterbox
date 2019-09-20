@@ -162,8 +162,10 @@ function* handleFetchMessages() {
     const { credentials } = state.clientState
     const { sketch } = state.messagesState
     const messages = yield call(fetchMessages, credentials, sketch)
+    console.log(messages)
 
     if (messages.error) {
+      console.log(messages.error)
       yield put(fetchMessagesError(messages.error))
     } else if (messages.length > 0) {
       const clientId = state.clientState.credentials.client_id
@@ -174,6 +176,7 @@ function* handleFetchMessages() {
       yield put(updateSketchRequest())
     }
   } catch (error) {
+    console.log(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(fetchMessagesError(error.response.data.message))
     } else if (error.message) {
