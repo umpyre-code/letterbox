@@ -33,6 +33,7 @@
     "@svgr/webpack": "^4.3.2",
     "axios": "^0.19.0",
     "axios-retry": "^3.1.2",
+    "blueimp-load-image": "^2.24.0",
     "buffer": "^5.4.2",
     "connected-react-router": "^6.5.2",
     "dexie": "^2.0.4",

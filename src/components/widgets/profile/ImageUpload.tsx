@@ -5,20 +5,21 @@ import {
   FormControlLabel,
   Grid,
   Input,
+  LinearProgress,
   makeStyles,
   Modal,
   Paper,
-  Typography,
-  LinearProgress
+  Typography
 } from '@material-ui/core'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import DeleteIcon from '@material-ui/icons/Delete'
+import loadImage from 'blueimp-load-image'
 import * as React from 'react'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
+import { API } from '../../../store/api'
 import { ClientCredentials, ClientProfile } from '../../../store/models/client'
 import { Emoji } from '../Emoji'
-import { API } from '../../../store/api'
 import { ProfileAvatar } from './ProfileAvatar'
 
 interface Crop {
@@ -148,9 +149,24 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
     const target = event.target as HTMLInputElement
     if (target.files && target.files.length === 1) {
       if (target.files[0].size < MAX_FILE_SIZE) {
-        const reader = new FileReader()
-        reader.addEventListener('load', () => setSrc(reader.result))
-        reader.readAsDataURL(target.files[0])
+        loadImage(
+          target.files[0],
+          (canvas, data) => {
+            console.log(canvas, data)
+            if (canvas.type === 'error') {
+              console.error('Error loading image ')
+            } else {
+              setSrc(canvas.toDataURL())
+            }
+          },
+          {
+            canvas: true,
+            orientation: true
+          }
+        )
+        // const reader = new FileReader()
+        // reader.addEventListener('load', () => setSrc(reader.result))
+        // reader.readAsDataURL(target.files[0])
       } else {
         flashError('File is too large! (10MiB max)')
       }
