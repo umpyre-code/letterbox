@@ -66,7 +66,7 @@ const SignUpPage = () => {
                   <Typography>
                     Umpyre is a messaging platform where everyone has skin in the game. Anyone can
                     reach you, but they need to make it worth your while. No spam, no junk, no time
-                    wasted. Just pure value.
+                    wasted. Just value.
                   </Typography>
                 </Box>
 
@@ -155,8 +155,8 @@ const SignUpPage = () => {
                   <Grid item xs={6}>
                     <Typography variant="h6">
                       We use strong end-to-end encryption, secure remote password protocol to
-                      protect against MITM attacks, and zero knowledge secure tokens. Only you know
-                      your encryption keys.
+                      protect against MITM attacks, and zero knowledge secure tokens. You hold your
+                      encryption keys.
                     </Typography>
                   </Grid>
                 </Grid>
