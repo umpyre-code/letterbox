@@ -152,7 +152,6 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
         loadImage(
           target.files[0],
           (canvas, data) => {
-            console.log(canvas, data)
             if (canvas.type === 'error') {
               console.error('Error loading image ')
             } else {

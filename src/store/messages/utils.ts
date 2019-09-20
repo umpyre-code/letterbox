@@ -247,6 +247,37 @@ async function processSystemMessages(clientId: ClientID, messages: MessageBase[]
   })
 }
 
+export async function findRootParentThread(
+  decryptedMessage: DecryptedMessage,
+  messagesMap: Map<
+    string,
+    {
+      hash: string
+      encryptedMessage: EncryptedMessage
+      decryptedMessage: DecryptedMessage
+    }
+  >
+): Promise<MessageHash> {
+  let thread = await addChildMessageInDb(decryptedMessage.body.parent, decryptedMessage.hash)
+  if (thread === undefined && messagesMap.has(decryptedMessage.body.parent)) {
+    // parent wasn't found in the DB, which means it must be included in
+    // this batch of messages. Search for it, and update accordingly.
+    const parent = messagesMap.get(decryptedMessage.body.parent)
+    if (parent.decryptedMessage.body.parent) {
+      return findRootParentThread(parent.decryptedMessage, messagesMap)
+    }
+    messagesMap.set(parent.hash, {
+      ...parent,
+      encryptedMessage: {
+        ...parent.encryptedMessage,
+        children: _.uniq([...(parent.encryptedMessage.children || []), decryptedMessage.hash])
+      }
+    })
+    thread = parent.decryptedMessage.hash
+  }
+  return Promise.resolve(thread)
+}
+
 export async function storeAndRetrieveMessages(
   clientId: ClientID,
   messages: APIMessage[]
@@ -277,19 +308,7 @@ export async function storeAndRetrieveMessages(
       // check if these messages have parents, and if so, update them accordingly
       let thread = encryptedMessage.hash
       if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
-        thread = await addChildMessageInDb(decryptedMessage.body.parent, decryptedMessage.hash)
-        if (thread === undefined && messagesMap.has(decryptedMessage.body.parent)) {
-          // parent wasn't found in the DB, which means it must be included in
-          // this batch of messages. Search for it, and update accordingly.
-          const parent = messagesMap.get(decryptedMessage.body.parent)
-          messagesMap.set(parent.hash, {
-            ...parent,
-            encryptedMessage: {
-              ...parent.encryptedMessage,
-              children: _.uniq([...(parent.encryptedMessage.children || []), decryptedMessage.hash])
-            }
-          })
-        }
+        thread = await findRootParentThread(decryptedMessage, messagesMap)
       }
       messagesMap.set(message.hash, {
         ...messagesMap.get(message.hash),
