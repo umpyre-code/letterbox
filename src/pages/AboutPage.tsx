@@ -113,11 +113,11 @@ const AboutPage = () => {
           </Box>
           <Box className={classes.box}>
             <Typography variant="body1">
-              The fee to send a message is 3%, paid by the sender. The fee to read a message is 7%,
-              paid by the recipient when the message is read. These fees only apply to messages
-              which have payments. If you send a message with no payment, there is no fee. For
-              unread messages, the payment minus the sender fee is refunded if the message is not
-              read within 30 days.
+              The fee to send a message is 3%, paid by the sender. If the recipient reads a message,
+              a 7% read fee is deducted from the payment. These fees only apply to messages which
+              have payments. If you send a message with no payment, there is no fee. For unread
+              messages, the payment minus the sender fee is refunded if the message is not read
+              within 30 days.
             </Typography>
             <Typography variant="body1">
               Additionally, our payment processor may incur additional fees for adding or removing
