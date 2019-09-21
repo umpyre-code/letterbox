@@ -432,26 +432,21 @@ export async function systemMessageDeletedFor(
         type: MessageType.SYSTEM_DELETED,
         messageDeleted: hash
       }
-      const readMessage = await db.messageInfos.get({ hash })
-      // only send read receipts if we're the recipient of the message
-      if (readMessage.to === credentials.client_id) {
-        const message = {
-          body: JSON.stringify(messageBody),
-          deleted: false,
-          from: credentials.client_id,
-          nonce: '',
-          read: false,
-          recipient_public_key: '',
-          sender_public_key: '',
-          sent_at: new Date(),
-          to: readMessage.from,
-          value_cents: 0
-        }
-
-        return prepareMessage(credentials, keyPair, message, [readMessage.from])
+      // send message to self only
+      const message = {
+        body: JSON.stringify(messageBody),
+        deleted: false,
+        from: credentials.client_id,
+        nonce: '',
+        read: false,
+        recipient_public_key: '',
+        sender_public_key: '',
+        sent_at: new Date(),
+        to: credentials.client_id,
+        value_cents: 0
       }
 
-      return Promise.resolve([])
+      return prepareMessage(credentials, keyPair, message, [credentials.client_id])
     })
   )
   return Promise.resolve(_.flatten(res))
