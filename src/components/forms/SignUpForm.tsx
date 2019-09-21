@@ -138,17 +138,23 @@ class SignUp extends React.Component<AllProps> {
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <FormControl fullWidth>
-            <Field name="email" type="email" label="Email" component={TextField} />
+            <Field name="email" type="email" label="Email" component={TextField} fullWidth />
           </FormControl>
         </Grid>
         <Grid item>
           <FormControl fullWidth>
-            <Field type="password" label="Password" name="password" component={TextField} />
+            <Field
+              type="password"
+              label="Password"
+              name="password"
+              component={TextField}
+              fullWidth
+            />
           </FormControl>
         </Grid>
         <Grid item>
           <FormControl fullWidth>
-            <Field type="text" label="Your Name" name="full_name" component={TextField} />
+            <Field type="text" label="Your Name" name="full_name" component={TextField} fullWidth />
           </FormControl>
         </Grid>
         <Grid item>
