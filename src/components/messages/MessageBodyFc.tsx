@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
           '0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 1px 0px rgba(0, 0, 0, 0.04), 0px 2px 1px -1px rgba(0, 0, 0, 0.02)'
       },
       '& img': {
-        padding: theme.spacing(1),
+        margin: theme.spacing(1),
         maxWidth: '100%',
         maxHeight: '100%',
         boxShadow: theme.shadows[3],

@@ -99,7 +99,7 @@
 }
 
 .public-DraftEditor-content[contenteditable='true'] img {
-  padding: 6px;
+  margin: 6px;
   max-width: 100%;
   max-height: 100%;
 }
