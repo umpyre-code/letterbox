@@ -20,6 +20,7 @@ import { API } from '../api'
 import { ApplicationState } from '../ApplicationState'
 import { removeDraftRequest, updateDraftRequest } from '../drafts/actions'
 import { Draft } from '../drafts/types'
+import { KeyPair } from '../keys/types'
 import { SettlePaymentResponse } from '../models/account'
 import { ClientCredentials, ClientID } from '../models/client'
 import { APIMessage, DecryptedMessage, MessageBase, MessageHash } from '../models/messages'
@@ -27,6 +28,8 @@ import {
   deleteMessageError,
   deleteMessageRequest,
   deleteMessageSuccess,
+  deleteSweepError,
+  deleteSweepSuccess,
   fetchMessagesError,
   fetchMessagesRequest,
   fetchMessagesSuccess,
@@ -51,7 +54,8 @@ import {
   fetchMessages,
   getMessagesWithoutBody,
   storeAndRetrieveMessages,
-  systemMessageReadFor
+  systemMessageReadFor,
+  systemMessageDeletedFor
 } from './utils'
 
 function* delayThenFetchMessages() {
@@ -281,6 +285,7 @@ function* handleMessageReadSuccess(payload: string, state: ApplicationState) {
   // No result from settlePayment() just means the message was $0, so there's no need to hit the
   // API.
   yield call(markMessageAsRead, payload)
+
   // Reload messages from DB
   const messages = yield call(getMessagesWithoutBody, 30, false, false, false)
   const clientId = state.clientState.credentials.client_id
@@ -303,12 +308,9 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
     }
 
     // send system message to mark this message as read
-    const messages = yield call(
-      systemMessageReadFor,
-      credentials,
-      state.keysState.current_key,
+    const messages = yield call(systemMessageReadFor, credentials, state.keysState.current_key, [
       payload
-    )
+    ])
     yield call(sendMessages, credentials, messages)
 
     yield handleMessageReadSuccess(payload, state)
@@ -330,21 +332,39 @@ function* watchMessageReadRequest() {
   yield takeEvery(MessagesActionTypes.MESSAGE_READ_REQUEST, handleMessageRead)
 }
 
-async function markMessageDeleted(hash: MessageHash) {
+async function markMessageDeleted(hash: MessageHash): Promise<number> {
   await db.messageBodies.delete(hash)
-  await db.messageInfos.update(hash, { deleted: true })
+  return db.messageInfos.update(hash, { deleted: true })
+}
+
+async function markMessageDeletedAndFetch(
+  credentials: ClientCredentials,
+  keyPair: KeyPair,
+  hash: MessageHash
+): Promise<MessageBase[]> {
+  await markMessageDeleted(hash)
+
+  // send system message to mark this message as deleted
+  const messages = await systemMessageDeletedFor(credentials, keyPair, [hash])
+  await sendMessages(credentials, messages)
+
   return getMessagesWithoutBody(30, false, false, false)
 }
 
 function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
   const { payload } = values
   try {
-    const res = yield call(markMessageDeleted, payload)
+    const state: ApplicationState = yield select()
+    const res = yield call(
+      markMessageDeletedAndFetch,
+      state.clientState.credentials,
+      state.keysState.current_key,
+      payload
+    )
 
     if (res.error) {
       yield put(deleteMessageError(res.error))
     } else {
-      const state: ApplicationState = yield select()
       const clientId = state.clientState.credentials.client_id
       const rankedMessages = rankMessages(clientId, res)
       yield put(deleteMessageSuccess(rankedMessages))
@@ -362,6 +382,61 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
 
 function* watchDeleteMessageRequest() {
   yield takeEvery(MessagesActionTypes.DELETE_MESSAGE_REQUEST, handleDeleteMessage)
+}
+
+async function deleteSweep(
+  credentials: ClientCredentials,
+  keyPair: KeyPair,
+  clientId: ClientID
+): Promise<MessageBase[]> {
+  const messages = await getMessagesWithoutBody(30, false, false, false)
+  const unreadMessages = _.filter(
+    messages,
+    message => message.read === false && message.to === clientId
+  )
+  await Promise.all(_.map(unreadMessages, async m => markMessageDeleted(m.hash)))
+
+  // send system message to mark these messages as deleted
+  const systemMessages = await systemMessageDeletedFor(
+    credentials,
+    keyPair,
+    _.map(unreadMessages, m => m.hash)
+  )
+  sendMessages(credentials, systemMessages)
+
+  return getMessagesWithoutBody(30, false, false, false)
+}
+
+function* handleSweepMessage() {
+  try {
+    const state: ApplicationState = yield select()
+    const clientId = state.clientState.credentials.client_id
+    const res = yield call(
+      deleteSweep,
+      state.clientState.credentials,
+      state.keysState.current_key,
+      clientId
+    )
+
+    if (res.error) {
+      yield put(deleteSweepError(res.error))
+    } else {
+      const rankedMessages = rankMessages(clientId, res)
+      yield put(deleteSweepSuccess(rankedMessages))
+    }
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      yield put(deleteSweepError(error.response.data.message))
+    } else if (error.message) {
+      yield put(deleteSweepError(error.message))
+    } else {
+      yield put(deleteSweepError(error))
+    }
+  }
+}
+
+function* watchDeleteSweepRequest() {
+  yield takeEvery(MessagesActionTypes.DELETE_SWEEP_REQUEST, handleSweepMessage)
 }
 
 async function loadMessages(
@@ -455,6 +530,7 @@ function* watchLoadMessagesRequest() {
 export function* sagas() {
   yield all([
     fork(watchDeleteMessageRequest),
+    fork(watchDeleteSweepRequest),
     fork(watchFetchMessagesRequest),
     fork(watchInitializeMessagesRequest),
     fork(watchLoadMessagesRequest),

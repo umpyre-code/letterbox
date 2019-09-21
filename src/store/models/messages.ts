@@ -11,7 +11,9 @@ export enum MessageType {
   // a plain old message
   MESSAGE = '@@message/message',
   // message was seen by the recipient (aka read)
-  SYSTEM_READ = '@@system/read'
+  SYSTEM_READ = '@@system/read',
+  // message marked as deleted
+  SYSTEM_DELETED = '@@system/deleted'
 }
 
 export interface MessageBody {
@@ -25,6 +27,8 @@ export interface MessageBody {
   pda?: string
   // the message that was seen, if this is a SYSTEM_READ message
   messageSeen?: MessageHash
+  // the message that was deleted, if this is a SYSTEM_DELETED message
+  messageDeleted?: MessageHash
 }
 
 // The message body when it's stored in the DB

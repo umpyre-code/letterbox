@@ -241,6 +241,14 @@ async function processSystemMessages(clientId: ClientID, messages: MessageBase[]
           console.error(error)
         }
         break
+      case MessageType.SYSTEM_DELETED:
+        // message was delete, update the corresponding local message
+        try {
+          db.messageInfos.update(message.body.messageDeleted, { deleted: true })
+        } catch (error) {
+          console.error(error)
+        }
+        break
       default:
         break
     }
@@ -382,30 +390,69 @@ export async function prepareMessage(
 export async function systemMessageReadFor(
   credentials: ClientCredentials,
   keyPair: KeyPair,
-  hash: MessageHash
+  hashes: MessageHash[]
 ): Promise<APIMessage[]> {
-  const messageBody: MessageBody = {
-    type: MessageType.SYSTEM_READ,
-    messageSeen: hash
-  }
-  const readMessage = await db.messageInfos.get({ hash })
-  // only send read receipts if we're the recipient of the message
-  if (readMessage.to === credentials.client_id) {
-    const message = {
-      body: JSON.stringify(messageBody),
-      deleted: false,
-      from: credentials.client_id,
-      nonce: '',
-      read: false,
-      recipient_public_key: '',
-      sender_public_key: '',
-      sent_at: new Date(),
-      to: readMessage.from,
-      value_cents: 0
-    }
+  const res = await Promise.all(
+    _.map(hashes, async hash => {
+      const messageBody: MessageBody = {
+        type: MessageType.SYSTEM_READ,
+        messageSeen: hash
+      }
+      const readMessage = await db.messageInfos.get({ hash })
+      // only send read receipts if we're the recipient of the message
+      if (readMessage.to === credentials.client_id) {
+        const message = {
+          body: JSON.stringify(messageBody),
+          deleted: false,
+          from: credentials.client_id,
+          nonce: '',
+          read: false,
+          recipient_public_key: '',
+          sender_public_key: '',
+          sent_at: new Date(),
+          to: readMessage.from,
+          value_cents: 0
+        }
+        return prepareMessage(credentials, keyPair, message, [readMessage.from])
+      }
+      return Promise.resolve([])
+    })
+  )
+  return Promise.resolve(_.flatten(res))
+}
 
-    return prepareMessage(credentials, keyPair, message, [readMessage.from])
-  }
+export async function systemMessageDeletedFor(
+  credentials: ClientCredentials,
+  keyPair: KeyPair,
+  hashes: MessageHash[]
+): Promise<APIMessage[]> {
+  const res = await Promise.all(
+    _.map(hashes, async hash => {
+      const messageBody: MessageBody = {
+        type: MessageType.SYSTEM_DELETED,
+        messageDeleted: hash
+      }
+      const readMessage = await db.messageInfos.get({ hash })
+      // only send read receipts if we're the recipient of the message
+      if (readMessage.to === credentials.client_id) {
+        const message = {
+          body: JSON.stringify(messageBody),
+          deleted: false,
+          from: credentials.client_id,
+          nonce: '',
+          read: false,
+          recipient_public_key: '',
+          sender_public_key: '',
+          sent_at: new Date(),
+          to: readMessage.from,
+          value_cents: 0
+        }
 
-  return Promise.resolve([])
+        return prepareMessage(credentials, keyPair, message, [readMessage.from])
+      }
+
+      return Promise.resolve([])
+    })
+  )
+  return Promise.resolve(_.flatten(res))
 }

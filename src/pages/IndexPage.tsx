@@ -2,12 +2,15 @@ import {
   Container,
   createStyles,
   Divider,
+  Grid,
+  IconButton,
   makeStyles,
   Theme,
   Tooltip,
   Typography
 } from '@material-ui/core'
 import Fab from '@material-ui/core/Fab'
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep'
 import Edit from '@material-ui/icons/Edit'
 import * as React from 'react'
 import { connect } from 'react-redux'
@@ -17,13 +20,14 @@ import { DraftList } from '../components/drafts/DraftList'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { MessageList } from '../components/messages/MessageList'
 import PhoneVerification from '../components/widgets/PhoneVerification'
+import { PUBLIC_URL } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
+import { deleteSweepRequest } from '../store/messages/actions'
 import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
-import { PUBLIC_URL } from '../store/api'
 
 interface PropsFromState {
   balance?: Balance
@@ -38,6 +42,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   addDraft: typeof addDraftRequest
+  deleteSweep: typeof deleteSweepRequest
 }
 
 type AllProps = PropsFromState & PropsFromDispatch
@@ -62,15 +67,45 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     messageListContainer: {
       padding: theme.spacing(1)
+    },
+    deleteSweepButton: {
+      float: 'right',
+      height: 36,
+      margin: 0,
+      width: 36
     }
   })
 )
+
+interface DeleteSweepProps {
+  deleteSweep: typeof deleteSweepRequest
+}
+
+const DeleteSweep: React.FC<DeleteSweepProps> = ({ deleteSweep }) => {
+  const classes = useStyles({})
+
+  return (
+    <Tooltip title="Delete remaining unread messages">
+      <IconButton
+        className={classes.deleteSweepButton}
+        aria-label="delete sweep"
+        onClick={event => {
+          event.stopPropagation()
+          deleteSweep()
+        }}
+      >
+        <DeleteSweepIcon />
+      </IconButton>
+    </Tooltip>
+  )
+}
 
 const IndexPageFC: React.FC<AllProps> = ({
   addDraft,
   balance,
   clientReady,
   credentialsReady,
+  deleteSweep,
   drafts,
   messagesState,
   profile,
@@ -119,7 +154,14 @@ const IndexPageFC: React.FC<AllProps> = ({
           </React.Fragment>
         )}
         <Container className={classes.messageListContainer}>
-          <Typography>Unread</Typography>
+          <Grid container justify="space-between" alignItems="flex-end">
+            <Grid item>
+              <Typography>Unread</Typography>
+            </Grid>
+            <Grid item xs>
+              <DeleteSweep deleteSweep={deleteSweep} />
+            </Grid>
+          </Grid>
           <MessageList
             messages={messagesState.unreadMessages}
             messageType="unread"
@@ -175,7 +217,8 @@ const mapStateToProps = ({
 })
 
 const mapDispatchToProps = {
-  addDraft: addDraftRequest
+  addDraft: addDraftRequest,
+  deleteSweep: deleteSweepRequest
 }
 
 const IndexPage = connect(

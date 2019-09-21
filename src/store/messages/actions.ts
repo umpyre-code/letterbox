@@ -48,3 +48,9 @@ export const loadMessagesSuccess = (messages: DecryptedMessage[]) =>
 export const loadMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.LOAD_MESSAGES_ERROR, errorMessage)
 export const unloadMessages = () => action(MessagesActionTypes.UNLOAD_MESSAGES_REQUEST)
+
+export const deleteSweepRequest = () => action(MessagesActionTypes.DELETE_SWEEP_REQUEST)
+export const deleteSweepSuccess = (messages: RankedMessages) =>
+  action(MessagesActionTypes.DELETE_SWEEP_SUCCESS, messages)
+export const deleteSweepError = (errorMessage: string) =>
+  action(MessagesActionTypes.DELETE_SWEEP_ERROR, errorMessage)
