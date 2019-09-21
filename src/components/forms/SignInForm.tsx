@@ -34,22 +34,28 @@ class SignIn extends React.Component<AllProps> {
   private handleFormRender = ({ submitForm, isSubmitting, isValid }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <FormControl fullWidth>
-            <Field name="email" type="email" label="Email" component={TextField} />
+            <Field name="email" type="email" label="Email" component={TextField} fullWidth />
           </FormControl>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <FormControl fullWidth>
-            <Field type="password" label="Password" name="password" component={TextField} />
+            <Field
+              type="password"
+              label="Password"
+              name="password"
+              component={TextField}
+              fullWidth
+            />
           </FormControl>
         </Grid>
         {this.props.client.authError && (
-          <Grid item>
+          <Grid item xs={12} style={{ width: '100%' }}>
             <SnackbarContent
               message={
                 <h3>
-                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don&apos;t look right!
+                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don&apos;t seem right!
                   Try again :)
                 </h3>
               }
@@ -61,7 +67,7 @@ class SignIn extends React.Component<AllProps> {
             <LinearProgress />
           </Grid>
         )}
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <Button
             variant="contained"
             color="primary"
@@ -72,7 +78,7 @@ class SignIn extends React.Component<AllProps> {
             Sign In 👍
           </Button>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <Button
             variant="contained"
             color="secondary"

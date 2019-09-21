@@ -50,7 +50,8 @@ interface PropsFromDispatch {
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {
-    maxWidth: 400
+    maxWidth: 400,
+    background: 'rgba(0, 0, 0, 0.9)'
   }
 }))(Tooltip)
 
@@ -136,12 +137,12 @@ class SignUp extends React.Component<AllProps> {
   private handleFormRender = ({ submitForm, isSubmitting, isValid }) => (
     <Form>
       <Grid container direction="column" spacing={2}>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <FormControl fullWidth>
             <Field name="email" type="email" label="Email" component={TextField} fullWidth />
           </FormControl>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <FormControl fullWidth>
             <Field
               type="password"
@@ -152,12 +153,12 @@ class SignUp extends React.Component<AllProps> {
             />
           </FormControl>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <FormControl fullWidth>
             <Field type="text" label="Your Name" name="full_name" component={TextField} fullWidth />
           </FormControl>
         </Grid>
-        <Grid item>
+        <Grid item xs={12}>
           <FormControl fullWidth>
             <FormGroup row>
               <Grid container>
@@ -178,7 +179,7 @@ class SignUp extends React.Component<AllProps> {
                     })}
                   </Field>
                 </Grid>
-                <Grid item container xs>
+                <Grid item container xs style={{ width: '100%' }}>
                   <Grid item xs>
                     <Field
                       type="text"
@@ -188,7 +189,7 @@ class SignUp extends React.Component<AllProps> {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item style={{ alignSelf: 'end' }}>
+                  <Grid item style={{ alignSelf: 'flex-end' }}>
                     <PhoneNumberToolTip />
                   </Grid>
                 </Grid>
@@ -197,7 +198,7 @@ class SignUp extends React.Component<AllProps> {
           </FormControl>
         </Grid>
         {this.props.client.signUpFormErrors && (
-          <Grid item>
+          <Grid item xs={12} style={{ width: '100%' }}>
             <SnackbarContent
               message={
                 <h3>
@@ -213,7 +214,7 @@ class SignUp extends React.Component<AllProps> {
             <LinearProgress />
           </Grid>
         )}
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <Button
             variant="contained"
             color="primary"
@@ -224,7 +225,7 @@ class SignUp extends React.Component<AllProps> {
             Sign Up 👍
           </Button>
         </Grid>
-        <Grid item>
+        <Grid item xs={12} style={{ width: '100%' }}>
           <Button
             variant="contained"
             color="secondary"
