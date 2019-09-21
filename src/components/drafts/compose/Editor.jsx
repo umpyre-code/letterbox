@@ -1,9 +1,15 @@
+// This is a JS instead of TS file because some of the typings are broken in the
+// plugins.
+
+import createDragNDropUploadPlugin from '@arahansen/draft-js-drag-n-drop-upload-plugin'
 import { Box } from '@material-ui/core'
-import { EditorState } from 'draft-js'
+import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin'
+import createFocusPlugin from 'draft-js-focus-plugin'
+import createImagePlugin from 'draft-js-image-plugin'
 import createLinkifyPlugin from 'draft-js-linkify-plugin'
 import createMarkdownPlugin from 'draft-js-markdown-plugin-es6'
+import PluginEditor, { composeDecorators } from 'draft-js-plugins-editor'
 import createPrismPlugin from 'draft-js-prism-plugin-ng'
-import PluginEditor from 'draft-js-plugins-editor'
 import Prism from 'prismjs'
 import 'prismjs/components/prism-bash'
 import 'prismjs/components/prism-c'
@@ -21,30 +27,45 @@ import 'prismjs/components/prism-scala'
 import 'prismjs/components/prism-sql'
 import 'prismjs/components/prism-swift'
 import 'prismjs/components/prism-typescript'
+import 'draft-js-image-plugin/lib/plugin.css'
 import * as React from 'react'
 import './Draft.css'
+import focusTheme from './focusPlugin.module.css'
 import './normalize.css'
 import './prism.css'
 import styles from './styles.module.css'
 
-interface Language {
-  label: string
-  value: string
-}
+const focusPlugin = createFocusPlugin({ theme: focusTheme })
+const blockDndPlugin = createBlockDndPlugin()
 
-interface RenderProps {
-  options: Array<Language>
-  onChange: () => void
-  selectedValue: string
-  selectedLabel: string
-}
+const decorator = composeDecorators(focusPlugin.decorator, blockDndPlugin.decorator)
+const imagePlugin = createImagePlugin({ decorator })
 
-const renderLanguageSelect: React.FC<RenderProps> = ({
-  options,
-  onChange,
-  selectedValue,
-  selectedLabel
-}) => (
+const dragNDropFileUploadPlugin = createDragNDropUploadPlugin({
+  handleUpload: (data, success, failed, progress) => {
+    // if (data.files) {
+    //   data.files.forEach(file => {
+    //     loadImage(
+    //       file,
+    //       (canvas, imageData) => {
+    //         if (canvas.type === 'error') {
+    //           console.error('Error loading image ')
+    //         } else {
+    //           console.log(canvas.toDataURL())
+    //         }
+    //       },
+    //       {
+    //         canvas: true,
+    //         orientation: true
+    //       }
+    //     )
+    //   })
+    // }
+  },
+  addImage: imagePlugin.addImage
+})
+
+const renderLanguageSelect = ({ options, onChange, selectedValue, selectedLabel }) => (
   <div className={styles.switcherContainer}>
     <div className={styles.switcher}>
       <select className={styles.switcherSelect} value={selectedValue} onChange={onChange}>
@@ -82,19 +103,16 @@ const languages = {
 }
 
 const editorPlugins = [
+  dragNDropFileUploadPlugin,
+  blockDndPlugin,
+  focusPlugin,
+  imagePlugin,
   createPrismPlugin({ prism: Prism }),
   createLinkifyPlugin(),
   createMarkdownPlugin({ renderLanguageSelect, languages })
 ]
 
-interface Props {
-  placeholder: string
-  editorState: EditorState
-  onChange: (arg0: EditorState) => void
-  readOnly?: boolean
-}
-
-export const Editor: React.FC<Props> = ({ placeholder, editorState, onChange, readOnly }) => {
+export const Editor = ({ placeholder, editorState, onChange, readOnly }) => {
   const editor = React.useRef(null)
 
   function focusEditor() {

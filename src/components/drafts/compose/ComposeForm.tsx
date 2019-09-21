@@ -190,9 +190,12 @@ const ComposeFormFC: React.FC<AllProps> = ({
             editorState={editorState}
             onChange={(updatedEditorState: EditorState) => {
               setEditorState(updatedEditorState)
+              const editorContent = JSON.stringify(
+                convertToRaw(updatedEditorState.getCurrentContent())
+              )
               updateDraft({
                 ...draft,
-                editorContent: JSON.stringify(convertToRaw(updatedEditorState.getCurrentContent())),
+                editorContent,
                 sendError: undefined
               })
             }}

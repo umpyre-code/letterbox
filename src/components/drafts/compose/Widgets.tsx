@@ -35,10 +35,12 @@ interface SendButtonProps {
 
 export const SendButton: React.FC<SendButtonProps> = ({ cents, enabled, classes, handleSend }) => (
   <Tooltip title="Look good? Send it!">
-    <Button variant="contained" color="primary" onClick={handleSend} disabled={!enabled}>
-      Send for ${(cents / 100).toFixed(2)}
-      <SendIcon className={classes.sendIcon} />
-    </Button>
+    <React.Fragment>
+      <Button variant="contained" color="primary" onClick={handleSend} disabled={!enabled}>
+        Send for ${(cents / 100).toFixed(2)}
+        <SendIcon className={classes.sendIcon} />
+      </Button>
+    </React.Fragment>
   </Tooltip>
 )
 
