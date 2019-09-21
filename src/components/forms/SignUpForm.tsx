@@ -26,6 +26,7 @@ import { ApplicationState } from '../../store/ApplicationState'
 import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
 import { CountryCodes } from './CountryCodes'
+import { Emoji } from '../widgets/Emoji'
 
 interface PhoneNumber {
   country_code?: string
@@ -202,7 +203,7 @@ class SignUp extends React.Component<AllProps> {
             <SnackbarContent
               message={
                 <h3>
-                  <span style={{ fontSize: '1.5rem', padding: '5px' }}>😳</span>{' '}
+                  <Emoji ariaLabel="error">😳</Emoji>&nbsp;
                   {this.props.client.signUpFormErrors}
                 </h3>
               }
