@@ -69,13 +69,13 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return { ...state, sketch: action.payload }
     }
     case MessagesActionTypes.LOAD_MESSAGES_ERROR: {
-      return { ...state, loadedMessages: [] }
+      return { ...state, loadedMessages: [], loading: false }
     }
     case MessagesActionTypes.LOAD_MESSAGES_REQUEST: {
-      return { ...state, loadedMessages: [] }
+      return { ...state, loadedMessages: [], loading: true }
     }
     case MessagesActionTypes.LOAD_MESSAGES_SUCCESS: {
-      return { ...state, loadedMessages: action.payload }
+      return { ...state, loadedMessages: action.payload, loading: false }
     }
     case MessagesActionTypes.UNLOAD_MESSAGES_REQUEST: {
       return { ...state, loadedMessages: [] }
