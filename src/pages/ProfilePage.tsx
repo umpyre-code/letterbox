@@ -63,8 +63,10 @@ const ProfilePageFC: React.FC<AllProps> = ({
     async function fetchData() {
       const api = new API(credentials)
       if (
-        myProfile &&
-        (match.params.handle === myProfile.handle || match.params.clientId === myProfile.client_id)
+        (myProfile &&
+          (match.params.handle === myProfile.handle ||
+            match.params.clientId === myProfile.client_id)) ||
+        (!match.params.handle && !match.params.clientId)
       ) {
         setIsEditable(true)
         setProfile(myProfile)

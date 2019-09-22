@@ -1,4 +1,16 @@
-import { Box, Button, TextField, Tooltip, Typography } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  createStyles,
+  IconButton,
+  makeStyles,
+  TextField,
+  Theme,
+  Tooltip,
+  Typography
+} from '@material-ui/core'
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto'
+import AttachFileIcon from '@material-ui/icons/AttachFile'
 import DeleteIcon from '@material-ui/icons/Delete'
 import HelpIcon from '@material-ui/icons/Help'
 import SendIcon from '@material-ui/icons/Send'
@@ -17,11 +29,11 @@ export const AddCreditsButton: React.FC<AddCreditsButtonProps> = ({ cents }) => 
   <Tooltip title="Your balance is insufficient, you need to add credits first.">
     <Button
       variant="contained"
-      color="primary"
+      color="secondary"
       component={AdapterLink}
       to={`/addcredits?amountCents=${cents}`}
     >
-      Add Credits for ${(cents / 100).toFixed(2)}
+      Add Credits ${(cents / 100).toFixed(2)}
     </Button>
   </Tooltip>
 )
@@ -37,7 +49,7 @@ export const SendButton: React.FC<SendButtonProps> = ({ cents, enabled, classes,
   <Tooltip title="Look good? Send it!">
     <React.Fragment>
       <Button variant="contained" color="primary" onClick={handleSend} disabled={!enabled}>
-        Send for ${(cents / 100).toFixed(2)}
+        Send ${(cents / 100).toFixed(2)}
         <SendIcon className={classes.sendIcon} />
       </Button>
     </React.Fragment>
@@ -55,19 +67,11 @@ export const DiscardButton: React.FC<DiscardButtonProps> = ({
   classes,
   handleDiscard
 }) => (
-  <Box position="relative">
-    <Tooltip title="Discard this draft">
-      <Button
-        variant="contained"
-        className={classes.discardButton}
-        onClick={handleDiscard}
-        disabled={!enabled}
-      >
-        Discard
-        <DeleteIcon className={classes.deleteIcon} />
-      </Button>
-    </Tooltip>
-  </Box>
+  <Tooltip title="Discard this draft">
+    <IconButton className={classes.discardButton} onClick={handleDiscard} disabled={!enabled}>
+      <DeleteIcon className={classes.deleteIcon} />
+    </IconButton>
+  </Tooltip>
 )
 
 interface PDAFieldProps {
@@ -105,3 +109,49 @@ export const PDAToolTip = () => (
     <HelpIcon />
   </Tooltip>
 )
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    attachFileButton: {
+      height: 36,
+      margin: 0,
+      width: 36
+    }
+  })
+)
+
+interface AttachFileProps {
+  onClick: (event) => void
+}
+
+export const AttachFile: React.FC<AttachFileProps> = ({ onClick }) => {
+  const classes = useStyles({})
+
+  return (
+    <Tooltip title="Attach file" enterDelay={250}>
+      <IconButton className={classes.attachFileButton} aria-label="attach file" onClick={onClick}>
+        <AttachFileIcon />
+      </IconButton>
+    </Tooltip>
+  )
+}
+
+interface InsertImageProps {
+  onClick: (event) => void
+}
+
+export const InsertImage: React.FC<InsertImageProps> = ({ onClick }) => {
+  const classes = useStyles({})
+
+  return (
+    <Tooltip title="Insert image at cursor" enterDelay={250}>
+      <IconButton
+        className={classes.attachFileButton}
+        aria-label="insert image at cursor"
+        onClick={onClick}
+      >
+        <AddAPhotoIcon />
+      </IconButton>
+    </Tooltip>
+  )
+}

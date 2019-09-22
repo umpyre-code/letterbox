@@ -1,14 +1,19 @@
 import {
   createStyles,
   Divider,
+  FormControl,
+  FormControlLabel,
   Grid,
+  Input,
   LinearProgress,
   makeStyles,
   Theme,
   Typography
 } from '@material-ui/core'
+import loadImage from 'blueimp-load-image'
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js'
 import { stateToHTML } from 'draft-js-export-html'
+import _ from 'lodash'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../../../store/ApplicationState'
@@ -23,19 +28,26 @@ import { ClientCredentials, ClientID } from '../../../store/models/client'
 import { MessageBody, MessageType } from '../../../store/models/messages'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { PaymentInput } from '../../widgets/PaymentInput'
-import { Editor } from './Editor'
+import { Editor, imagePlugin } from './Editor'
 import { RecipientField } from './RecipientField'
-import { AddCreditsButton, DiscardButton, PDAField, PDAToolTip, SendButton } from './Widgets'
+import {
+  AddCreditsButton,
+  DiscardButton,
+  InsertImage,
+  PDAField,
+  PDAToolTip,
+  SendButton
+} from './Widgets'
 
 const UMPYRE_MESSAGE_SEND_FEE = 0.03
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    deleteIcon: {
-      marginLeft: theme.spacing(1)
-    },
+    deleteIcon: {},
     discardButton: {
-      backgroundColor: '#ccc'
+      height: 36,
+      margin: 0,
+      width: 36
     },
     progress: {
       margin: theme.spacing(1, 0, 0, 0)
@@ -86,6 +98,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
     Math.trunc(draft.value_cents / 100)
   )
+  const imageInputRef = React.createRef()
   const classes = useStyles({})
 
   function handleSend() {
@@ -112,6 +125,27 @@ const ComposeFormFC: React.FC<AllProps> = ({
       recipients
     }
     sendDraft(messageDraft)
+  }
+
+  function handleImageUpload(imageFiles: FileList) {
+    if (imageFiles && imageFiles.length > 0) {
+      _.forEach(imageFiles, file => {
+        loadImage(
+          file,
+          (canvas, data) => {
+            if (canvas.type === 'error') {
+              console.error('Error loading image ')
+            } else {
+              setEditorState(imagePlugin.addImage(editorState, canvas.toDataURL()))
+            }
+          },
+          {
+            canvas: true,
+            orientation: true
+          }
+        )
+      })
+    }
   }
 
   function handleDiscard() {
@@ -200,37 +234,80 @@ const ComposeFormFC: React.FC<AllProps> = ({
               })
             }}
             placeholder="🔐 private message body"
+            images
           />
         </Grid>
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        <Grid container item xs={12} sm justify="space-between" alignItems="flex-end">
-          <Grid item container xs spacing={1} justify="flex-start" alignItems="flex-end">
-            <Grid item>
-              <PaymentInput
-                disabled={draft.sending}
-                style={{ margin: '0 10px 0 0', padding: '10', width: 150 }}
-                placeholder="Message value"
-                label="Payment"
-                defaultValue={
-                  draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : undefined
-                }
-                onChange={event => {
-                  const value = Number(event.target.value)
-                  setMessageValue(value)
-                  updateDraft({ ...draft, value_cents: value * 100, sendError: undefined })
-                }}
-              />
-            </Grid>
-            <Grid item>{showAddCreditsButton()}</Grid>
+        <Grid container item spacing={2} justify="space-between" alignItems="flex-end">
+          {/* <Grid item container spacing={1} justify="flex-start" alignItems="flex-end"> */}
+          <Grid item>
+            <PaymentInput
+              disabled={draft.sending}
+              style={{ margin: '0 0 0 0', padding: '3', width: 110 }}
+              placeholder="Value"
+              label="Payment"
+              defaultValue={draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : undefined}
+              onChange={event => {
+                const value = Number(event.target.value)
+                setMessageValue(value)
+                updateDraft({ ...draft, value_cents: value * 100, sendError: undefined })
+              }}
+            />
           </Grid>
+          <Grid item>{showAddCreditsButton()}</Grid>
+          <Grid item>
+            <Divider orientation="vertical" style={{ marginLeft: 3, marginRight: 3, height: 36 }} />
+          </Grid>
+          <Grid item>
+            <FormControl>
+              <FormControlLabel
+                label={
+                  <InsertImage
+                    onClick={() => {
+                      if (imageInputRef.current) {
+                        const input = imageInputRef.current as HTMLInputElement
+                        input.click()
+                      }
+                    }}
+                  />
+                }
+                control={
+                  <Input
+                    inputRef={imageInputRef}
+                    style={{ display: 'none' }}
+                    inputProps={{
+                      accept: 'image/png, image/jpeg, image/gif'
+                    }}
+                    aria-describedby="upload-image"
+                    type="file"
+                    onChange={event => {
+                      const target = event.target as HTMLInputElement
+                      handleImageUpload(target.files)
+                    }}
+                  />
+                }
+              />
+            </FormControl>
+          </Grid>
+          {/* <Grid item>
+            <AttachFile
+              onClick={e => {
+                console.log(e)
+              }}
+            />
+          </Grid> */}
+          <Grid item xs />
+          {/* </Grid> */}
+          {/* <Grid item container spacing={1} justify="flex-end" alignItems="flex-end" zeroMinWidth> */}
           <Grid item>
             <DiscardButton
               classes={classes}
               enabled={!draft.sending}
               handleDiscard={handleDiscard}
             />
+            {/* </Grid> */}
           </Grid>
         </Grid>
       </Grid>

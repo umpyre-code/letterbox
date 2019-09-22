@@ -6,7 +6,7 @@ import { Box } from '@material-ui/core'
 import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin'
 import createFocusPlugin from 'draft-js-focus-plugin'
 import createImagePlugin from 'draft-js-image-plugin'
-import createLinkifyPlugin from 'draft-js-linkify-plugin'
+import 'draft-js-image-plugin/lib/plugin.css'
 import createMarkdownPlugin from 'draft-js-markdown-plugin-es6'
 import PluginEditor, { composeDecorators } from 'draft-js-plugins-editor'
 import createPrismPlugin from 'draft-js-prism-plugin-ng'
@@ -27,7 +27,6 @@ import 'prismjs/components/prism-scala'
 import 'prismjs/components/prism-sql'
 import 'prismjs/components/prism-swift'
 import 'prismjs/components/prism-typescript'
-import 'draft-js-image-plugin/lib/plugin.css'
 import * as React from 'react'
 import './Draft.css'
 import focusTheme from './focusPlugin.module.css'
@@ -39,7 +38,7 @@ const focusPlugin = createFocusPlugin({ theme: focusTheme })
 const blockDndPlugin = createBlockDndPlugin()
 
 const decorator = composeDecorators(focusPlugin.decorator, blockDndPlugin.decorator)
-const imagePlugin = createImagePlugin({ decorator })
+export const imagePlugin = createImagePlugin({ decorator })
 
 const dragNDropFileUploadPlugin = createDragNDropUploadPlugin({
   handleUpload: (data, success, failed, progress) => {
@@ -103,16 +102,19 @@ const languages = {
 }
 
 const editorPlugins = [
+  createPrismPlugin({ prism: Prism }),
+  createMarkdownPlugin({ renderLanguageSelect, languages })
+]
+
+const editorWithImagesPlugins = [
   dragNDropFileUploadPlugin,
   blockDndPlugin,
   focusPlugin,
   imagePlugin,
-  createPrismPlugin({ prism: Prism }),
-  createLinkifyPlugin(),
-  createMarkdownPlugin({ renderLanguageSelect, languages })
+  ...editorPlugins
 ]
 
-export const Editor = ({ placeholder, editorState, onChange, readOnly }) => {
+export const Editor = ({ placeholder, editorState, onChange, readOnly, images }) => {
   const editor = React.useRef(null)
 
   function focusEditor() {
@@ -135,7 +137,7 @@ export const Editor = ({ placeholder, editorState, onChange, readOnly }) => {
       <PluginEditor
         ref={editor}
         editorState={editorState}
-        plugins={editorPlugins}
+        plugins={images ? editorWithImagesPlugins : editorPlugins}
         onChange={onChange}
         placeholder={placeholder}
         spellCheck
@@ -146,5 +148,6 @@ export const Editor = ({ placeholder, editorState, onChange, readOnly }) => {
 }
 
 Editor.defaultProps = {
-  readOnly: false
+  readOnly: false,
+  images: false
 }
