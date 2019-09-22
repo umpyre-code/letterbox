@@ -125,10 +125,8 @@ export const ProfileFormFC: React.FC<AllProps> = ({
   const classes = useStyles({})
   const [editorState, setEditorState] = React.useState(getInitialState(profile))
 
-  const clientProfileHelper = ClientProfileHelper.FROM(profile)
-
   const handleFormRender = (props: FormikProps<FormikValues>) => {
-    const { submitForm, isSubmitting, isValid, isValidating } = props
+    const { submitForm, isSubmitting, isValid } = props
 
     function doneButtonDisabled() {
       return isSubmitting || !isValid
