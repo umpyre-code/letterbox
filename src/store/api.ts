@@ -31,6 +31,10 @@ export const API_ENDPOINT = process.env.API_ENDPOINT || 'invalid API endpoint'
 export const PUBLIC_URL = process.env.PUBLIC_URL || 'invalid public URL'
 
 export class API {
+  public static async METRIC_COUNTER_INC(metric: string) {
+    return axios.post(`${API_ENDPOINT}/metrics/counter/${metric}/inc`)
+  }
+
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
     return axios.post(`${API_ENDPOINT}/client`, newClient).then(response => response.data)
   }

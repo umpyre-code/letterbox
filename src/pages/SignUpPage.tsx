@@ -15,6 +15,7 @@ import HelpIcon from '@material-ui/icons/Help'
 import * as React from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import { SignUpForm } from '../components/forms/SignUpForm'
+import { API } from '../store/api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +51,9 @@ const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef'
 )
 
 const SignUpPage = () => {
+  React.useEffect(() => {
+    API.METRIC_COUNTER_INC('signup-page-loaded')
+  }, [])
   const classes = useStyles({})
   return (
     <React.Fragment>

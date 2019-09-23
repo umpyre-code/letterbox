@@ -272,8 +272,10 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     const res = yield call(submitNewClient, payload, currentKeyPair)
 
     if (res.error) {
+      yield spawn(API.METRIC_COUNTER_INC, 'signup-error')
       yield put(submitNewClientError(res.error))
     } else {
+      yield spawn(API.METRIC_COUNTER_INC, 'signup-success')
       const authres = yield call(authenticate, payload as AuthCreds)
       const credentials = yield call(saveClientToken, authres)
       yield put(submitNewClientSuccess(credentials))
@@ -286,6 +288,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
       yield put(push('/flashseed'))
     }
   } catch (error) {
+    yield spawn(API.METRIC_COUNTER_INC, 'signup-error')
     if (error.response && error.response.data && error.response.data.message) {
       if (error.response.data.code && error.response.data.code === 3) {
         if (error.response.data.message.startsWith('invalid email')) {
