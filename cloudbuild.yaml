@@ -9,11 +9,10 @@ steps:
       - 'CI=true'
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'sh'
-    # libx11 is required for chrome headless installation
     args:
       [
         '-c',
-        'apt-get update -yqq ; apt-get install -yqq xvfb libxss1 libgconf-2-4 libnss3 libasound2 && yarn run build',
+        'apt-get update -yqq ; apt-get install -yqq xvfb libxss1 libgconf-2-4 libnss3 libasound2 libcups2 && yarn run build',
       ]
     env:
       - 'DEBIAN_FRONTEND=noninteractive'
