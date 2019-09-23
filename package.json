@@ -127,7 +127,7 @@
     "electron": "^6.0.9",
     "electron-builder": "^21.2.0",
     "eslint": "^6.4.0",
-    "eslint-config-airbnb-typescript": "^4.0.1",
+    "eslint-config-airbnb-typescript": "^5.0.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-config-react-app": "^5.0.1",
     "eslint-loader": "^3.0.0",
