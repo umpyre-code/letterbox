@@ -235,6 +235,10 @@
   "name": "letterbox",
   "private": true,
   "reactSnap": {
+    "include": [
+      "/signup",
+      "/about"
+    ],
     "minifyHtml": {
       "collapseWhitespace": false,
       "removeComments": false
