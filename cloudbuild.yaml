@@ -13,7 +13,7 @@ steps:
     args:
       [
         '-c',
-        'apt-get update -yqq ; apt-get install -yqq xorg libxss1 libgconf-2-4 libnss3 libasound2 && yarn run build',
+        'apt-get update -yqq ; apt-get install -yqq xvfb libxss1 libgconf-2-4 libnss3 libasound2 && yarn run build',
       ]
     env:
       - 'DEBIAN_FRONTEND=noninteractive'
