@@ -22,7 +22,18 @@ steps:
     # First copy everything excluding index.html. This provides us with some
     # atomicity, and reduces the likelihood of people winding up in a weird
     # state.
-    args: ['-m', 'rsync', '-x', 'index\.html$', '-r', 'build', 'gs://staging.umpyre.io/']
+    args:
+      [
+        '-m',
+        'rsync',
+        '-x',
+        'index\.html$',
+        '-r',
+        '-z',
+        'html,css,js,txt',
+        'build',
+        'gs://staging.umpyre.io/',
+      ]
   - name: 'gcr.io/cloud-builders/gsutil'
     # Rerun the sync, this time include index.html.
-    args: ['-m', 'rsync', '-r', 'build', 'gs://staging.umpyre.io/']
+    args: ['-m', 'rsync', '-r', '-z', 'html,css,js,txt', 'build', 'gs://staging.umpyre.io/']
