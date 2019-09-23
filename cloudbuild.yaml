@@ -10,12 +10,9 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'sh'
     # libx11 is required for chrome headless installation
-    args:
-      [
-        '-c',
-        'apt-get update -yqq && DEBIAN_FRONTEND=noninteractive apt-get install -yqq xorg && yarn run build',
-      ]
+    args: ['-c', 'apt-get update -yqq ; apt-get install -yqq xorg && yarn run build']
     env:
+      - 'DEBIAN_FRONTEND=noninteractive'
       - 'PUBLIC_URL=https://staging.umpyre.io'
       - 'API_URL=https://api.staging.umpyre.io'
   - name: 'gcr.io/cloud-builders/gsutil'
