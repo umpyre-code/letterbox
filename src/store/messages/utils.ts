@@ -301,11 +301,23 @@ export async function storeAndRetrieveMessages(
 
   // decrypt newly received messages and perform any processing needed
   const decryptedMessages = await Promise.all(
-    _.map(newMessages, async message => {
-      const encryptedMessage = fromApiMessage(message)
-      const decryptedMessage = await decryptMessage(clientId, encryptedMessage)
-      return Promise.resolve({ hash: encryptedMessage.hash, encryptedMessage, decryptedMessage })
-    })
+    _.chain(newMessages)
+      .map(async message => {
+        try {
+          const encryptedMessage = fromApiMessage(message)
+          const decryptedMessage = await decryptMessage(clientId, encryptedMessage)
+          return Promise.resolve({
+            hash: encryptedMessage.hash,
+            encryptedMessage,
+            decryptedMessage
+          })
+        } catch (error) {
+          console.log('Unable to decrypt message with hash', message.hash)
+          return Promise.resolve(undefined)
+        }
+      })
+      .compact()
+      .value()
   )
 
   const messagesMap = new Map(_.map(decryptedMessages, m => [m.hash, m]))
