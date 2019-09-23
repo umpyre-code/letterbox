@@ -20,8 +20,8 @@ export const Routes: React.FunctionComponent = () => (
     <Root>
       <Switch>
         <Route exact path="/" component={LazyIndexPage} />
-        <Route exact path="/about" component={LazyAboutPage} />
-        <Route exact path="/signup" component={LazySignUpPage} />
+        <Route exact path={['/about', '/about/index.html']} component={LazyAboutPage} />
+        <Route exact path={['/signup', '/signup/index.html']} component={LazySignUpPage} />
         <Route exact path="/flashseed" component={LazyFlashSeedPage} />
         <Route exact path="/inputseed" component={LazyInputSeedPage} />
         <Route exact path="/signin" component={LazySignInPage} />

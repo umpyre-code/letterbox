@@ -113,7 +113,7 @@ const SignUpPage = () => {
                         maxWidth: '300px',
                         height: 'auto'
                       }}
-                      src="artwork/umpyre-logo-yellow.png"
+                      src="/artwork/umpyre-logo-yellow.png"
                       alt="Inbox"
                     />
                   </Grid> */}
@@ -126,7 +126,7 @@ const SignUpPage = () => {
                         width: '100%',
                         height: 'auto'
                       }}
-                      src="artwork/inbox.png"
+                      src="/artwork/inbox.png"
                       alt="Inbox"
                     />
                   </Grid>
@@ -151,7 +151,7 @@ const SignUpPage = () => {
                         maxWidth: '200px',
                         height: 'auto'
                       }}
-                      src="artwork/privacy.png"
+                      src="/artwork/privacy.png"
                       alt="Privacy"
                     />
                   </Grid>
@@ -164,7 +164,7 @@ const SignUpPage = () => {
                         maxWidth: '200px',
                         height: 'auto'
                       }}
-                      src="artwork/security.png"
+                      src="/artwork/security.png"
                       alt="Security"
                     />
                   </Grid>
