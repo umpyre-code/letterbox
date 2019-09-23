@@ -15,7 +15,12 @@ function createHistory() {
 const history = createHistory()
 const store = configureStore(history)
 
-ReactDOM.render(<Main store={store} history={history} />, document.getElementById('root'))
+const rootElement = document.getElementById('root')
+if (rootElement.hasChildNodes()) {
+  ReactDOM.hydrate(<Main store={store} history={history} />, rootElement)
+} else {
+  ReactDOM.render(<Main store={store} history={history} />, rootElement)
+}
 
 const Application = {
   isUpdating: false

@@ -587,7 +587,7 @@ module.exports = function(webpackEnv) {
           skipWaiting: false,
           exclude: [/\.map$/, /asset-manifest\.json$/],
           importWorkboxFrom: 'local',
-          navigateFallback: publicUrl + '/index.html',
+          navigateFallback: publicUrl + '/200.html',
           navigateFallbackBlacklist: [
             // Exclude URLs starting with /_, as they're likely an API call
             new RegExp('^/_'),

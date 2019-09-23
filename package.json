@@ -234,11 +234,23 @@
   "main": "src/start.js",
   "name": "letterbox",
   "private": true,
+  "reactSnap": {
+    "minifyHtml": {
+      "collapseWhitespace": false,
+      "removeComments": false
+    },
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
+    "source": "build"
+  },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "build": "node scripts/build.js",
     "electron_dist": "electron-builder",
     "electron_start": "electron .",
+    "postbuild": "react-snap",
     "postinstall": "patch-package",
     "start": "node scripts/start.js",
     "test": "node scripts/test.js"
