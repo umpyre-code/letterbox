@@ -5,4 +5,4 @@ set -x
 
 yarn install
 yarn build
-gsutil -m cp -r -z html,css,js,txt,woff,woff2,svg build/* gs://umpyre.com/
+gsutil -m cp -r -z html,css,js,map,mjs,txt,woff,woff2,svg,json build/* gs://umpyre.com/
