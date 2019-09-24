@@ -331,18 +331,20 @@ export async function storeAndRetrieveMessages(
       const { encryptedMessage, decryptedMessage } = messagesMap.get(message.hash)
       // check if these messages have parents, and if so, update them accordingly
       let thread = encryptedMessage.hash
-      if (decryptedMessage && decryptedMessage.body && decryptedMessage.body.parent) {
-        thread = await findRootParentThread(decryptedMessage, messagesMap)
-      }
-      messagesMap.set(message.hash, {
-        ...messagesMap.get(message.hash),
-        encryptedMessage: {
-          ...encryptedMessage,
-          pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
-          type: decryptedMessage.body.type,
-          thread
+      if (decryptedMessage && decryptedMessage.body) {
+        if (decryptedMessage.body.parent) {
+          thread = await findRootParentThread(decryptedMessage, messagesMap)
         }
-      })
+        messagesMap.set(message.hash, {
+          ...messagesMap.get(message.hash),
+          encryptedMessage: {
+            ...encryptedMessage,
+            pda: decryptedMessage.body.pda || decryptedMessage.pda, // fallback to legacy PDA
+            type: decryptedMessage.body.type,
+            thread
+          }
+        })
+      }
       return Promise.resolve()
     })
   )
