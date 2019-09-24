@@ -29,6 +29,7 @@ import {
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import { DecryptedMessage } from '../store/models/messages'
+import { updateFavicon } from '../util/favicon'
 
 interface PropsFromState {
   balance?: Balance
@@ -36,6 +37,7 @@ interface PropsFromState {
   drafts: Draft[]
   loadedMessages: DecryptedMessage[]
   profile?: ClientProfile
+  unreadCount: number
 }
 
 interface PropsFromDispatch {
@@ -81,7 +83,8 @@ const MessagePageFC: React.FC<AllProps> = ({
   loadMessages,
   match,
   messageRead,
-  profile
+  profile,
+  unreadCount
 }) => {
   const classes = useStyles({})
   const { messageHash } = match.params
@@ -116,6 +119,11 @@ const MessagePageFC: React.FC<AllProps> = ({
       messageRef.current.scrollIntoView()
     }
   }, [messageHash, loadedMessages.length])
+
+  React.useEffect(() => {
+    // Update favicon
+    updateFavicon(unreadCount)
+  }, [unreadCount])
 
   function messageBodies() {
     return loadedMessages.map((message, index) => (
@@ -205,7 +213,8 @@ const mapStateToProps = ({
   credentials: clientState.credentials,
   profile: clientState.profile,
   loadedMessages: messagesState.loadedMessages,
-  drafts: draftsState.drafts
+  drafts: draftsState.drafts,
+  unreadCount: messagesState.unreadMessages.length
 })
 
 const mapDispatchToProps = {

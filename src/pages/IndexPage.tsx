@@ -20,7 +20,6 @@ import { DraftList } from '../components/drafts/DraftList'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { MessageList } from '../components/messages/MessageList'
 import PhoneVerification from '../components/widgets/PhoneVerification'
-import { PUBLIC_URL } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { deleteSweepRequest } from '../store/messages/actions'
@@ -28,6 +27,7 @@ import { Draft } from '../store/drafts/types'
 import { MessagesState } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientProfile } from '../store/models/client'
+import { updateFavicon } from '../util/favicon'
 
 interface PropsFromState {
   balance?: Balance
@@ -116,17 +116,7 @@ const IndexPageFC: React.FC<AllProps> = ({
 
   React.useEffect(() => {
     // Update favicon
-    const favicon = document.getElementById('favicon') as HTMLLinkElement
-    if (favicon) {
-      const unreadCount = messagesState.unreadMessages.length
-      if (unreadCount === 0) {
-        favicon.href = `${PUBLIC_URL}/favicon.png`
-      } else if (unreadCount >= 5) {
-        favicon.href = `${PUBLIC_URL}/favicon-5p.png`
-      } else {
-        favicon.href = `${PUBLIC_URL}/favicon-${unreadCount}.png`
-      }
-    }
+    updateFavicon(messagesState.unreadMessages.length)
   }, [messagesState.unreadMessages.length])
 
   if (reload) {
