@@ -137,13 +137,19 @@ const ComposeFormFC: React.FC<AllProps> = ({
             if (canvas.type === 'error') {
               console.error('Error loading image ')
             } else {
-              const newEditorState = imagePlugin.addImage(editorState, canvas.toDataURL())
+              const newEditorState = imagePlugin.addImage(
+                editorState,
+                canvas.toDataURL('image/jpeg')
+              )
+              console.log(newEditorState)
               setEditorState(newEditorState)
             }
           },
           {
             canvas: true,
-            orientation: true
+            orientation: true,
+            maxWidth: 2000,
+            maxHeight: 2000
           }
         )
       })
