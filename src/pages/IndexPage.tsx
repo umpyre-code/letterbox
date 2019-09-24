@@ -72,7 +72,8 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'right',
       height: 36,
       margin: 0,
-      width: 36
+      width: 36,
+      padding: theme.spacing(1)
     }
   })
 )

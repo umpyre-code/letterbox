@@ -115,7 +115,8 @@ const useStyles = makeStyles((theme: Theme) =>
     attachFileButton: {
       height: 36,
       margin: 0,
-      width: 36
+      width: 36,
+      padding: theme.spacing(1)
     }
   })
 )
@@ -136,22 +137,14 @@ export const AttachFile: React.FC<AttachFileProps> = ({ onClick }) => {
   )
 }
 
-interface InsertImageProps {
-  onClick: (event) => void
-}
-
-export const InsertImage: React.FC<InsertImageProps> = ({ onClick }) => {
+export const InsertImage: React.FC<{}> = () => {
   const classes = useStyles({})
 
   return (
     <Tooltip title="Insert image at cursor" enterDelay={250}>
-      <IconButton
-        className={classes.attachFileButton}
-        aria-label="insert image at cursor"
-        onClick={onClick}
-      >
+      <div className={classes.attachFileButton}>
         <AddAPhotoIcon />
-      </IconButton>
+      </div>
     </Tooltip>
   )
 }

@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme: Theme) =>
     discardButton: {
       height: 36,
       margin: 0,
-      width: 36
+      width: 36,
+      padding: theme.spacing(1)
     },
     progress: {
       margin: theme.spacing(1, 0, 0, 0)
@@ -264,30 +265,23 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Grid item>
             <FormControl>
               <FormControlLabel
-                label={
-                  <InsertImage
-                    onClick={() => {
-                      if (imageInputRef.current) {
-                        console.log('click')
-                        const input = imageInputRef.current as HTMLInputElement
-                        input.click()
-                      }
-                    }}
-                  />
-                }
+                label={<InsertImage />}
                 control={
                   <Input
                     inputRef={imageInputRef}
-                    style={{ display: 'none' }}
+                    style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }}
                     inputProps={{
                       accept: 'image/png, image/jpeg, image/gif'
                     }}
                     aria-describedby="upload-image"
                     type="file"
                     onChange={event => {
-                      console.log('onchange')
                       const target = event.target as HTMLInputElement
                       handleImageUpload(target.files)
+                      if (imageInputRef.current) {
+                        const element = imageInputRef.current as HTMLInputElement
+                        element.value = ''
+                      }
                     }}
                   />
                 }
