@@ -144,6 +144,7 @@ function* handleInitializeMessages() {
       yield put(initializeMessagesSuccess(rankedMessages))
     }
   } catch (error) {
+    console.error(error)
     if (error instanceof Error) {
       yield put(initializeMessagesError(error.stack))
     } else {
@@ -178,6 +179,7 @@ function* handleFetchMessages() {
       yield put(updateSketchRequest())
     }
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(fetchMessagesError(error.response.data.message))
     } else if (error.message) {
@@ -225,6 +227,7 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       }
     }
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(
         updateDraftRequest({ ...draft, sending: false, sendError: error.response.data.message })
@@ -315,6 +318,7 @@ function* handleMessageRead(values: ReturnType<typeof messageReadRequest>) {
 
     yield handleMessageReadSuccess(payload, state)
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.status === 400) {
       // Not really an error, this just means it was already read.
       yield handleMessageReadSuccess(payload, state)
@@ -370,6 +374,7 @@ function* handleDeleteMessage(values: ReturnType<typeof deleteMessageRequest>) {
       yield put(deleteMessageSuccess(rankedMessages))
     }
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(deleteMessageError(error.response.data.message))
     } else if (error.message) {
@@ -425,6 +430,7 @@ function* handleSweepMessage() {
       yield put(deleteSweepSuccess(rankedMessages))
     }
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(deleteSweepError(error.response.data.message))
     } else if (error.message) {
@@ -445,53 +451,56 @@ async function loadMessages(
   messages: Immutable.Map<MessageHash, DecryptedMessage>,
   child?: MessageBase
 ): Promise<Immutable.Map<MessageHash, DecryptedMessage>> {
-  if (messages.has(hash)) {
+  if (hash !== null && hash !== undefined) {
+    // double check that the hash is valid
+    if (messages.has(hash)) {
+      const messageInfo = await db.messageInfos.get({ hash })
+      if (
+        messageInfo &&
+        child &&
+        (!messageInfo.children || !messageInfo.children.includes(child.hash))
+      ) {
+        await addChildMessageInDb(messageInfo.hash, child.hash)
+      }
+      return Promise.resolve(messages)
+    }
     const messageInfo = await db.messageInfos.get({ hash })
-    if (
-      messageInfo &&
-      child &&
-      (!messageInfo.children || !messageInfo.children.includes(child.hash))
-    ) {
-      await addChildMessageInDb(messageInfo.hash, child.hash)
-    }
-    return Promise.resolve(messages)
-  }
-  const messageInfo = await db.messageInfos.get({ hash })
-  const messageBody = await db.messageBodies.get({ hash })
-  const decryptedMessage = await decryptMessage(clientId, {
-    ...messageInfo,
-    ...messageBody
-  })
+    const messageBody = await db.messageBodies.get({ hash })
+    const decryptedMessage = await decryptMessage(clientId, {
+      ...messageInfo,
+      ...messageBody
+    })
 
-  // Check if we're actually able to decrypt this message
-  if (decryptedMessage) {
-    // Using asMutable() is less preferable, but the alternative is some very
-    // messy code.
-    let map = messages.asMutable()
-    map.set(decryptedMessage.hash, decryptedMessage)
+    // Check if we're actually able to decrypt this message
+    if (decryptedMessage) {
+      // Using asMutable() is less preferable, but the alternative is some very
+      // messy code.
+      let map = messages.asMutable()
+      map.set(decryptedMessage.hash, decryptedMessage)
 
-    if (decryptedMessage.children) {
-      await Promise.all(
-        decryptedMessage.children.map(async childHash => {
-          map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
-          Promise.resolve(true)
-        })
-      )
-    }
+      if (decryptedMessage.children) {
+        await Promise.all(
+          decryptedMessage.children.map(async childHash => {
+            map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
+            Promise.resolve(true)
+          })
+        )
+      }
 
-    if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-      await addChildMessageInDb(messageInfo.hash, child.hash)
-    }
+      if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+        await addChildMessageInDb(messageInfo.hash, child.hash)
+      }
 
-    if (decryptedMessage.body.parent) {
-      return loadMessages(
-        clientId,
-        decryptedMessage.body.parent,
-        map.asImmutable(),
-        decryptedMessage
-      )
+      if (decryptedMessage.body.parent) {
+        return loadMessages(
+          clientId,
+          decryptedMessage.body.parent,
+          map.asImmutable(),
+          decryptedMessage
+        )
+      }
+      return Promise.resolve(map.asImmutable())
     }
-    return Promise.resolve(map.asImmutable())
   }
   return Promise.resolve(messages)
 }
