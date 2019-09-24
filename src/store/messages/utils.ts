@@ -312,7 +312,7 @@ export async function storeAndRetrieveMessages(
             decryptedMessage
           })
         } catch (error) {
-          console.log('Unable to decrypt message with hash', message.hash)
+          console.error('Unable to decrypt message with hash', message.hash)
           return Promise.resolve(undefined)
         }
       })

@@ -136,7 +136,8 @@ const ComposeFormFC: React.FC<AllProps> = ({
             if (canvas.type === 'error') {
               console.error('Error loading image ')
             } else {
-              setEditorState(imagePlugin.addImage(editorState, canvas.toDataURL()))
+              const newEditorState = imagePlugin.addImage(editorState, canvas.toDataURL())
+              setEditorState(newEditorState)
             }
           },
           {
@@ -267,6 +268,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
                   <InsertImage
                     onClick={() => {
                       if (imageInputRef.current) {
+                        console.log('click')
                         const input = imageInputRef.current as HTMLInputElement
                         input.click()
                       }
@@ -283,6 +285,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
                     aria-describedby="upload-image"
                     type="file"
                     onChange={event => {
+                      console.log('onchange')
                       const target = event.target as HTMLInputElement
                       handleImageUpload(target.files)
                     }}
