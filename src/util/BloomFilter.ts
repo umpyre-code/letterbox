@@ -86,8 +86,8 @@ export class BloomFilter {
   // each element is a 32-bit integer.  Otherwise, *m* should specify the
   // number of bits.  Note that *m* is rounded up to the nearest multiple of
   // 32.  *k* specifies the number of hashing functions.
-  constructor() {
-    let m = 8 * 1024
+  constructor(size: number) {
+    let m = 8 * size
     const k = 8
     const n = Math.ceil(m / 8)
     m = n * 8

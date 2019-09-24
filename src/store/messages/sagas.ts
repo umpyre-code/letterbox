@@ -251,7 +251,7 @@ async function calculateMessageSketch(): Promise<string> {
   const messagesFromLast31days = await getMessagesWithoutBody(31, true, true, true)
 
   // Construct bloom filter
-  const bf = new BloomFilter()
+  const bf = new BloomFilter(4096)
   messagesFromLast31days.forEach(message => bf.add(message.hash))
 
   await sodium.ready
