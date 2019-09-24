@@ -202,10 +202,10 @@ class SignUp extends React.Component<AllProps> {
           <Grid item xs={12} style={{ width: '100%' }}>
             <SnackbarContent
               message={
-                <h3>
+                <Typography variant="h6">
                   <Emoji ariaLabel="error">😳</Emoji>&nbsp;
                   {this.props.client.signUpFormErrors}
-                </h3>
+                </Typography>
               }
             />
           </Grid>

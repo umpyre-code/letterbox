@@ -105,6 +105,15 @@ const SignUpPage = () => {
             <Container maxWidth="sm" className={classes.container}>
               <Paper className={classes.paper}>
                 <Grid container alignItems="center" justify="center">
+                  <Grid item xs={12}>
+                    <br />
+                    <Typography variant="h6">
+                      Are you an influencer? Open source developer? Someone with expertise? Umpyre
+                      can help you <strong>monetize your influence and expertise</strong>.
+                    </Typography>
+                    <br />
+                    <br />
+                  </Grid>
                   {/* <Grid item xs={12}>
                     <img
                       style={{
@@ -122,7 +131,7 @@ const SignUpPage = () => {
                       style={{
                         display: 'block',
                         margin: 'auto',
-                        maxWidth: '200px',
+                        maxWidth: '150px',
                         width: '100%',
                         height: 'auto'
                       }}
@@ -131,13 +140,13 @@ const SignUpPage = () => {
                     />
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography variant="h6">
+                    <Typography>
                       On Umpyre, your inbox becomes an auction: messages are ranked by their value.
                       If you read the message, you keep the payment.
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography variant="h6">
+                    <Typography>
                       Message data is stored locally and stays private. We don&apos;t collect
                       personally identifiable behavioral data.
                     </Typography>
@@ -148,7 +157,7 @@ const SignUpPage = () => {
                         display: 'block',
                         margin: 'auto',
                         width: '100%',
-                        maxWidth: '200px',
+                        maxWidth: '150px',
                         height: 'auto'
                       }}
                       src="/artwork/privacy.png"
@@ -161,7 +170,7 @@ const SignUpPage = () => {
                         display: 'block',
                         margin: 'auto',
                         width: '100%',
-                        maxWidth: '200px',
+                        maxWidth: '150px',
                         height: 'auto'
                       }}
                       src="/artwork/security.png"
@@ -169,7 +178,7 @@ const SignUpPage = () => {
                     />
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography variant="h6">
+                    <Typography>
                       We use end-to-end encryption, secure remote password protocol to mitigate MITM
                       attacks, and zero knowledge secure tokens. You hold your encryption keys.
                     </Typography>

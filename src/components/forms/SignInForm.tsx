@@ -1,4 +1,4 @@
-import { FormControl, Grid, LinearProgress, SnackbarContent } from '@material-ui/core'
+import { FormControl, Grid, LinearProgress, SnackbarContent, Typography } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import { Field, Form, Formik } from 'formik'
 import { TextField } from 'formik-material-ui'
@@ -54,10 +54,10 @@ class SignIn extends React.Component<AllProps> {
           <Grid item xs={12} style={{ width: '100%' }}>
             <SnackbarContent
               message={
-                <h3>
+                <Typography variant="h6">
                   <Emoji ariaLabel="error">😳</Emoji>&nbsp;Those credentials don&apos;t seem right!
                   Try again :)
-                </h3>
+                </Typography>
               }
             />
           </Grid>
