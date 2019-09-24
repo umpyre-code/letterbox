@@ -452,54 +452,58 @@ async function loadMessages(
   child?: MessageBase
 ): Promise<Immutable.Map<MessageHash, DecryptedMessage>> {
   if (hash !== null && hash !== undefined) {
-    // double check that the hash is valid
-    if (messages.has(hash)) {
+    try {
+      // double check that the hash is valid
+      if (messages.has(hash)) {
+        const messageInfo = await db.messageInfos.get({ hash })
+        if (
+          messageInfo &&
+          child &&
+          (!messageInfo.children || !messageInfo.children.includes(child.hash))
+        ) {
+          await addChildMessageInDb(messageInfo.hash, child.hash)
+        }
+        return Promise.resolve(messages)
+      }
       const messageInfo = await db.messageInfos.get({ hash })
-      if (
-        messageInfo &&
-        child &&
-        (!messageInfo.children || !messageInfo.children.includes(child.hash))
-      ) {
-        await addChildMessageInDb(messageInfo.hash, child.hash)
-      }
-      return Promise.resolve(messages)
-    }
-    const messageInfo = await db.messageInfos.get({ hash })
-    const messageBody = await db.messageBodies.get({ hash })
-    const decryptedMessage = await decryptMessage(clientId, {
-      ...messageInfo,
-      ...messageBody
-    })
+      const messageBody = await db.messageBodies.get({ hash })
+      const decryptedMessage = await decryptMessage(clientId, {
+        ...messageInfo,
+        ...messageBody
+      })
 
-    // Check if we're actually able to decrypt this message
-    if (decryptedMessage) {
-      // Using asMutable() is less preferable, but the alternative is some very
-      // messy code.
-      let map = messages.asMutable()
-      map.set(decryptedMessage.hash, decryptedMessage)
+      // Check if we're actually able to decrypt this message
+      if (decryptedMessage) {
+        // Using asMutable() is less preferable, but the alternative is some very
+        // messy code.
+        let map = messages.asMutable()
+        map.set(decryptedMessage.hash, decryptedMessage)
 
-      if (decryptedMessage.children) {
-        await Promise.all(
-          decryptedMessage.children.map(async childHash => {
-            map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
-            Promise.resolve(true)
-          })
-        )
-      }
+        if (decryptedMessage.children) {
+          await Promise.all(
+            decryptedMessage.children.map(async childHash => {
+              map = map.merge(await loadMessages(clientId, childHash, map.asImmutable(), undefined))
+              Promise.resolve(true)
+            })
+          )
+        }
 
-      if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
-        await addChildMessageInDb(messageInfo.hash, child.hash)
-      }
+        if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+          await addChildMessageInDb(messageInfo.hash, child.hash)
+        }
 
-      if (decryptedMessage.body.parent) {
-        return loadMessages(
-          clientId,
-          decryptedMessage.body.parent,
-          map.asImmutable(),
-          decryptedMessage
-        )
+        if (decryptedMessage.body.parent) {
+          return loadMessages(
+            clientId,
+            decryptedMessage.body.parent,
+            map.asImmutable(),
+            decryptedMessage
+          )
+        }
+        return Promise.resolve(map.asImmutable())
       }
-      return Promise.resolve(map.asImmutable())
+    } catch (error) {
+      console.error('Error loading messages', error)
     }
   }
   return Promise.resolve(messages)

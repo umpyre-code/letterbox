@@ -20,11 +20,15 @@ export async function addChildMessageInDb(
   childHash: MessageHash
 ): Promise<MessageHash | undefined> {
   const parent = await db.messageInfos.get(parentHash)
-  if (parent) {
-    await db.messageInfos.update(parent.hash, {
-      ...parent,
-      children: _.uniq([...(parent.children || []), childHash])
-    })
+  if (parent && parent.hash) {
+    try {
+      await db.messageInfos.update(parent.hash, {
+        ...parent,
+        children: _.uniq([...(parent.children || []), childHash])
+      })
+    } catch (error) {
+      console.log('Error updating parent', error)
+    }
     return Promise.resolve(parent.thread)
   }
   // If the parent wasn't found in the DB, it must be included in this batch of
