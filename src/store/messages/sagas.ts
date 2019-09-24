@@ -509,6 +509,7 @@ function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
     )
 
     if (res.error) {
+      console.error(res.error)
       yield put(loadMessagesError(res.error))
     } else {
       const messageArray = _.chain(res.valueSeq().toArray())
@@ -517,6 +518,7 @@ function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
       yield put(loadMessagesSuccess(messageArray))
     }
   } catch (error) {
+    console.error(error)
     if (error.response && error.response.data && error.response.data.message) {
       yield put(loadMessagesError(error.response.data.message))
     } else if (error.message) {
