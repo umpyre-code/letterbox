@@ -447,7 +447,11 @@ async function loadMessages(
 ): Promise<Immutable.Map<MessageHash, DecryptedMessage>> {
   if (messages.has(hash)) {
     const messageInfo = await db.messageInfos.get({ hash })
-    if (child && (!messageInfo.children || !messageInfo.children.includes(child.hash))) {
+    if (
+      messageInfo &&
+      child &&
+      (!messageInfo.children || !messageInfo.children.includes(child.hash))
+    ) {
       await addChildMessageInDb(messageInfo.hash, child.hash)
     }
     return Promise.resolve(messages)
