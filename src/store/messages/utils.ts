@@ -223,7 +223,10 @@ export async function decryptMessage(
 async function processSystemMessages(clientId: ClientID, messages: MessageBase[]) {
   const systemMessages = await Promise.all(
     _.chain(messages)
-      .filter(message => message.type.startsWith('@@system/'))
+      .filter(
+        message =>
+          message.type && typeof message.type === 'string' && message.type.startsWith('@@system/')
+      )
       .map(async message => {
         // decrypt
         const messageBody = await db.messageBodies.get({ hash: message.hash })
