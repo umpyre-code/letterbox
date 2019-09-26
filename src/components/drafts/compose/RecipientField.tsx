@@ -20,7 +20,7 @@ import { ProfileTooltip } from '../../widgets/profile/ProfileTooltip'
 
 interface RecipientFieldProps {
   credentials: ClientCredentials
-  setRecipients: (value: ClientID[]) => void
+  setRecipients: (arg0: ClientWithRal[]) => void
   initialValues: ClientID[]
   disabled: boolean
 }
@@ -183,11 +183,16 @@ async function getSuggestions(
   return Promise.resolve([])
 }
 
+export interface ClientWithRal {
+  client_id: ClientID
+  ral: number
+}
+
 interface DownshiftMultipleProps {
   classes: ReturnType<typeof useStyles>
   credentials: ClientCredentials
   disabled: boolean
-  setRecipients: (value: ClientID[]) => void
+  setRecipients: (arg0: ClientWithRal[]) => void
   initialValues: ClientID[]
 }
 
@@ -223,7 +228,11 @@ function DownshiftMultiple(props: DownshiftMultipleProps) {
   }, [props.initialValues])
 
   React.useEffect(() => {
-    setRecipients(selectedItem.map(si => si.client_id))
+    setRecipients(
+      selectedItem.map(si => {
+        return { client_id: si.client_id, ral: si.ral }
+      })
+    )
   }, [selectedItem])
 
   function handleKeyDown(

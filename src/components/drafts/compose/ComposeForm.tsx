@@ -29,7 +29,7 @@ import { MessageBody, MessageType } from '../../../store/models/messages'
 import { htmlToMarkdown } from '../../../util/htmlToMarkdown'
 import { PaymentInput } from '../../widgets/PaymentInput'
 import { Editor, imagePlugin } from './Editor'
-import { RecipientField } from './RecipientField'
+import { RecipientField, ClientWithRal } from './RecipientField'
 import {
   AddCreditsButton,
   DiscardButton,
@@ -99,6 +99,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
     Math.trunc(draft.value_cents / 100)
   )
+  const [maxRal, setMaxRal] = React.useState<number | undefined>(undefined)
   const imageInputRef = React.createRef()
   const classes = useStyles({})
 
@@ -213,6 +214,13 @@ const ComposeFormFC: React.FC<AllProps> = ({
     )
   }
 
+  function getPaymentPlaceholder(): string {
+    if (maxRal && maxRal > 0) {
+      return `RAL $${maxRal}`
+    }
+    return 'Value'
+  }
+
   return (
     <>
       <Grid container spacing={1} alignItems="flex-end">
@@ -221,9 +229,19 @@ const ComposeFormFC: React.FC<AllProps> = ({
             disabled={draft.sending}
             credentials={credentials}
             initialValues={draft.recipients}
-            setRecipients={(value: ClientID[]) => {
-              setRecipients(value)
-              updateDraft({ ...draft, recipients: value, sendError: undefined })
+            setRecipients={(clientsWithRal: ClientWithRal[]) => {
+              const updatedRecipients = clientsWithRal.map(c => c.client_id)
+              const updatedMaxRal = _.chain(clientsWithRal)
+                .map('ral')
+                .max()
+                .value()
+              if (updatedMaxRal > 0) {
+                setMaxRal(updatedMaxRal)
+              } else {
+                setMaxRal(undefined)
+              }
+              setRecipients(updatedRecipients)
+              updateDraft({ ...draft, recipients: updatedRecipients, sendError: undefined })
             }}
           />
         </Grid>
@@ -270,7 +288,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
             <PaymentInput
               disabled={draft.sending}
               style={{ margin: '0 0 0 0', padding: '3', width: 110 }}
-              placeholder="Value"
+              placeholder={getPaymentPlaceholder()}
               label="Payment"
               defaultValue={draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : undefined}
               onChange={event => {
