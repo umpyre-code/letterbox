@@ -36,7 +36,8 @@ export class API {
   }
 
   public static async METRIC_COUNTER_REASON_INC(metric: string, reason: string) {
-    return axios.post(`${API_ENDPOINT}/metrics/counter/${metric}/${reason}/inc`)
+    const reasonEncoded = encodeURIComponent(reason)
+    return axios.post(`${API_ENDPOINT}/metrics/counter/${metric}/${reasonEncoded}/inc`)
   }
 
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
