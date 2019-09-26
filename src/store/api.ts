@@ -35,6 +35,10 @@ export class API {
     return axios.post(`${API_ENDPOINT}/metrics/counter/${metric}/inc`)
   }
 
+  public static async METRIC_COUNTER_REASON_INC(metric: string, reason: string) {
+    return axios.post(`${API_ENDPOINT}/metrics/counter/${metric}/${reason}/inc`)
+  }
+
   public static async SUBMIT_NEW_CLIENT(newClient: NewClient): Promise<ClientCredentials> {
     return axios.post(`${API_ENDPOINT}/client`, newClient).then(response => response.data)
   }

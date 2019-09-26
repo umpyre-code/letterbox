@@ -273,6 +273,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
 
     if (res.error) {
       yield spawn(API.METRIC_COUNTER_INC, 'signup-error')
+      yield spawn(API.METRIC_COUNTER_REASON_INC, 'signup-error', res.error)
       yield put(submitNewClientError(res.error))
     } else {
       yield spawn(API.METRIC_COUNTER_INC, 'signup-success')
@@ -291,6 +292,7 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
     yield spawn(API.METRIC_COUNTER_INC, 'signup-error')
     if (error.response && error.response.data && error.response.data.message) {
       if (error.response.data.code && error.response.data.code === 3) {
+        yield spawn(API.METRIC_COUNTER_REASON_INC, 'signup-error', error.response.data.message)
         if (error.response.data.message.startsWith('invalid email')) {
           yield put(submitNewClientError('The email address provided is not valid'))
         } else if (error.response.data.message.startsWith('invalid phone number')) {
@@ -303,11 +305,14 @@ function* handleSubmitNewClientRequest(values: ReturnType<typeof submitNewClient
           )
         }
       } else {
+        yield spawn(API.METRIC_COUNTER_REASON_INC, 'signup-error', error.response.data.message)
         yield put(submitNewClientError(error.response.data.message))
       }
     } else if (error.message) {
+      yield spawn(API.METRIC_COUNTER_REASON_INC, 'signup-error', error.message)
       yield put(submitNewClientError(error.message))
     } else {
+      yield spawn(API.METRIC_COUNTER_REASON_INC, 'signup-error', error)
       yield put(submitNewClientError(error))
     }
   }
