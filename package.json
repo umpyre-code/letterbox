@@ -94,7 +94,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
+    "@babel/core": "^7.6.2",
     "@types/dompurify": "^0.0.33",
     "@types/draft-js": "^0.10.35",
     "@types/history": "^4.7.3",
@@ -119,6 +119,7 @@
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
     "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-named-asset-import": "^0.3.3",
     "babel-preset-react-app": "^9.0.1",
