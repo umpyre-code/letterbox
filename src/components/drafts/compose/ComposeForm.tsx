@@ -59,6 +59,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
+function blobToDataURL(blob: Blob, callback: (ArrayBuffer) => void) {
+  const reader = new FileReader()
+  reader.onload = event => {
+    callback(event.target.result)
+  }
+  reader.readAsDataURL(blob)
+}
+
 export function calculateMessageCost(amountCents: number) {
   if (amountCents === 0) {
     return 0
@@ -151,11 +159,10 @@ const ComposeFormFC: React.FC<AllProps> = ({
 
               newCanvas.toBlob(
                 blob => {
-                  const newEditorState = imagePlugin.addImage(
-                    editorState,
-                    URL.createObjectURL(blob)
-                  )
-                  setEditorState(newEditorState)
+                  blobToDataURL(blob, dataUrl => {
+                    const newEditorState = imagePlugin.addImage(editorState, dataUrl)
+                    setEditorState(newEditorState)
+                  })
                 },
                 'image/jpeg',
                 0.96
