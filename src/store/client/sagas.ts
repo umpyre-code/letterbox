@@ -214,7 +214,12 @@ async function saveClientToken(credentials: ClientCredentials) {
 async function withPassword(newClient: NewClient): Promise<NewClient> {
   await sodium.ready
 
-  const salt = sodium.to_hex(sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES))
+  let saltLength = 0
+  let salt = ''
+  while (saltLength !== sodium.crypto_pwhash_SALTBYTES) {
+    salt = sodium.to_hex(sodium.randombytes_buf(sodium.crypto_pwhash_SALTBYTES))
+    saltLength = salt.length / 2
+  }
 
   const privateKey = await computePrivateKey(newClient.email, newClient.password, salt)
 
