@@ -83,7 +83,7 @@ const ProfilePageFC: React.FC<AllProps> = ({
   }, [match.params, myProfile])
 
   return (
-    <React.Fragment>
+    <>
       <DefaultLayout profile={myProfile} balance={balance}>
         <Container className={classes.profileContainer}>
           <BackToIndexButton />
@@ -99,7 +99,7 @@ const ProfilePageFC: React.FC<AllProps> = ({
           {!loaded && <Loading />}
         </Container>
       </DefaultLayout>
-    </React.Fragment>
+    </>
   )
 }
 

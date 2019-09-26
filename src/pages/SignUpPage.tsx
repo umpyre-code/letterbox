@@ -56,7 +56,7 @@ const SignUpPage = () => {
   }, [])
   const classes = useStyles({})
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Grid container className={classes.rootGrid} alignItems="flex-start">
         <Grid item container direction="row-reverse">
@@ -189,7 +189,7 @@ const SignUpPage = () => {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }
 

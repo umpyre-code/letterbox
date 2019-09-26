@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const AboutPage = () => {
   const classes = useStyles({})
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Container className={classes.container}>
         <Container maxWidth="sm">
@@ -175,7 +175,7 @@ const AboutPage = () => {
           </Paper>
         </Container>
       </Container>
-    </React.Fragment>
+    </>
   )
 }
 

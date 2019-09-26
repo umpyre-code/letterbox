@@ -58,7 +58,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
               <Route
                 path="/account"
                 render={({ location }) => (
-                  <React.Fragment>
+                  <>
                     <AppBar position="static">
                       <Tabs value={location.pathname} aria-label="my account">
                         <Tab
@@ -84,7 +84,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                         />
                       </Tabs>
                     </AppBar>
-                    <React.Fragment>
+                    <>
                       <Switch>
                         <Route
                           exact
@@ -117,8 +117,8 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           )}
                         />
                       </Switch>
-                    </React.Fragment>
-                  </React.Fragment>
+                    </>
+                  </>
                 )}
               />
             </Paper>

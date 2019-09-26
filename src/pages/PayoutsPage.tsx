@@ -126,7 +126,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       <FormControl component="fieldset">
         <FormGroup>
           <FormControlLabel
@@ -180,7 +180,7 @@ const PayoutSlider: React.FC<PayoutSliderProps> = ({
         </Grid>
         <Grid item>{showProgress()}</Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -208,7 +208,7 @@ const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({
   const classes = useStyles({})
 
   return (
-    <React.Fragment>
+    <>
       <Box className={classes.wordBox}>
         <Typography variant="h6">Payout preferences</Typography>
       </Box>
@@ -226,7 +226,7 @@ const PayoutPreferencesSection: React.FC<PayoutPreferencesSectionProps> = ({
           updatePrefs={updatePrefs}
         />
       </Box>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -248,7 +248,7 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
 
   if (connectAccount.state === 'active') {
     return (
-      <React.Fragment>
+      <>
         <Box className={classes.wordBox}>
           <Typography variant="body1">Your Stripe Connect account is active.</Typography>
         </Box>
@@ -267,24 +267,24 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
           updatingPrefs={updatingPrefs}
           updatePrefs={updatePrefs}
         />
-      </React.Fragment>
+      </>
     )
   }
   if (connectAccount.state === 'ineligible') {
     return (
-      <React.Fragment>
+      <>
         <Box className={classes.wordBox}>
           <Typography variant="body1">
             Your your account is not yet eligible for payouts. Check back when your account is at
             least 7 days old.
           </Typography>
         </Box>
-      </React.Fragment>
+      </>
     )
   }
   if (connectAccount.oauth_url) {
     return (
-      <React.Fragment>
+      <>
         <Box className={classes.wordBox}>
           <Typography variant="body1">
             {"To enable payouts, you'll need a Stripe Connect account."}
@@ -307,7 +307,7 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
             </em>
           </Typography>
         </Box>
-      </React.Fragment>
+      </>
     )
   }
   return (
@@ -354,7 +354,7 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
 
   if (profile && balance && connectAccount) {
     return (
-      <React.Fragment>
+      <>
         <Typography variant="h5">Account payouts</Typography>
         <Divider />
         <ConnectButtonSection
@@ -362,7 +362,7 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
           updatingPrefs={updatingPrefs}
           updatePrefs={updatePrefs}
         />
-      </React.Fragment>
+      </>
     )
   }
   return <Loading />

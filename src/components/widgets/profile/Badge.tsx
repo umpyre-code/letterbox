@@ -187,10 +187,10 @@ export const ImageRadio: React.FC<ImageRadioProps> = ({
 }) => {
   const classes = radioStyles({})
   return (
-    <React.Fragment>
+    <>
       <Radio {...outerProps} classes={classes} />
       <img alt={alt} src={imageSrc} width={width} height={height} />
-    </React.Fragment>
+    </>
   )
 }
 
@@ -226,7 +226,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
   }
   const badge = renderBadge(profile, badgeOptions)
   return (
-    <React.Fragment>
+    <>
       <Grid item container spacing={1}>
         <Grid item xs={6}>
           <FormControl component="fieldset" className={classes.formControl}>
@@ -393,7 +393,7 @@ export const BadgeDisplay: React.FC<BadgeProps> = ({ profile }) => {
       <Grid item xs={12}>
         <Divider />
       </Grid>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -420,7 +420,7 @@ export const Badge: React.FC<BadgeProps> = props => {
   const classes = useStyles({})
   const [isOpen, setIsOpen] = React.useState<boolean>(false)
   return (
-    <React.Fragment>
+    <>
       <MiniBadgeButton
         onClick={() => {
           setIsOpen(!isOpen)
@@ -443,6 +443,6 @@ export const Badge: React.FC<BadgeProps> = props => {
           </Grid>
         </Paper>
       </Modal>
-    </React.Fragment>
+    </>
   )
 }

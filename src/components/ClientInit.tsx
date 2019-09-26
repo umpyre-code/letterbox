@@ -26,7 +26,7 @@ let globalStorageIsAvailable = false
 type AllProps = Props & PropsFromDispatch
 
 const NoStorageAvailable: React.FC = () => (
-  <React.Fragment>
+  <>
     <CssBaseline />
     <Container>
       <Paper style={{ margin: 20 }}>
@@ -46,7 +46,7 @@ const NoStorageAvailable: React.FC = () => (
         </Container>
       </Paper>
     </Container>
-  </React.Fragment>
+  </>
 )
 
 const ClientInitFC: React.FC<AllProps> = ({
@@ -87,7 +87,7 @@ const ClientInitFC: React.FC<AllProps> = ({
   if (!clientReady && !credentialsReady) {
     return <Loading centerOnPage />
   }
-  return <React.Fragment>{children}</React.Fragment>
+  return <>{children}</>
 }
 
 const mapStateToProps = ({ clientState }: ApplicationState) => ({

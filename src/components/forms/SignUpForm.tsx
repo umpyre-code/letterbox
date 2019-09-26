@@ -60,7 +60,7 @@ export const PhoneNumberToolTip = () => (
   <HtmlTooltip
     enterDelay={150}
     title={
-      <React.Fragment>
+      <>
         <Typography variant="h5">Why do you need my phone number?</Typography>
         <br />
         <Typography>
@@ -78,7 +78,7 @@ export const PhoneNumberToolTip = () => (
           3rd parties. We don&apos;t harvest your phone number or contact lists, and it&apos;s never
           exposed through our API.
         </Typography>
-      </React.Fragment>
+      </>
     }
   >
     <HelpIcon />

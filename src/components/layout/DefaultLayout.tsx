@@ -44,7 +44,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
   const classes = useStyles({})
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Grid container direction="column" style={{ height: '100vh' }}>
         <Grid item>
@@ -89,6 +89,6 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
             </Grid>
           </Grid>
         </Container> */}
-    </React.Fragment>
+    </>
   )
 }

@@ -80,7 +80,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
@@ -112,9 +112,9 @@ const InputSeedPageFC: React.FC<AllProps> = ({
               <PasteIcon>copy</PasteIcon>
               Paste from clipboard
               {pasted && (
-                <React.Fragment>
+                <>
                   &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
-                </React.Fragment>
+                </>
               )}
             </Button>
           </Box>
@@ -179,7 +179,7 @@ const InputSeedPageFC: React.FC<AllProps> = ({
           </Grid>
         </Paper>
       </Container>
-    </React.Fragment>
+    </>
   )
 }
 

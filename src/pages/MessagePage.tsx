@@ -139,7 +139,7 @@ const MessagePageFC: React.FC<AllProps> = ({
           <Divider />
           <MessageBodyFc body={message.body} />
           {index === loadedMessages.length - 1 && (
-            <React.Fragment>
+            <>
               <Divider />
               <Container className={classes.buttonContainer}>
                 <Grid container justify="space-between">
@@ -177,15 +177,15 @@ const MessagePageFC: React.FC<AllProps> = ({
                   </Grid>
                 </Grid>
               </Container>
-            </React.Fragment>
+            </>
           )}
           {message.hash in draftsMap && (
-            <React.Fragment>
+            <>
               <Divider />
               <Container className={classes.bodyContainer} key={draftsMap[message.hash].id}>
                 <LazyComposeForm draft={draftsMap[message.hash]} />
               </Container>
-            </React.Fragment>
+            </>
           )}
         </Container>
       </React.Fragment>

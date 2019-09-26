@@ -66,7 +66,7 @@ export const RecipientField: React.FC<RecipientFieldProps> = ({
 }) => {
   const classes = useStyles({})
   return (
-    <React.Fragment>
+    <>
       <DownshiftMultiple
         classes={classes}
         disabled={disabled}
@@ -74,7 +74,7 @@ export const RecipientField: React.FC<RecipientFieldProps> = ({
         setRecipients={setRecipients}
         initialValues={initialValues}
       />
-    </React.Fragment>
+    </>
   )
 }
 

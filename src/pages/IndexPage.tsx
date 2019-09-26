@@ -134,15 +134,15 @@ const IndexPageFC: React.FC<AllProps> = ({
       return <PhoneVerification />
     }
     return (
-      <React.Fragment>
+      <>
         {drafts.length > 0 && (
-          <React.Fragment>
+          <>
             <Container className={classes.draftContainer}>
               <Typography>Drafts</Typography>
               <DraftList />
             </Container>
             <Divider />
-          </React.Fragment>
+          </>
         )}
         <Container className={classes.messageListContainer}>
           <Grid container justify="space-between" alignItems="flex-end">
@@ -161,12 +161,12 @@ const IndexPageFC: React.FC<AllProps> = ({
           />
         </Container>
         {messagesState.readMessages.length > 0 && (
-          <React.Fragment>
+          <>
             <Container className={classes.messageListContainer}>
               <Typography>Read</Typography>
               <MessageList messages={messagesState.readMessages} messageType="read" shaded button />
             </Container>
-          </React.Fragment>
+          </>
         )}
         <Tooltip title="Compose a new message">
           <Fab
@@ -178,7 +178,7 @@ const IndexPageFC: React.FC<AllProps> = ({
             <Edit />
           </Fab>
         </Tooltip>
-      </React.Fragment>
+      </>
     )
   }
 

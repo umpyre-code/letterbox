@@ -338,7 +338,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
           enterDelay={500}
           leaveDelay={100}
           title={
-            <React.Fragment>
+            <>
               <Typography>
                 <em>Reading at level</em>, or RAL, is the estimated reading level for this person.
               </Typography>
@@ -346,7 +346,7 @@ export const Ral: React.FC<RalProps> = ({ profile }) => {
               <Typography>
                 To reach someone, we recommend pricing your message at or above this level.
               </Typography>
-            </React.Fragment>
+            </>
           }
         >
           <HelpIcon style={{ padding: 4, verticalAlign: 'top' }}>what&apos;s RAL</HelpIcon>
@@ -381,7 +381,7 @@ export const ProfileView: React.FC<Props> = ({
   function getCardHeader() {
     if (profile) {
       return (
-        <React.Fragment>
+        <>
           <Grid item style={{ padding: '5px' }}>
             {!editable && (
               <Router.Link to={getProfileUrl(profile)}>
@@ -454,7 +454,7 @@ export const ProfileView: React.FC<Props> = ({
               )}
             </Grid>
           )}
-        </React.Fragment>
+        </>
       )
     }
     return <Loading />
@@ -481,7 +481,7 @@ export const ProfileView: React.FC<Props> = ({
   }
 
   function getCardBody() {
-    return <React.Fragment>{getProfileContent()}</React.Fragment>
+    return <>{getProfileContent()}</>
   }
 
   return (

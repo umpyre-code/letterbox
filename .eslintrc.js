@@ -32,6 +32,7 @@ module.exports = {
 
   parser: '@typescript-eslint/parser',
   rules: {
+    'react/jsx-props-no-spreading': 'off',
     'react/jsx-boolean-value': 'off',
     'react/prop-types': 'off',
     'react/require-default-props': 'off',
@@ -92,6 +93,7 @@ module.exports = {
     ],
     // "react/prop-types": ["warn"],
     // "import/no-default-export": ["warn"],
-    'jsx-a11y/accessible-emoji': ['off']
+    'jsx-a11y/accessible-emoji': ['off'],
+    'react/jsx-props-no-spreading': ['off']
   }
 }

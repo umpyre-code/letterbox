@@ -206,15 +206,15 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
   function getSecondryComponent() {
     if (message.to === credentials.client_id) {
       return (
-        <React.Fragment>
+        <>
           <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>↓ from</span> {fromProfile.full_name}
-        </React.Fragment>
+        </>
       )
     }
     return (
-      <React.Fragment>
+      <>
         <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>↑ to</span> {toProfile.full_name}
-      </React.Fragment>
+      </>
     )
   }
 
@@ -238,14 +238,14 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
         {renderAvatar()}
         <ListItemText
           primary={
-            <React.Fragment>
+            <>
               <Typography component="span" variant="h5" className={classes.inline} color="inherit">
                 {message.pda || <Emoji ariaLabel="letter">💌</Emoji>}
               </Typography>
-            </React.Fragment>
+            </>
           }
           secondary={
-            <React.Fragment>
+            <>
               <Typography
                 component="span"
                 variant="body2"
@@ -255,7 +255,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                 {getSecondryComponent()} <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>sent </span>
                 {getMessageDate()}
               </Typography>
-            </React.Fragment>
+            </>
           }
         />
         {showDelete && <MessageDelete message={message} deleteMessage={deleteMessage} />}

@@ -204,6 +204,10 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
 
+    // Fill canvas with white
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
     ctx.drawImage(
       image,
       makeCrop.x * scaleX,
@@ -274,7 +278,8 @@ export const ImageUpload: React.FC<ImageProps> = ({ profile, credentials, upload
               <ReactCrop
                 style={{
                   left: '50%',
-                  transform: 'translate(-50%, 0)'
+                  transform: 'translate(-50%, 0)',
+                  background: '#ffffff'
                 }}
                 circularCrop
                 src={src}

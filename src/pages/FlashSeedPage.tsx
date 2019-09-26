@@ -50,7 +50,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Container maxWidth="sm" className={classes.container}>
         <Paper className={classes.paper}>
@@ -120,7 +120,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
           </Grid>
         </Paper>
       </Container>
-    </React.Fragment>
+    </>
   )
 }
 

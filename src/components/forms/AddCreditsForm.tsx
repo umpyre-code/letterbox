@@ -152,7 +152,7 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ amountCents, balance })
   ]
 
   return (
-    <React.Fragment>
+    <>
       <Container className={classes.contentContainer}>
         <Typography variant="h6">Current balance</Typography>
       </Container>
@@ -165,7 +165,7 @@ const AddCreditsForm: React.FC<AddCreditsFormProps> = ({ amountCents, balance })
       <Container className={classes.contentContainer}>
         <CardSectionForm chargeAmount={chargeAmount} />
       </Container>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -47,12 +47,12 @@ interface SendButtonProps {
 
 export const SendButton: React.FC<SendButtonProps> = ({ cents, enabled, classes, handleSend }) => (
   <Tooltip title="Look good? Send it!">
-    <React.Fragment>
+    <>
       <Button variant="contained" color="primary" onClick={handleSend} disabled={!enabled}>
         Send ${(cents / 100).toFixed(2)}
         <SendIcon className={classes.sendIcon} />
       </Button>
-    </React.Fragment>
+    </>
   </Tooltip>
 )
 
@@ -94,7 +94,7 @@ export const PDAField: React.FC<PDAFieldProps> = ({ disabled, setPda, initialVal
 export const PDAToolTip = () => (
   <Tooltip
     title={
-      <React.Fragment>
+      <>
         <Typography>
           <strong>Public Display of Affection</strong>
         </Typography>
@@ -103,7 +103,7 @@ export const PDAToolTip = () => (
           The PDA is a short message, like a subject line. The recipient can view the PDA before the
           message is read.
         </Typography>
-      </React.Fragment>
+      </>
     }
   >
     <HelpIcon />

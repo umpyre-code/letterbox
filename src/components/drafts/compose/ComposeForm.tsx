@@ -137,12 +137,28 @@ const ComposeFormFC: React.FC<AllProps> = ({
             if (canvas.type === 'error') {
               console.error('Error loading image ')
             } else {
-              const newEditorState = imagePlugin.addImage(
-                editorState,
-                canvas.toDataURL('image/jpeg')
+              const newCanvas = document.createElement('canvas')
+              newCanvas.width = canvas.width
+              newCanvas.height = canvas.height
+              const ctx = newCanvas.getContext('2d')
+
+              // Fill canvas bg with white
+              ctx.fillStyle = '#ffffff'
+              ctx.fillRect(0, 0, newCanvas.width, newCanvas.height)
+
+              ctx.drawImage(canvas, 0, 0)
+
+              newCanvas.toBlob(
+                blob => {
+                  const newEditorState = imagePlugin.addImage(
+                    editorState,
+                    URL.createObjectURL(blob)
+                  )
+                  setEditorState(newEditorState)
+                },
+                'image/jpeg',
+                0.96
               )
-              console.log(newEditorState)
-              setEditorState(newEditorState)
             }
           },
           {
@@ -198,7 +214,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   }
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={1} alignItems="flex-end">
         <Grid item xs={12}>
           <RecipientField
@@ -324,7 +340,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Typography>There was an error sending. Please try again.</Typography>
         </Grid>
       )}
-    </React.Fragment>
+    </>
   )
 }
 
