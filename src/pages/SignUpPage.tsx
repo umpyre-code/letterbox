@@ -9,11 +9,12 @@ import {
   Theme,
   Typography,
   CssBaseline,
-  Grid
+  Grid,
+  Link
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/Help'
 import * as React from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import * as Router from 'react-router-dom'
 import { SignUpForm } from '../components/forms/SignUpForm'
 import { API } from '../store/api'
 
@@ -46,8 +47,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<LinkProps, 'innerRef' | 'to'>>(
-  (props, ref) => <Link innerRef={ref} to="/about" {...props} />
+const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<Router.LinkProps, 'innerRef' | 'to'>>(
+  (props, ref) => <Router.Link innerRef={ref} to="/about" {...props} />
 )
 
 const SignUpPage = () => {
@@ -181,6 +182,16 @@ const SignUpPage = () => {
                     <Typography>
                       We use end-to-end encryption, secure remote password protocol to mitigate MITM
                       attacks, and zero knowledge secure tokens. You hold your encryption keys.
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <br />
+                    <Typography align="center">
+                      We&apos;re open source!{' '}
+                      <Link href="https://github.com/umpyre-code/" target="_blank">
+                        Check us out on GitHub
+                      </Link>
+                      .
                     </Typography>
                   </Grid>
                 </Grid>
