@@ -290,9 +290,7 @@ const MessageListItemFC: React.FunctionComponent<AllProps> = ({
                     <Typography>+</Typography>
                   </Grid>
                   <Grid item>
-                    <Typography>
-                      <MessageValue message={message} />
-                    </Typography>
+                    <MessageValue message={message} />
                   </Grid>
                 </Grid>
               </Box>

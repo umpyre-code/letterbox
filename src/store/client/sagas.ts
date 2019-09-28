@@ -223,10 +223,7 @@ async function withPassword(newClient: NewClient): Promise<NewClient> {
   const verifier = sodium.from_hex(srp.deriveVerifier(privateKey))
   const client = {
     ...newClient,
-    password_salt: sodium.to_base64(
-      sodium.from_hex(salt),
-      sodium.base64_variants.URLSAFE_NO_PADDING
-    ),
+    password_salt: sodium.to_base64(saltBytes, sodium.base64_variants.URLSAFE_NO_PADDING),
     password_verifier: sodium.to_base64(verifier, sodium.base64_variants.URLSAFE_NO_PADDING)
   }
 

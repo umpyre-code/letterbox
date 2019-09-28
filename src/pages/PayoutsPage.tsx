@@ -338,8 +338,6 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
   updatingPrefs,
   updatePrefs
 }) => {
-  const classes = useStyles({})
-
   React.useEffect(() => {
     const oauthParams = qs.parse(searchString, { ignoreQueryPrefix: true })
     if (oauthParams && oauthParams.code && oauthParams.state) {

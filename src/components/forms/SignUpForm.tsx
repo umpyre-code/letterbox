@@ -6,10 +6,10 @@ import {
   LinearProgress,
   MenuItem,
   SnackbarContent,
+  Theme,
   Tooltip,
   Typography,
-  withStyles,
-  Theme
+  withStyles
 } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import MuiTextField from '@material-ui/core/TextField'
@@ -17,6 +17,7 @@ import HelpIcon from '@material-ui/icons/Help'
 import { Field, Form, Formik } from 'formik'
 import { fieldToTextField, Select, TextField, TextFieldProps } from 'formik-material-ui'
 import { AsYouType } from 'libphonenumber-js'
+import qs from 'qs'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
@@ -25,8 +26,8 @@ import zxcvbn from 'zxcvbn'
 import { ApplicationState } from '../../store/ApplicationState'
 import { loadCredentialsRequest, submitNewClientRequest } from '../../store/client/actions'
 import { ClientState } from '../../store/client/types'
-import { CountryCodes } from './CountryCodes'
 import { Emoji } from '../widgets/Emoji'
+import { CountryCodes } from './CountryCodes'
 
 interface PhoneNumber {
   country_code?: string
@@ -268,9 +269,19 @@ class SignUp extends React.Component<AllProps> {
         }}
         validationSchema={SignupFormSchema}
         onSubmit={(values, actions) => {
-          this.props.submitNewClientRequest(values, {
-            actions
-          })
+          const params = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
+          console.log(params)
+          const referredBy = params.r || params.ref || params.referred_by || undefined
+          console.log(params)
+          this.props.submitNewClientRequest(
+            {
+              ...values,
+              referred_by: referredBy
+            },
+            {
+              actions
+            }
+          )
         }}
         render={this.handleFormRender}
       />

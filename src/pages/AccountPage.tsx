@@ -1,19 +1,33 @@
-import { AppBar, Box, Container, Paper, Tab, Tabs, Typography } from '@material-ui/core'
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  createStyles,
+  Grid,
+  makeStyles,
+  Paper,
+  Tab,
+  Tabs,
+  Theme,
+  Typography
+} from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
-import { Link, Route, Switch } from 'react-router-dom'
+import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
+import { AccountPrefs } from '../components/widgets/AccountPrefs'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
-import { Emoji } from '../components/widgets/Emoji'
+import { CopyIcon } from '../components/widgets/CopyIcon'
 import Loading from '../components/widgets/Loading'
+import { PUBLIC_URL } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
 import PayoutsPage from './PayoutsPage'
-import { AccountPrefs } from '../components/widgets/AccountPrefs'
 
 interface PropsFromState {
   profile?: ClientProfile
@@ -47,7 +61,23 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, name, ...other }) => (
   </Typography>
 )
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    urlBox: {
+      background: theme.palette.grey[100],
+      padding: theme.spacing(2),
+      borderRadius: 6
+    }
+  })
+)
+
 const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentials }) => {
+  const classes = useStyles({})
+
+  function getRefLink(): string {
+    return `${PUBLIC_URL}/signup/?r=${profile.client_id}`
+  }
+
   if (balance && profile && credentials) {
     return (
       <ClientInit>
@@ -55,7 +85,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
           <Container>
             <BackToIndexButton />
             <Paper>
-              <Route
+              <Router.Route
                 path="/account"
                 render={({ location }) => (
                   <>
@@ -64,29 +94,36 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                         <Tab
                           label="Account"
                           {...a11yProps('account')}
-                          component={Link}
+                          component={Router.Link}
                           to="/account"
                           value="/account"
                         />
                         <Tab
                           label="Balance"
                           {...a11yProps('balance')}
-                          component={Link}
+                          component={Router.Link}
                           to="/account/balance"
                           value="/account/balance"
                         />
                         <Tab
                           label="Payouts"
                           {...a11yProps('payouts')}
-                          component={Link}
+                          component={Router.Link}
                           to="/account/payouts"
                           value="/account/payouts"
+                        />
+                        <Tab
+                          label="Referrals"
+                          {...a11yProps('referrals')}
+                          component={Router.Link}
+                          to="/account/referrals"
+                          value="/account/referrals"
                         />
                       </Tabs>
                     </AppBar>
                     <>
-                      <Switch>
-                        <Route
+                      <Router.Switch>
+                        <Router.Route
                           exact
                           path="/account"
                           render={() => (
@@ -98,7 +135,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                             </TabPanel>
                           )}
                         />
-                        <Route
+                        <Router.Route
                           path="/account/balance"
                           render={() => (
                             <TabPanel name="balance">
@@ -108,7 +145,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                             </TabPanel>
                           )}
                         />
-                        <Route
+                        <Router.Route
                           path="/account/payouts"
                           render={params => (
                             <TabPanel name="payouts">
@@ -116,7 +153,41 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                             </TabPanel>
                           )}
                         />
-                      </Switch>
+                        <Router.Route
+                          path="/account/referrals"
+                          render={() => (
+                            <TabPanel name="referrals">
+                              <Typography variant="h5">Referrals</Typography>
+                              <br />
+                              <Typography>
+                                For each person you invite, we&apos;ll give you a $20 account
+                                credit. Just share your reflink, and if your friends sign up, you
+                                get twenty bucks.
+                              </Typography>
+                              <br />
+                              <Grid container spacing={1} alignItems="center">
+                                <Grid item>
+                                  <Box className={classes.urlBox}>
+                                    <Typography variant="h5">{getRefLink()}</Typography>
+                                  </Box>
+                                </Grid>
+                                <Grid item>
+                                  <Box>
+                                    <Button
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(getRefLink())
+                                      }}
+                                    >
+                                      <CopyIcon>copy</CopyIcon>
+                                      Copy
+                                    </Button>
+                                  </Box>
+                                </Grid>
+                              </Grid>
+                            </TabPanel>
+                          )}
+                        />
+                      </Router.Switch>
                     </>
                   </>
                 )}

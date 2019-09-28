@@ -34,6 +34,7 @@ export interface NewClient {
   phone_number: PhoneNumber
   box_public_key?: string
   signing_public_key?: string
+  referred_by?: string
 }
 
 export interface MicroClientProfile {

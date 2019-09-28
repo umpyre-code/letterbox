@@ -16,7 +16,7 @@ const history = createHistory()
 const store = configureStore(history)
 
 const rootElement = document.getElementById('root')
-if (rootElement.hasChildNodes()) {
+if (rootElement.hasChildNodes() && rootElement.firstElementChild.className !== 'lds-heart') {
   ReactDOM.hydrate(<Main store={store} history={history} />, rootElement)
 } else {
   ReactDOM.render(<Main store={store} history={history} />, rootElement)

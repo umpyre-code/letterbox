@@ -74,7 +74,6 @@ const SignUpPage = () => {
                     wasted. Just value.
                   </Typography>
                 </Box>
-
                 <Divider />
                 <SignUpForm />
                 <Box className={classes.box}>
