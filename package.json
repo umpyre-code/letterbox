@@ -68,7 +68,7 @@
     "prop-types": "^15.6.2",
     "qs": "^6.8.0",
     "querystringify": "^2.1.1",
-    "react": "^16.10.0",
+    "react": "^16.10.1",
     "react-animated-css": "^1.2.1",
     "react-dev-utils": "^9.0.3",
     "react-dom": "^16.10.0",
