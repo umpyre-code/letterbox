@@ -27,7 +27,7 @@ export async function addChildMessageInDb(
         children: _.uniq([...(parent.children || []), childHash])
       })
     } catch (error) {
-      console.log('Error updating parent', error)
+      console.error('Error updating parent', error)
     }
     return Promise.resolve(parent.thread)
   }

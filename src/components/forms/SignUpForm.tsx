@@ -270,9 +270,7 @@ class SignUp extends React.Component<AllProps> {
         validationSchema={SignupFormSchema}
         onSubmit={(values, actions) => {
           const params = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
-          console.log(params)
           const referredBy = params.r || params.ref || params.referred_by || undefined
-          console.log(params)
           this.props.submitNewClientRequest(
             {
               ...values,
