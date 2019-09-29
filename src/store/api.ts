@@ -125,9 +125,7 @@ export class API {
     //   seconds: number,
     // }
     // Here we convert it into a local representation which has a simplified date.
-    return this.client
-      .get('/messages', { params: qs.stringify({ sketch }) })
-      .then(response => response.data)
+    return this.client.get('/messages', { params: { sketch } }).then(response => response.data)
   }
 
   public async sendMessages(messages: APIMessage[]): Promise<APIMessage[]> {
@@ -137,12 +135,6 @@ export class API {
   public async updateClientProfile(clientProfile: ClientProfile): Promise<ClientProfile> {
     return this.client
       .put(`/client/${clientProfile.client_id}`, clientProfile)
-      .then(response => response.data)
-  }
-
-  public async updateClientRal(clientId: ClientID, ral: number): Promise<ClientProfile> {
-    return this.client
-      .put(`/client/${clientId}/ral`, qs.stringify({ ral }))
       .then(response => response.data)
   }
 
@@ -202,7 +194,7 @@ export class API {
 
   public async getTransactions(limit: number): Promise<Transaction[]> {
     return this.client
-      .get('/account/transactions', { params: qs.stringify({ limit }) })
+      .get('/account/transactions', { params: { limit } })
       .then(response => response.data)
   }
 }
