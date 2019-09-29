@@ -1,16 +1,13 @@
 import {
-  createStyles,
+  Button,
   Divider,
   Grid,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Theme,
-  Typography,
-  Button
+  Typography
 } from '@material-ui/core'
 import _ from 'lodash'
 import moment from 'moment'
@@ -18,31 +15,15 @@ import * as React from 'react'
 import NumberFormat from 'react-number-format'
 import { API } from '../../store/api'
 import { Transaction } from '../../store/models/account'
-import { ClientCredentials, ClientProfile } from '../../store/models/client'
+import { ClientCredentials } from '../../store/models/client'
 import { Emoji } from './Emoji'
 import Loading from './Loading'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    urlBox: {
-      background: theme.palette.grey[100],
-      padding: theme.spacing(2),
-      borderRadius: 6
-    }
-  })
-)
-
 interface AccountTransactionsProps {
-  profile?: ClientProfile
   credentials?: ClientCredentials
 }
 
-export const AccountTransactions: React.FC<AccountTransactionsProps> = ({
-  profile,
-  credentials
-}) => {
-  const classes = useStyles({})
-
+export const AccountTransactions: React.FC<AccountTransactionsProps> = ({ credentials }) => {
   const [transactions, setTransactions] = React.useState<Transaction[] | undefined>(undefined)
 
   React.useEffect(() => {

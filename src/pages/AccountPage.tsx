@@ -117,7 +117,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                               <br />
                               {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
                               <br />
-                              <AccountTransactions profile={profile} credentials={credentials} />
+                              <AccountTransactions credentials={credentials} />
                             </TabPanel>
                           )}
                         />

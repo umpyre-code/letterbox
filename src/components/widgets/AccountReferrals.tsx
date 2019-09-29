@@ -156,11 +156,10 @@ export const AccountReferrals: React.FC<AccountReferralsProps> = ({ profile, cre
         </Grid>
       </Grid>
       <br />
-      <Divider />
-      <br />
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Typography variant="h5">Your referrals</Typography>
+          <Divider />
         </Grid>
         {getReferrals()}
       </Grid>
