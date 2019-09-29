@@ -1,4 +1,5 @@
 import 'stripe-v3'
+import { Timestamp } from './messages'
 
 export interface Balance {
   balance_cents: number
@@ -55,4 +56,11 @@ export interface SettlePaymentResponse {
   fee_cents: number
   payment_cents: number
   balance: Balance
+}
+
+export interface Transaction {
+  created_at: Timestamp
+  tx_type: string
+  tx_reason: string
+  amount_cents: number
 }

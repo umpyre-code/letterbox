@@ -10,7 +10,8 @@ import {
   ConnectAccountPrefs,
   ConnectOauth,
   PostConnectOauthResponse,
-  SettlePaymentResponse
+  SettlePaymentResponse,
+  Transaction
 } from './models/account'
 import {
   AuthHandshakeRequest,
@@ -124,9 +125,9 @@ export class API {
     //   seconds: number,
     // }
     // Here we convert it into a local representation which has a simplified date.
-    const params = new URLSearchParams()
-    params.append('sketch', sketch)
-    return this.client.get('/messages', { params }).then(response => response.data)
+    return this.client
+      .get('/messages', { params: qs.stringify({ sketch }) })
+      .then(response => response.data)
   }
 
   public async sendMessages(messages: APIMessage[]): Promise<APIMessage[]> {
@@ -197,5 +198,11 @@ export class API {
 
   public async getReferrals(): Promise<ClientProfile[]> {
     return this.client.get(`/referrals`).then(response => response.data)
+  }
+
+  public async getTransactions(limit: number): Promise<Transaction[]> {
+    return this.client
+      .get('/account/transactions', { params: qs.stringify({ limit }) })
+      .then(response => response.data)
   }
 }

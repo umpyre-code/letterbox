@@ -6,6 +6,7 @@ import ClientInit from '../components/ClientInit'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { AccountPrefs } from '../components/widgets/AccountPrefs'
 import { AccountReferrals } from '../components/widgets/AccountReferrals'
+import { AccountTransactions } from '../components/widgets/AccountTransactions'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
 import Loading from '../components/widgets/Loading'
@@ -114,8 +115,9 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                               <Typography variant="h5">Account balance</Typography>
                               <Divider />
                               <br />
-
                               {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
+                              <br />
+                              <AccountTransactions profile={profile} credentials={credentials} />
                             </TabPanel>
                           )}
                         />
