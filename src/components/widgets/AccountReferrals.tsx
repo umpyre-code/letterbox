@@ -132,7 +132,7 @@ export const AccountReferrals: React.FC<AccountReferralsProps> = ({ profile, cre
                   nav.share({
                     title: 'Sign up for Umpyre',
                     text: 'Join Umpyre today — it rocks!',
-                    url: 'getRefLink()'
+                    url: getRefLink()
                   })
                 }}
               >
