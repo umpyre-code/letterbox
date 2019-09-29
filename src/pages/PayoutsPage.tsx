@@ -242,9 +242,6 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
   updatePrefs
 }) => {
   const classes = useStyles({})
-  const [autoPayoutsEnabled, setAutoPayoutsEnabled] = React.useState(
-    connectAccount.preferences.enable_automatic_payouts
-  )
 
   if (connectAccount.state === 'active') {
     return (
@@ -355,6 +352,7 @@ export const PayoutsPageFC: React.FC<PayoutsProps> = ({
       <>
         <Typography variant="h5">Account payouts</Typography>
         <Divider />
+        <br />
         <ConnectButtonSection
           connectAccount={connectAccount}
           updatingPrefs={updatingPrefs}

@@ -36,7 +36,14 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       verticalAlign: 'middle'
     },
-    container: { padding: theme.spacing(5) },
+    root: {
+      width: '100%',
+      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
+      minHeight: '100vh'
+    },
+    container: {
+      padding: theme.spacing(5)
+    },
     paper: { padding: theme.spacing(2) },
     wordBox: {
       backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -82,103 +89,105 @@ const InputSeedPageFC: React.FC<AllProps> = ({
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="sm" className={classes.container}>
-        <Paper className={classes.paper}>
-          <Box className={classes.box}>
-            <Typography variant="h3">Recovery Phrase</Typography>
-          </Box>
-          <Box className={classes.box}>
-            <Typography variant="h6">Please enter your 16 word recovery phrase</Typography>
-          </Box>
-          <Box className={classes.box}>
-            <Button
-              onClick={() => {
-                navigator.clipboard.readText().then(clipText => {
-                  const splat = clipText.split(/[^\w]/)
-                  const updatedSeedWords = Array.from(seedWords)
-                  splat.splice(0, 16).forEach((value, index) => {
-                    if (wordLists.english.includes(value)) {
-                      updatedSeedWords[index] = value
-                    }
+      <Box className={classes.root}>
+        <Container maxWidth="sm" className={classes.container}>
+          <Paper className={classes.paper}>
+            <Box className={classes.box}>
+              <Typography variant="h3">Recovery Phrase</Typography>
+            </Box>
+            <Box className={classes.box}>
+              <Typography variant="h6">Please enter your 16 word recovery phrase</Typography>
+            </Box>
+            <Box className={classes.box}>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.readText().then(clipText => {
+                    const splat = clipText.split(/[^\w]/)
+                    const updatedSeedWords = Array.from(seedWords)
+                    splat.splice(0, 16).forEach((value, index) => {
+                      if (wordLists.english.includes(value)) {
+                        updatedSeedWords[index] = value
+                      }
+                    })
+                    setSeedWords(updatedSeedWords)
                   })
-                  setSeedWords(updatedSeedWords)
-                })
-                setPasted(true)
-                setTimeout(() => {
-                  setPasted(false)
-                }, 1000)
+                  setPasted(true)
+                  setTimeout(() => {
+                    setPasted(false)
+                  }, 1000)
+                }}
+              >
+                <PasteIcon>copy</PasteIcon>
+                Paste from clipboard
+                {pasted && (
+                  <>
+                    &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
+                  </>
+                )}
+              </Button>
+            </Box>
+            <Grid container>
+              {seedWords.slice(0, 15).map((word: string, index: number) => (
+                <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
+                  <SeedWordInput
+                    label={(index + 1).toString()}
+                    placeholder={undefined}
+                    selectedItem={word}
+                    focusNextOnChange
+                    onChange={(updatedWord: string) => {
+                      const updatedWords = Array.from(seedWords)
+                      updatedWords[index] = updatedWord
+                      setSeedWords(updatedWords)
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            <SeedWordInput
+              label="16"
+              placeholder="Check word"
+              selectedItem={seedWords[15]}
+              focusNextOnChange={false}
+              onChange={(updatedWord: string) => {
+                const updatedWords = Array.from(seedWords)
+                updatedWords[15] = updatedWord
+                setSeedWords(updatedWords)
               }}
-            >
-              <PasteIcon>copy</PasteIcon>
-              Paste from clipboard
-              {pasted && (
-                <>
-                  &nbsp;<Emoji ariaLabel="copied">✔️</Emoji>
-                </>
-              )}
-            </Button>
-          </Box>
-          <Grid container>
-            {seedWords.slice(0, 15).map((word: string, index: number) => (
-              <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
-                <SeedWordInput
-                  label={(index + 1).toString()}
-                  placeholder={undefined}
-                  selectedItem={word}
-                  focusNextOnChange
-                  onChange={(updatedWord: string) => {
-                    const updatedWords = Array.from(seedWords)
-                    updatedWords[index] = updatedWord
-                    setSeedWords(updatedWords)
-                  }}
-                />
+            />
+            <Box className={classes.box}>
+              <Typography>
+                If you lost your recovery phrase, you won&apos;t be able to read old messages.
+              </Typography>
+            </Box>
+            <Grid container justify="space-between">
+              <Grid item>
+                <Box className={classes.box}>
+                  <Button
+                    color="secondary"
+                    variant="contained"
+                    disabled={keysLoading}
+                    onClick={() => resetKeys()}
+                  >
+                    <Emoji ariaLabel="shock">😲</Emoji>&nbsp;I lost my recovery phrase
+                  </Button>
+                </Box>
               </Grid>
-            ))}
-          </Grid>
-          <SeedWordInput
-            label="16"
-            placeholder="Check word"
-            selectedItem={seedWords[15]}
-            focusNextOnChange={false}
-            onChange={(updatedWord: string) => {
-              const updatedWords = Array.from(seedWords)
-              updatedWords[15] = updatedWord
-              setSeedWords(updatedWords)
-            }}
-          />
-          <Box className={classes.box}>
-            <Typography>
-              If you lost your recovery phrase, you won&apos;t be able to read old messages.
-            </Typography>
-          </Box>
-          <Grid container justify="space-between">
-            <Grid item>
-              <Box className={classes.box}>
-                <Button
-                  color="secondary"
-                  variant="contained"
-                  disabled={keysLoading}
-                  onClick={() => resetKeys()}
-                >
-                  <Emoji ariaLabel="shock">😲</Emoji>&nbsp;I lost my recovery phrase
-                </Button>
-              </Box>
+              <Grid item>
+                <Box className={classes.box}>
+                  <Button
+                    disabled={!checkPassed}
+                    color="primary"
+                    variant="contained"
+                    onClick={() => initializeKeysFromSeed(seedWords)}
+                  >
+                    Continue &nbsp;<Emoji ariaLabel="continue">👉</Emoji>
+                  </Button>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Box className={classes.box}>
-                <Button
-                  disabled={!checkPassed}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => initializeKeysFromSeed(seedWords)}
-                >
-                  Continue &nbsp;<Emoji ariaLabel="continue">👉</Emoji>
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+          </Paper>
+        </Container>
+      </Box>
     </>
   )
 }

@@ -194,4 +194,8 @@ export class API {
   public async putClientPrefs(prefs: ClientPrefs): Promise<ClientPrefs> {
     return this.client.put(`/client/self/prefs`, prefs).then(response => response.data)
   }
+
+  public async getReferrals(): Promise<ClientProfile[]> {
+    return this.client.get(`/referrals`).then(response => response.data)
+  }
 }

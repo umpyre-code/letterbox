@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     bodyGrid: {
       overflow: 'auto',
       backgroundColor: theme.palette.grey[100]
+      // backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
     }
   })
 )

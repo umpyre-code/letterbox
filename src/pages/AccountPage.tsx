@@ -1,28 +1,14 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  createStyles,
-  Grid,
-  makeStyles,
-  Paper,
-  Tab,
-  Tabs,
-  Theme,
-  Typography
-} from '@material-ui/core'
+import { AppBar, Box, Container, Paper, Tab, Tabs, Typography, Divider } from '@material-ui/core'
 import * as React from 'react'
 import { connect } from 'react-redux'
 import * as Router from 'react-router-dom'
 import ClientInit from '../components/ClientInit'
 import { DefaultLayout } from '../components/layout/DefaultLayout'
 import { AccountPrefs } from '../components/widgets/AccountPrefs'
+import { AccountReferrals } from '../components/widgets/AccountReferrals'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { BalanceTable, makeRowsFromBalance } from '../components/widgets/BalanceTable'
-import { CopyIcon } from '../components/widgets/CopyIcon'
 import Loading from '../components/widgets/Loading'
-import { PUBLIC_URL } from '../store/api'
 import { ApplicationState } from '../store/ApplicationState'
 import { addDraftRequest } from '../store/drafts/actions'
 import { Balance } from '../store/models/account'
@@ -61,23 +47,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, name, ...other }) => (
   </Typography>
 )
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    urlBox: {
-      background: theme.palette.grey[100],
-      padding: theme.spacing(2),
-      borderRadius: 6
-    }
-  })
-)
-
 const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentials }) => {
-  const classes = useStyles({})
-
-  function getRefLink(): string {
-    return `${PUBLIC_URL}/signup/?r=${profile.client_id}`
-  }
-
   if (balance && profile && credentials) {
     return (
       <ClientInit>
@@ -129,6 +99,8 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           render={() => (
                             <TabPanel name="account">
                               <Typography variant="h5">Account Info</Typography>
+                              <Divider />
+                              <br />
                               <Typography>Your current reading level is ${profile.ral}</Typography>
                               <br />
                               <AccountPrefs profile={profile} credentials={credentials} />
@@ -140,6 +112,8 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           render={() => (
                             <TabPanel name="balance">
                               <Typography variant="h5">Account balance</Typography>
+                              <Divider />
+                              <br />
 
                               {balance && <BalanceTable rows={makeRowsFromBalance(balance)} />}
                             </TabPanel>
@@ -157,33 +131,7 @@ const AccountPageFC: React.FC<AccountPageProps> = ({ balance, profile, credentia
                           path="/account/referrals"
                           render={() => (
                             <TabPanel name="referrals">
-                              <Typography variant="h5">Referrals</Typography>
-                              <br />
-                              <Typography>
-                                For each person you invite, we&apos;ll give you a $20 account
-                                credit. Just share your reflink, and if your friends sign up, you
-                                get twenty bucks.
-                              </Typography>
-                              <br />
-                              <Grid container spacing={1} alignItems="center">
-                                <Grid item>
-                                  <Box className={classes.urlBox}>
-                                    <Typography variant="h5">{getRefLink()}</Typography>
-                                  </Box>
-                                </Grid>
-                                <Grid item>
-                                  <Box>
-                                    <Button
-                                      onClick={() => {
-                                        navigator.clipboard.writeText(getRefLink())
-                                      }}
-                                    >
-                                      <CopyIcon>copy</CopyIcon>
-                                      Copy
-                                    </Button>
-                                  </Box>
-                                </Grid>
-                              </Grid>
+                              <AccountReferrals profile={profile} credentials={credentials} />
                             </TabPanel>
                           )}
                         />

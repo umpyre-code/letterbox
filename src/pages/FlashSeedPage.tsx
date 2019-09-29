@@ -26,7 +26,14 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       verticalAlign: 'middle'
     },
-    container: { padding: theme.spacing(5) },
+    root: {
+      width: '100%',
+      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
+      minHeight: '100vh'
+    },
+    container: {
+      padding: theme.spacing(5)
+    },
     paper: { padding: theme.spacing(2) },
     wordBox: {
       backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -52,74 +59,76 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="sm" className={classes.container}>
-        <Paper className={classes.paper}>
-          <Box className={classes.box}>
-            <Typography variant="h3">Recovery Phrase</Typography>
-          </Box>
-          <Box className={classes.box}>
-            <Typography variant="h6">
-              Store these 16 words in a safe place, such as a password manager, and don&apos;t share
-              them with anyone.
-            </Typography>
-          </Box>
-          <Grid container>
-            {seedWords.slice(0, 15).map((word: string, index: number) => (
-              <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
-                <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
-                  <Typography variant="subtitle1">
-                    <Box className={classes.wordBox} fontFamily="Monospace">
-                      {index + 1}. {word}
-                    </Box>
-                  </Typography>
+      <Box className={classes.root}>
+        <Container maxWidth="sm" className={classes.container}>
+          <Paper className={classes.paper}>
+            <Box className={classes.box}>
+              <Typography variant="h3">Recovery Phrase</Typography>
+            </Box>
+            <Box className={classes.box}>
+              <Typography variant="h6">
+                Store these 16 words in a safe place, such as a password manager, and don&apos;t
+                share them with anyone.
+              </Typography>
+            </Box>
+            <Grid container>
+              {seedWords.slice(0, 15).map((word: string, index: number) => (
+                <Grid item xs={4} key={stringHash(`${index}:${word}`)}>
+                  <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
+                    <Typography variant="subtitle1">
+                      <Box className={classes.wordBox} fontFamily="Monospace">
+                        {index + 1}. {word}
+                      </Box>
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+            <Box className={classes.box}>
+              <Typography>Check word:</Typography>
+            </Box>
+            <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
+              <Typography variant="subtitle1">
+                <Box className={classes.wordBox} fontFamily="Monospace">
+                  16. {seedWords[15]}
+                </Box>
+              </Typography>
+            </Box>
+            <Box className={classes.box}>
+              <Typography>
+                If you want to sign in on another device, or recover messages later, you will need
+                your recovery phrase.
+              </Typography>
+            </Box>
+            <Grid container justify="space-between" alignItems="center">
+              <Grid item xs>
+                <Box className={classes.box}>
+                  <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(seedWords.join(' '))
+                      setCopied(true)
+                      setTimeout(() => {
+                        setCopied(false)
+                      }, 1000)
+                    }}
+                  >
+                    <CopyIcon>copy</CopyIcon>
+                    Copy to clipboard{' '}
+                    <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
+                  </Button>
                 </Box>
               </Grid>
-            ))}
-          </Grid>
-          <Box className={classes.box}>
-            <Typography>Check word:</Typography>
-          </Box>
-          <Box className={classes.box} style={{ display: 'block', width: 'auto' }}>
-            <Typography variant="subtitle1">
-              <Box className={classes.wordBox} fontFamily="Monospace">
-                16. {seedWords[15]}
-              </Box>
-            </Typography>
-          </Box>
-          <Box className={classes.box}>
-            <Typography>
-              If you want to sign in on another device, or recover messages later, you will need
-              your recovery phrase.
-            </Typography>
-          </Box>
-          <Grid container justify="space-between" alignItems="center">
-            <Grid item xs>
-              <Box className={classes.box}>
-                <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(seedWords.join(' '))
-                    setCopied(true)
-                    setTimeout(() => {
-                      setCopied(false)
-                    }, 1000)
-                  }}
-                >
-                  <CopyIcon>copy</CopyIcon>
-                  Copy to clipboard{' '}
-                  <span style={{ visibility: copied ? 'visible' : 'hidden' }}>✔</span>
-                </Button>
-              </Box>
+              <Grid item xs>
+                <Box className={classes.box}>
+                  <Button color="primary" variant="contained" onClick={() => history.push('/')}>
+                    I&apos;ve saved my recovery phrase&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
+                  </Button>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item xs>
-              <Box className={classes.box}>
-                <Button color="primary" variant="contained" onClick={() => history.push('/')}>
-                  I&apos;ve saved my recovery phrase&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Container>
+          </Paper>
+        </Container>
+      </Box>
     </>
   )
 }
