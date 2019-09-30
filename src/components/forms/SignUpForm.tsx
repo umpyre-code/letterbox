@@ -28,6 +28,7 @@ import { loadCredentialsRequest, submitNewClientRequest } from '../../store/clie
 import { ClientState } from '../../store/client/types'
 import { Emoji } from '../widgets/Emoji'
 import { CountryCodes } from './CountryCodes'
+import { API } from '../../store/api'
 
 interface PhoneNumber {
   country_code?: string
@@ -269,6 +270,7 @@ class SignUp extends React.Component<AllProps> {
         }}
         validationSchema={SignupFormSchema}
         onSubmit={(values, actions) => {
+          API.METRIC_COUNTER_INC('signup-form-submitted')
           const params = qs.parse(this.props.location.search, { ignoreQueryPrefix: true })
           const referredBy = params.r || params.ref || params.referred_by || undefined
           this.props.submitNewClientRequest(
