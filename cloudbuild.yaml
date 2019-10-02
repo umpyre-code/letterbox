@@ -8,6 +8,24 @@ steps:
     env:
       - 'CI=true'
   - name: 'gcr.io/cloud-builders/npm'
+    entrypoint: 'yarn'
+    args: ['run', 'build']
+    env:
+      - 'DEBIAN_FRONTEND=noninteractive'
+      - 'PUBLIC_URL=https://staging.umpyre.io'
+      - 'API_URL=https://api.staging.umpyre.io'
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args:
+      [
+        '-m',
+        'cp',
+        '-r',
+        '-z',
+        'html,css,js,map,mjs,txt,woff,woff2,svg,json',
+        'build/*',
+        'gs://staging.umpyre.io/',
+      ]
+  - name: 'gcr.io/cloud-builders/npm'
     entrypoint: 'sh'
     args:
       [
