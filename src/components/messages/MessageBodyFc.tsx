@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme: Theme) =>
         'sans-serif',
         '"Apple Color Emoji"',
         '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"'
+        '"Segoe UI Symbol"',
+        '"Noto Color Emoji"'
       ].join(','),
       '& blockquote': {
         background: '#f9f9f9',
