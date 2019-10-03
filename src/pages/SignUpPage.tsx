@@ -69,9 +69,9 @@ const SignUpPage = () => {
                 </Box>
                 <Box className={classes.box}>
                   <Typography>
-                    Umpyre is a messaging platform where everyone has skin in the game. Anyone can
-                    reach you, but they need to make it worth your while. No spam, no junk, no time
-                    wasted. Just value.
+                    Umpyre is a messaging platform with payments where everyone has skin in the
+                    game. Anyone can reach you, but they need to make it worth your while. No spam,
+                    no junk, no time wasted. Just value.
                   </Typography>
                 </Box>
                 <Divider />
