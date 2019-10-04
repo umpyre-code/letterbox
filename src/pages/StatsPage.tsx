@@ -18,6 +18,10 @@ import { AmountByDate, Stats } from '../store/models/stats'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    rootBox: {
+      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
+      minHeight: '100vh'
+    },
     box: {
       margin: theme.spacing(1),
       padding: theme.spacing(1)
@@ -74,59 +78,61 @@ const AboutPage = () => {
   return (
     <>
       <CssBaseline />
-      <Container className={classes.container}>
-        <Container maxWidth="md">
-          <Box className={classes.box}>
-            <BackToIndexButton />
-          </Box>
-          <Paper className={classes.paper}>
+      <Box className={classes.rootBox}>
+        <Container className={classes.container}>
+          <Container maxWidth="md">
             <Box className={classes.box}>
-              <Typography variant="h1">STATS</Typography>
+              <BackToIndexButton />
             </Box>
-            {!stats && <Loading />}
-            {stats && (
-              <>
-                <Box className={classes.box}>
-                  <Typography variant="h6">Sent per day</Typography>
-                  <BarChart
-                    height={300}
-                    margin={35}
-                    axisPrefix="$"
-                    data={stats.message_sent_amount.map(d => ({
-                      ...d,
-                      value: Math.abs(d.amount_cents / 100.0)
-                    }))}
-                  />
-                </Box>
-                <Box className={classes.box}>
-                  <Typography variant="h6">Read per day</Typography>
-                  <BarChart
-                    height={300}
-                    margin={35}
-                    axisPrefix="$"
-                    data={stats.message_read_amount.map(d => ({
-                      ...d,
-                      value: Math.abs(d.amount_cents / 100.0)
-                    }))}
-                  />
-                </Box>
-                <Box className={classes.box}>
-                  <Typography variant="h6">Total verified clients</Typography>
-                  <BarChart
-                    height={300}
-                    margin={35}
-                    axisPrefix=""
-                    data={stats.clients_by_date.map(d => ({ ...d, value: d.count }))}
-                  />
-                </Box>
-                <Box className={classes.box}>
-                  <Typography>All data is for the prior 30.</Typography>
-                </Box>
-              </>
-            )}
-          </Paper>
+            <Paper className={classes.paper}>
+              <Box className={classes.box}>
+                <Typography variant="h1">STATS</Typography>
+              </Box>
+              {!stats && <Loading />}
+              {stats && (
+                <>
+                  <Box className={classes.box}>
+                    <Typography variant="h6">Sent per day</Typography>
+                    <BarChart
+                      height={300}
+                      margin={35}
+                      axisPrefix="$"
+                      data={stats.message_sent_amount.map(d => ({
+                        ...d,
+                        value: Math.abs(d.amount_cents / 100.0)
+                      }))}
+                    />
+                  </Box>
+                  <Box className={classes.box}>
+                    <Typography variant="h6">Read per day</Typography>
+                    <BarChart
+                      height={300}
+                      margin={35}
+                      axisPrefix="$"
+                      data={stats.message_read_amount.map(d => ({
+                        ...d,
+                        value: Math.abs(d.amount_cents / 100.0)
+                      }))}
+                    />
+                  </Box>
+                  <Box className={classes.box}>
+                    <Typography variant="h6">Total verified clients</Typography>
+                    <BarChart
+                      height={300}
+                      margin={35}
+                      axisPrefix=""
+                      data={stats.clients_by_date.map(d => ({ ...d, value: d.count }))}
+                    />
+                  </Box>
+                  <Box className={classes.box}>
+                    <Typography>All data is for the prior 30 days.</Typography>
+                  </Box>
+                </>
+              )}
+            </Paper>
+          </Container>
         </Container>
-      </Container>
+      </Box>
     </>
   )
 }
