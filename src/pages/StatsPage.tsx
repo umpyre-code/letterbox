@@ -6,10 +6,12 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography
+  Typography,
+  Button
 } from '@material-ui/core'
 import _ from 'lodash'
 import * as React from 'react'
+import * as Router from 'react-router-dom'
 import { BarChart } from '../components/vx/BarChart'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import Loading from '../components/widgets/Loading'
@@ -34,6 +36,11 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: { padding: theme.spacing(2) }
   })
 )
+
+const LeaderboardLink = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<Router.LinkProps, 'innerRef' | 'to'>
+>((props, ref) => <Router.Link innerRef={ref} to="/leaderboard" {...props} />)
 
 const AboutPage = () => {
   const classes = useStyles({})
@@ -126,6 +133,9 @@ const AboutPage = () => {
                   </Box>
                   <Box className={classes.box}>
                     <Typography>All data is for the prior 30 days.</Typography>
+                  </Box>
+                  <Box className={classes.box}>
+                    <Button component={LeaderboardLink}>Check leaderboard</Button>
                   </Box>
                 </>
               )}

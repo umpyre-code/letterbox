@@ -9,6 +9,7 @@ const LazyAddCreditsPage = React.lazy(() => import('./pages/AddCreditsPage'))
 const LazyFlashSeedPage = React.lazy(() => import('./pages/FlashSeedPage'))
 const LazyIndexPage = React.lazy(() => import('./pages/IndexPage'))
 const LazyInputSeedPage = React.lazy(() => import('./pages/InputSeedPage'))
+const LazyLeaderboardPage = React.lazy(() => import('./pages/LeaderboardPage'))
 const LazyMessagePage = React.lazy(() => import('./pages/MessagePage'))
 const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
 const LazySignInPage = React.lazy(() => import('./pages/SignInPage'))
@@ -24,6 +25,11 @@ export const Routes: React.FunctionComponent = () => (
         <Route exact path={['/about', '/about/index.html']} component={LazyAboutPage} />
         <Route exact path={['/signup', '/signup/index.html']} component={LazySignUpPage} />
         <Route exact path={['/stats', '/stats/index.html']} component={LazyStatsPage} />
+        <Route
+          exact
+          path={['/leaderboard', '/leaderboard/index.html']}
+          component={LazyLeaderboardPage}
+        />
         <Route exact path="/flashseed" component={LazyFlashSeedPage} />
         <Route exact path="/inputseed" component={LazyInputSeedPage} />
         <Route exact path="/signin" component={LazySignInPage} />

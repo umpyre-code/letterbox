@@ -6,6 +6,7 @@ import {
   ClientProfile,
   MicroClientProfile
 } from '../models/client'
+import { API_ENDPOINT } from '../api'
 
 export enum ClientActionTypes {
   AUTH_ERROR = '@@client/AUTH_ERROR',
@@ -125,4 +126,8 @@ export class ClientProfileHelper implements MicroClientProfile {
     }
     return this.full_name[0]
   }
+}
+
+export function getAvatarImgSrc(profile: MicroClientProfile, size: string, format: string) {
+  return `${API_ENDPOINT}/img/avatar/${profile.client_id}/${size}.${format}?v=${profile.avatar_version}`
 }

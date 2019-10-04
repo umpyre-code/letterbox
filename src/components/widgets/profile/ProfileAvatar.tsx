@@ -3,7 +3,7 @@ import PersonIcon from '@material-ui/icons/Person'
 import { createStyles } from '@material-ui/styles'
 import * as React from 'react'
 import { API_ENDPOINT } from '../../../store/api'
-import { ClientProfileHelper } from '../../../store/client/types'
+import { ClientProfileHelper, getAvatarImgSrc } from '../../../store/client/types'
 import { MicroClientProfile } from '../../../store/models/client'
 
 type AvatarSize = 'tiny' | 'small' | 'medium' | 'large'
@@ -111,10 +111,6 @@ const TextAvatarBox: React.FC<BoxProps> = ({ children, size }) => {
 }
 
 export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
-  function getAvatarImgSrc(format: string) {
-    return `${API_ENDPOINT}/img/avatar/${profile.client_id}/${size}.${format}?v=${profile.avatar_version}`
-  }
-
   function getInner() {
     if (profile.avatar_version === 0) {
       return (
@@ -137,9 +133,9 @@ export const ProfileAvatar: React.FC<AvatarProps> = ({ profile, size }) => {
     return (
       <ImageAvatarBox size={size}>
         <picture>
-          <source srcSet={getAvatarImgSrc('webp')} type="image/webp" />
-          <source srcSet={getAvatarImgSrc('jpg')} type="image/jpeg" />
-          <img alt={profile.full_name} src={getAvatarImgSrc('jpg')} />
+          <source srcSet={getAvatarImgSrc(profile, size, 'webp')} type="image/webp" />
+          <source srcSet={getAvatarImgSrc(profile, size, 'jpg')} type="image/jpeg" />
+          <img alt={profile.full_name} src={getAvatarImgSrc(profile, size, 'jpg')} />
         </picture>
       </ImageAvatarBox>
     )

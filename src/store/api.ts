@@ -58,6 +58,10 @@ export class API {
     return axios.post(`${API_ENDPOINT}/client/auth/verify`, request).then(response => response.data)
   }
 
+  public static async FETCH_CLIENT_PUBLIC(clientId: ClientID): Promise<ClientProfile> {
+    return axios.get(`${API_ENDPOINT}/client/${clientId}`).then(response => response.data)
+  }
+
   public static async FETCH_CLIENT(
     credentials: ClientCredentials,
     clientId: ClientID
