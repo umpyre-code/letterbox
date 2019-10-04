@@ -247,7 +247,6 @@
   "reactSnap": {
     "include": [
       "/signup",
-      "/stats",
       "/about"
     ],
     "minifyHtml": {
