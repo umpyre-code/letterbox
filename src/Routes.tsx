@@ -14,6 +14,7 @@ const LazyProfilePage = React.lazy(() => import('./pages/ProfilePage'))
 const LazySignInPage = React.lazy(() => import('./pages/SignInPage'))
 const LazySignOutPage = React.lazy(() => import('./pages/SignOutPage'))
 const LazySignUpPage = React.lazy(() => import('./pages/SignUpPage'))
+const LazyStatsPage = React.lazy(() => import('./pages/StatsPage'))
 
 export const Routes: React.FunctionComponent = () => (
   <React.Suspense fallback={<Loading centerOnPage />}>
@@ -22,6 +23,7 @@ export const Routes: React.FunctionComponent = () => (
         <Route exact path="/" component={LazyIndexPage} />
         <Route exact path={['/about', '/about/index.html']} component={LazyAboutPage} />
         <Route exact path={['/signup', '/signup/index.html']} component={LazySignUpPage} />
+        <Route exact path={['/stats', '/stats/index.html']} component={LazyStatsPage} />
         <Route exact path="/flashseed" component={LazyFlashSeedPage} />
         <Route exact path="/inputseed" component={LazyInputSeedPage} />
         <Route exact path="/signin" component={LazySignInPage} />

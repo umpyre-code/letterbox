@@ -27,6 +27,7 @@ import {
   ClientPrefs
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
+import { Stats } from './models/stats'
 
 export const API_ENDPOINT = process.env.API_ENDPOINT || 'invalid API endpoint'
 export const PUBLIC_URL = process.env.PUBLIC_URL || 'invalid public URL'
@@ -79,6 +80,10 @@ export class API {
   ): Promise<APIMessage[]> {
     const api = new API(credentials)
     return api.fetchMessages(sketch)
+  }
+
+  public static async GET_STATS(): Promise<Stats> {
+    return axios.get(`${API_ENDPOINT}/stats`).then(response => response.data)
   }
 
   private client: AxiosInstance
