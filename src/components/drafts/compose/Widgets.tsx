@@ -74,6 +74,24 @@ export const DiscardButton: React.FC<DiscardButtonProps> = ({
   </Tooltip>
 )
 
+interface BodyFieldProps {
+  disabled: boolean
+  setBody: (value: string) => void
+  initialValue: string
+}
+
+export const BodyField: React.FC<BodyFieldProps> = ({ disabled, setBody, initialValue }) => (
+  <TextField
+    id="body"
+    disabled={disabled}
+    defaultValue={initialValue}
+    placeholder="🔐 private message body"
+    fullWidth
+    multiline
+    onChange={event => setBody(event.target.value)}
+  />
+)
+
 interface PDAFieldProps {
   disabled: boolean
   setPda: (value: string) => void

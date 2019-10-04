@@ -36,7 +36,8 @@ import {
   InsertImage,
   PDAField,
   PDAToolTip,
-  SendButton
+  SendButton,
+  BodyField
 } from './Widgets'
 
 const UMPYRE_MESSAGE_SEND_FEE = 0.03
@@ -58,6 +59,8 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
+
+const IOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 
 function blobToDataURL(blob: Blob, callback: (ArrayBuffer) => void) {
   const reader = new FileReader()
@@ -104,6 +107,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   )
   const [recipients, setRecipients] = React.useState<ClientID[]>(draft.recipients)
   const [pda, setPda] = React.useState(draft.pda)
+  const [body, setBody] = React.useState(draft.body)
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
     Math.trunc(draft.value_cents / 100)
   )
@@ -111,10 +115,16 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const imageInputRef = React.createRef()
   const classes = useStyles({})
 
+  function getMarkdown(): string {
+    if (IOS) {
+      return body
+    }
+    return htmlToMarkdown(stateToHTML(editorState.getCurrentContent()))
+  }
   function handleSend() {
     const messageBody: MessageBody = {
       type: MessageType.MESSAGE,
-      markdown: htmlToMarkdown(stateToHTML(editorState.getCurrentContent())),
+      markdown: getMarkdown(),
       parent: draft.inReplyTo,
       pda
     }
@@ -194,7 +204,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
 
   function readyToSend() {
     if (
-      editorState.getCurrentContent().hasText() &&
+      (editorState.getCurrentContent().hasText() || (body && body.length > 0)) &&
       recipients.length > 0 &&
       balanceIsSufficient()
     ) {
@@ -269,22 +279,34 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Divider />
         </Grid>
         <Grid item xs={12}>
-          <Editor
-            editorState={editorState}
-            onChange={(updatedEditorState: EditorState) => {
-              setEditorState(updatedEditorState)
-              const editorContent = JSON.stringify(
-                convertToRaw(updatedEditorState.getCurrentContent())
-              )
-              updateDraft({
-                ...draft,
-                editorContent,
-                sendError: undefined
-              })
-            }}
-            placeholder="🔐 private message body"
-            images
-          />
+          {!IOS && (
+            <Editor
+              editorState={editorState}
+              onChange={(updatedEditorState: EditorState) => {
+                setEditorState(updatedEditorState)
+                const editorContent = JSON.stringify(
+                  convertToRaw(updatedEditorState.getCurrentContent())
+                )
+                updateDraft({
+                  ...draft,
+                  editorContent,
+                  sendError: undefined
+                })
+              }}
+              placeholder="🔐 private message body"
+              images
+            />
+          )}
+          {IOS && (
+            <BodyField
+              disabled={draft.sending}
+              initialValue={draft.body}
+              setBody={(value: string) => {
+                setBody(value)
+                updateDraft({ ...draft, body: value, sendError: undefined })
+              }}
+            />
+          )}
         </Grid>
         <Grid item xs={12}>
           <Divider />

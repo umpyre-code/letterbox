@@ -17,6 +17,7 @@ export interface Draft {
   message?: MessageBase
   apiMessages?: APIMessage[]
   inReplyTo?: MessageHash
+  body?: string
 }
 
 export interface NewDraft {
