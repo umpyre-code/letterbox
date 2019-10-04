@@ -165,7 +165,7 @@ export async function getMessagesWithoutBody(
 }
 
 async function decryptMessageBody(
-  body: string,
+  body: Uint8Array,
   nonce: string,
   publicKey: string,
   privateKey: string
@@ -173,7 +173,7 @@ async function decryptMessageBody(
   await sodium.ready
   return sodium.to_string(
     sodium.crypto_box_open_easy(
-      sodium.from_base64(body, sodium.base64_variants.URLSAFE_NO_PADDING),
+      body,
       sodium.from_base64(nonce, sodium.base64_variants.URLSAFE_NO_PADDING),
       sodium.from_base64(publicKey, sodium.base64_variants.URLSAFE_NO_PADDING),
       sodium.from_base64(privateKey, sodium.base64_variants.URLSAFE_NO_PADDING)
@@ -195,6 +195,25 @@ function getTheirPublicKey(clientId: ClientID, message: EncryptedMessage): strin
   return message.sender_public_key
 }
 
+export async function getMessageBodyArray(message: EncryptedMessage): Promise<Uint8Array> {
+  if (message.bodyBlob) {
+    const arrayBuffer: ArrayBuffer = await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = ev => resolve(ev.target.result as ArrayBuffer)
+      reader.onerror = ev => reject(ev.target.error)
+      reader.onabort = () => reject(new Error('Blob Aborted'))
+      reader.readAsArrayBuffer(message.bodyBlob)
+    })
+    return new Uint8Array(arrayBuffer)
+  }
+  if (message.body) {
+    return Promise.resolve(
+      sodium.from_base64(message.body, sodium.base64_variants.URLSAFE_NO_PADDING)
+    )
+  }
+  return Promise.resolve(new Uint8Array())
+}
+
 export async function decryptMessage(
   clientId: ClientID,
   message: EncryptedMessage
@@ -205,15 +224,11 @@ export async function decryptMessage(
   const theirPublicKey = getTheirPublicKey(clientId, message)
   const myKeyPair = await db.keyPairs.get({ box_public_key: myPublicKey })
   if (myKeyPair) {
+    const body = await getMessageBodyArray(message)
     return {
       ...message,
       body: JSON.parse(
-        await decryptMessageBody(
-          message.body,
-          message.nonce,
-          theirPublicKey,
-          myKeyPair.box_secret_key
-        )
+        await decryptMessageBody(body, message.nonce, theirPublicKey, myKeyPair.box_secret_key)
       ) as MessageBody
     }
   }
@@ -356,7 +371,10 @@ export async function storeAndRetrieveMessages(
 
   // Split messages into info and body parts
   const messageBodies = finalizedMessages.map(message => ({
-    body: message.body,
+    bodyBlob: new Blob(
+      [sodium.from_base64(message.body, sodium.base64_variants.URLSAFE_NO_PADDING)],
+      { type: 'application/octet-binary' }
+    ),
     hash: message.hash
   }))
 

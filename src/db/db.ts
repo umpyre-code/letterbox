@@ -1,5 +1,5 @@
-// tslint:disable-next-line:import-name
 import Dexie from 'dexie'
+import sodium from 'libsodium-wrappers'
 import { Draft } from '../store/drafts/types'
 import { KeyPair } from '../store/keys/types'
 import { ClientCredentials } from '../store/models/client'
@@ -33,7 +33,7 @@ class UmpyreDb extends Dexie {
 
   public async deleteAndReset() {
     await this.delete()
-    await this.close()
+    this.close()
     this.init()
     await this.open()
   }
@@ -49,6 +49,29 @@ class UmpyreDb extends Dexie {
       messageInfos:
         'hash, to, from, received_at, recipient_public_key, sender_public_key, nonce, sent_at, signature'
     })
+
+    this.version(2)
+      .stores({
+        messageBodies: 'hash'
+      })
+      .upgrade(async tx => {
+        await sodium.ready
+        return (tx as any).messageBodies.toCollection().modify((message: DBMessageBody) => {
+          const bodyString = message.body
+          // make sure it's a string
+          if (bodyString && typeof bodyString === 'string') {
+            const bodyBlob = new Blob(
+              [sodium.from_base64(bodyString, sodium.base64_variants.URLSAFE_NO_PADDING)],
+              { type: 'application/octet-binary' }
+            )
+            // eslint-disable-next-line no-param-reassign
+            message.bodyBlob = bodyBlob
+            // eslint-disable-next-line no-param-reassign
+            delete message.body
+          }
+        })
+      })
+
     this.apiTokens = this.table('api_tokens')
     this.drafts = this.table('drafts')
     this.keyPairs = this.table('keyPairs')

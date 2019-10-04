@@ -34,7 +34,8 @@ export interface MessageBody {
 // The message body when it's stored in the DB
 export interface DBMessageBody {
   hash: MessageHash
-  body: string
+  bodyBlob: Blob
+  body?: string
 }
 
 // Our internal representation of a message
@@ -63,6 +64,7 @@ export interface DecryptedMessage extends MessageBase {
 
 export interface EncryptedMessage extends MessageBase {
   body?: string
+  bodyBlob?: Blob
 }
 
 // The API's actual representation of a message

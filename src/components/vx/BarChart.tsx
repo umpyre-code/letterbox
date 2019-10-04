@@ -1,4 +1,4 @@
-import { AxisBottom, AxisLeft } from '@vx/axis'
+import { AxisLeft } from '@vx/axis'
 import { LinearGradient } from '@vx/gradient'
 import { Group } from '@vx/group'
 import { ParentSize } from '@vx/responsive'
@@ -6,7 +6,6 @@ import { scaleBand, scaleLinear } from '@vx/scale'
 import { Bar } from '@vx/shape'
 import { timeFormat } from 'd3-time-format'
 import React from 'react'
-import { AmountByDate } from '../../store/models/stats'
 
 interface TimeDatum {
   year: number
