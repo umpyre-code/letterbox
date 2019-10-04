@@ -155,6 +155,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   const AboutLink = React.forwardRef<HTMLAnchorElement, Omit<Router.LinkProps, 'innerRef' | 'to'>>(
     (props, ref) => <Router.Link innerRef={ref} to="/about" {...props} />
   )
+  const StatsLink = React.forwardRef<HTMLAnchorElement, Omit<Router.LinkProps, 'innerRef' | 'to'>>(
+    (props, ref) => <Router.Link innerRef={ref} to="/stats" {...props} />
+  )
   const BlogLink = React.forwardRef<HTMLAnchorElement, Omit<LinkBaseProps, 'innerRef' | 'to'>>(
     (props, ref) => (
       <Link innerRef={ref} href="https://blog.umpyre.com" target="_blank" {...props} />
@@ -181,6 +184,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       </MenuItem>
       <MenuItem button component={AboutLink}>
         About Umpyre
+      </MenuItem>
+      <MenuItem button component={StatsLink}>
+        Stats
       </MenuItem>
       <MenuItem button component={BlogLink}>
         Umpyre Blog

@@ -8,24 +8,33 @@ import { timeFormat } from 'd3-time-format'
 import React from 'react'
 import { AmountByDate } from '../../store/models/stats'
 
+interface TimeDatum {
+  year: number
+  month: number
+  day: number
+  value: number
+}
+
 const format = timeFormat('%b %d')
 const formatDate = date => format(date)
 
 // accessors
 const x = d => new Date(d.year, d.month - 1, d.day)
-const y = d => Math.abs(d.amount_cents / 100.0)
+const y = d => d.value
 
 interface Props {
+  axisPrefix: string
   width: number
   height: number
   margin?: number
-  data: AmountByDate[]
+  data: TimeDatum[]
 }
 
 interface GradProps {
   width: number
   height: number
 }
+
 const Gradient: React.FC<GradProps> = ({ width, height }) => (
   <>
     <LinearGradient from="#ffd740" to="rgba(255, 215, 64, 0.5)" id="gradient" />
@@ -33,7 +42,7 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
   </>
 )
 
-const ChartInner: React.FC<Props> = ({ width, height, margin, data }) => {
+const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
   const xMax = width - margin - margin
   const yMax = height - margin - margin
@@ -53,8 +62,13 @@ const ChartInner: React.FC<Props> = ({ width, height, margin, data }) => {
     <svg width={width} height={height}>
       <Gradient width={width} height={height} />
       <Group left={margin} top={margin}>
-        <AxisLeft scale={yScale} numTicks={5} hideTicks hideAxisLine tickFormat={t => `$${t}`} />
-        <AxisBottom top={yMax} scale={xScale} hideTicks hideAxisLine tickFormat={formatDate} />
+        <AxisLeft
+          scale={yScale}
+          numTicks={5}
+          hideTicks
+          hideAxisLine
+          tickFormat={t => `${axisPrefix}${t}`}
+        />
 
         {data.map((d, i) => {
           const amount = x(d)
@@ -80,14 +94,17 @@ const ChartInner: React.FC<Props> = ({ width, height, margin, data }) => {
 }
 
 interface ChartProps {
+  axisPrefix: string
   height: number
   margin: number
-  data: AmountByDate[]
+  data: TimeDatum[]
 }
-export const BarChart: React.FC<ChartProps> = ({ height, margin, data }) => (
+export const BarChart: React.FC<ChartProps> = ({ axisPrefix, height, margin, data }) => (
   <ParentSize>
     {({ width: w }) => {
-      return <ChartInner width={w} height={height} margin={margin} data={data} />
+      return (
+        <ChartInner width={w} height={height} margin={margin} data={data} axisPrefix={axisPrefix} />
+      )
     }}
   </ParentSize>
 )

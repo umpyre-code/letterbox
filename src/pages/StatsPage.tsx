@@ -62,6 +62,7 @@ const AboutPage = () => {
 
   function fillStats(s: Stats): Stats {
     return {
+      ...s,
       message_read_amount: fillDates(s.message_read_amount),
       message_sent_amount: fillDates(s.message_sent_amount)
     }
@@ -87,11 +88,39 @@ const AboutPage = () => {
               <>
                 <Box className={classes.box}>
                   <Typography variant="h6">Sent per day</Typography>
-                  <BarChart height={300} margin={25} data={stats.message_sent_amount} />
+                  <BarChart
+                    height={300}
+                    margin={35}
+                    axisPrefix="$"
+                    data={stats.message_sent_amount.map(d => ({
+                      ...d,
+                      value: Math.abs(d.amount_cents / 100.0)
+                    }))}
+                  />
                 </Box>
                 <Box className={classes.box}>
                   <Typography variant="h6">Read per day</Typography>
-                  <BarChart height={300} margin={25} data={stats.message_read_amount} />
+                  <BarChart
+                    height={300}
+                    margin={35}
+                    axisPrefix="$"
+                    data={stats.message_read_amount.map(d => ({
+                      ...d,
+                      value: Math.abs(d.amount_cents / 100.0)
+                    }))}
+                  />
+                </Box>
+                <Box className={classes.box}>
+                  <Typography variant="h6">Total verified clients</Typography>
+                  <BarChart
+                    height={300}
+                    margin={35}
+                    axisPrefix=""
+                    data={stats.clients_by_date.map(d => ({ ...d, value: d.count }))}
+                  />
+                </Box>
+                <Box className={classes.box}>
+                  <Typography>All data is for the prior 30.</Typography>
                 </Box>
               </>
             )}
