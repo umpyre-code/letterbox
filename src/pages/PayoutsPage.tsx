@@ -296,10 +296,10 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
           <Typography variant="body1">
             <em>
               {
-                "Payouts are currently only available to clients in the US or Canada. If you're outside the US or Canada and want to withdraw credits, please contact"
+                "Payouts are currently only available to clients in the US or Canada. If you're outside the US or Canada and want to withdraw credits, please contact "
               }
               <Router.Link to="/c/support">/c/support</Router.Link>
-              {'or send an email to '}
+              {' or send an email to '}
               <Link href="mailto:support@umpyre.com">support@umpyre.com</Link>.
             </em>
           </Typography>
