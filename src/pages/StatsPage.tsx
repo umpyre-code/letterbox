@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: '100vh'
     },
     box: {
-      margin: theme.spacing(1),
+      margin: 0,
       padding: theme.spacing(1)
     },
     container: {
       width: '100%',
-      padding: theme.spacing(5)
+      padding: theme.spacing(1)
     },
     paper: { padding: theme.spacing(2) }
   })
@@ -45,6 +45,8 @@ const LeaderboardLink = React.forwardRef<
 const AboutPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
+  const margin = 30
+  const height = 300
 
   function fillDates(d: AmountByDate[]): AmountByDate[] {
     const toDate = item => new Date(item.year, item.month - 1, item.day)
@@ -92,7 +94,7 @@ const AboutPage = () => {
               <BackToIndexButton />
             </Box>
             <Paper className={classes.paper}>
-              <Typography variant="h3" noWrap>
+              <Typography variant="h4" noWrap>
                 STATS
               </Typography>
               {!stats && <Loading />}
@@ -101,8 +103,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Sent per day</Typography>
                     <BarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix="$"
                       data={stats.message_sent_amount.map(d => ({
                         ...d,
@@ -113,8 +115,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Read per day</Typography>
                     <BarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix="$"
                       data={stats.message_read_amount.map(d => ({
                         ...d,
@@ -125,8 +127,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Total verified clients</Typography>
                     <BarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix=""
                       data={stats.clients_by_date.map(d => ({ ...d, value: d.count }))}
                     />

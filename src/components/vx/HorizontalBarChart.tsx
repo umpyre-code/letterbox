@@ -66,7 +66,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
   // scales
   y0Scale.rangeRound([0, yMax])
   y1Scale.rangeRound([0, y0Scale.bandwidth()])
-  xScale.rangeRound([xMax, 0])
+  xScale.rangeRound([xMax - 50, 0])
 
   return (
     <svg width={width} height={height}>
@@ -135,10 +135,10 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                         </a>
                         <Text
                           y={bar.y + bar.height / 2}
-                          x={bar.x + bar.width - 5}
+                          x={bar.x + bar.width + 5}
                           width={bar.width}
                           verticalAnchor="middle"
-                          textAnchor="end"
+                          textAnchor="start"
                         >
                           {`$${(data[barGroup.index].amount_cents / 100.0).toFixed(0)}`}
                         </Text>

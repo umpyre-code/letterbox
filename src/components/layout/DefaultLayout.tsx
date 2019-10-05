@@ -50,7 +50,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
       <Grid container direction="column" style={{ height: '100vh' }}>
         <Grid container item>
           <Container className={classes.headerContainer}>
-            <Grid container spacing={1} alignItems="flex-start" xs={12}>
+            <Grid container spacing={1} alignItems="flex-start">
               <Grid item>
                 <Router.Link to="/">
                   <Logotype />

@@ -26,12 +26,12 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: '100vh'
     },
     box: {
-      margin: theme.spacing(1),
+      margin: 0,
       padding: theme.spacing(1)
     },
     container: {
       width: '100%',
-      padding: theme.spacing(5)
+      padding: theme.spacing(1)
     },
     paper: { padding: theme.spacing(2) }
   })
@@ -58,6 +58,8 @@ async function fetchProfiles(data: AmountByClient[]): Promise<AmountByClient[]> 
 const AboutPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
+  const margin = 30
+  const height = 300
 
   React.useEffect(() => {
     async function fetchStats() {
@@ -85,7 +87,7 @@ const AboutPage = () => {
             </Box>
             <Paper className={classes.paper}>
               <Box className={classes.box}>
-                <Typography variant="h3" noWrap>
+                <Typography variant="h4" noWrap>
                   LEADERBOARD
                 </Typography>
               </Box>
@@ -95,8 +97,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Most valued</Typography>
                     <HorizontalBarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix="$"
                       data={stats.clients_by_ral.slice(0, 5).map((d, index) => ({
                         ...d,
@@ -108,8 +110,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Most well read</Typography>
                     <HorizontalBarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix="$"
                       data={stats.most_well_read.slice(0, 5).map((d, index) => ({
                         ...d,
@@ -121,8 +123,8 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Typography variant="h6">Most generous</Typography>
                     <HorizontalBarChart
-                      height={300}
-                      margin={35}
+                      height={height}
+                      margin={margin}
                       axisPrefix="$"
                       data={stats.most_generous.slice(0, 5).map((d, index) => ({
                         ...d,

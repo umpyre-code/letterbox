@@ -43,7 +43,7 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
 
 const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
-  const xMax = width - margin - margin
+  const xMax = width - margin
   const yMax = height - margin - margin
 
   // scales
