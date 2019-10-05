@@ -47,3 +47,4 @@ steps:
         'build/*',
         'gs://staging.umpyre.io/',
       ]
+timeout: 3600s
