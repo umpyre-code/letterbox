@@ -14,6 +14,7 @@ import * as React from 'react'
 import * as Router from 'react-router-dom'
 import { HorizontalBarChart } from '../components/vx/HorizontalBarChart'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
 import { API } from '../store/api'
 import { AmountByClient, Stats } from '../store/models/stats'
@@ -129,7 +130,9 @@ const AboutPage = () => {
                     />
                   </Box>
                   <Box className={classes.box}>
-                    <Typography>Data is for the last 30 days.</Typography>
+                    <Typography>
+                      <Emoji ariaLabel="clock">⏱</Emoji> last 30 days
+                    </Typography>
                   </Box>
                   <Box className={classes.box}>
                     <Button component={StatsLink}>Check stats</Button>
