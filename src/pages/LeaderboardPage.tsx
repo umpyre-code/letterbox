@@ -85,7 +85,9 @@ const AboutPage = () => {
             </Box>
             <Paper className={classes.paper}>
               <Box className={classes.box}>
-                <Typography variant="h1">LEADERBOARD</Typography>
+                <Typography variant="h3" noWrap>
+                  LEADERBOARD
+                </Typography>
               </Box>
               {!stats && <Loading />}
               {stats && (

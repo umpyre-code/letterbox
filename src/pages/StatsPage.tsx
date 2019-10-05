@@ -92,9 +92,9 @@ const AboutPage = () => {
               <BackToIndexButton />
             </Box>
             <Paper className={classes.paper}>
-              <Box className={classes.box}>
-                <Typography variant="h1">STATS</Typography>
-              </Box>
+              <Typography variant="h3" noWrap>
+                STATS
+              </Typography>
               {!stats && <Loading />}
               {stats && (
                 <>

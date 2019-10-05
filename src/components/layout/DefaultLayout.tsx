@@ -48,9 +48,9 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
     <>
       <CssBaseline />
       <Grid container direction="column" style={{ height: '100vh' }}>
-        <Grid item>
+        <Grid container item>
           <Container className={classes.headerContainer}>
-            <Grid container spacing={1} justify="space-between" alignItems="flex-start">
+            <Grid container spacing={1} alignItems="flex-start" xs={12}>
               <Grid item>
                 <Router.Link to="/">
                   <Logotype />
@@ -73,23 +73,6 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
           {children}
         </Grid>
       </Grid>
-      {/* <Container className={classes.footerContainer}>
-          <Grid container justify="center" alignItems="center" spacing={2}>
-            <Grid item>
-              <Router.Link to="/about">
-                <Typography variant="subtitle1">About</Typography>
-              </Router.Link>
-            </Grid>
-            <Grid item>
-              <Divider orientation="vertical" style={{ height: 15 }} />
-            </Grid>
-            <Grid item>
-              <Link href="https://blog.umpyre.com" variant="subtitle2" underline="none">
-                <Typography variant="subtitle1">Blog</Typography>
-              </Link>
-            </Grid>
-          </Grid>
-        </Container> */}
     </>
   )
 }
