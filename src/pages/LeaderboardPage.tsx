@@ -30,8 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       width: '100%',
-      padding: theme.spacing(5),
-      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
+      padding: theme.spacing(5)
     },
     paper: { padding: theme.spacing(2) }
   })
@@ -64,10 +63,12 @@ const AboutPage = () => {
       const s = await API.GET_STATS()
       const wellRead = await fetchProfiles(s.most_well_read)
       const generous = await fetchProfiles(s.most_generous)
+      const clientsByRal = await fetchProfiles(s.clients_by_ral)
       setStats({
         ...s,
         most_well_read: _.filter(wellRead, 'profile'),
-        most_generous: _.filter(generous, 'profile')
+        most_generous: _.filter(generous, 'profile'),
+        clients_by_ral: _.filter(clientsByRal, 'profile')
       })
     }
     fetchStats()
@@ -88,6 +89,19 @@ const AboutPage = () => {
               {!stats && <Loading />}
               {stats && (
                 <>
+                  <Box className={classes.box}>
+                    <Typography variant="h6">Most valued</Typography>
+                    <HorizontalBarChart
+                      height={300}
+                      margin={35}
+                      axisPrefix="$"
+                      data={stats.clients_by_ral.slice(0, 5).map((d, index) => ({
+                        ...d,
+                        index,
+                        amount_cents: Math.abs(d.amount_cents)
+                      }))}
+                    />
+                  </Box>
                   <Box className={classes.box}>
                     <Typography variant="h6">Most well read</Typography>
                     <HorizontalBarChart
@@ -115,7 +129,7 @@ const AboutPage = () => {
                     />
                   </Box>
                   <Box className={classes.box}>
-                    <Typography>All data is for the prior 30 days.</Typography>
+                    <Typography>Data is for the last 30 days.</Typography>
                   </Box>
                   <Box className={classes.box}>
                     <Button component={StatsLink}>Check stats</Button>

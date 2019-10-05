@@ -30,8 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       width: '100%',
-      padding: theme.spacing(5),
-      backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
+      padding: theme.spacing(5)
     },
     paper: { padding: theme.spacing(2) }
   })
@@ -132,7 +131,7 @@ const AboutPage = () => {
                     />
                   </Box>
                   <Box className={classes.box}>
-                    <Typography>All data is for the prior 30 days.</Typography>
+                    <Typography>Data is for the last 30 days.</Typography>
                   </Box>
                   <Box className={classes.box}>
                     <Button component={LeaderboardLink}>Check leaderboard</Button>

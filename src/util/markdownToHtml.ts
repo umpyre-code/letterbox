@@ -7,10 +7,10 @@ export function markdownToHtml(body: string): string {
 
   dompurify.removeAllHooks()
   dompurify.addHook('afterSanitizeAttributes', (node: Element) => {
-    const element = node as HTMLAnchorElement
+    const element = node as HTMLElement
     if (element) {
       // set all elements owning target to target=_blank
-      if ('target' in node && !element.href.startsWith('/')) {
+      if ('target' in node && !element.getAttribute('href').startsWith('/')) {
         element.setAttribute('target', '_blank')
         // prevent https://www.owasp.org/index.php/Reverse_Tabnabbing
         element.setAttribute('rel', 'noopener noreferrer')

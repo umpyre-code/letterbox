@@ -331,32 +331,34 @@ const ComposeFormFC: React.FC<AllProps> = ({
           <Grid item>
             <Divider orientation="vertical" style={{ marginLeft: 3, marginRight: 3, height: 36 }} />
           </Grid>
-          <Grid item>
-            <FormControl>
-              <FormControlLabel
-                label={<InsertImage />}
-                control={
-                  <Input
-                    inputRef={imageInputRef}
-                    style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }}
-                    inputProps={{
-                      accept: 'image/png, image/jpeg, image/gif'
-                    }}
-                    aria-describedby="upload-image"
-                    type="file"
-                    onChange={event => {
-                      const target = event.target as HTMLInputElement
-                      handleImageUpload(target.files)
-                      if (imageInputRef.current) {
-                        const element = imageInputRef.current as HTMLInputElement
-                        element.value = ''
-                      }
-                    }}
-                  />
-                }
-              />
-            </FormControl>
-          </Grid>
+          {!IOS && (
+            <Grid item>
+              <FormControl>
+                <FormControlLabel
+                  label={<InsertImage />}
+                  control={
+                    <Input
+                      inputRef={imageInputRef}
+                      style={{ opacity: 0, position: 'absolute', width: 0, height: 0 }}
+                      inputProps={{
+                        accept: 'image/png, image/jpeg, image/gif'
+                      }}
+                      aria-describedby="upload-image"
+                      type="file"
+                      onChange={event => {
+                        const target = event.target as HTMLInputElement
+                        handleImageUpload(target.files)
+                        if (imageInputRef.current) {
+                          const element = imageInputRef.current as HTMLInputElement
+                          element.value = ''
+                        }
+                      }}
+                    />
+                  }
+                />
+              </FormControl>
+            </Grid>
+          )}
           {/* <Grid item>
             <AttachFile
               onClick={e => {

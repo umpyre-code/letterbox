@@ -26,4 +26,5 @@ export interface Stats {
   most_well_read: AmountByClient[]
   most_generous: AmountByClient[]
   clients_by_date: CountByDate[]
+  clients_by_ral: AmountByClient[]
 }

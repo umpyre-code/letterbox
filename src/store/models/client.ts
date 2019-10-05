@@ -90,4 +90,5 @@ export enum EmailNotificationPrefs {
 
 export interface ClientPrefs {
   email_notifications: EmailNotificationPrefs
+  include_in_leaderboard: boolean
 }

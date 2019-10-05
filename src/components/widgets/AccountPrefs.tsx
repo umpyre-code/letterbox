@@ -6,7 +6,10 @@ import {
   RadioGroup,
   makeStyles,
   Grid,
-  Typography
+  Typography,
+  Divider,
+  FormGroup,
+  Switch
 } from '@material-ui/core'
 import * as React from 'react'
 import {
@@ -42,12 +45,9 @@ export const AccountPrefs: React.FC<AccountPrefsProps> = ({ profile, credentials
     loadPrefs()
   }, [])
 
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value as EmailNotificationPrefs
+  function updatePrefs(updatedPrefs: ClientPrefs) {
     const api = new API(credentials)
-    api
-      .putClientPrefs({ ...clientPrefs, email_notifications: value })
-      .then(prefs => setClientPrefs(prefs))
+    api.putClientPrefs(updatedPrefs).then(prefs => setClientPrefs(prefs))
   }
 
   if (!clientPrefs) {
@@ -55,9 +55,26 @@ export const AccountPrefs: React.FC<AccountPrefsProps> = ({ profile, credentials
   }
 
   return (
-    <Grid container>
+    <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Typography variant="h5">Email Preferences</Typography>
+        <Typography variant="h5">Preferences</Typography>
+        <Divider />
+      </Grid>
+      <Grid item xs={12}>
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={clientPrefs.include_in_leaderboard}
+                onChange={event =>
+                  updatePrefs({ ...clientPrefs, include_in_leaderboard: event.target.checked })
+                }
+                value="include_in_leaderboard"
+              />
+            }
+            label="Include me in the leaderboard"
+          />
+        </FormGroup>
       </Grid>
       <Grid item xs={12}>
         <FormControl component="fieldset" className={classes.formControl}>
@@ -66,7 +83,10 @@ export const AccountPrefs: React.FC<AccountPrefsProps> = ({ profile, credentials
             aria-label="email notifications"
             name="email-notifications"
             value={clientPrefs.email_notifications}
-            onChange={handleEmailChange}
+            onChange={event => {
+              const value = event.target.value as EmailNotificationPrefs
+              updatePrefs({ ...clientPrefs, email_notifications: value })
+            }}
             row
           >
             <FormControlLabel value="never" control={<Radio />} label="Never" />

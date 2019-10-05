@@ -108,6 +108,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                             width={bar.height}
                             height={bar.height}
                             rx={bar.height}
+                            fill="#ffffff"
                           />
                           <clipPath id="clip">
                             <use xlinkHref="#rect" />
@@ -118,11 +119,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                           <image
                             x={bar.x - bar.height - 5}
                             y={bar.y}
-                            xlinkHref={getAvatarImgSrc(
-                              data[barGroup.index].profile,
-                              'small',
-                              'webp'
-                            )}
+                            xlinkHref={getAvatarImgSrc(data[barGroup.index].profile, 'tiny', 'jpg')}
                             width={bar.height}
                             height={bar.height}
                             clipPath="url(#clip)"
@@ -143,7 +140,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                           verticalAnchor="middle"
                           textAnchor="end"
                         >
-                          {`$${(data[barGroup.index].amount_cents / 100.0).toFixed(2)}`}
+                          {`$${(data[barGroup.index].amount_cents / 100.0).toFixed(0)}`}
                         </Text>
                       </React.Fragment>
                     )
