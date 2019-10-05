@@ -90,7 +90,7 @@ export const AccountReferrals: React.FC<AccountReferralsProps> = ({ profile, cre
             {referrals.map(ref => (
               <TableRow key={ref.client_id}>
                 <TableCell component="th" scope="row">
-                  {<Router.Link to={`/u/${ref.client_id}`}>{ref.full_name}</Router.Link>}
+                  <Router.Link to={`/u/${ref.client_id}`}>{ref.full_name}</Router.Link>
                 </TableCell>
                 <TableCell align="right">
                   {ref.handle && <Router.Link to={`/c/${ref.client_id}`}>{ref.handle}</Router.Link>}

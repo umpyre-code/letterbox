@@ -37,11 +37,10 @@ const NoStorageAvailable: React.FC = () => (
           <Typography variant="body1">
             Umpyre uses local storage (
             <Link href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API">
-              {"your browser's IndexedDB API"}
+              your browser&apos;s IndexedDB API
             </Link>
-            {
-              ") for storing data. If you're using an older browser, or trying to use Umpyre in private browsing mode, it will not work."
-            }
+            ) for storing data. If you&apos;re using an older browser, or trying to use Umpyre in
+            private browsing mode, it will not work.
           </Typography>
         </Container>
       </Paper>

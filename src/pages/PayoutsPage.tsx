@@ -284,7 +284,7 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
       <>
         <Box className={classes.wordBox}>
           <Typography variant="body1">
-            {"To enable payouts, you'll need a Stripe Connect account."}
+            To enable payouts, you&apos;ll need a Stripe Connect account.
           </Typography>
         </Box>
         <Box className={classes.buttonBox}>
@@ -295,11 +295,9 @@ const ConnectButtonSection: React.FC<ConnectButtonSectionProps> = ({
         <Box className={classes.wordBox}>
           <Typography variant="body1">
             <em>
-              {
-                "Payouts are currently only available to clients in the US or Canada. If you're outside the US or Canada and want to withdraw credits, please contact "
-              }
-              <Router.Link to="/c/support">/c/support</Router.Link>
-              {' or send an email to '}
+              Payouts are currently only available to clients in the US or Canada. If you&apos;re
+              outside the US or Canada and want to withdraw credits, please contact
+              <Router.Link to="/c/support">/c/support</Router.Link> or send an email to{' '}
               <Link href="mailto:support@umpyre.com">support@umpyre.com</Link>.
             </em>
           </Typography>
