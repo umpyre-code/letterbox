@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     container: {
       width: '100%',
+      maxWidth: '100%',
       padding: theme.spacing(5),
       backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
     },
