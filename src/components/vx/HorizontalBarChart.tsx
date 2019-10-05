@@ -41,7 +41,7 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
 const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
   const xMax = width - margin - margin - 5
-  const yMax = height - margin - margin
+  const yMax = height
   const keys = ['amount_cents']
 
   // scales
@@ -66,12 +66,12 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
   // scales
   y0Scale.rangeRound([0, yMax])
   y1Scale.rangeRound([0, y0Scale.bandwidth()])
-  xScale.rangeRound([xMax - 50, 0])
+  xScale.rangeRound([xMax - margin, margin / 2])
 
   return (
     <svg width={width} height={height}>
       <Gradient width={width} height={height} />
-      <Group top={margin} left={margin}>
+      <Group top={0} left={margin + 15}>
         <BarGroupHorizontal
           data={data}
           keys={keys}

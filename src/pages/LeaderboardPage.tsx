@@ -59,7 +59,7 @@ const LeaderboardPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
   const margin = 35
-  const height = 350
+  const height = 320
 
   React.useEffect(() => {
     async function fetchStats() {

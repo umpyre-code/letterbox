@@ -101,7 +101,7 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
               </Typography>
             </Box>
             <Grid container justify="space-between" alignItems="center">
-              <Grid item xs>
+              <Grid item>
                 <Box className={classes.box}>
                   <Button
                     onClick={() => {
@@ -118,10 +118,10 @@ const FlashSeedPageFC: React.FC<AllProps> = ({ history, seedWords }) => {
                   </Button>
                 </Box>
               </Grid>
-              <Grid item xs>
+              <Grid item>
                 <Box className={classes.box}>
                   <Button color="primary" variant="contained" onClick={() => history.push('/')}>
-                    I&apos;ve saved my recovery phrase&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
+                    Continue&nbsp;<Emoji ariaLabel="continue">👉</Emoji>
                   </Button>
                 </Box>
               </Grid>
