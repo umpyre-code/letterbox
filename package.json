@@ -257,9 +257,11 @@
     },
     "puppeteerArgs": [
       "--no-sandbox",
-      "--disable-setuid-sandbox"
+      "--disable-setuid-sandbox",
+      "--disable-web-security"
     ],
-    "source": "build"
+    "source": "build",
+    "inlineCss": true
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
