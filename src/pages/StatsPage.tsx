@@ -134,6 +134,15 @@ const StatsPage = () => {
                     />
                   </Box>
                   <Box className={classes.box}>
+                    <Typography variant="h6">Total paid messages read</Typography>
+                    <BarChart
+                      height={height}
+                      margin={margin}
+                      axisPrefix=""
+                      data={stats.read_by_date.map(d => ({ ...d, value: d.count }))}
+                    />
+                  </Box>
+                  <Box className={classes.box}>
                     <Typography>
                       <Emoji ariaLabel="clock">⏱</Emoji> last 30 days
                     </Typography>
