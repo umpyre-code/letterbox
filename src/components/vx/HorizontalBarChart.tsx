@@ -40,7 +40,7 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
 
 const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
-  const xMax = width - margin - margin
+  const xMax = width - margin - margin - 5
   const yMax = height - margin - margin
   const keys = ['amount_cents']
 
@@ -116,14 +116,21 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                         </defs>
                         <use xlinkHref="#rect" strokeWidth="2" stroke="white" />
                         <a href={`/u/${data[barGroup.index].client_id}`}>
-                          <image
-                            x={bar.x - bar.height - 5}
-                            y={bar.y}
-                            xlinkHref={getAvatarImgSrc(data[barGroup.index].profile, 'tiny', 'jpg')}
-                            width={bar.height}
-                            height={bar.height}
-                            clipPath="url(#clip)"
-                          />
+                          {data[barGroup.index].profile.avatar_version &&
+                            data[barGroup.index].profile.avatar_version > 0 && (
+                              <image
+                                x={bar.x - bar.height - 5}
+                                y={bar.y}
+                                xlinkHref={getAvatarImgSrc(
+                                  data[barGroup.index].profile,
+                                  'tiny',
+                                  'jpg'
+                                )}
+                                width={bar.height}
+                                height={bar.height}
+                                clipPath="url(#clip)"
+                              />
+                            )}
                           <Text
                             y={bar.y + bar.height / 2}
                             x={bar.x + 5}

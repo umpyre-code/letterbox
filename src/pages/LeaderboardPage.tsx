@@ -58,7 +58,7 @@ async function fetchProfiles(data: AmountByClient[]): Promise<AmountByClient[]> 
 const LeaderboardPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
-  const margin = 30
+  const margin = 35
   const height = 300
 
   React.useEffect(() => {

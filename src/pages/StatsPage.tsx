@@ -45,7 +45,7 @@ const LeaderboardLink = React.forwardRef<
 const StatsPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
-  const margin = 30
+  const margin = 35
   const height = 300
 
   function fillDates(d: AmountByDate[]): AmountByDate[] {
