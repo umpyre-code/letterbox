@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import axiosRetry from 'axios-retry'
 import * as jwt from 'jsonwebtoken'
-import qs from 'qs'
 import {
   Balance,
   ChargeRequest,
@@ -20,11 +19,11 @@ import {
   AuthVerifyResponse,
   ClientCredentials,
   ClientID,
+  ClientPrefs,
   ClientProfile,
   ClientSearchResult,
   NewClient,
-  VerifyPhoneResult,
-  ClientPrefs
+  VerifyPhoneResult
 } from './models/client'
 import { APIMessage, MessageHash } from './models/messages'
 import { Stats } from './models/stats'
