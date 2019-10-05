@@ -42,7 +42,7 @@ const LeaderboardLink = React.forwardRef<
   Omit<Router.LinkProps, 'innerRef' | 'to'>
 >((props, ref) => <Router.Link innerRef={ref} to="/leaderboard" {...props} />)
 
-const AboutPage = () => {
+const StatsPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
   const margin = 30
@@ -95,7 +95,7 @@ const AboutPage = () => {
             </Box>
             <Paper className={classes.paper}>
               <Typography variant="h4" noWrap>
-                STATS
+                <Router.Link to="/stats">STATS</Router.Link>
               </Typography>
               {!stats && <Loading />}
               {stats && (
@@ -151,4 +151,4 @@ const AboutPage = () => {
   )
 }
 
-export default AboutPage
+export default StatsPage

@@ -55,7 +55,7 @@ async function fetchProfiles(data: AmountByClient[]): Promise<AmountByClient[]> 
   )
 }
 
-const AboutPage = () => {
+const LeaderboardPage = () => {
   const classes = useStyles({})
   const [stats, setStats] = React.useState<Stats | undefined>(undefined)
   const margin = 30
@@ -88,9 +88,10 @@ const AboutPage = () => {
             <Paper className={classes.paper}>
               <Box className={classes.box}>
                 <Typography variant="h4" noWrap>
-                  LEADERBOARD
+                  <Router.Link to="/leaderboard">LEADERBOARD</Router.Link>
                 </Typography>
               </Box>
+
               {!stats && <Loading />}
               {stats && (
                 <>
@@ -141,6 +142,13 @@ const AboutPage = () => {
                   <Box className={classes.box}>
                     <Button component={StatsLink}>Check stats</Button>
                   </Box>
+                  <Box className={classes.box}>
+                    <Typography variant="body2">
+                      <Router.Link to="/account">
+                        <em>You can opt out of the leaderboard by changing your preferences.</em>
+                      </Router.Link>
+                    </Typography>
+                  </Box>
                 </>
               )}
             </Paper>
@@ -151,4 +159,4 @@ const AboutPage = () => {
   )
 }
 
-export default AboutPage
+export default LeaderboardPage
