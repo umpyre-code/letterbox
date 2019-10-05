@@ -32,8 +32,12 @@ class UmpyreDb extends Dexie {
   }
 
   public async deleteAndReset() {
-    await this.delete()
-    this.close()
+    try {
+      await this.delete()
+      this.close()
+    } catch (error) {
+      console.error('Error deleting DB', error)
+    }
     this.init()
     await this.open()
   }
