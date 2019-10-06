@@ -113,7 +113,7 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
     <Container className={classes.container}>
       <Paper className={classes.paper}>
         <Box className={classes.box}>
-          <Typography variant="h5">Please verify your phone number:</Typography>
+          <Typography variant="h5">Enter phone verification code:</Typography>
         </Box>
         <Box className={classes.box}>
           <TextField
@@ -136,9 +136,11 @@ export const PhoneVerificationFC: React.FC<AllProps> = ({
         )}
         <Box className={classes.box}>
           <Typography variant="body2">
-            You cannot send messages until your phone number is verified. If your phone number is
-            not verified within 1 hour, this account will be deleted. You may try signing up again
-            with the same number afterward.
+            An SMS message was sent to your phone. If your phone number is not verified within 1
+            hour, this account will be deleted. You may try signing up again with the same number
+            afterward.
+            <br />
+            <br />
             <em>
               {' '}
               Having problems with verification? Please email{' '}
