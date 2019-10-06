@@ -145,7 +145,9 @@ const LeaderboardPage = () => {
                     </Typography>
                   </Box>
                   <Box className={classes.box}>
-                    <Button component={StatsLink}>Check stats</Button>
+                    <Button variant="outlined" component={StatsLink}>
+                      Check stats
+                    </Button>
                   </Box>
                   <Box className={classes.box}>
                     <Typography variant="body2">

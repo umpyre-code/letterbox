@@ -153,7 +153,9 @@ const StatsPage = () => {
                     </Typography>
                   </Box>
                   <Box className={classes.box}>
-                    <Button component={LeaderboardLink}>Check leaderboard</Button>
+                    <Button variant="outlined" component={LeaderboardLink}>
+                      Check leaderboard
+                    </Button>
                   </Box>
                 </>
               )}
