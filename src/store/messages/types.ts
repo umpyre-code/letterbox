@@ -36,9 +36,11 @@ export interface RankedMessages {
   unreadMessages: MessageBase[]
 }
 
+export type LoadedMessages = Map<string, DecryptedMessage[]>
+
 export interface MessagesState {
   readonly errors?: string
-  readonly loadedMessages: DecryptedMessage[]
+  readonly loadedMessages: LoadedMessages
   readonly loading: boolean
   readonly readMessages: MessageBase[]
   readonly sentMessages: MessageBase[]

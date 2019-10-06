@@ -216,10 +216,10 @@ function* handleSendMessages(values: ReturnType<typeof sendMessagesRequest>) {
       yield put(sendMessagesError(res.error))
       yield put(updateDraftRequest({ ...draft, sending: false, sendError: res.error }))
     } else {
+      yield put(removeDraftRequest(draft))
       const storedMessages = yield call(storeAndRetrieveMessages, credentials.client_id, res)
       const rankedMessages = rankMessages(credentials.client_id, storedMessages)
       yield put(sendMessagesSuccess(rankedMessages))
-      yield put(removeDraftRequest(draft))
       yield put(fetchBalanceRequest())
       // reload messages if this was sent in reply to another
       if (draft.inReplyTo) {
@@ -514,10 +514,11 @@ function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
   try {
     const state: ApplicationState = yield select()
     const clientId = state.clientState.credentials.client_id
+    const messageHash = payload
     const res = yield call(
       loadMessages,
       clientId,
-      payload,
+      messageHash,
       Immutable.Map<MessageHash, DecryptedMessage>()
     )
 
@@ -528,7 +529,7 @@ function* handleLoadMessages(values: ReturnType<typeof loadMessagesRequest>) {
       const messageArray = _.chain(res.valueSeq().toArray())
         .sortBy(['received_at'])
         .value()
-      yield put(loadMessagesSuccess(messageArray))
+      yield put(loadMessagesSuccess(new Map([[messageHash, messageArray]])))
     }
   } catch (error) {
     console.error(error)

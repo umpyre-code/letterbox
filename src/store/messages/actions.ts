@@ -1,7 +1,7 @@
 import { action } from 'typesafe-actions'
 import { Draft } from '../drafts/types'
-import { DecryptedMessage, MessageHash } from '../models/messages'
-import { MessagesActionTypes, RankedMessages } from './types'
+import { MessageHash } from '../models/messages'
+import { MessagesActionTypes, RankedMessages, LoadedMessages } from './types'
 
 export const initializeMessagesRequest = () =>
   action(MessagesActionTypes.INITIALIZE_MESSAGES_REQUEST)
@@ -43,7 +43,7 @@ export const messageReadError = (errorMessage: string) =>
 
 export const loadMessagesRequest = (hash: MessageHash) =>
   action(MessagesActionTypes.LOAD_MESSAGES_REQUEST, hash)
-export const loadMessagesSuccess = (messages: DecryptedMessage[]) =>
+export const loadMessagesSuccess = (messages: LoadedMessages) =>
   action(MessagesActionTypes.LOAD_MESSAGES_SUCCESS, messages)
 export const loadMessagesError = (errorMessage: string) =>
   action(MessagesActionTypes.LOAD_MESSAGES_ERROR, errorMessage)

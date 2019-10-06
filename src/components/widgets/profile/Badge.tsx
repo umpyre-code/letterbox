@@ -32,7 +32,7 @@ const badgeStyles = (theme: Theme) =>
     root: {
       display: 'inline-block',
       verticalAlign: 'middle',
-      backgroundColor: theme.palette.secondary.light,
+      backgroundColor: theme.palette.secondary.main,
       borderRadius: '12px',
       padding: theme.spacing(1),
       minWidth: '90px',

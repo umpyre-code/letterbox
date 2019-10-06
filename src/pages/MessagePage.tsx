@@ -6,7 +6,8 @@ import {
   Grid,
   makeStyles,
   Paper,
-  Theme
+  Theme,
+  Typography
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import ReplyIcon from '@material-ui/icons/Reply'
@@ -26,16 +27,16 @@ import {
   loadMessagesRequest,
   messageReadRequest
 } from '../store/messages/actions'
+import { LoadedMessages } from '../store/messages/types'
 import { Balance } from '../store/models/account'
 import { ClientCredentials, ClientProfile } from '../store/models/client'
-import { DecryptedMessage } from '../store/models/messages'
 import { updateFavicon } from '../util/favicon'
 
 interface PropsFromState {
   balance?: Balance
   credentials?: ClientCredentials
   drafts: Draft[]
-  loadedMessages: DecryptedMessage[]
+  loadedMessages: LoadedMessages
   profile?: ClientProfile
   unreadCount: number
 }
@@ -90,6 +91,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   const { messageHash } = match.params
   const [draftsMap, setDraftsMap] = React.useState<{}>({})
   const messageRef = React.createRef<HTMLDivElement>()
+  const messages = loadedMessages.get(messageHash) || []
   React.useEffect(() => {
     setDraftsMap(
       _.chain(drafts)
@@ -105,20 +107,19 @@ const MessagePageFC: React.FC<AllProps> = ({
 
   React.useEffect(() => {
     // mark any unread messages as read
-    _.filter(
-      loadedMessages,
-      message => !message.read && message.to === credentials.client_id
-    ).forEach(message => {
-      messageRead(message.hash)
-    })
-  }, [loadedMessages.length])
+    _.filter(messages, message => !message.read && message.to === credentials.client_id).forEach(
+      message => {
+        messageRead(message.hash)
+      }
+    )
+  }, [messages.length])
 
   React.useEffect(() => {
     // scroll to message
     if (messageRef.current) {
       messageRef.current.scrollIntoView()
     }
-  }, [messageHash, loadedMessages.length])
+  }, [messageHash, messages.length])
 
   React.useEffect(() => {
     // Update favicon
@@ -126,7 +127,7 @@ const MessagePageFC: React.FC<AllProps> = ({
   }, [unreadCount])
 
   function messageBodies() {
-    return loadedMessages.map((message, index) => (
+    return messages.map((message, index) => (
       <React.Fragment key={message.hash}>
         <Container className={classes.bodyContainer} ref={messageRef}>
           <MessageListItem
@@ -138,7 +139,7 @@ const MessagePageFC: React.FC<AllProps> = ({
           />
           <Divider />
           <MessageBodyFc body={message.body} />
-          {index === loadedMessages.length - 1 && (
+          {index === messages.length - 1 && (
             <>
               <Divider />
               <Container className={classes.buttonContainer}>
