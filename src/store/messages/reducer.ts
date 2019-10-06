@@ -75,7 +75,11 @@ export const reducer: Reducer<MessagesState> = (state = initialState, action) =>
       return { ...state, loading: true }
     }
     case MessagesActionTypes.LOAD_MESSAGES_SUCCESS: {
-      return { ...state, loadedMessages: action.payload, loading: false }
+      return {
+        ...state,
+        loadedMessages: new Map([...state.loadedMessages, ...action.payload]),
+        loading: false
+      }
     }
     case MessagesActionTypes.UNLOAD_MESSAGES_REQUEST: {
       return { ...state, loadedMessages: new Map() }
