@@ -11,7 +11,7 @@ import * as React from 'react'
 import * as Router from 'react-router-dom'
 import { Balance } from '../../store/models/account'
 import { ClientProfile } from '../../store/models/client'
-import { Logotype } from '../widgets/Logotype'
+import { LogotypeDark } from '../widgets/LogotypeDark'
 import { Profile } from '../widgets/profile/Profile'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(1),
       // backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.grey[100]})`,
       // backgroundColor: theme.palette.primary.light
-      backgroundColor: theme.palette.grey[100]
+      backgroundColor: theme.palette.grey[200]
     },
     bodyGrid: {
       overflow: 'auto',
-      backgroundColor: theme.palette.grey[100]
+      backgroundColor: theme.palette.grey[200]
       // backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`
     }
   })
@@ -53,7 +53,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
             <Grid container spacing={1} alignItems="flex-start">
               <Grid item>
                 <Router.Link to="/">
-                  <Logotype />
+                  <LogotypeDark />
                 </Router.Link>
               </Grid>
               {profile && balance && (

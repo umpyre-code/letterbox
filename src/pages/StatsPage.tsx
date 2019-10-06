@@ -16,6 +16,7 @@ import { BarChart } from '../components/vx/BarChart'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
 import { Emoji } from '../components/widgets/Emoji'
 import Loading from '../components/widgets/Loading'
+import { LogotypeLight } from '../components/widgets/LogotypeLight'
 import { API } from '../store/api'
 import { AmountByDate, Stats } from '../store/models/stats'
 
@@ -88,6 +89,10 @@ const StatsPage = () => {
     <>
       <CssBaseline />
       <Box className={classes.rootBox}>
+        <br />
+        <Router.Link to="/">
+          <LogotypeLight />
+        </Router.Link>
         <Container className={classes.container}>
           <Container maxWidth="md">
             <Box className={classes.box}>

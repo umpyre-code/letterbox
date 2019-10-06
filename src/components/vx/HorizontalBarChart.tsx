@@ -5,7 +5,7 @@ import { scaleBand, scaleLinear, scaleOrdinal } from '@vx/scale'
 import { Bar, BarGroupHorizontal } from '@vx/shape'
 import { Text } from '@vx/text'
 import React from 'react'
-import { ClientProfile } from '../../store/models/client'
+import { ClientProfile, ClientID } from '../../store/models/client'
 import { getAvatarImgSrc } from '../../store/client/types'
 
 interface Datum {
@@ -37,6 +37,107 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
     {/* <rect width={width} height={height} fill="url(#gradient)" rx={14} /> */}
   </>
 )
+
+const GlowBlur: React.FC<{}> = () => (
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+    <feMerge>
+      <feMergeNode in="coloredBlur" />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+)
+
+interface BarProps {
+  x: number
+  y: number
+  width: number
+  height: number
+  fill: string
+  clientId: ClientID
+  amountCents: number
+  profile?: ClientProfile
+}
+const HoverBar: React.FC<BarProps> = ({
+  x,
+  y,
+  width,
+  height,
+  fill,
+  profile,
+  amountCents,
+  clientId
+}) => {
+  const [hovering, setHovering] = React.useState<boolean>(false)
+
+  return (
+    <>
+      <Bar
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={fill}
+        rx={4}
+        onTouchStart={() => setHovering(true)}
+        onTouchMove={() => setHovering(true)}
+        onMouseMove={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+        filter={hovering ? 'url(#glow)' : null}
+      />
+      <defs>
+        <rect
+          id="rect"
+          x={x - height - 5}
+          y={y}
+          width={height}
+          height={height}
+          rx={height}
+          fill="#ffffff"
+        />
+        <clipPath id="clip">
+          <use xlinkHref="#rect" />
+        </clipPath>
+      </defs>
+      <use xlinkHref="#rect" strokeWidth="2" stroke="white" />
+      <a href={`/u/${clientId}`}>
+        {profile.avatar_version && profile.avatar_version > 0 && (
+          <image
+            x={x - height - 5}
+            y={y}
+            xlinkHref={getAvatarImgSrc(profile, 'tiny', 'jpg')}
+            width={height}
+            height={height}
+            clipPath="url(#clip)"
+          />
+        )}
+        <Text
+          y={y + height / 2}
+          x={x + 5}
+          width={width}
+          verticalAnchor="middle"
+          fontSize={hovering ? '1.1em' : '1em'}
+          onTouchStart={() => setHovering(true)}
+          onTouchMove={() => setHovering(true)}
+          onMouseMove={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {profile.full_name}
+        </Text>
+      </a>
+      <Text
+        y={y + height / 2}
+        x={x + width + 5}
+        width={width}
+        verticalAnchor="middle"
+        textAnchor="start"
+        fontSize={hovering ? '1.1em' : '1em'}
+      >
+        {`$${(amountCents / 100.0).toFixed(0)}`}
+      </Text>
+    </>
+  )
+}
 
 const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
@@ -71,6 +172,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
   return (
     <svg width={width} height={height}>
       <Gradient width={width} height={height} />
+      <GlowBlur />
       <Group top={0} left={margin + 15}>
         <BarGroupHorizontal
           data={data}
@@ -92,63 +194,16 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
                   {barGroup.bars.map(bar => {
                     return (
                       <React.Fragment key={`${barGroup.index}-${bar.index}-${bar.key}`}>
-                        <Bar
+                        <HoverBar
                           x={bar.x}
                           y={bar.y}
                           width={bar.width}
                           height={bar.height}
                           fill={bar.color}
-                          rx={4}
+                          clientId={data[barGroup.index].client_id}
+                          profile={data[barGroup.index].profile}
+                          amountCents={data[barGroup.index].amount_cents}
                         />
-                        <defs>
-                          <rect
-                            id="rect"
-                            x={bar.x - bar.height - 5}
-                            y={bar.y}
-                            width={bar.height}
-                            height={bar.height}
-                            rx={bar.height}
-                            fill="#ffffff"
-                          />
-                          <clipPath id="clip">
-                            <use xlinkHref="#rect" />
-                          </clipPath>
-                        </defs>
-                        <use xlinkHref="#rect" strokeWidth="2" stroke="white" />
-                        <a href={`/u/${data[barGroup.index].client_id}`}>
-                          {data[barGroup.index].profile.avatar_version &&
-                            data[barGroup.index].profile.avatar_version > 0 && (
-                              <image
-                                x={bar.x - bar.height - 5}
-                                y={bar.y}
-                                xlinkHref={getAvatarImgSrc(
-                                  data[barGroup.index].profile,
-                                  'tiny',
-                                  'jpg'
-                                )}
-                                width={bar.height}
-                                height={bar.height}
-                                clipPath="url(#clip)"
-                              />
-                            )}
-                          <Text
-                            y={bar.y + bar.height / 2}
-                            x={bar.x + 5}
-                            width={bar.width}
-                            verticalAnchor="middle"
-                          >
-                            {data[barGroup.index].profile.full_name}
-                          </Text>
-                        </a>
-                        <Text
-                          y={bar.y + bar.height / 2}
-                          x={bar.x + bar.width + 5}
-                          width={bar.width}
-                          verticalAnchor="middle"
-                          textAnchor="start"
-                        >
-                          {`$${(data[barGroup.index].amount_cents / 100.0).toFixed(0)}`}
-                        </Text>
                       </React.Fragment>
                     )
                   })}

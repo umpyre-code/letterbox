@@ -4,6 +4,7 @@ import { Group } from '@vx/group'
 import { ParentSize } from '@vx/responsive'
 import { scaleBand, scaleLinear } from '@vx/scale'
 import { Bar } from '@vx/shape'
+import { Text } from '@vx/text'
 import { timeFormat } from 'd3-time-format'
 import React from 'react'
 
@@ -41,6 +42,48 @@ const Gradient: React.FC<GradProps> = ({ width, height }) => (
   </>
 )
 
+const GlowBlur: React.FC<{}> = () => (
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+    <feMerge>
+      <feMergeNode in="coloredBlur" />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+)
+interface BarProps {
+  barX: number
+  barY: number
+  width: number
+  height: number
+  value: string
+}
+const HoverBar: React.FC<BarProps> = ({ barX, barY, width, height, value }) => {
+  const [hovering, setHovering] = React.useState<boolean>(false)
+  return (
+    <>
+      <Bar
+        x={barX}
+        y={barY}
+        width={width}
+        height={height}
+        fill="url(#gradient)"
+        rx={4}
+        onTouchStart={() => setHovering(true)}
+        onTouchMove={() => setHovering(true)}
+        onMouseMove={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+        filter={hovering ? 'url(#glow)' : null}
+      />
+      {hovering && (
+        <Text x={barX + width / 2} y={barY - 5} textAnchor="middle" verticalAnchor="end">
+          {value}
+        </Text>
+      )}
+    </>
+  )
+}
+
 const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }) => {
   // bounds
   const xMax = width - margin
@@ -59,6 +102,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
 
   return (
     <svg width={width} height={height}>
+      <GlowBlur />
       <Gradient width={width} height={height} />
       <Group left={margin} top={margin}>
         <AxisLeft
@@ -76,14 +120,13 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
           const barX = xScale(amount)
           const barY = yMax - barHeight
           return (
-            <Bar
+            <HoverBar
               key={`bar-${amount.getTime()}`}
-              x={barX}
-              y={barY}
+              barX={barX}
+              barY={barY}
               width={barWidth}
               height={barHeight}
-              fill="url(#gradient)"
-              rx={4}
+              value={`${axisPrefix}${y(d)}`}
             />
           )
         })}

@@ -3,14 +3,16 @@ import {
   Container,
   createStyles,
   CssBaseline,
+  Link,
   makeStyles,
   Paper,
   Theme,
-  Typography,
-  Link
+  Typography
 } from '@material-ui/core'
 import * as React from 'react'
+import * as Router from 'react-router-dom'
 import { BackToIndexButton } from '../components/widgets/BackToIndexButton'
+import { LogotypeLight } from '../components/widgets/LogotypeLight'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,6 +36,10 @@ const AboutPage = () => {
     <>
       <CssBaseline />
       <Container className={classes.container}>
+        <br />
+        <Router.Link to="/">
+          <LogotypeLight />
+        </Router.Link>
         <Container maxWidth="sm">
           <Box className={classes.box}>
             <BackToIndexButton />

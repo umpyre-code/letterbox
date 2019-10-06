@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { ReactComponent as SvgLogotype } from './logotype.svg'
-import { ReactComponent as SvgLogomark } from './logomark.svg'
+import { ReactComponent as SvgLogotype } from './logotype-light.svg'
+import { ReactComponent as SvgLogomark } from './logomark-light.svg'
 
-export function Logotype() {
+export function LogotypeLight() {
   if (window.innerWidth > 500) {
     return (
       <div
