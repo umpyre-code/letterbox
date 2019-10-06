@@ -80,8 +80,8 @@ const HoverBar: React.FC<BarProps> = ({
         fill={fill}
         rx={4}
         onTouchStart={() => setHovering(true)}
-        onTouchMove={() => setHovering(true)}
-        onMouseMove={() => setHovering(true)}
+        onTouchEnd={() => setHovering(false)}
+        onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
         filter={hovering ? 'url(#glow)' : null}
       />
@@ -118,8 +118,8 @@ const HoverBar: React.FC<BarProps> = ({
           verticalAnchor="middle"
           fontSize={hovering ? '1.1em' : '1em'}
           onTouchStart={() => setHovering(true)}
-          onTouchMove={() => setHovering(true)}
-          onMouseMove={() => setHovering(true)}
+          onTouchEnd={() => setHovering(false)}
+          onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
           {profile.full_name}

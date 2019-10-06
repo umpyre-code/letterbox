@@ -53,7 +53,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
             <Grid container spacing={1} alignItems="flex-start">
               <Grid item>
                 <Router.Link to="/">
-                  <LogotypeDark />
+                  <LogotypeDark responsive />
                 </Router.Link>
               </Grid>
               {profile && balance && (

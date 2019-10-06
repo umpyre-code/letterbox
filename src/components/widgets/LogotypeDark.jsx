@@ -2,8 +2,8 @@ import * as React from 'react'
 import { ReactComponent as SvgLogotype } from './logotype-dark.svg'
 import { ReactComponent as SvgLogomark } from './logomark-dark.svg'
 
-export function LogotypeDark() {
-  if (window.innerWidth > 500) {
+export function LogotypeDark(props) {
+  if (!props.responsive || window.innerWidth > 500) {
     return (
       <div
         style={{
@@ -23,7 +23,7 @@ export function LogotypeDark() {
       style={{
         position: 'relative',
         height: '60px',
-        width: '60px'
+        minWidth: '60px'
       }}
     >
       <SvgLogomark
@@ -31,4 +31,8 @@ export function LogotypeDark() {
       />
     </div>
   )
+}
+
+LogotypeDark.defaultProps = {
+  responsive: false
 }

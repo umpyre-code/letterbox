@@ -70,8 +70,8 @@ const HoverBar: React.FC<BarProps> = ({ barX, barY, width, height, value }) => {
         fill="url(#gradient)"
         rx={4}
         onTouchStart={() => setHovering(true)}
-        onTouchMove={() => setHovering(true)}
-        onMouseMove={() => setHovering(true)}
+        onTouchEnd={() => setHovering(false)}
+        onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
         filter={hovering ? 'url(#glow)' : null}
       />

@@ -91,7 +91,7 @@ const StatsPage = () => {
       <Box className={classes.rootBox}>
         <br />
         <Router.Link to="/">
-          <LogotypeLight />
+          <LogotypeLight responsive={false} />
         </Router.Link>
         <Container className={classes.container}>
           <Container maxWidth="md">
