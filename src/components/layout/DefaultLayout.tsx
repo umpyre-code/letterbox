@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
     // footerContainer: {
     //   padding: theme.spacing(5, 0, 5, 0)
     // },
+    headerGridContainer: {
+      backgroundColor: theme.palette.grey[200]
+    },
     headerContainer: {
       padding: theme.spacing(1),
       // backgroundImage: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.grey[100]})`,
@@ -48,7 +51,7 @@ export const DefaultLayout: React.FC<Props> = ({ children, profile, balance }) =
     <>
       <CssBaseline />
       <Grid container direction="column" style={{ height: '100vh' }}>
-        <Grid container item>
+        <Grid container item className={classes.headerGridContainer}>
           <Container className={classes.headerContainer}>
             <Grid container spacing={1} alignItems="flex-start">
               <Grid item>
