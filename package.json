@@ -180,7 +180,7 @@
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-microsoft-contrib": "^6.2.0",
-    "typescript": "^3.6.3",
+    "typescript": "^3.6.4",
     "url-loader": "^2.2.0",
     "webpack": "^4.40.2",
     "webpack-dev-server": "^3.8.2",
