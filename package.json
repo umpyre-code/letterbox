@@ -104,7 +104,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.3",
+    "@babel/core": "^7.6.4",
     "@types/dompurify": "^0.0.33",
     "@types/draft-js": "^0.10.36",
     "@types/history": "^4.7.3",
