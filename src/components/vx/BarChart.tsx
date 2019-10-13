@@ -97,7 +97,7 @@ const ChartInner: React.FC<Props> = ({ axisPrefix, width, height, margin, data }
   })
   const yScale = scaleLinear({
     rangeRound: [yMax, 0],
-    domain: [Math.min(...data.map(y)), Math.max(...data.map(y))]
+    domain: [Math.min(...data.map(y)) - 1, Math.max(...data.map(y))]
   })
 
   return (

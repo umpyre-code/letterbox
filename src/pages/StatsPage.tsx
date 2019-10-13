@@ -85,6 +85,7 @@ const StatsPage = () => {
   React.useEffect(() => {
     API.GET_STATS().then(s => setStats(fillStats(s)))
   }, [])
+
   return (
     <>
       <CssBaseline />
