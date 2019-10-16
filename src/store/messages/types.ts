@@ -44,6 +44,11 @@ export interface MessagesState {
   readonly loading: boolean
   readonly readMessages: MessageBase[]
   readonly sentMessages: MessageBase[]
-  readonly sketch: string
+  readonly sketch: Sketch
   readonly unreadMessages: MessageBase[]
+}
+
+export interface Sketch {
+  salt: string
+  sketch: string
 }

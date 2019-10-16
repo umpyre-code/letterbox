@@ -81,18 +81,21 @@ export class BloomFilter {
 
   private buckets: Uint8Array
 
+  private salt: string
+
   // Creates a new bloom filter.  If *m* is an array-like object, with a length
   // property, then the bloom filter is loaded with data from the array, where
   // each element is a 32-bit integer.  Otherwise, *m* should specify the
   // number of bits.  Note that *m* is rounded up to the nearest multiple of
   // 32.  *k* specifies the number of hashing functions.
-  constructor(size: number) {
+  constructor(size: number, salt: string) {
     let m = 8 * size
     const k = 8
     const n = Math.ceil(m / 8)
     m = n * 8
     this.m = m
     this.k = k
+    this.salt = salt
 
     const kbytes = 1 << Math.ceil(Math.log(Math.ceil(Math.log(m) / Math.LN2 / 8)) / Math.LN2)
     const kbuffer = new ArrayBuffer(kbytes * k)
@@ -103,7 +106,7 @@ export class BloomFilter {
 
   // See http://willwhim.wpengine.com/2011/09/03/producing-n-hash-functions-by-hashing-only-once/
   public locations(value: string): Uint16Array {
-    const a = fnv1a(value)
+    const a = fnv1a(this.salt.concat(value))
     const b = fnv1a(value, 872958581) // The seed value is chosen randomly
     let x = a % this.m
     for (let i = 0; i < this.k; i += 1) {

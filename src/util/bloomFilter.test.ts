@@ -2,7 +2,7 @@ import * as crypto from 'crypto'
 import { BloomFilter, fnv1a, popcnt } from './BloomFilter'
 
 test('adds entries to the bloomfilter and tests them', () => {
-  const bf = new BloomFilter(1024)
+  const bf = new BloomFilter(1024, 'salt')
 
   bf.add('entry')
   bf.add('hello')
@@ -11,13 +11,13 @@ test('adds entries to the bloomfilter and tests them', () => {
 })
 
 test('creates an empty bloomfilter and tests some values', () => {
-  const bf = new BloomFilter(1024)
+  const bf = new BloomFilter(1024, 'salt')
   expect(bf.test('entry')).toBe(false)
   expect(bf.test('hello')).toBe(false)
 })
 
 test('adds random values to the bloomfilter and tests they are present', () => {
-  const bf = new BloomFilter(1024)
+  const bf = new BloomFilter(1024, 'salt')
 
   const array = []
   for (let i = 0; i < 100; i++) {
@@ -32,7 +32,7 @@ test('adds random values to the bloomfilter and tests they are present', () => {
 })
 
 test("generates random values and tests they aren't present in the bloomfilter", () => {
-  const bf = new BloomFilter(1024)
+  const bf = new BloomFilter(1024, 'salt')
 
   const array = []
   for (let i = 0; i < 100; i++) {
@@ -45,7 +45,7 @@ test("generates random values and tests they aren't present in the bloomfilter",
 })
 
 test('generates sequential numbers and tests for presence in bloomfilter', () => {
-  const bf = new BloomFilter(1024)
+  const bf = new BloomFilter(1024, 'salt')
 
   const present = []
   const notPresent = []

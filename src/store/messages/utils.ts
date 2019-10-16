@@ -14,6 +14,7 @@ import {
   MessageHash,
   MessageType
 } from '../models/messages'
+import { Sketch } from './types'
 
 export async function addChildMessageInDb(
   parentHash: MessageHash,
@@ -395,7 +396,7 @@ export async function storeAndRetrieveMessages(
 
 export async function fetchMessages(
   credentials: ClientCredentials,
-  sketch: string
+  sketch: Sketch
 ): Promise<APIMessage[]> {
   const api = new API(credentials)
   return api.fetchMessages(sketch)

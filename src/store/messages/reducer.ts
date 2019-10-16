@@ -7,7 +7,7 @@ export const initialState: MessagesState = {
   loading: false,
   readMessages: Array.from([]),
   sentMessages: Array.from([]),
-  sketch: '',
+  sketch: { sketch: '', salt: '' },
   unreadMessages: Array.from([])
 }
 

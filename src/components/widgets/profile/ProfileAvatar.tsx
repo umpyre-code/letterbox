@@ -2,7 +2,6 @@ import { Box, makeStyles, Theme } from '@material-ui/core'
 import PersonIcon from '@material-ui/icons/Person'
 import { createStyles } from '@material-ui/styles'
 import * as React from 'react'
-import { API_ENDPOINT } from '../../../store/api'
 import { ClientProfileHelper, getAvatarImgSrc } from '../../../store/client/types'
 import { MicroClientProfile } from '../../../store/models/client'
 

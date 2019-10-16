@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import axiosRetry from 'axios-retry'
 import * as jwt from 'jsonwebtoken'
+import { Sketch } from './messages/types'
 import {
   Balance,
   ChargeRequest,
@@ -79,7 +80,7 @@ export class API {
 
   public static async FETCH_MESSAGES(
     credentials: ClientCredentials,
-    sketch: string
+    sketch: Sketch
   ): Promise<APIMessage[]> {
     const api = new API(credentials)
     return api.fetchMessages(sketch)
@@ -126,14 +127,16 @@ export class API {
     return this.client.get(`/handle/${handle}`).then(response => response.data)
   }
 
-  public async fetchMessages(sketch: string): Promise<APIMessage[]> {
+  public async fetchMessages(sketch: Sketch): Promise<APIMessage[]> {
     // The received_at field is actually an object that looks like this:
     // received_at: {
     //   nanos: number
     //   seconds: number,
     // }
     // Here we convert it into a local representation which has a simplified date.
-    return this.client.get('/messages', { params: { sketch } }).then(response => response.data)
+    return this.client
+      .get('/messages', { params: { sketch: sketch.sketch, salt: sketch.salt } })
+      .then(response => response.data)
   }
 
   public async sendMessages(messages: APIMessage[]): Promise<APIMessage[]> {

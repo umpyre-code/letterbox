@@ -47,15 +47,15 @@ import {
   updateSketchRequest,
   updateSketchSuccess
 } from './actions'
-import { MessagesActionTypes, RankedMessages } from './types'
+import { MessagesActionTypes, RankedMessages, Sketch } from './types'
 import {
   addChildMessageInDb,
   decryptMessage,
   fetchMessages,
   getMessagesWithoutBody,
   storeAndRetrieveMessages,
-  systemMessageReadFor,
-  systemMessageDeletedFor
+  systemMessageDeletedFor,
+  systemMessageReadFor
 } from './utils'
 
 function* delayThenFetchMessages() {
@@ -247,15 +247,22 @@ function* watchSendMessagesRequest() {
   yield takeEvery(MessagesActionTypes.SEND_MESSAGES_REQUEST, handleSendMessages)
 }
 
-async function calculateMessageSketch(): Promise<string> {
+async function calculateMessageSketch(): Promise<Sketch> {
+  await sodium.ready
   const messagesFromLast31days = await getMessagesWithoutBody(31, true, true, true)
 
   // Construct bloom filter
-  const bf = new BloomFilter(4096)
+  const salt = sodium.to_base64(
+    sodium.randombytes_buf(4),
+    sodium.base64_variants.URLSAFE_NO_PADDING
+  )
+  const bf = new BloomFilter(2048, salt)
   messagesFromLast31days.forEach(message => bf.add(message.hash))
 
-  await sodium.ready
-  return sodium.to_base64(bf.asBytes(), sodium.base64_variants.URLSAFE_NO_PADDING)
+  return Promise.resolve({
+    sketch: sodium.to_base64(bf.asBytes(), sodium.base64_variants.URLSAFE_NO_PADDING),
+    salt
+  })
 }
 
 function* handleUpdateSketch() {
