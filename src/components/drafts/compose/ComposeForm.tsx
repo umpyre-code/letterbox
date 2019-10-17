@@ -108,8 +108,8 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const [recipients, setRecipients] = React.useState<ClientID[]>(draft.recipients)
   const [pda, setPda] = React.useState(draft.pda)
   const [body, setBody] = React.useState(draft.body)
-  const [messageValue, setMessageValue] = React.useState<number | undefined>(
-    draft.value_cents ? Math.trunc(draft.value_cents / 100) : undefined
+  const [messageValue, setMessageValue] = React.useState<number>(
+    draft.value_cents ? Math.trunc(draft.value_cents / 100) : 0
   )
   const [maxRal, setMaxRal] = React.useState<number | undefined>(undefined)
   const imageInputRef = React.createRef()
