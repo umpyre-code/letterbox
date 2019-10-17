@@ -314,6 +314,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
         </Grid>
         <Grid container item spacing={2} justify="space-between" alignItems="flex-end">
           {/* <Grid item container spacing={1} justify="flex-start" alignItems="flex-end"> */}
+          <Grid item>{showAddCreditsButton()}</Grid>
           <Grid item>
             <PaymentInput
               disabled={draft.sending}
@@ -328,7 +329,6 @@ const ComposeFormFC: React.FC<AllProps> = ({
               }}
             />
           </Grid>
-          <Grid item>{showAddCreditsButton()}</Grid>
           <Grid item>
             <Divider orientation="vertical" style={{ marginLeft: 3, marginRight: 3, height: 36 }} />
           </Grid>
