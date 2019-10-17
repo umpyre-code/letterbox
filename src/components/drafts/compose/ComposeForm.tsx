@@ -109,7 +109,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
   const [pda, setPda] = React.useState(draft.pda)
   const [body, setBody] = React.useState(draft.body)
   const [messageValue, setMessageValue] = React.useState<number | undefined>(
-    Math.trunc(draft.value_cents / 100)
+    draft.value_cents ? Math.trunc(draft.value_cents / 100) : undefined
   )
   const [maxRal, setMaxRal] = React.useState<number | undefined>(undefined)
   const imageInputRef = React.createRef()
@@ -254,6 +254,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
                 .value()
               if (updatedMaxRal > 0) {
                 setMaxRal(updatedMaxRal)
+                setMessageValue(updatedMaxRal)
               } else {
                 setMaxRal(undefined)
               }
@@ -319,7 +320,7 @@ const ComposeFormFC: React.FC<AllProps> = ({
               style={{ margin: '0 0 0 0', padding: '3', width: 110 }}
               placeholder={getPaymentPlaceholder()}
               label="Payment"
-              defaultValue={draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : undefined}
+              defaultValue={draft.value_cents > 0 ? Math.round(draft.value_cents / 100) : maxRal}
               onChange={event => {
                 const value = Number(event.target.value)
                 setMessageValue(value)
