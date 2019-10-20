@@ -68,7 +68,7 @@
     "immutable": "^4.0.0-rc.12",
     "jsonwebtoken": "^8.5.1",
     "libphonenumber-js": "^1.7.26",
-    "libsodium-wrappers": "^0.7.5",
+    "libsodium-wrappers": "^0.7.6",
     "lodash": "^4.17.15",
     "marked": "^0.7.0",
     "mini-css-extract-plugin": "^0.8.0",
