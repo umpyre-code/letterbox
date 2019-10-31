@@ -108,7 +108,7 @@
     "@types/dompurify": "^0.0.33",
     "@types/draft-js": "^0.10.37",
     "@types/history": "^4.7.3",
-    "@types/jest": "^24.0.20",
+    "@types/jest": "^24.0.21",
     "@types/jsonwebtoken": "^8.3.5",
     "@types/libsodium-wrappers": "^0.7.6",
     "@types/lodash": "^4.14.144",
