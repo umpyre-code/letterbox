@@ -50,7 +50,7 @@
     "dexie": "^2.0.4",
     "dompurify": "^2.0.7",
     "downshift": "^3.4.1",
-    "draft-js": "^0.11.0",
+    "draft-js": "^0.11.6",
     "draft-js-alignment-plugin": "^2.0.6",
     "draft-js-buttons": "^2.0.2",
     "draft-js-drag-n-drop-plugin": "^2.0.4",
