@@ -1504,10 +1504,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/libsodium-wrappers@^0.7.6":
-  version "0.7.6"
-  resolved "https://registry.yarnpkg.com/@types/libsodium-wrappers/-/libsodium-wrappers-0.7.6.tgz#0702395d73de9556dbde05c91ba4925eb64f5aee"
-  integrity sha512-CrTY7kY5s7dxdioA2N5x6iTNgRllWGENzGCqQD/aazsakxKB4NYTJdh83ERCScev3Po5FRnVHj2TUkc6sD1oqw==
+"@types/libsodium-wrappers@^0.7.8":
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/@types/libsodium-wrappers/-/libsodium-wrappers-0.7.8.tgz#34575d7692fdbb7a7fdb63afcde381db86ec0de2"
+  integrity sha512-vkDSj6enD3K0+Ep83wnoGUk+f7sqsO4alsqxxEZ8BcTJhFmcY4UehYH3rTf4M3JGHXNhdpGFDdMbWFMgyvw/fA==
 
 "@types/lodash@^4.14.144":
   version "4.14.144"
