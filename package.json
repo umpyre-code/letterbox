@@ -48,7 +48,7 @@
     "connected-react-router": "^6.5.2",
     "d3-time-format": "^2.2.1",
     "dexie": "^2.0.4",
-    "dompurify": "^2.0.7",
+    "dompurify": "^2.0.17",
     "downshift": "^3.4.1",
     "draft-js": "^0.11.0",
     "draft-js-alignment-plugin": "^2.0.6",
