@@ -74,7 +74,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
-    "prismjs": "^1.17.1",
+    "prismjs": "^1.25.0",
     "prop-types": "^15.6.2",
     "qs": "^6.8.0",
     "querystringify": "^2.1.1",
