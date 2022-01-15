@@ -70,7 +70,7 @@
     "libphonenumber-js": "^1.7.26",
     "libsodium-wrappers": "^0.7.6",
     "lodash": "^4.17.15",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "mini-css-extract-plugin": "^0.8.0",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
