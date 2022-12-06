@@ -76,7 +76,7 @@
     "moment-duration-format": "^2.3.2",
     "prismjs": "^1.17.1",
     "prop-types": "^15.6.2",
-    "qs": "^6.8.0",
+    "qs": "^6.9.7",
     "querystringify": "^2.1.1",
     "react": "^16.11.0",
     "react-animated-css": "^1.2.1",
